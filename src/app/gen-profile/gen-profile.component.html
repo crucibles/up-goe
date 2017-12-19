@@ -1,0 +1,40 @@
+<div class="topnav">
+    <a routerLink="/select-course">Courses</a>
+    <a class="active">Profile</a>
+    <a routerLink="/gen-news">News</a>
+    <a (click)="logout()"id="log-out">Log Out</a>
+  </div>
+  
+  <ul class="vert-tab">
+    <li>
+      <img src="https://image.freepik.com/free-photo/cute-cat-picture_1122-449.jpg" alt="Cat">
+    </li>
+    <li>
+      {{user.u_f_name}} {{user.u_m_name}} {{user.u_l_name}}
+    </li>
+    <li style="font-weight: bold">
+      Quest(s):
+    </li>
+    <li *ngFor="let quest of quests; let i = index">
+      <a>{{quest.quest_title}}
+        <div class="progress">
+          <div ngClass="{{this.defaultPBClass}} {{this.progressBarClass? this.progressBarClass[i]: ''}}" role="progressbar" aria-valuenow="40" aria-valuemin="0"
+            aria-valuemax="100" [style.width]="this.questTimePercentage? this.questTimePercentage[i]: '0%'">
+          </div>
+          <span>{{this.questTimeDisplay? this.questTimeDisplay[i]: '0%'}}</span>
+        </div>
+        {{quest.quest_description}}
+      </a>
+    </li>
+  </ul>
+  
+  <div class="main-body">
+    <div class="search-container">
+      <form (keydown.enter)="search()">
+        <input type="text" placeholder="Search.." [(ngModel)]="course_search" name="course_search">
+        <button type="submit">
+          <i class="fa fa-search"></i>
+        </button>
+      </form>
+    </div>
+  </div>
