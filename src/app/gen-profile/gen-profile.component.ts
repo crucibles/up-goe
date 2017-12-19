@@ -8,7 +8,9 @@ import {
 } from '../user.service';
 
 import {
-  User
+  User,
+  TOTXP,
+  MAXXP
 } from '../user';
 
 import {
@@ -47,6 +49,87 @@ export class GenProfileComponent implements OnInit {
   questTimeDisplay: string[];
   progressBarClass: string[];
   defaultPBClass: string = 'progress-bar progress-bar-striped active';
+  grades: number[];
+
+
+  // lineChart
+  public lineChartData: Array<any> = [];
+  public lineChartLabels: Array<any> = ['Week 0', 'Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7', 'Week 8'];
+  public lineChartOptions: any = {
+    responsive: true,
+    scales: {
+      yAxes: [{id: 'y-axis-1', type: 'linear', position: 'left', ticks: {min: 0, max:100}}]
+    }
+  };
+  public lineChartColors: Array<any> = [
+    { // grey
+      backgroundColor: 'rgba(148,159,177,0.2)',
+      borderColor: 'rgba(148,159,177,1)',
+      pointBackgroundColor: 'rgba(148,159,177,1)',
+      pointBorderColor: '#fff',
+      pointHoverBackgroundColor: '#fff',
+      pointHoverBorderColor: 'rgba(148,159,177,0.8)'
+    },
+    { // dark grey
+      backgroundColor: 'rgba(77,83,96,0.2)',
+      borderColor: 'rgba(77,83,96,1)',
+      pointBackgroundColor: 'rgba(77,83,96,1)',
+      pointBorderColor: '#fff',
+      pointHoverBackgroundColor: '#fff',
+      pointHoverBorderColor: 'rgba(77,83,96,1)'
+    },
+    { // grey
+      backgroundColor: 'rgba(148,159,177,0.2)',
+      borderColor: 'rgba(148,159,177,1)',
+      pointBackgroundColor: 'rgba(148,159,177,1)',
+      pointBorderColor: '#fff',
+      pointHoverBackgroundColor: '#fff',
+      pointHoverBorderColor: 'rgba(148,159,177,0.8)'
+    },
+    { // grey
+      backgroundColor: 'rgba(148,159,177,0.2)',
+      borderColor: 'rgba(148,159,177,1)',
+      pointBackgroundColor: 'rgba(148,159,177,1)',
+      pointBorderColor: '#fff',
+      pointHoverBackgroundColor: '#fff',
+      pointHoverBorderColor: 'rgba(148,159,177,0.8)'
+    }
+  ];
+  
+  public lineChartLegend: boolean = true;
+  public lineChartType: string = 'line';
+
+  // events
+  public chartClicked(e: any): void {
+    console.log(e);
+  }
+
+  public chartHovered(e: any): void {
+    console.log(e);
+  }
+
+  getGrades(): void {
+    this.grades = TOTXP? TOTXP: [];
+    let dataGrade: number[] = [];
+    let max: number = MAXXP? MAXXP: 10;
+    for(let i=0; i<this.grades.length; i++){
+      let perc: number = this.grades[i]/MAXXP*100; 
+      dataGrade.push(Math.round((perc + 0.00001) * 100) / 100);
+    }
+    let dataLine: any = {
+      data: dataGrade,
+      label: 'CMSC 128'
+    };
+    this.lineChartData.push(dataLine);
+    console.log(this.lineChartData);
+  }
+
+
+
+
+
+
+
 
 
   constructor(private userService: UserService) {
@@ -140,6 +223,8 @@ export class GenProfileComponent implements OnInit {
     this.getUser();
     this.getQuests();
     this.timeQuest();
+    this.getGrades();
   }
+
 
 }

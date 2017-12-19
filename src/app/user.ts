@@ -32,3 +32,8 @@ export const USER: User = {
   u_security_answer: 'Donevir',
   u_course: COURSES
 };
+
+export const TOTXP: number[] = [1000,2123,3439,4655,6053,6104];
+
+export const MAXXP: number = 10000;
+
