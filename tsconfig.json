@@ -11,9 +11,6 @@
     "typeRoots": [
       "node_modules/@types"
     ],
-    "files": [
-      "src/app/gen-selcourse/gen-selcourse.component.ts"
-    ],
     "lib": [
       "es2017",
       "dom"
