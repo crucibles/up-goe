@@ -1,0 +1,61 @@
+<div class="topnav">
+  <a class="active" href="#home">Courses</a>
+  <a routerLink="/general-profile">Profile</a>
+  <a routerLink="/gen-news">News</a>
+  <a (click)="logout()"id="log-out">Log Out</a>
+</div>
+
+<ul class="vert-tab">
+  <li>
+    <img src="https://image.freepik.com/free-photo/cute-cat-picture_1122-449.jpg" alt="Cat">
+  </li>
+  <li>
+    {{user.u_f_name}} {{user.u_m_name}} {{user.u_l_name}}
+  </li>
+  <li style="font-weight: bold">
+    Quest(s):
+  </li>
+  <li *ngFor="let quest of quests; let i = index">
+    <a>{{quest.quest_title}}
+      <div class="progress">
+        <div ngClass="{{this.defaultPBClass}} {{this.progressBarClass? this.progressBarClass[i]: ''}}" role="progressbar" aria-valuenow="40" aria-valuemin="0"
+          aria-valuemax="100" [style.width]="this.questTimePercentage? this.questTimePercentage[i]: '0%'">
+        </div>
+        <span>{{this.questTimeDisplay? this.questTimeDisplay[i]: '0%'}}</span>
+      </div>
+      {{quest.quest_description}}
+    </a>
+  </li>
+</ul>
+
+<div class="main-body">
+  <div class="search-container">
+    <form (keydown.enter)="search()">
+      <input type="text" placeholder="Search.." [(ngModel)]="course_search" name="course_search">
+      <button type="submit">
+        <i class="fa fa-search"></i>
+      </button>
+    </form>
+  </div>
+  <table id="hor-zebra" summary="Course List">
+    <thead>
+      <tr>
+        <th scope="col">Course Name</th>
+        <th scope="col">Section</th>
+        <th scope="col">Instructor</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngIf="!courses || courses.length == 0">
+          <td colspan="3" style="text-align: center">You have no course enrolled yet!<br>Search course name or course code now.</td>
+      </tr>
+      <ng-container *ngIf="courses != null && courses.length != 0">
+        <tr *ngFor="let course of courses" [class.odd]="i%2 == 0">
+          <td><a class="clickable">{{course.c_name}}</a></td>
+          <td>{{course.c_name}}</td>
+          <td>{{course.instructor}}</td>
+        </tr>
+      </ng-container>
+    </tbody>
+  </table>
+</div>
