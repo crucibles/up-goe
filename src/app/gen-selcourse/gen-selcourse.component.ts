@@ -97,7 +97,10 @@ export class GenSelcourseComponent implements OnInit {
         let hourRem: number = Math.floor(totalMinRem / 1000 / 60 / 60);
         this.toggleClass(hourRem, i);
 
-        if (hourRem >= 168) {
+        if (totalMinRem <= 0) {
+          timePerc = 100;
+          string = "Time's up!";
+        } else if (hourRem >= 168) {
           let weekRem: number = Math.floor(totalMinRem / 1000 / 60 / 60 / 128);
           let dayRem = Math.floor(totalMinRem / 1000 / 60 / 60 % 128);
           string = weekRem.toString() + " wk(s) & " + dayRem.toString() + " dy(s) left";
@@ -116,9 +119,9 @@ export class GenSelcourseComponent implements OnInit {
     }, 1000);
   }
 
-  toggleClass(hourRem, i){
+  toggleClass(hourRem, i) {
     this.progressBarClass = [];
-    if(hourRem <= 24){
+    if (hourRem <= 24) {
       this.progressBarClass[i] = 'progress-bar-danger';
     } else {
       this.progressBarClass[i] = 'progress-bar-success';
