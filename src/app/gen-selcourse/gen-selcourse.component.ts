@@ -12,7 +12,8 @@ import {
 } from '../user';
 
 import {
-  Course
+  Course,
+  ALLCOURSES
 } from '../course';
 
 import {
@@ -48,6 +49,9 @@ export class GenSelcourseComponent implements OnInit {
   questTimeDisplay: string[];
   progressBarClass: string[];
   defaultPBClass: string = 'progress-bar progress-bar-striped active';
+  isSearching: boolean = false; 
+  allcourses: Course[];
+  course_found: Course[];
 
 
   constructor(private userService: UserService) {
@@ -96,7 +100,6 @@ export class GenSelcourseComponent implements OnInit {
         let totalMinRem: number = this.timeDiff(this.quests[i].quest_end_time_date, new Date());
         let hourRem: number = Math.floor(totalMinRem / 1000 / 60 / 60);
         this.toggleClass(hourRem, i);
-
         if (totalMinRem <= 0) {
           timePerc = 100;
           string = "Time's up!";
@@ -133,6 +136,17 @@ export class GenSelcourseComponent implements OnInit {
 
   search() {
     console.log(this.course_search);
+    if(this.course_search == null || this.course_search.length == 0){
+      this.isSearching = false;
+    } else {
+      this.isSearching = true;
+      this.getAllCourses();
+      this.course_found = this.allcourses.filter(course => (course.c_code == this.course_search) || (course.c_name == this.course_search));
+    }
+  }
+
+  getAllCourses(){
+    this.allcourses = ALLCOURSES;
   }
 
   ngOnInit() {
