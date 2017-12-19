@@ -25,11 +25,6 @@ import {
   NgModel
 } from '@angular/forms';
 
-
-import { Observable } from 'rxjs/Observable';
-import { Observer } from 'rxjs/Observer';
-import { Subject } from 'rxjs/Subject';
-
 @Component({
   selector: 'app-gen-selcourse',
   templateUrl: './gen-selcourse.component.html',
@@ -43,8 +38,6 @@ export class GenSelcourseComponent implements OnInit {
   course_search: string;
   timePerc: number[];
   pb_width: string = '50%'; //width of the progress bar
-  timeObservable: Observable<any>;
-  timeObserver: Observer<any>;
   questTimePercentage: string[];
   questTimeDisplay: string[];
   progressBarClass: string[];
@@ -58,10 +51,8 @@ export class GenSelcourseComponent implements OnInit {
   }
 
   getCourses(): void {
-    this.courses = [];
-    console.log(this.courses.length);
-    //this.userService.getCourses()
-    //  .subscribe(courses => this.courses = courses);
+    this.userService.getCourses()
+      .subscribe(courses => this.courses = courses);
   }
 
   getUser(): void {
@@ -72,14 +63,6 @@ export class GenSelcourseComponent implements OnInit {
   getQuests(): void {
     this.quests = QUESTS;
     this.timeDisplays();
-  }
-
-  timeQuest() {
-    //console.log(this.trials[4]);
-    setInterval(() => {
-      //  this.trials[0]++;
-      //  console.log(this.trials[0]);
-    }, 1000);
   }
 
   timeDiff(date1: Date, date2: Date): number {
@@ -151,13 +134,9 @@ export class GenSelcourseComponent implements OnInit {
 
   ngOnInit() {
     this.defaultPBClass = 'progress-bar progress-bar-striped active';
-    this.timeObservable = new Observable(observer => {
-      this.timeObserver = observer;
-    });
     this.getCourses();
     this.getUser();
     this.getQuests();
-    this.timeQuest();
   }
 
 }

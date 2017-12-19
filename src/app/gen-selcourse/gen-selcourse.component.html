@@ -32,11 +32,14 @@
   <div class="search-container">
     <form (keydown.enter)="search()">
       <input type="text" placeholder="Search.." [(ngModel)]="course_search" name="course_search">
-      <button type="submit">
+      <button type="submit" (click)="search()">
         <i class="fa fa-search"></i>
       </button>
     </form>
   </div>
+
+
+
   <table id="hor-zebra" summary="Course List">
     <thead>
       <tr>
@@ -65,7 +68,8 @@
           <td colspan="3" style="text-align: center">You have no course enrolled yet!
             <br>Search course name or course code now.</td>
         </tr>
-        <ng-container *ngIf="courses != null && courses.length != 0">
+        <!--AHJ: Fix zebra form-->
+        <ng-container id="mult" *ngIf="courses != null && courses.length != 0">
           <tr *ngFor="let course of courses" [class.odd]="i%2 == 0">
             <td>
               <a class="clickable">{{course.c_name}}</a>
