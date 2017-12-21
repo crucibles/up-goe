@@ -1,3 +1,4 @@
+//Core Imports
 import {
   NgModule
 } from '@angular/core';
@@ -7,13 +8,15 @@ import {
   Routes
 } from '@angular/router';
 
+//Application Imports
+import {
+  GenProfileComponent
+} from './gen-profile/gen-profile.component';
+
 import {
   GenSelcourseComponent
 } from './gen-selcourse/gen-selcourse.component';
 
-import {
-  GenProfileComponent
-} from './gen-profile/gen-profile.component';
 
 const routes: Routes = [
   /*{
