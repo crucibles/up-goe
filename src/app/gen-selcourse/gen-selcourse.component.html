@@ -26,8 +26,9 @@
       </a>
     </li>
   </ul>
-  <!--Side body: complement of vertical side tab-->
+  <!--Side Body: complement of vertical side tab-->
   <div class="side-body">
+
     <!--Search bar-->
     <div class="search-container">
       <form (keydown.enter)="search()">
@@ -38,31 +39,51 @@
       </form>
     </div>
 
-    <!--Course List Table (also contains search result list)-->
+    <!--Course/Search-Result List Table (also contains search result list)-->
     <table id="hor-zebra" summary="Course List">
       <thead>
         <tr>
           <th scope="col">Course Name</th>
           <th scope="col">Section</th>
           <th scope="col">Instructor</th>
+          <th scope="col" *ngIf="isSearching && course_found && course_found.length != 0">Add Course</th>
         </tr>
       </thead>
       <tbody>
-        <!--Shows if user has no enrolled course-->
-        <tr *ngIf="!courses || courses.length == 0">
-          <td colspan="3" style="text-align: center">You have no course enrolled yet!
-            <br>Search course name or course code now.</td>
-        </tr>
-
-        <!--Shows if user has enrolled course-->
-        <ng-container *ngIf="courses != null && courses.length != 0">
-          <tr *ngFor="let course of courses" [class.odd]="i%2 == 0">
-            <td>
-              <a class="clickable">{{course.c_name}}</a>
-            </td>
-            <td>{{course.c_name}}</td>
-            <td>{{course.instructor}}</td>
+        <!--Shows if user is searching-->
+        <ng-container *ngIf="isSearching">
+          <!--Shows if no course of same code/name has been found-->
+          <tr *ngIf="!course_found || course_found.length == 0">
+            <td colspan="3" style="text-align: center">Course not found!</td>
           </tr>
+          <!--Shows if course has been found-->
+          <tr *ngIf="course_found && course_found.length != 0" [class.odd]="true">
+            <td>
+              <a class="clickable">{{this.course_found[0].c_name}}</a>
+            </td>
+            <td>{{this.course_found[0].c_name}}</td>
+            <td>{{this.course_found[0].instructor}}</td>
+            <td>
+              <a>Add</a>
+            </td>
+          </tr>
+        </ng-container>
+        <ng-container *ngIf="!isSearching">
+          <!--Shows if user has no enrolled course-->
+          <tr *ngIf="!courses || courses.length == 0">
+            <td colspan="3" style="text-align: center">You have no course enrolled yet!
+              <br>Search course name or course code now.</td>
+          </tr>
+          <!--AHJ: Fix zebra form-->
+          <ng-container id="mult" *ngIf="courses != null && courses.length != 0">
+            <tr *ngFor="let course of courses" [class.odd]="i%2 == 0">
+              <td>
+                <a class="clickable">{{course.c_name}}</a>
+              </td>
+              <td>{{course.c_name}}</td>
+              <td>{{course.instructor}}</td>
+            </tr>
+          </ng-container>
         </ng-container>
       </tbody>
     </table>
