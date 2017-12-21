@@ -1,9 +1,11 @@
-
+/*Padding added so body will not be overlapped by topnavbar*/
+body {
+    padding-top: 50px;
+}
 
 /*Vertical Tab*/
 .vert-tab {
     list-style-type: none;
-    margin-top: 52px;
     padding: 0;
     width: 22%;
     background-color: #f1f1f1;
@@ -45,7 +47,7 @@
     border-collapse: collapse;
     margin: auto;
     margin-top: 100px;
-    
+    display: block;
 }
 
 #hor-zebra thead {
@@ -66,42 +68,10 @@
     cursor: pointer;
 }
 
-
 #hor-zebra .odd {
     background: #e8edff;
 }
 
-/*Top Nav Bar*/
-.topnav {
-    overflow: hidden;
-    background-color: #e9e9e9;
-    position: fixed; /* Make it stick, even on scroll */
-    width: 100%;
-  }
-  
-  .topnav a {
-    float: left;
-    display: block;
-    color: black;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-    font-size: 17px;
-  }
-
-  #log-out {
-    float: right;
-  }
-  
-  .topnav a:hover, #log-out:hover{
-    background-color: #ddd;
-    color: black;
-  }
-  
-  .topnav a.active {
-    background-color: #2196F3;
-    color: white;
-  }
 
 /*Search Bar*/
 .search-container {
@@ -152,8 +122,8 @@
     }
   }
 
-/*Main body - Complement of Vertical Tab*/
-.main-body {
+/*Side body - Complement of Vertical Tab & Top Navbar*/
+.side-body {
     margin-left:25%;
     padding:1px 16px;
 }

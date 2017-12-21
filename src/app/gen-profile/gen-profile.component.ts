@@ -54,7 +54,7 @@ export class GenProfileComponent implements OnInit {
 
   // lineChart
   public lineChartData: Array<any> = [];
-  public lineChartLabels: Array<any> = ['Week 0', 'Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7', 'Week 8'];
+  public lineChartLabels: Array<any> = ['Week 0', 'Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7', 'Week 8', 'Week 9', 'Week 10', 'Week 11', 'Week 12', 'Week 13', 'Week 14', 'Week 15', 'Week 16'];
   public lineChartOptions: any = {
     responsive: true,
     scales: {
