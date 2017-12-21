@@ -25,7 +25,7 @@
           <th scope="col">Course Name</th>
           <th scope="col">Section</th>
           <th scope="col">Instructor</th>
-          <ng-container *ngIf="isSearching && course_found && course_found.length != 0"><th scope="col" >Add Course</th></ng-container>
+          <th scope="col" *ngIf="isSearching && course_found && course_found.length != 0">Add Course</th>
         </tr>
       </thead>
       <tbody>
