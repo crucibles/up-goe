@@ -41,6 +41,7 @@ import {
   UserService
 } from './user.service';
 import { GenSidetabComponent } from './gen-sidetab/gen-sidetab.component';
+import { GenNewsComponent } from './gen-news/gen-news.component';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import { GenSidetabComponent } from './gen-sidetab/gen-sidetab.component';
     GenSelcourseComponent,
     GenProfileComponent,
     GenTopnavbarComponent,
-    GenSidetabComponent
+    GenSidetabComponent,
+    GenNewsComponent
   ],
   imports: [
     AppRoutingModule,

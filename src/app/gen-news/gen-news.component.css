@@ -1,0 +1,37 @@
+/*Padding added so body will not be overlapped by topnavbar*/
+body {
+    padding: 50px 50px 50px 0;
+}
+
+/*Main body - Complement of Vertical Tab*/
+.side-body {
+    margin-left:25%;
+}
+
+#comments { display: block; }
+
+#comments .cmmnt, ul .cmmnt, ul ul .cmmnt { display: block; position: relative; padding-left: 65px; border-top: 1px solid #ddd; }
+
+#comments .cmmnt .avatar  { position: absolute; top: 8px; left: 0; }
+#comments .cmmnt .avatar img { 
+  -webkit-border-radius: 3px; 
+  -moz-border-radius: 3px; 
+  border-radius: 3px; 
+  -webkit-box-shadow: 1px 1px 2px rgba(0,0,0,0.44);
+  -moz-box-shadow: 1px 1px 2px rgba(0,0,0,0.44);
+  box-shadow: 1px 1px 2px rgba(0,0,0,0.44);
+  -webkit-transition: all 0.4s linear;
+  -moz-transition: all 0.4s linear;
+  -ms-transition: all 0.4s linear;
+  -o-transition: all 0.4s linear;
+  transition: all 0.4s linear;
+}
+
+#comments .cmmnt .avatar a:hover img { opacity: 0.77; }
+
+
+#comments .cmmnt .cmmnt-content { padding: 0px 3px; padding-bottom: 12px; padding-top: 8px; }
+#comments .cmmnt .cmmnt-content header { font-size: 1.3em; display: block; margin-bottom: 8px; }
+#comments .cmmnt .cmmnt-content header .pubdate { color: #777; }
+#comments .cmmnt .cmmnt-content header .userlink { font-weight: bold; } 
+#comments .cmmnt .replies { margin-bottom: 7px; }

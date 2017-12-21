@@ -29,6 +29,10 @@ const routes: Routes = [
     component: GenSelcourseComponent
   },
   {
+    path: '/general-news',
+    component: GenNewsComponent
+  },
+  {
     path: 'general-profile',
     component: GenProfileComponent
   }
