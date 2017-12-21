@@ -4,33 +4,34 @@ import {
 } from './course'
 
 export class User {
-  u_id: number;
-  u_f_name: string;
-  u_m_name: string;
-  u_l_name: string;
-  u_birthdate: Date;
-  u_email: string;
-  u_password: string;
-  u_type: string;
-  u_contact_no: string;
-  u_security_question: string;
-  u_security_answer: string;
-  u_course: Course[];
+  user_id: number;
+  user_f_name: string;
+  user_m_name: string;
+  user_l_name: string;
+  user_birthdate: Date;
+  user_email: string;
+  user_password: string;
+  user_type: string;
+  user_contact_no: string;
+  user_security_question: string;
+  user_security_answer: string;
+  user_course: Course[];
 };
 
+/*Mock user*/
 export const USER: User = {
-  u_id: 1,
-  u_f_name: 'Donevir',
-  u_m_name: 'Densing',
-  u_l_name: 'Hynson',
-  u_birthdate: new Date('1997/05/26'),
-  u_email: 'ddhynson@up.edu.ph',
-  u_password: 'p',
-  u_type: 'student',
-  u_contact_no: '09499709292',
-  u_security_question: 'What is your name?',
-  u_security_answer: 'Donevir',
-  u_course: COURSES
+  user_id: 1,
+  user_f_name: 'Donevir',
+  user_m_name: 'Densing',
+  user_l_name: 'Hynson',
+  user_birthdate: new Date('1997/05/26'),
+  user_email: 'ddhynson@up.edu.ph',
+  user_password: 'p',
+  user_type: 'student',
+  user_contact_no: '09499709292',
+  user_security_question: 'What is your name?',
+  user_security_answer: 'Donevir',
+  user_course: COURSES
 };
 
 export const TOTXP: number[] = [1000,2123,3439,4655,6053,6104];

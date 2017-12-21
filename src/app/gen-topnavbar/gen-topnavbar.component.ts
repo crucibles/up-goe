@@ -1,4 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+//Core Imports
+import {
+  Component, 
+  OnInit
+} from '@angular/core';
 
 @Component({
   selector: 'gen-topnavbar',
@@ -12,4 +16,9 @@ export class GenTopnavbarComponent implements OnInit {
   ngOnInit() {
   }
 
+  /**
+   * Logs out the current user
+   */
+  logout() {
+  }
 }

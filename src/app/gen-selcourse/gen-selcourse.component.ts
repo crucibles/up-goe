@@ -1,18 +1,17 @@
+//Core Imports
 import {
   Component,
   OnInit
 } from '@angular/core';
 
 import {
-  UserService
-} from '../user.service';
+  NgModel
+} from '@angular/forms';
 
+//Application Imports
 import {
-  User
-} from '../user';
-
-import {
-  Course
+  Course,
+  ALLCOURSES
 } from '../course';
 
 import {
@@ -21,13 +20,12 @@ import {
 } from '../quest'
 
 import {
-  NgModel
-} from '@angular/forms';
+  User
+} from '../user';  
 
-
-import { Observable } from 'rxjs/Observable';
-import { Observer } from 'rxjs/Observer';
-import { Subject } from 'rxjs/Subject';
+import {
+  UserService
+} from '../user.service';  
 
 @Component({
   selector: 'app-gen-selcourse',
@@ -35,115 +33,62 @@ import { Subject } from 'rxjs/Subject';
   styleUrls: ['./gen-selcourse.component.css']
 })
 export class GenSelcourseComponent implements OnInit {
-
+  
   courses: Course[];
-  quests: Quest[];
   user: User;
+  allcourses: Course[];
+  
+  //for search bar
   course_search: string;
-  timePerc: number[];
-  pb_width: string = '50%'; //width of the progress bar
-  timeObservable: Observable<any>;
-  timeObserver: Observer<any>;
-  questTimePercentage: string[];
-  questTimeDisplay: string[];
-  progressBarClass: string[];
-  defaultPBClass: string = 'progress-bar progress-bar-striped active';
-
-
-  constructor(private userService: UserService) {
+  isSearching: boolean = false; 
+  course_found: Course[];
+  
+  constructor(
+    private userService: UserService
+  ) {}
+  
+  ngOnInit() {
+    this.getCourses();
+    this.getUser();
   }
-
+  
+  /**
+   * @summary: Obtains courses of the current user and stores it to 'courses' variable
+   */
   getCourses(): void {
-    this.courses = [];
-    console.log(this.courses.length);
-    //this.userService.getCourses()
-    //  .subscribe(courses => this.courses = courses);
+    this.userService.getCourses()
+    .subscribe(courses => this.courses = courses);
   }
 
+  /**
+   * @summary: Obtains information of the current user
+   */
   getUser(): void {
     this.userService.getUser()
       .subscribe(user => this.user = user);
   }
-
-  getQuests(): void {
-    this.quests = QUESTS;
-    this.timeDisplays();
-  }
-
-  timeQuest() {
-    //console.log(this.trials[4]);
-    setInterval(() => {
-      //  this.trials[0]++;
-      //  console.log(this.trials[0]);
-    }, 1000);
-  }
-
-  timeDiff(date1: Date, date2: Date): number {
-    let time1 = date1.getTime();
-    let time2 = date2.getTime();
-    let diffInMs: number = time1 - time2;
-    return diffInMs;
-  }
-
-  timeDisplays() {
-    this.questTimeDisplay = [];
-    this.questTimePercentage = [];
-    let string: string = "";
-    setInterval(() => {
-      for (let i = 0; i < this.quests.length; i++) {
-        let timePerc: number = 100 - this.timeDiff(this.quests[i].quest_end_time_date, new Date()) / this.timeDiff(this.quests[i].quest_end_time_date, this.quests[i].quest_start_time_date) * 100;
-
-        let totalMinRem: number = this.timeDiff(this.quests[i].quest_end_time_date, new Date());
-        let hourRem: number = Math.floor(totalMinRem / 1000 / 60 / 60);
-        this.toggleClass(hourRem, i);
-
-        if (totalMinRem <= 0) {
-          timePerc = 100;
-          string = "Time's up!";
-        } else if (hourRem >= 168) {
-          let weekRem: number = Math.floor(totalMinRem / 1000 / 60 / 60 / 128);
-          let dayRem = Math.floor(totalMinRem / 1000 / 60 / 60 % 128);
-          string = weekRem.toString() + " wk(s) & " + dayRem.toString() + " dy(s) left";
-        } else if (hourRem >= 24) {
-          let dayRem: number = Math.floor(totalMinRem / 1000 / 60 / 60 / 24);
-          hourRem = Math.floor(totalMinRem / 1000 / 60 / 60 % 24);
-          string = dayRem.toString() + " dy(s) & " + hourRem.toString() + " hr(s) left";
-        } else {
-          let minRem: number = Math.floor(totalMinRem / 1000 / 60 % 60);
-          string = hourRem.toString() + " hr(s) & " + minRem.toString() + " mn(s) left";
-        }
-
-        this.questTimeDisplay[i] = string;
-        this.questTimePercentage[i] = timePerc.toString() + '%';
-      }
-    }, 1000);
-  }
-
-  toggleClass(hourRem, i) {
-    this.progressBarClass = [];
-    if (hourRem <= 24) {
-      this.progressBarClass[i] = 'progress-bar-danger';
+  
+  /**
+   * @summary searches the string entered by the user and stores result in 'course_found' variable
+   */
+  search() {
+    console.log(this.course_search);
+    if(this.course_search == null || this.course_search.length == 0){
+      this.isSearching = false;
     } else {
-      this.progressBarClass[i] = 'progress-bar-success';
+      this.isSearching = true;
+      this.course_found = this.getAllCourses().filter(course => (course.course_code == this.course_search) || (course.course_name == this.course_search));
     }
   }
 
-  logout() {
+  /**
+   * @summary Gets all courses from the database
+   * 
+   * @returns all courses from the database
+   */
+  getAllCourses(): Course[]{
+    return ALLCOURSES;
   }
 
-  search() {
-    console.log(this.course_search);
-  }
-
-  ngOnInit() {
-    this.defaultPBClass = 'progress-bar progress-bar-striped active';
-    this.timeObservable = new Observable(observer => {
-      this.timeObserver = observer;
-    });
-    this.getCourses();
-    this.getUser();
-    this.getQuests();
-    this.timeQuest();
-  }
 
 }
