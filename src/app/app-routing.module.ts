@@ -17,6 +17,10 @@ import {
   GenSelcourseComponent
 } from './gen-selcourse/gen-selcourse.component';
 
+import {
+  SignUpComponent
+} from './sign-up/sign-up.component';
+
 
 const routes: Routes = [
   /*{
@@ -24,6 +28,10 @@ const routes: Routes = [
     redirectTo: '/select-course',
     pathMatch: 'full'
   },*/
+  {
+    path: '',
+    component: SignUpComponent
+  },
   {
     path: 'select-course',
     component: GenSelcourseComponent
