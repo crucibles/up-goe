@@ -1,31 +1,15 @@
 //Core Imports
-import {
-  Component,
-  OnInit
-} from '@angular/core';
-
-import {
-  NgModel
-} from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { NgModel } from '@angular/forms';
 
 //Application Imports
-import {
-  Course,
-  ALLCOURSES
-} from '../course';
-
-import {
-  Quest,
-  QUESTS
-} from '../quest'
-
-import {
-  User
-} from '../user';  
-
-import {
-  UserService
-} from '../user.service'; 
+import { CommentPost } from '../comment-post'
+import { CommentPostService } from '../comment-post.service'
+import { Course, courses } from '../course';
+import { Quest, quests } from '../quest'
+import { User } from '../user';
+import { UserService } from '../user.service';
+import { QuestService } from '../quest.service'
 
 @Component({
   selector: 'gen-sidetab',
@@ -33,43 +17,60 @@ import {
   styleUrls: ['./gen-sidetab.component.css']
 })
 export class GenSidetabComponent implements OnInit {
-  quests: Quest[];
+  quests: Quest[] = [];
   user: User;
-  
+
   //for progress bar
   defaultPBClass: string = 'progress-bar progress-bar-striped active';
   progressBarClass: string[];
   questTimePercentage: string[];
   questTimeDisplay: string[];
-  
+
   constructor(
-    private userService: UserService
-  ) {}
-  
+    private userService: UserService,
+    private commentPostService: CommentPostService,
+    private questService: QuestService
+  ) { }
+
   ngOnInit() {
     this.defaultPBClass = 'progress-bar progress-bar-striped active';
     this.getUser();
-    this.getQuests();
   }
 
   /**
-   * @summary: Obtains information of the current user
+   * @summary Obtains information of the current user
    */
   getUser(): void {
-    this.userService.getUser()
-      .subscribe(user => this.user = user);
+    this.userService.getUserById("1")
+      .subscribe(user => {
+        this.user = user;
+        this.getQuests(this.user.user_id);
+      });
+  }
+
+  getNumOfPost() {
+    /*this.commentPostService.getSectionPosts()
+      .subscribe(post => {
+        let postdummy: CommentPost
+      });*/
   }
 
   /**
    * @summary: Obtains quests of the current user and stores it to 'courses' variable
+   * 
+   * @param user_id the id of the user that asks for the list of quests
    */
-  getQuests(): void {
-    this.quests = QUESTS;
-    this.timeDisplays();
+  getQuests(user_id): void {
+    this.questService.getQuestById(user_id)
+      .subscribe(quest => {
+        this.quests.push(quest);
+        this.quests = quests;
+        this.timeDisplays();
+      });
   }
 
   /**
-   * @summary: Returns the difference in minutes of two dates
+   * @summary Returns the difference in minutes of two dates
    * 
    * @param date1 the date of the further date
    * @param date2 the date of the earlier date
@@ -120,6 +121,7 @@ export class GenSidetabComponent implements OnInit {
     }, 1000);
   }
 
+
   /**
    * @summary changes the color of the progress bar by changing its class
    * 
@@ -133,6 +135,5 @@ export class GenSidetabComponent implements OnInit {
     } else {
       this.progressBarClass[i] = 'progress-bar-success';
     }
-    console.log("quest " + i + ": " + this.progressBarClass[i]);
   }
 }

@@ -11,6 +11,15 @@ import {
   BrowserModule
 } from '@angular/platform-browser';
 
+import {
+  HttpClientModule
+} from '@angular/common/http';
+
+//AHJ: remove after server is available
+import {
+  HttpClientInMemoryWebApiModule
+} from 'angular-in-memory-web-api';
+
 //Third-Party Imports
 import {
   ChartsModule
@@ -26,6 +35,14 @@ import {
 } from './app-routing.module';
 
 import {
+  CommentPostService
+} from './comment-post.service';
+
+import {
+  GenNewsComponent
+} from './gen-news/gen-news.component';
+
+import {
   GenProfileComponent
 } from './gen-profile/gen-profile.component';
 
@@ -34,14 +51,31 @@ import {
 } from './gen-selcourse/gen-selcourse.component';
 
 import {
+  GenSidetabComponent
+} from './gen-sidetab/gen-sidetab.component';
+
+import {
   GenTopnavbarComponent
 } from './gen-topnavbar/gen-topnavbar.component';
 
 import {
+  QuestService
+} from './quest.service';
+
+import {
+  SectionService
+} from './section.service';
+
+import {
   UserService
 } from './user.service';
-import { GenSidetabComponent } from './gen-sidetab/gen-sidetab.component';
-import { GenNewsComponent } from './gen-news/gen-news.component';
+
+//AHJ: remove after server is working
+import {
+  InMemoryDataService
+} from './in-memory-data.service';
+import { SpecificNewsComponent } from './specific-news/specific-news.component';
+
 
 @NgModule({
   declarations: [
@@ -50,15 +84,27 @@ import { GenNewsComponent } from './gen-news/gen-news.component';
     GenProfileComponent,
     GenTopnavbarComponent,
     GenSidetabComponent,
-    GenNewsComponent
+    GenNewsComponent,
+    SpecificNewsComponent
   ],
   imports: [
     AppRoutingModule,
     BrowserModule,
     ChartsModule,
-    FormsModule
+    FormsModule,
+    HttpClientModule,
+
+    // The HttpClientInMemoryWebApiModule module intercepts HTTP requests
+    // and returns simulated server responses.
+    // Remove it when a real server is ready to receive requests.
+    HttpClientInMemoryWebApiModule.forRoot(
+      InMemoryDataService, { dataEncapsulation: false }
+    )
   ],
   providers: [
+    CommentPostService,
+    QuestService,
+    SectionService,
     UserService
   ],
   bootstrap: [AppComponent]

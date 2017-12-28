@@ -1,18 +1,33 @@
 export class Course {
-  course_id: number;
+  course_id: string;
   course_name: string;
-  course_code: string;
-  instructor: string;
+  course_description: string;
+  sections: string[];
 };
 
-export const COURSES: Course[] = [
-  { course_id: 11, course_name: 'CMSC 128', course_code: '123', instructor: 'Miguel Guillermo'},
-  { course_id: 12, course_name: 'NSM 192', course_code: '101', instructor: 'Vicente Calag' }
-];
-
-export const ALLCOURSES: Course[] = [
-  { course_id: 11, course_name: 'CMSC 128', course_code: '123', instructor: 'Miguel Guillermo'},
-  { course_id: 11, course_name: 'CMSC 141', course_code: '456', instructor: 'Jon Santillan'},
-  { course_id: 11, course_name: 'CMSC 170', course_code: '789', instructor: 'Ritchie Gamot'},
-  { course_id: 12, course_name: 'NSM 192', course_code: '101', instructor: 'Vicente Calag' }
+export const courses: Course[] = [
+  {
+    course_id: "11",
+    course_name: 'CMSC 128',
+    course_description: "Fly hiiiiigh",
+    sections: ["11", "22", "33"]
+  },
+  {
+    course_id: "22",
+    course_name: 'CMSC 141',
+    course_description: "Fly hiiiiigh",
+    sections: ["11", "22", "33"]
+  },
+  {
+    course_id: "33",
+    course_name: 'CMSC 170',
+    course_description: "Fly hiiiiigh",
+    sections: ["11", "22", "33"]
+  },
+  {
+    course_id: "44",
+    course_name: 'NSM 192',
+    course_description: "Fly hiiiiigh",
+    sections: ["11", "22", "33"]
+  }
 ];

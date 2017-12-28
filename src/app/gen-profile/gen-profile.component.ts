@@ -15,7 +15,7 @@ import {
 
 import {
   Quest,
-  QUESTS
+  quests
 } from '../quest'
 
 import {
@@ -140,7 +140,7 @@ export class GenProfileComponent implements OnInit {
   }
 
   getUser(): void {
-    this.userService.getUser()
+    this.userService.getUserById("1")
       .subscribe(user => this.user = user);
   }
 

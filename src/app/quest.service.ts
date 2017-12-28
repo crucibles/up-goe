@@ -39,37 +39,24 @@ import {
 } from './quest'
 
 @Injectable()
-export class UserService {
+export class QuestService {
 
-  private userUrl = 'api/users';  // URL to web api
+  private questUrl = "api/quests";
 
   constructor(
     private http: HttpClient
   ) { }
 
-  /**
-   * @summary: Obtains user from server
-   */
-  getUserById(id: string): Observable<User> {
-    const url = `${this.userUrl}/?user_id=${id}`;
-    return this.http.get<User>(url).pipe(
-      map(users => users[0]), // returns a {0|1} element array
+  getQuestById(id: string): Observable<Quest>{
+    const url = `${this.questUrl}/?quest_id=${id}`;
+    return this.http.get<Quest>(url).pipe(
+      map(quests => quests[0]), // returns a {0|1} element array
       tap(h => {
-        const outcome = h ? 'fetched user ' + id: 'did not find user ' + id;
+        const outcome = h ? 'fetched quest ' + id : 'did not find quest ' + id;
         console.log(outcome);
       }),
-      catchError(this.handleError<User>(`getUserById user_id=${id}`))
+      catchError(this.handleError<User>(`getQuestById quest_id=${id}`))
     );
-  }
-  /**
-   * @summary: Obtains course from user
-   */
-  getCourses(): Observable<Course[]> {
-    return of(courses);
-  }
-
-  getUserQuests(): Observable<Quest[]> {
-    return of(quests);
   }
 
   /**
@@ -91,5 +78,4 @@ export class UserService {
       return of(result as T);
     };
   }
-
 }

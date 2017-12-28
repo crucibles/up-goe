@@ -11,12 +11,12 @@ import {
 //Application Imports
 import {
   Course,
-  ALLCOURSES
+  courses
 } from '../course';
 
 import {
   Quest,
-  QUESTS
+  quests
 } from '../quest'
 
 import {
@@ -64,7 +64,7 @@ export class GenSelcourseComponent implements OnInit {
    * @summary: Obtains information of the current user
    */
   getUser(): void {
-    this.userService.getUser()
+    this.userService.getUserById("1")
       .subscribe(user => this.user = user);
   }
   
@@ -77,7 +77,7 @@ export class GenSelcourseComponent implements OnInit {
       this.isSearching = false;
     } else {
       this.isSearching = true;
-      this.course_found = this.getAllCourses().filter(course => (course.course_code == this.course_search) || (course.course_name == this.course_search));
+      this.course_found = this.getAllCourses().filter(course => (course.course_id == this.course_search) || (course.course_name == this.course_search));
     }
   }
 
@@ -87,7 +87,7 @@ export class GenSelcourseComponent implements OnInit {
    * @returns all courses from the database
    */
   getAllCourses(): Course[]{
-    return ALLCOURSES;
+    return courses;
   }
 
 

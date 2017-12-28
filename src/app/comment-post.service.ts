@@ -1,9 +1,5 @@
 //Core Imports
 import {
-  HttpClient
-} from '@angular/common/http';
-
-import {
   Injectable
 } from '@angular/core';
 
@@ -24,52 +20,33 @@ import {
 
 //Application Imports
 import {
-  Course,
-  courses
-} from './course';
-
-import {
-  User,
-  USERS
-} from './user';
-
-import {
-  Quest,
-  quests
-} from './quest'
+  CommentPost
+} from './comment-post'
+import { HttpClient } from '@angular/common/http';
 
 @Injectable()
-export class UserService {
-
-  private userUrl = 'api/users';  // URL to web api
+export class CommentPostService {
 
   constructor(
     private http: HttpClient
   ) { }
 
+  private postUrl = "api/commentposts";
+
   /**
-   * @summary: Obtains user from server
+   * @summary Obtains the posts from a section based on section's id
+   * 
+   * @param section_id - the section id of the section 
    */
-  getUserById(id: string): Observable<User> {
-    const url = `${this.userUrl}/?user_id=${id}`;
-    return this.http.get<User>(url).pipe(
-      map(users => users[0]), // returns a {0|1} element array
+  getSectionPosts(section_id: string): Observable<CommentPost[]>{
+    const url = `${this.postUrl}/?section_id=${section_id}`;
+    return this.http.get<CommentPost[]>(url).pipe(
       tap(h => {
-        const outcome = h ? 'fetched user ' + id: 'did not find user ' + id;
+        const outcome = h ? 'fetched section ' + section_id: 'did not find section ' + section_id;
         console.log(outcome);
       }),
-      catchError(this.handleError<User>(`getUserById user_id=${id}`))
+      catchError(this.handleError<CommentPost[]>(`getSectionPosts section_id=${section_id}`))
     );
-  }
-  /**
-   * @summary: Obtains course from user
-   */
-  getCourses(): Observable<Course[]> {
-    return of(courses);
-  }
-
-  getUserQuests(): Observable<Quest[]> {
-    return of(quests);
   }
 
   /**
