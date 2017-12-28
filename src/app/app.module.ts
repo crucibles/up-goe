@@ -1,15 +1,7 @@
 //Core Imports
-import {
-  NgModule
-} from '@angular/core';
-
-import {
-  FormsModule
-} from '@angular/forms';
-
-import {
-  BrowserModule
-} from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserModule } from '@angular/platform-browser';
 
 import {
   HttpClientModule
@@ -21,11 +13,10 @@ import {
 } from 'angular-in-memory-web-api';
 
 //Third-Party Imports
-import {
-  ChartsModule
-} from 'ng2-charts';
+import { ChartsModule } from 'ng2-charts';
 
 //Application Imports
+
 import {
   AppComponent
 } from './app.component';
@@ -74,7 +65,14 @@ import {
 import {
   InMemoryDataService
 } from './in-memory-data.service';
-import { SpecificNewsComponent } from './specific-news/specific-news.component';
+
+import { 
+  SpecificNewsComponent 
+} from './specific-news/specific-news.component';
+
+import { 
+  SignUpComponent 
+} from './sign-up/sign-up.component';
 
 
 @NgModule({
@@ -85,7 +83,8 @@ import { SpecificNewsComponent } from './specific-news/specific-news.component';
     GenTopnavbarComponent,
     GenSidetabComponent,
     GenNewsComponent,
-    SpecificNewsComponent
+    SpecificNewsComponent,
+    SignUpComponent
   ],
   imports: [
     AppRoutingModule,
@@ -93,13 +92,14 @@ import { SpecificNewsComponent } from './specific-news/specific-news.component';
     ChartsModule,
     FormsModule,
     HttpClientModule,
-
+    ReactiveFormsModule,
     // The HttpClientInMemoryWebApiModule module intercepts HTTP requests
     // and returns simulated server responses.
     // Remove it when a real server is ready to receive requests.
     HttpClientInMemoryWebApiModule.forRoot(
       InMemoryDataService, { dataEncapsulation: false }
     )
+    
   ],
   providers: [
     CommentPostService,
