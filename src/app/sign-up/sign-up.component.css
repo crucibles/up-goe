@@ -1,0 +1,25 @@
+table {
+    text-align: left;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+h2 {
+    text-align: center;
+}
+
+.form-horizontal {
+    width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+.form-control {
+    width: 200px;
+    margin-right: -15px;
+}
+
+.submit-button {
+    margin-left: auto;
+    margin-right: auto;
+}
