@@ -10,6 +10,10 @@ import {
 
 //Application Imports
 import {
+  GenNewsComponent
+} from './gen-news/gen-news.component';
+
+import {
   GenProfileComponent
 } from './gen-profile/gen-profile.component';
 
@@ -17,9 +21,13 @@ import {
   GenSelcourseComponent
 } from './gen-selcourse/gen-selcourse.component';
 
+
+import { SpecificNewsComponent } from './specific-news/specific-news.component';
+
 import {
   SignUpComponent
 } from './sign-up/sign-up.component';
+
 
 
 const routes: Routes = [
@@ -37,8 +45,16 @@ const routes: Routes = [
     component: GenSelcourseComponent
   },
   {
+    path: 'general-news',
+    component: GenNewsComponent
+  },
+  {
     path: 'general-profile',
     component: GenProfileComponent
+  },
+  {
+    path: 'specific-news',
+    component: SpecificNewsComponent
   }
 ];
 

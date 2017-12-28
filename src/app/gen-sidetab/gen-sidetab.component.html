@@ -2,8 +2,8 @@
     <li>
       <img src="https://image.freepik.com/free-photo/cute-cat-picture_1122-449.jpg" alt="Cat">
     </li>
-    <li>
-      {{user.user_f_name}} {{user.user_m_name}} {{user.user_l_name}}
+    <li *ngIf="user">
+      {{user.user_fname}} {{user.user_mname}} {{user.user_lname}}
     </li>
     <!--displays quests-->
     <li style="font-weight: bold">
