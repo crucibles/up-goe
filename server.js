@@ -11,8 +11,8 @@ const api = require('./server/routes/api');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false}));
 
-// Angular DIST output folder
-app.use(express.static(path.join(__dirname, 'dist')));
+// Angular DIST output folder (renamed to public for development stage)
+app.use(express.static(path.join(__dirname, 'public')));
 
 // API location
 app.use('/api', api);
