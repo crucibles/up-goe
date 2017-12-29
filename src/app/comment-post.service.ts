@@ -34,9 +34,10 @@ export class CommentPostService {
   private postUrl = "api/commentposts";
 
   /**
-   * @summary Obtains the posts from a section based on section's id
+   * Obtains the posts from a section based on section's id.
+   * @param section_id section id of the section whose posts are to be retrieved
    * 
-   * @param section_id - the section id of the section 
+   * @returns commentpost array of the chosen section
    */
   getSectionPosts(section_id: string): Observable<CommentPost[]>{
     const url = `${this.postUrl}/?section_id=${section_id}`;
@@ -52,8 +53,8 @@ export class CommentPostService {
   /**
    * Handle Http operation that failed.
    * Let the app continue.
-   * @param operation - name of the operation that failed
-   * @param result - optional value to return as the observable result
+   * @param operation name of the operation that failed
+   * @param result optional value to return as the observable result
    */
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {

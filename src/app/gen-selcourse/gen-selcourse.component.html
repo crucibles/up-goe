@@ -49,18 +49,18 @@
         </ng-container>
         <ng-container *ngIf="!isSearching">
           <!--Shows if user has no enrolled course-->
-          <tr *ngIf="!courses || courses.length == 0">
+          <tr *ngIf="!sections || sections.length == 0">
             <td colspan="3" style="text-align: center">You have no course enrolled yet!
               <br>Search course name or course code now.</td>
           </tr>
           <!--AHJ: Fix zebra form-->
-          <ng-container id="mult" *ngIf="courses != null && courses.length != 0">
-            <tr *ngFor="let course of courses" [class.odd]="i%2 == 0">
+          <ng-container id="mult" *ngIf="sections != null && sections.length != 0">
+            <tr *ngFor="let section of sections" [class.odd]="i%2 == 0">
               <td>
-                <a class="clickable">{{course.course_name}}</a>
+                <a class="clickable">{{section.section_name}}</a>
               </td>
-              <td>{{course.course_name}}</td>
-              <td>{{course.instructor}}</td>
+              <td>{{section.section_name}}</td>
+              <td>{{section.instructor}}</td>
             </tr>
           </ng-container>
         </ng-container>

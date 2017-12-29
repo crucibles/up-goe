@@ -11,7 +11,7 @@
 
 
         <div class="col-sm-offset-1 col-sm-8" *ngFor="let post of commentPosts">
-          <div class="panel panel-white post panel-shadow">
+          <div class="panel panel-white post panel-shadow" (click)="openCoursePage(post.section_id)">
             <div class="post-heading">
               <div class="pull-left image">
                 <img src="http://bootdey.com/img/Content/user_1.jpg" class="img-circle avatar" alt="user profile image">
@@ -23,14 +23,14 @@
                   </a>
                   made a post.
                 </div>
-                <h6 class="text-muted time">1 minute ago</h6>
+                <h6 class="text-muted time">{{this.displayTimeDate(post.post_date)}}</h6>
               </div>
             </div>
             <div class="post-description">
               <p>{{post.post_content}}</p>
               <br class="clear" />
               <div class="action-box" style="padding-top: 20px">
-                <a>Go to course page to show comments or reply to this post...</a>
+                <a>Click on this post to show comments or reply to this post...</a>
               </div>
               <br class="clear" />
 

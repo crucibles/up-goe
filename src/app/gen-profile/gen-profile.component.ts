@@ -14,8 +14,7 @@ import {
 } from '../course';
 
 import {
-  Quest,
-  quests
+  Quest
 } from '../quest'
 
 import {

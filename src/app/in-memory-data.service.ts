@@ -2,25 +2,35 @@ import {
   InMemoryDbService
 } from 'angular-in-memory-web-api';
 
+import { Conditions, Badge } from './badge';
+import { CommentPost } from './comment-post';
+import { Course } from './course';
+import { Inventory } from './inventory';
+import { Item } from './item';
+import { Quest } from './quest';
+import { Student, Section } from './section';
+import { User } from './user';
+
+/* Mock DB */
 export class InMemoryDataService {
 
   createDb() {
-    const badges = [
+    const badges: Badge[] = [
       {
         badge_id: "111",
         badge_photo: "",
         badge_description: "Rookie Commentor",
-        badge_conditions: "Comment five times in a post"
+        badge_conditions: new Conditions(0, 0, "", "", "", "", "", "", "", "", "", "", "")
       },
       {
         badge_id: "222",
         badge_photo: "",
         badge_description: "Expert Commentor",
-        badge_conditions: "Comment one hundred times in a post"
+        badge_conditions: new Conditions(0, 0, "", "", "", "", "", "", "", "", "", "", "")
       }
     ];
 
-    const commentposts = [
+    const commentposts: CommentPost[] = [
       {
         post_id: '1',
         section_id: '11',
@@ -37,7 +47,7 @@ export class InMemoryDataService {
         user_id: '1',
         post_content: "Bootdey is a gallery of free snippets resources templates and utilities for bootstrap css hmtl js framework. Codes for developers and web designers",
         post_comments: ["2"],
-        post_date: new Date('2018/05/26'),
+        post_date: new Date('2018/05/05'),
         commentable: true,
         is_post: true
       },
@@ -47,13 +57,13 @@ export class InMemoryDataService {
         user_id: '2',
         post_content: "Comment",
         post_comments: [],
-        post_date: new Date('2018/05/26'),
+        post_date: new Date('2018/05/05'),
         commentable: true,
         is_post: false
       }
     ];
 
-    const courses = [
+    const courses: Course[] = [
       {
         course_id: "11",
         course_name: 'CMSC 128',
@@ -80,7 +90,7 @@ export class InMemoryDataService {
       }
     ];
 
-    const inventories = [
+    const inventories: Inventory[] = [
       {
         user_id: "1",
         section_id: "11",
@@ -93,7 +103,7 @@ export class InMemoryDataService {
       }
     ];
 
-    const items = [
+    const items: Item[] = [
       {
         item_id: "111",
         item_type: "W",
@@ -116,7 +126,7 @@ export class InMemoryDataService {
       }
     ];
 
-    const quests = [
+    const quests: Quest[] = [
       {
         quest_id: 11,
         quest_title: 'Going Bananas!',
@@ -161,34 +171,26 @@ export class InMemoryDataService {
       }
     ];
 
-    const sections = [
+    const sections: Section[] = [
       {
         section_id: "11",
         course_id: "11",
         section_name: "A",
-        students: ["1", "2", "3", "4"],
-        section_schedule: [{
-          section_day: "M",
-          section_start_time: "9:00",
-          section_end_time: "10:00"
-        }],
+        students: [new Student("1", "E"), new Student("2", "E"), new Student("3", "E"), new Student("4", "E")],
+        section_schedule: ["Mon, 9:00 a.m. - 10:00 a.m", "Fri, 9:00 a.m. - 10:00 a.m"],
         instructor: "Miguel Guillermo"
       },
       {
         section_id: "22",
         course_id: "11",
         section_name: "A",
-        students: ["1", "2", "3", "4"],
-        section_schedule: [{
-          section_day: "M",
-          section_start_time: "9:00",
-          section_end_time: "10:00"
-        }],
+        students: [new Student("1", "E"), new Student("2", "E"), new Student("3", "E"), new Student("4", "E")],
+        section_schedule: ["Mon, 9:00 a.m. - 10:00 a.m", "Fri, 9:00 a.m. - 10:00 a.m"],
         instructor: "Miguel Guillermo"
       }
     ];
 
-    const users = [
+    const users: User[] = [
       {
         user_id: '1',
         user_fname: 'Donevir',
@@ -219,7 +221,6 @@ export class InMemoryDataService {
         user_course: ["11", "22"],
         user_quests: ["22", "33"]
       }
-
     ];
 
     return { badges, commentposts, courses, inventories, items, quests, sections, users };

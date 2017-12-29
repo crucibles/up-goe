@@ -7,7 +7,7 @@ import {
 } from './quest'
 
 export class User {
-  user_id: number;
+  user_id: string;
   user_fname: string;
   user_mname: string;
   user_lname: string;
@@ -27,9 +27,9 @@ export const TOTXP: number[] = [1000,2123,3439,4655,6053,6104];
 export const MAXXP: number = 10000;
 
 
-export const USERS: User[] = [
+export const users: User[] = [
   {
-    user_id: 1,
+    user_id: '1',
     user_fname: 'Donevir',
     user_mname: 'Densing',
     user_lname: 'Hynson',
@@ -44,7 +44,7 @@ export const USERS: User[] = [
     user_quests: ["22", "33"]
   },
   {
-    user_id: 2,
+    user_id: '2',
     user_fname: 'Cedric',
     user_mname: 'Yao',
     user_lname: 'Alvaro',
@@ -58,5 +58,4 @@ export const USERS: User[] = [
     user_course: ["11", "22"],
     user_quests: ["22", "33"]
   }
-
 ];
