@@ -15,8 +15,7 @@ import {
 } from '../course';
 
 import {
-  Quest,
-  quests
+  Quest
 } from '../quest'
 
 import {
@@ -26,6 +25,8 @@ import {
 import {
   UserService
 } from '../user.service';  
+import { SectionService } from '../section.service';
+import { Section } from '../section';
 
 @Component({
   selector: 'app-gen-selcourse',
@@ -34,7 +35,7 @@ import {
 })
 export class GenSelcourseComponent implements OnInit {
   
-  courses: Course[];
+  sections: Section[];
   user: User;
   allcourses: Course[];
   
@@ -44,7 +45,8 @@ export class GenSelcourseComponent implements OnInit {
   course_found: Course[];
   
   constructor(
-    private userService: UserService
+    private userService: UserService,
+    private sectionService: SectionService
   ) {}
   
   ngOnInit() {
@@ -56,8 +58,12 @@ export class GenSelcourseComponent implements OnInit {
    * @summary: Obtains courses of the current user and stores it to 'courses' variable
    */
   getCourses(): void {
-    this.userService.getCourses()
-    .subscribe(courses => this.courses = courses);
+    this.sectionService.getUserSections("1")
+    .subscribe(sections => {
+      this.sections = sections
+      console.log("sections: array HER");
+      console.log(sections);
+    });
   }
 
   /**

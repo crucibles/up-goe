@@ -21,13 +21,13 @@ import {
   GenSelcourseComponent
 } from './gen-selcourse/gen-selcourse.component';
 
-
-import { SpecificNewsComponent } from './specific-news/specific-news.component';
-
 import {
   SignUpComponent
 } from './sign-up/sign-up.component';
 
+import {
+  SpecificNewsComponent
+} from './specific-news/specific-news.component';
 
 
 const routes: Routes = [

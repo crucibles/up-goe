@@ -8,5 +8,5 @@ import {
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'marjorie2';
+  title = 'up-goe';
 }

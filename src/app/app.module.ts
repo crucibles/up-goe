@@ -1,11 +1,20 @@
 //Core Imports
-import { NgModule } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { BrowserModule } from '@angular/platform-browser';
-
 import {
   HttpClientModule
 } from '@angular/common/http';
+
+import {
+  NgModule
+} from '@angular/core';
+
+import {
+  FormsModule,
+  ReactiveFormsModule
+} from '@angular/forms';
+
+import {
+  BrowserModule
+} from '@angular/platform-browser';
 
 //AHJ: remove after server is available
 import {
@@ -13,10 +22,11 @@ import {
 } from 'angular-in-memory-web-api';
 
 //Third-Party Imports
-import { ChartsModule } from 'ng2-charts';
+import {
+  ChartsModule
+} from 'ng2-charts';
 
 //Application Imports
-
 import {
   AppComponent
 } from './app.component';
@@ -24,6 +34,10 @@ import {
 import {
   AppRoutingModule
 } from './app-routing.module';
+
+import {
+  BadgeService
+} from './badge.service';
 
 import {
   CommentPostService
@@ -49,6 +63,11 @@ import {
   GenTopnavbarComponent
 } from './gen-topnavbar/gen-topnavbar.component';
 
+//AHJ: remove after server is working
+import {
+  InMemoryDataService
+} from './in-memory-data.service';
+
 import {
   QuestService
 } from './quest.service';
@@ -58,21 +77,17 @@ import {
 } from './section.service';
 
 import {
-  UserService
-} from './user.service';
+  SignUpComponent
+} from './sign-up/sign-up.component';
 
-//AHJ: remove after server is working
 import {
-  InMemoryDataService
-} from './in-memory-data.service';
-
-import { 
-  SpecificNewsComponent 
+  SpecificNewsComponent
 } from './specific-news/specific-news.component';
 
-import { 
-  SignUpComponent 
-} from './sign-up/sign-up.component';
+import {
+  UserService
+} from './user.service';
+import { ItemService } from './item.service';
 
 
 @NgModule({
@@ -99,13 +114,14 @@ import {
     HttpClientInMemoryWebApiModule.forRoot(
       InMemoryDataService, { dataEncapsulation: false }
     )
-    
   ],
   providers: [
+    BadgeService,
     CommentPostService,
     QuestService,
     SectionService,
-    UserService
+    UserService,
+    ItemService
   ],
   bootstrap: [AppComponent]
 })

@@ -1,3 +1,12 @@
+/**
+ * A class to represent courses
+ * @class
+ *
+ * @property course_id identification for a course
+ * @property course_name name of the course
+ * @property course_description description of the course (what the course is all about)
+ * @property sections[] array of section names belonging to this course
+ */
 export class Course {
   course_id: string;
   course_name: string;

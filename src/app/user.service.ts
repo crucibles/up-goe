@@ -29,13 +29,11 @@ import {
 } from './course';
 
 import {
-  User,
-  USERS
+  User
 } from './user';
 
 import {
-  Quest,
-  quests
+  Quest
 } from './quest'
 
 @Injectable()
@@ -48,29 +46,44 @@ export class UserService {
   ) { }
 
   /**
+   * Lets the user log in (if user enters valid email and password) and be able to navigate to the correct pages
+   * @param user_id id of the user to be logged in
+   */
+  logIn(user_id) {
+
+  }
+
+  /**
+   * Logs out the user
+   */
+  logOut() {
+
+  }
+
+  /**
+   * Registers the received user parameter to the database 
+   * @param user user to be registered to the database
+   */
+  register(user: User) {
+
+  }
+
+  /**
    * @summary: Obtains user from server
    */
   getUserById(id: string): Observable<User> {
     const url = `${this.userUrl}/?user_id=${id}`;
-    return this.http.get<User>(url).pipe(
-      map(users => users[0]), // returns a {0|1} element array
-      tap(h => {
-        const outcome = h ? 'fetched user ' + id: 'did not find user ' + id;
-        console.log(outcome);
-      }),
-      catchError(this.handleError<User>(`getUserById user_id=${id}`))
-    );
-  }
-  /**
-   * @summary: Obtains course from user
-   */
-  getCourses(): Observable<Course[]> {
-    return of(courses);
+    return this.http.get<User[]>(url)
+      .pipe(
+        map(users => users[0]), // returns a {0|1} element array
+        tap(h => {
+          const outcome = h ? 'fetched user ' + id : 'did not find user ' + id;
+          console.log(outcome);
+        }),
+        catchError(this.handleError<User>(`getUserById user_id=${id}`))
+      );
   }
 
-  getUserQuests(): Observable<Quest[]> {
-    return of(quests);
-  }
 
   /**
    * Handle Http operation that failed.

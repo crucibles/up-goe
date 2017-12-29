@@ -5,8 +5,8 @@ import { NgModel } from '@angular/forms';
 //Application Imports
 import { CommentPost } from '../comment-post'
 import { CommentPostService } from '../comment-post.service'
-import { Course, courses } from '../course';
-import { Quest, quests } from '../quest'
+import { Course } from '../course';
+import { Quest } from '../quest'
 import { User } from '../user';
 import { UserService } from '../user.service';
 import { QuestService } from '../quest.service'
@@ -61,9 +61,8 @@ export class GenSidetabComponent implements OnInit {
    * @param user_id the id of the user that asks for the list of quests
    */
   getQuests(user_id): void {
-    this.questService.getQuestById(user_id)
-      .subscribe(quest => {
-        this.quests.push(quest);
+    this.questService.getUserSectionQuests(user_id)
+      .subscribe(quests => {
         this.quests = quests;
         this.timeDisplays();
       });
@@ -78,9 +77,13 @@ export class GenSidetabComponent implements OnInit {
    * @returns the difference (in minutes) of the two dates
    */
   timeDiff(date1: Date, date2: Date): number {
+    date1 = new Date(date1);
+    date2 = new Date(date2);
+
     let time1 = date1.getTime();
     let time2 = date2.getTime();
     let diffInMs: number = time1 - time2;
+    
     return diffInMs;
   }
 
