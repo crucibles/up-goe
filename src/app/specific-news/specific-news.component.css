@@ -37,14 +37,14 @@ border-radius: 4px;
 float: left;
 width: 100%;
 }
-.status-upload form {
+.status-upload div {
 float: left;
 width: 100%;
 }
-.status-upload form textarea {
-background: none repeat scroll 0 0 #fff;
-border: medium none;
--webkit-border-radius: 4px 4px 0 0;
+.status-upload div textarea {
+  background: none repeat scroll 0 0 #fff;
+  border: medium none;
+  -webkit-border-radius: 4px 4px 0 0;
 -moz-border-radius: 4px 4px 0 0;
 -ms-border-radius: 4px 4px 0 0;
 -o-border-radius: 4px 4px 0 0;
@@ -62,6 +62,23 @@ outline:none;
 border: 1px solid #F2F2F2;
 }
 
+.status-upload div button {
+border: medium none;
+-webkit-border-radius: 4px;
+-moz-border-radius: 4px;
+-ms-border-radius: 4px;
+-o-border-radius: 4px;
+border-radius: 4px;
+color: #fff;
+float: right;
+font-family: Lato;
+font-size: 14px;
+letter-spacing: 0.3px;
+margin-right: 9px;
+margin-top: 9px;
+padding: 6px 15px;
+}
+
 .status-upload ul {
 float: left;
 list-style: none outside none;
@@ -70,7 +87,7 @@ padding: 0 0 0 15px;
 width: auto;
 }
 .status-upload ul > li {
-float: left;
+  float: left;
 }
 .status-upload ul > li > a {
 -webkit-border-radius: 4px;
@@ -96,22 +113,6 @@ cursor: pointer;
 .status-upload ul > li > a:hover {
 background: none repeat scroll 0 0 #606060;
 color: #fff;
-}
-.status-upload form button {
-border: medium none;
--webkit-border-radius: 4px;
--moz-border-radius: 4px;
--ms-border-radius: 4px;
--o-border-radius: 4px;
-border-radius: 4px;
-color: #fff;
-float: right;
-font-family: Lato;
-font-size: 14px;
-letter-spacing: 0.3px;
-margin-right: 9px;
-margin-top: 9px;
-padding: 6px 15px;
 }
 .dropdown > a > span.green:before {
 border-left-color: #2dcb73;

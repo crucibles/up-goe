@@ -60,9 +60,7 @@ export class GenSelcourseComponent implements OnInit {
   getCourses(): void {
     this.sectionService.getUserSections("1")
     .subscribe(sections => {
-      this.sections = sections
-      console.log("sections: array HER");
-      console.log(sections);
+      this.sections = sections;
     });
   }
 
@@ -78,7 +76,6 @@ export class GenSelcourseComponent implements OnInit {
    * @summary searches the string entered by the user and stores result in 'course_found' variable
    */
   search() {
-    console.log(this.course_search);
     if(this.course_search == null || this.course_search.length == 0){
       this.isSearching = false;
     } else {

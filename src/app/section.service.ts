@@ -125,14 +125,15 @@ export class SectionService {
    * @returns array of sections
    */
   getUserSections(user_id): Observable<Section[]> {
-    const url = `${this.secUrl}/?students=1`;
-      console.log(url);
-      return this.http.get<Section[]>(url).pipe(
+    const url = `${this.secUrl}`;
+    let params = new HttpParams().set('section', '11');
+    return this.http.get<Section[]>(url, { params }).pipe(
       tap(h => {
-        const outcome = h ? 'fetched sections of user ' + user_id : 'did not find sections of user ' + user_id;
+        const outcome = h ?
+          'fetched sections of user ' + user_id : 'did not find sections of user ' + user_id;
       }),
       catchError(this.handleError<Section[]>(`getUserSections user_id=${user_id}`))
-      );
+    );
   }
 
   /**
