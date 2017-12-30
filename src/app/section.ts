@@ -14,11 +14,10 @@ export class Section {
     course_id: string;
     section_name: string;
     students: Student[];
-    section_schedule: any[];
     instructor: string;
 }
 
-/**
+/** 
  * A class to represent students
  * @class
  * 

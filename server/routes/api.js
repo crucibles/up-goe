@@ -35,7 +35,6 @@ router.get('/users', (req, res) => {
             .toArray()
             .then((users) => {
                 response.data = users;
-                console.log(JSON.stringify(users[1]));
                 res.json(users);
             })
             .catch((err) => {
@@ -53,8 +52,53 @@ router.get('/courses', (req, res) => {
             .toArray()
             .then((courses) => {
                 response.data = courses;
-                console.log(JSON.stringify(courses[0]));
                 res.json(courses);
+            })
+            .catch((err) => {
+                sendError(err, res);
+            });
+    });
+});
+
+// Get sections of user
+router.get('/sections', (req, res) => {
+    console.log("START==============");
+    console.log(req);
+    console.log("END=====================");
+    connection((db) => {
+        const myDB = db.db('up-goe-db');
+        myDB.collection('sections')
+            .find({
+                students: { 
+                    $elemMatch: {
+                        user_id: req.query.id
+                    }                    
+                }
+            })
+            .toArray()
+            .then((sections) => {
+                console.log(sections);
+                //var user_sections = [];
+                console.log("hi");
+                /*for(var x=0 ; x< sections.length ; x++){
+                    console.log('x: '+x);
+                    let students = sections[x].students;
+
+                    for(var y=0; y<students.length; y++){
+                        console.log('y: '+y);
+                        let student = students[y];
+                        console.log(student);
+                        console.log(req.query.id);
+                        if(student.user_id == req.query.id){
+                            user_sections.push(sections[x]);                            
+                            break;                
+                        }
+                    }
+                    
+                }*/
+                response.data = sections;
+                res.json(sections);
+
             })
             .catch((err) => {
                 sendError(err, res);

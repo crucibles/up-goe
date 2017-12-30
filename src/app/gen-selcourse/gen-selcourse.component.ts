@@ -58,7 +58,8 @@ export class GenSelcourseComponent implements OnInit {
    * @summary: Obtains courses of the current user and stores it to 'courses' variable
    */
   getCourses(): void {
-    this.sectionService.getUserSections("1")
+    //ced test id
+    this.sectionService.getUserSections("5a37f4500d1126321c11e5e7")
     .subscribe(sections => {
       this.sections = sections
       console.log("sections: array HER");

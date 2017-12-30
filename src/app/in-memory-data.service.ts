@@ -177,7 +177,6 @@ export class InMemoryDataService {
         course_id: "11",
         section_name: "A",
         students: [new Student("1", "E"), new Student("2", "E"), new Student("3", "E"), new Student("4", "E")],
-        section_schedule: ["Mon, 9:00 a.m. - 10:00 a.m", "Fri, 9:00 a.m. - 10:00 a.m"],
         instructor: "Miguel Guillermo"
       },
       {
@@ -185,7 +184,6 @@ export class InMemoryDataService {
         course_id: "11",
         section_name: "A",
         students: [new Student("1", "E"), new Student("2", "E"), new Student("3", "E"), new Student("4", "E")],
-        section_schedule: ["Mon, 9:00 a.m. - 10:00 a.m", "Fri, 9:00 a.m. - 10:00 a.m"],
         instructor: "Miguel Guillermo"
       }
     ];
