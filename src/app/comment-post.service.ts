@@ -95,7 +95,7 @@ export class CommentPostService {
     const url = `${this.postUrl}/?section_id=${section_id}`;
     return this.http.get<CommentPost[]>(url).pipe(
       tap(h => {
-        const outcome = h ? 'fetched section ' + section_id : 'did not find section ' + section_id;
+        const outcome = h ? 'fetched section ' + section_id: 'did not find section ' + section_id;
         console.log(outcome);
       }),
       catchError(this.handleError<CommentPost[]>(`getSectionPosts section_id=${section_id}`))
