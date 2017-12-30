@@ -12,6 +12,7 @@ import {
 import {
   CommentPostService
 } from '../comment-post.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-gen-news',
@@ -24,7 +25,8 @@ export class GenNewsComponent implements OnInit {
   months: string[] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
   constructor(
-    private commentPostService: CommentPostService
+    private commentPostService: CommentPostService,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -47,12 +49,11 @@ export class GenNewsComponent implements OnInit {
     return displayDateTime;
   }
 
-  formatDate(date_obj: Date) {
-    date_obj = new Date(date_obj);
-    let datestring: string = this.months[date_obj.getMonth() - 1] + " "
-      + date_obj.getDay() + ", "
-      + date_obj.getFullYear();
-    console.log(datestring);
+  formatDate(date_obj) {
+    var month = this.months[date_obj.getMonth()];
+    var day = date_obj.getDate();
+    var year = date_obj.getFullYear();
+    let datestring: string = month + " " + day + ", " + year;
     return datestring;
   }
 
@@ -74,6 +75,7 @@ export class GenNewsComponent implements OnInit {
 
   openCoursePage(section_id: string) {
     console.log(section_id);
+    this.router.navigate(['/specific-news', section_id]);
   }
 
 }

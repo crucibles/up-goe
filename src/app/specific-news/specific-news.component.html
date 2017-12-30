@@ -10,8 +10,8 @@
       <div class="row">
 
 
-        <div class="col-sm-offset-1 col-sm-8" *ngFor="let post of commentPosts">
-          <div class="panel panel-white post panel-shadow" (click)="openCoursePage(post.section_id)">
+        <div class="col-sm-offset-1 col-sm-8" *ngFor="let post of commentPosts; let i = index">
+          <div class="panel panel-white post panel-shadow">
             <div class="post-heading">
               <div class="pull-left image">
                 <img src="http://bootdey.com/img/Content/user_1.jpg" class="img-circle avatar" alt="user profile image">
@@ -19,7 +19,7 @@
               <div class="pull-left meta">
                 <div class="title h5">
                   <a href="#">
-                    <b>{{post.user_id}}</b>
+                    <b>{{post.id}} - {{post.user_id}}</b>
                   </a>
                   made a post.
                 </div>
@@ -29,8 +29,20 @@
             <div class="post-description">
               <p>{{post.post_content}}</p>
               <br class="clear" />
-              <div class="action-box" style="padding-top: 20px">
+              <div class="action-box" style="padding-top: 20px" *ngIf="post.post_comments && post.post_comments.length != 0">
                 <div id="app" class="comments">
+                  <article *ngFor="let comment_id of post.post_comments; let j = index">
+                    <ng-container *ngIf="comments[i][j]">
+                      <img id="profile-photo" src="https://en.gravatar.com/userimage/18343163/3fd908393aedf6423ec12cacec9a1f50.jpg?size=200" />
+                      <h4>
+                        <a href="#">{{this.comments[i][j].id}}</a>
+                        <h6 class="text-muted time">{{displayTimeDate(this.comments[i][j].post_date)}}</h6>
+                        <p>{{this.comments[i][j].post_content}}</p>
+                      </h4>
+                    </ng-container>
+                  </article>
+                </div>
+                <!--<div id="app" class="comments">
                   <article>
                     <img id="profile-photo" src="https://en.gravatar.com/userimage/18343163/3fd908393aedf6423ec12cacec9a1f50.jpg?size=200" />
                     <h4>
@@ -63,7 +75,8 @@
                     <p>Thank you for visiting all the way from an unknown location. This is just a test to determine if the
                       Twitter API is working as it should. You should see your profile image and your username at the very
                       top that links to your account. You should also see that I wrote in a thank you introduction with your
-                      location.</p>
+                      location.
+                    </p>
                   </article>
 
                   <article>
@@ -76,13 +89,16 @@
                       as it should. You should see your profile image and your username at the very top that links to your
                       account. You should also see that I wrote in a thank you introduction with your location.</p>
                   </article>
-                </div>
+                </div>-->
               </div>
               <div class="action-box" style="padding-top: 20px">
-                <div class="widget-area no-padding blank">
+                <div *ngIf="!post.commentable">
+                  You cannot comment to this post.
+                </div>
+                <div *ngIf="post.commentable" class="widget-area no-padding blank">
                   <div class="status-upload">
-                    <form>
-                      <textarea placeholder="Reply to this post..."></textarea>
+                    <div>
+                      <textarea [(ngModel)]="commentContent" placeholder="Reply to this post..."></textarea>
                       <ul>
                         <li>
                           <a title="" data-toggle="tooltip" data-placement="bottom" data-original-title="Audio">
@@ -105,9 +121,9 @@
                           </a>
                         </li>
                       </ul>
-                      <button type="submit" class="btn btn-success green">
-                        <i class="fa fa-share"></i> Share</button>
-                    </form>
+                      <button [disabled]="!commentContent || commentContent.length == 0" type="submit" class="btn btn-success green" (click)=submitComment(i)>
+                        <i class="fa fa-share"></i> Submit</button>
+                    </div>
                   </div>
                   <!-- Status Upload  -->
                 </div>

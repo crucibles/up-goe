@@ -53,7 +53,7 @@ const routes: Routes = [
     component: GenProfileComponent
   },
   {
-    path: 'specific-news',
+    path: 'specific-news/:section_id',
     component: SpecificNewsComponent
   }
 ];
