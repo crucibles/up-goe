@@ -13,6 +13,7 @@ import {
   CommentPostService
 } from '../comment-post.service';
 import { Router } from '@angular/router';
+import { UserService } from '../user.service';
 
 @Component({
   selector: 'app-gen-news',
@@ -20,12 +21,15 @@ import { Router } from '@angular/router';
   styleUrls: ['./gen-news.component.css']
 })
 export class GenNewsComponent implements OnInit {
-
+  m: string;
   commentPosts: CommentPost[];
+  posters: string[];
   months: string[] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
 
   constructor(
     private commentPostService: CommentPostService,
+    private userService: UserService,
     private router: Router
   ) { }
 
@@ -35,8 +39,14 @@ export class GenNewsComponent implements OnInit {
 
   getAllCommentPost() {
     this.commentPostService.getSectionPosts("11").subscribe(commentPosts => {
-      this.commentPosts = commentPosts;
-      //.filter(post => post.is_post == true);
+      this.commentPosts = commentPosts.filter(post => post.is_post == true);
+      this.commentPosts.forEach((post, index)=>{
+        this.posters = [];
+        this.userService.getUserById(post.user_id).subscribe(user => {
+          let mname: string = user.user_mname? user.user_mname[0] + ".": ""
+          this.posters[index] = user.user_fname + " " + mname + " " + user.user_lname;
+        });
+      });
     });
   }
 
@@ -74,7 +84,7 @@ export class GenNewsComponent implements OnInit {
   }
 
   openCoursePage(section_id: string) {
-    console.log(section_id);
+    console.warn(section_id);
     this.router.navigate(['/specific-news', section_id]);
   }
 

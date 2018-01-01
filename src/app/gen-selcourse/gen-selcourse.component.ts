@@ -27,6 +27,7 @@ import {
 } from '../user.service';  
 import { SectionService } from '../section.service';
 import { Section } from '../section';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-gen-selcourse',
@@ -46,7 +47,8 @@ export class GenSelcourseComponent implements OnInit {
   
   constructor(
     private userService: UserService,
-    private sectionService: SectionService
+    private sectionService: SectionService,
+    private router: Router
   ) {}
   
   ngOnInit() {
@@ -91,6 +93,11 @@ export class GenSelcourseComponent implements OnInit {
    */
   getAllCourses(): Course[]{
     return courses;
+  }
+
+  openCoursePage(section_id: string) {
+    console.log(section_id);
+    this.router.navigate(['/specific-news', section_id]);
   }
 
 
