@@ -24,16 +24,10 @@ import {
 
 //Application Imports
 import {
-  Course
-} from './course';
-
-import {
+  Course,
+  Quest,
   User
-} from './user';
-
-import {
-  Quest
-} from './quest'
+} from '../../shared/models';
 
 @Injectable()
 export class QuestService {

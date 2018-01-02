@@ -1,11 +1,18 @@
 //Core Imports
 import {
-  HttpClient, HttpParams
+  HttpClient, 
+  HttpParams, 
+  HttpHeaders
 } from '@angular/common/http';
 
 import {
   Injectable
 } from '@angular/core';
+
+import {
+  Headers, 
+  RequestOptions 
+} from '@angular/http';
 
 //Third-Party Imports
 import {
@@ -25,26 +32,10 @@ import {
 //Application Imports
 import {
   Course,
-  courses
-} from './course';
-
-import {
-  User
-} from './user';
-
-import {
-  Quest
-} from './quest'
-
-import { 
-  Section 
-} from './section';
-
-import {
-  Headers, 
-  RequestOptions 
-} from '@angular/http';
-import { HttpHeaders } from '@angular/common/http';
+  Quest,
+  Section, 
+  User,
+} from '../../shared/models';
 
 @Injectable()
 export class SectionService {

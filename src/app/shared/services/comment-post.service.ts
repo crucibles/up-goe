@@ -26,7 +26,7 @@ import {
 //Application Imports
 import {
   CommentPost
-} from './comment-post'
+} from '../../shared/models'
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -61,8 +61,9 @@ export class CommentPostService {
 
   /**
      * Submits the received comment to a parent commentpost in the database
-     * @description Submits the received commentpost by adding it as a comment to a parent commentpost in the database
-     * by adding the comment's id to the post_comment attribute of the parent commentpost
+     * @description Submits the received commentpost by adding it as a comment to a parent commentpost 
+     * in the database which is done by merely adding the comment's id to the post_comment attribute of 
+     * the parent commentpost, thus, editing the 'comments' attribute of parent commentpost
      * @param main_post_id id of the parent post where the comment will be added
      * @param comment the comment to be added to the parent post
      */

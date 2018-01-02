@@ -5,7 +5,7 @@
   <li *ngIf="user">
     {{user.user_fname}} {{user.user_mname}} {{user.user_lname}}
   </li>
-  <!--displays quests-->
+  <!--displays quests if navigated page is not a profile page-->
   <ng-container *ngIf="!isProfile">
     <li style="font-weight: bold">
       Quest(s):
@@ -22,19 +22,32 @@
       </a>
     </li>
   </ng-container>
+
+  <!--displays user information if page navigated is a profile page-->
   <ng-container *ngIf="isProfile">
-    <li style="text-align: right"><a (click)="editUserInformation()">Edit</a></li>
+    <li style="text-align: right">
+      <a (click)="editUserInformation()">Edit</a>
+    </li>
     <li> Class List: </li>
     <li *ngFor="let section of sections; let i = index">
       <a *ngIf="courses[i]" (click)=openCoursePage(section.section_id)>{{this.courses[i].course_name}} - {{section.section_name}}</a>
     </li>
     <ng-container *ngIf="user">
       <li> School ID: </li>
-      <li><input type="text" [disabled]="!isEditing" [(ngModel)]="user.user_id" class="user-information" [class.remove-border]="!isEditing"/></li>
+      <li>
+        <input type="text" [disabled]="!isEditing" [(ngModel)]="user.user_id" class="user-information" [class.remove-border]="!isEditing"
+        />
+      </li>
       <li> Email: </li>
-      <li><input type="text" [disabled]="!isEditing" [(ngModel)]="user.user_email" class="user-information" [class.remove-border]="!isEditing"/></li>
+      <li>
+        <input type="text" [disabled]="!isEditing" [(ngModel)]="user.user_email" class="user-information" [class.remove-border]="!isEditing"
+        />
+      </li>
       <li> Contact #: </li>
-      <li><input type="text" [disabled]="!isEditing" [(ngModel)]="user.user_contact_no" class="user-information" [class.remove-border]="!isEditing"/></li>
+      <li>
+        <input type="text" [disabled]="!isEditing" [(ngModel)]="user.user_contact_no" class="user-information" [class.remove-border]="!isEditing"
+        />
+      </li>
       <li></li>
       <li></li>
       <li></li>
@@ -42,4 +55,5 @@
       <li></li>
     </ng-container>
   </ng-container>
+
 </ul>

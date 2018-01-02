@@ -5,7 +5,7 @@ import {
 
 import {
   Item
-} from './item';
+} from '../../shared/models';
 
 @Injectable()
 export class ItemService {

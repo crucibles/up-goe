@@ -11,15 +11,15 @@ import {
 //Application Imports
 import {
   GenNewsComponent
-} from './gen-news/gen-news.component';
+} from './general';
 
 import {
   GenProfileComponent
-} from './gen-profile/gen-profile.component';
+} from './general';
 
 import {
   GenSelcourseComponent
-} from './gen-selcourse/gen-selcourse.component';
+} from './general';
 
 import {
   LogInComponent
@@ -31,11 +31,20 @@ import {
 
 import {
   SpecificNewsComponent
-} from './specific-news/specific-news.component';
+} from './specific';
 
 
 
 const routes: Routes = [
+  {
+    path: '', 
+    redirectTo: '/log-in', 
+    pathMatch: 'full'
+  },
+  {
+    path: 'log-in',
+    component: LogInComponent
+  },
   {
     path: '',
     component: LogInComponent

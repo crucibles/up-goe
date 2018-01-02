@@ -15,40 +15,19 @@ import {
 
 //Application Imports
 import {
-  CommentPost
-} from '../comment-post';
-
-import {
-  CommentPostService
-} from '../comment-post.service';
-
-import {
-  Course
-} from '../course';
-
-import {
-  Quest
-} from '../quest';
-
-import {
-  QuestService
-} from '../quest.service'
-
-import {
-  Section
-} from '../section';
-
-import {
-  SectionService
-} from '../section.service';
-
-import {
+  CommentPost,
+  Course,
+  Quest,
+  Section,
   User
-} from '../user';
+} from '../../shared/models';
 
 import {
+  CommentPostService,
+  QuestService,
+  SectionService,
   UserService
-} from '../user.service';
+} from '../../shared/services';
 
 @Component({
   selector: 'gen-sidetab',
@@ -58,18 +37,22 @@ import {
 export class GenSidetabComponent implements OnInit {
   @Input('isProfile') isProfile: boolean = false;
 
-  quests: Quest[] = [];
+  //current user
   user: User;
 
-  //for progress bar
+  //for pages other than profile page  
+  quests: Quest[] = []; //user's quests
+  //for progress bar; 
   defaultPBClass: string = 'progress-bar progress-bar-striped active';
   progressBarClass: string[];
   questTimePercentage: string[];
   questTimeDisplay: string[];
+
+  //for profile page only
+  isEditing: boolean = false;
   sections: Section[] = [];
   courses: Course[] = [];
 
-  isEditing: boolean = false;
 
   constructor(
     private commentPostService: CommentPostService,
@@ -86,19 +69,31 @@ export class GenSidetabComponent implements OnInit {
   }
 
   /**
-   * @summary Obtains information of the current user
+   * Obtains information of the current user
+   * @description Obtains current user's information as well as knowing what information to display
+   * in the sidetab; personal information are displayed on general-profile page while 
+   * section quests are for other pages except general-profile page
    */
   getUser(): void {
     this.userService.getUser("1")
       .subscribe(user => {
         this.user = user;
-        this.getQuests(this.user.user_id);
         if (this.isProfile) {
           this.getUserSections(this.user.user_id);
+        } else {
+          this.getQuests(this.user.user_id);
         }
       });
   }
 
+  /**
+   * Get the array of sections where the user is a student
+   * @description Gets the user's array of sections and the course where it belongs and 
+   * stores it in the 'sections' and 'courses' array respectively; 
+   * used when the user is in the general-profile page
+   * @param user_id id of the user whose array of sections are to be retrieved
+   * 
+   */
   getUserSections(user_id: string) {
     console.log(user_id);
     this.sectionService.getUserSections(user_id).subscribe(sections => {
@@ -113,15 +108,10 @@ export class GenSidetabComponent implements OnInit {
     });
   }
 
-  getNumOfPost() {
-    /*this.commentPostService.getSectionPosts()
-      .subscribe(post => {
-        let postdummy: CommentPost
-      });*/
-  }
-
   /**
-   * @summary: Obtains quests of the current user and stores it to 'courses' variable
+   * Obtains quests participated by the user
+   * @description Obtains quests of the current user and stores it to 'courses' variable;
+   * used when user is navigating on pages other than the general-profile page
    * 
    * @param user_id the id of the user that asks for the list of quests
    */
@@ -133,20 +123,29 @@ export class GenSidetabComponent implements OnInit {
       });
   }
 
-  editUserInformation(){
+  /**
+   * Edits the user's information
+   * @description Edits the user's information; changes isEditing variable which changes the
+   * features of the input fields
+   */
+  editUserInformation() {
     this.isEditing = !this.isEditing;
   }
 
   /*Below are the helper functions for this component */
 
-  openCoursePage(section_id: string) {
+  /**
+   * Navigates to the specific section's page
+   * @param section_id id of the section where the user must be redirected to
+   */
+  openSectionPage(section_id: string) {
+    //AHJ: must navigate to the specific section's home page yet it is still not available
     console.warn(section_id);
     this.router.navigate(['/specific-news', section_id]);
   }
 
   /**
-   * @summary Returns the difference in minutes of two dates
-   * 
+   * Returns the difference in minutes of two dates
    * @param date1 the date of the further date
    * @param date2 the date of the earlier date
    * 
@@ -164,7 +163,7 @@ export class GenSidetabComponent implements OnInit {
   }
 
   /**
-   * @summary changes the time displays in the progress bar and sets the width of the progress bar
+   * Changes the time displays in the progress bar and sets the width of the progress bar
    */
   timeDisplays() {
     let string: string = "";
@@ -174,24 +173,13 @@ export class GenSidetabComponent implements OnInit {
     setInterval(() => {
       for (let i = 0; i < this.quests.length; i++) {
         let timePerc: number = 100 - this.timeDiff(this.quests[i].quest_end_time_date, new Date()) / this.timeDiff(this.quests[i].quest_end_time_date, this.quests[i].quest_start_time_date) * 100;
-
         let totalMinRem: number = this.timeDiff(this.quests[i].quest_end_time_date, new Date());
         let hourRem: number = Math.floor(totalMinRem / 1000 / 60 / 60);
+        
         this.toggleClass(hourRem, i);
+        string = this.getTimeLabel(totalMinRem, hourRem);
         if (totalMinRem <= 0) {
           timePerc = 100;
-          string = "Time's up!";
-        } else if (hourRem >= 168) {
-          let weekRem: number = Math.floor(totalMinRem / 1000 / 60 / 60 / 128);
-          let dayRem = Math.floor(totalMinRem / 1000 / 60 / 60 % 128);
-          string = weekRem.toString() + " wk(s) & " + dayRem.toString() + " dy(s) left";
-        } else if (hourRem >= 24) {
-          let dayRem: number = Math.floor(totalMinRem / 1000 / 60 / 60 / 24);
-          hourRem = Math.floor(totalMinRem / 1000 / 60 / 60 % 24);
-          string = dayRem.toString() + " dy(s) & " + hourRem.toString() + " hr(s) left";
-        } else {
-          let minRem: number = Math.floor(totalMinRem / 1000 / 60 % 60);
-          string = hourRem.toString() + " hr(s) & " + minRem.toString() + " mn(s) left";
         }
 
         this.questTimeDisplay[i] = string;
@@ -200,6 +188,33 @@ export class GenSidetabComponent implements OnInit {
     }, 1000);
   }
 
+  /**
+   * Returns the appropriate progress bar label
+   * @description Returns the appropriate progress bar label based on either the total minutes 
+   * remaining or the hours remaining
+   * @param totalMinRem the total minutes remaining for the quest
+   * @param hourRem the hours remaining for the quest
+   * 
+   * @returns string label for the progress bar
+   */
+  getTimeLabel(totalMinRem: number, hourRem: number): string{
+    let string = "";
+    if (totalMinRem <= 0) {
+      string = "Time's up!";
+    } else if (hourRem >= 168) {
+      let weekRem: number = Math.floor(totalMinRem / 1000 / 60 / 60 / 128);
+      let dayRem = Math.floor(totalMinRem / 1000 / 60 / 60 % 128);
+      string = weekRem.toString() + " wk(s) & " + dayRem.toString() + " dy(s) left";
+    } else if (hourRem >= 24) {
+      let dayRem: number = Math.floor(totalMinRem / 1000 / 60 / 60 / 24);
+      hourRem = Math.floor(totalMinRem / 1000 / 60 / 60 % 24);
+      string = dayRem.toString() + " dy(s) & " + hourRem.toString() + " hr(s) left";
+    } else {
+      let minRem: number = Math.floor(totalMinRem / 1000 / 60 % 60);
+      string = hourRem.toString() + " hr(s) & " + minRem.toString() + " mn(s) left";
+    }
+    return string;
+  }
 
   /**
    * @summary changes the color of the progress bar by changing its class
@@ -208,6 +223,7 @@ export class GenSidetabComponent implements OnInit {
    * @param i index of the quest to be checked
    */
   toggleClass(hourRem, i) {
+    //AHJ: not working; fix this later
     this.progressBarClass = [];
     if (hourRem <= 24) {
       this.progressBarClass[i] = 'progress-bar-danger';

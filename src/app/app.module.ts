@@ -16,16 +16,17 @@ import {
   BrowserModule
 } from '@angular/platform-browser';
 
-/*//AHJ: remove after server is available
+//AHJ: remove after server is available
 import {
   HttpClientInMemoryWebApiModule
 } from 'angular-in-memory-web-api';
-*/
+
 
 //Third-Party Imports
 import {
   ChartsModule
 } from 'ng2-charts';
+
 
 //Application Imports
 import {
@@ -37,46 +38,30 @@ import {
 } from './app-routing.module';
 
 import {
-  BadgeService
-} from './badge.service';
-
-import {
-  CommentPostService
-} from './comment-post.service';
-
-import {
-  GenNewsComponent
-} from './gen-news/gen-news.component';
-
-import {
-  GenProfileComponent
-} from './gen-profile/gen-profile.component';
-
-import {
-  GenSelcourseComponent
-} from './gen-selcourse/gen-selcourse.component';
-
-import {
-  GenSidetabComponent
-} from './gen-sidetab/gen-sidetab.component';
-
-import {
+  GenNewsComponent,
+  GenProfileComponent,
+  GenSelcourseComponent,
+  GenSidetabComponent,
   GenTopnavbarComponent
-} from './gen-topnavbar/gen-topnavbar.component';
+} from './general'
 
-/*//AHJ: remove after server is working
+import { 
+ LogInComponent 
+} from './log-in/log-in.component';
+
+import {
+  BadgeService,
+  CommentPostService,
+  ItemService, 
+  QuestService,
+  SectionService,
+  UserService
+} from './shared/services';
+
+//AHJ: remove after server is working
 import {
   InMemoryDataService
-} from './in-memory-data.service';
-*/
-
-import {
-  QuestService
-} from './quest.service';
-
-import {
-  SectionService
-} from './section.service';
+} from './shared/services';
 
 import {
   SignUpComponent
@@ -84,19 +69,7 @@ import {
 
 import {
   SpecificNewsComponent
-} from './specific-news/specific-news.component';
-
-import {
-  UserService
-} from './user.service';
-
-import { 
-  ItemService 
-} from './item.service';
-
-import { 
-  LogInComponent 
-} from './log-in/log-in.component';
+} from './specific';
 
 
 @NgModule({
@@ -121,9 +94,9 @@ import {
     // The HttpClientInMemoryWebApiModule module intercepts HTTP requests
     // and returns simulated server responses.
     // Remove it when a real server is ready to receive requests.
-    /*HttpClientInMemoryWebApiModule.forRoot(
+    HttpClientInMemoryWebApiModule.forRoot(
       InMemoryDataService, { dataEncapsulation: false }
-    )*/
+    )
   ],
   providers: [
     BadgeService,

@@ -1,8 +1,12 @@
 //Core Imports
 import {
-  Component, 
+  Component,
   OnInit
 } from '@angular/core';
+
+import {
+  Router
+} from '@angular/router';
 
 @Component({
   selector: 'gen-topnavbar',
@@ -11,7 +15,9 @@ import {
 })
 export class GenTopnavbarComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    private router: Router
+  ) { }
 
   ngOnInit() {
   }
@@ -20,5 +26,6 @@ export class GenTopnavbarComponent implements OnInit {
    * Logs out the current user
    */
   logout() {
+    this.router.navigate(['/log-in']);
   }
 }

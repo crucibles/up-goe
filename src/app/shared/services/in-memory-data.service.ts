@@ -2,14 +2,18 @@ import {
   InMemoryDbService
 } from 'angular-in-memory-web-api';
 
-import { Conditions, Badge } from './badge';
-import { CommentPost } from './comment-post';
-import { Course } from './course';
-import { Inventory } from './inventory';
-import { Item } from './item';
-import { Quest } from './quest';
-import { Student, Section } from './section';
-import { User } from './user';
+import {
+  Conditions,
+  Badge,
+  CommentPost,
+  Course,
+  Inventory,
+  Item,
+  Quest,
+  Student,
+  Section,
+  User
+} from '../../shared/models';
 
 /* Mock DB */
 export class InMemoryDataService {

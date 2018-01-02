@@ -20,12 +20,12 @@ import {
 //Application Imports
 import {
   CommentPost
-} from '../comment-post'
+} from '../../shared/models'
 
 import {
-  CommentPostService
-} from '../comment-post.service';
-import { UserService } from '../user.service';
+  CommentPostService,
+  UserService
+} from '../../shared/services';
 
 @Component({
   selector: 'app-specific-news',
@@ -64,6 +64,14 @@ export class SpecificNewsComponent implements OnInit {
     });
   }
 
+  /**
+   * Gets the commentposts of the current user
+   * @description Gets the commentposts of current user by adding the obtained commentpost into
+   * 'commentposts' array and adding its respective comments into 'comments' array.
+   * 
+   * @see getAllComments()
+   * @see appendComment()
+   */
   getAllCommentPosts() {
     this.commentPostService.getSectionPosts(this.section_id).subscribe(commentPosts => {
       this.commentPosts = commentPosts.filter(post => post.is_post == true);
@@ -81,6 +89,9 @@ export class SpecificNewsComponent implements OnInit {
     });
   }
 
+  /**
+   * Gets the comments of the given (main) commentposts
+   */
   getAllComments() {
     for (let i = 0; i < this.commentPosts.length; i++) {
       this.comments[i] = [];
@@ -96,6 +107,17 @@ export class SpecificNewsComponent implements OnInit {
     }
   }
 
+  /**
+   * Appends the received comment into 'comments' array
+   * @description Appends the received comment into 'comments' array by obtaining its information using 
+   * the received 'comment_id' from 'comment_info' parameter and add received comment information
+   * to its parent post's comments which is to the 'commentposts' array whose index is 'parent_index'
+   * which is found in 'comment_info' as well
+   * @param comment_info contains the comment_id and parent_index of the to-be-appended comment;
+   * @param comment_info.comment_id id of the comment to be appended
+   * @param comment_info.parent_index the index of the 'commentposts' array where 
+   * the comment is to be appended
+   */
   appendComments(comment_info: any) {
     this.commentPostService.getCommentPostById(comment_info.comment_id)
       .subscribe(comment => {
@@ -111,6 +133,10 @@ export class SpecificNewsComponent implements OnInit {
       });
   }
 
+  /**
+   * Submits the added comment to a main post
+   * @param parentPostIndex the index of the parent's post where the comment is to be submitted
+   */
   submitComment(parentPostIndex: number) {
     let user_id = "1";
     let newComment = new CommentPost(this.section_id, user_id, this.commentContent, "", new Date(), true, false);
@@ -125,11 +151,6 @@ export class SpecificNewsComponent implements OnInit {
 
     this.commentContent = ""; //resets the comment
   }
-
-
-
-
-
 
 
   /* Helper functions */
