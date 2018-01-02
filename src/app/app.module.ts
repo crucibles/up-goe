@@ -17,9 +17,9 @@ import {
 } from '@angular/platform-browser';
 
 //AHJ: remove after server is available
-import {
+/*import {
   HttpClientInMemoryWebApiModule
-} from 'angular-in-memory-web-api';
+} from 'angular-in-memory-web-api';*/
 
 
 //Third-Party Imports
@@ -59,9 +59,9 @@ import {
 } from './shared/services';
 
 //AHJ: remove after server is working
-import {
+/*import {
   InMemoryDataService
-} from './shared/services';
+} from './shared/services';*/
 
 import {
   SignUpComponent
@@ -94,9 +94,9 @@ import {
     // The HttpClientInMemoryWebApiModule module intercepts HTTP requests
     // and returns simulated server responses.
     // Remove it when a real server is ready to receive requests.
-    HttpClientInMemoryWebApiModule.forRoot(
+    /*HttpClientInMemoryWebApiModule.forRoot(
       InMemoryDataService, { dataEncapsulation: false }
-    )
+    )*/
   ],
   providers: [
     BadgeService,

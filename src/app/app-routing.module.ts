@@ -47,6 +47,11 @@ const routes: Routes = [
   },
   {
     path: '',
+    redirectTo: '/log-in',
+    pathMatch: 'full'
+  },
+  {
+    path: 'log-in',
     component: LogInComponent
   },
   {
