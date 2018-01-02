@@ -1,7 +1,12 @@
 //Core Imports
 import {
-  HttpClient
+  HttpClient,
+  HttpParams
 } from '@angular/common/http';
+
+import {
+  Router
+} from '@angular/router';
 
 import {
   Injectable
@@ -25,24 +30,10 @@ import {
 //Application Imports
 import {
   Course,
-  courses
-} from './course';
-
-import {
+  Quest,
   User
-} from './user';
+} from '../../shared/models';
 
-import {
-  Quest
-} from './quest'
-
-import {
-  HttpParams
-} from '@angular/common/http';
-
-import {
-  Router
-} from '@angular/router';
 
 @Injectable()
 export class UserService {

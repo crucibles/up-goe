@@ -14,28 +14,16 @@ import {
 //Application Imports
 import {
   Course,
-  courses
-} from '../course';
-
-import {
-  Quest
-} from '../quest'
-
-import {
-  Section
-} from '../section';
-
-import {
-  SectionService
-} from '../section.service';
-
-import {
+  courses,
+  Quest,
+  Section,
   User
-} from '../user';
+} from '../../../shared/models';
 
 import {
+  SectionService,
   UserService
-} from '../user.service';
+} from '../../../shared/services';
 
 @Component({
   selector: 'app-gen-selcourse',
@@ -63,25 +51,9 @@ export class GenSelcourseComponent implements OnInit {
   ngOnInit() {
     this.getUser();
   }
-
+  
   /**
-   * @summary: Obtains courses of the current user and stores it to 'courses' variable
-   */
-  getUserSections(user_id): void {
-    this.sectionService.getUserSections(user_id)
-      .subscribe(sections => {
-        this.sections = sections;
-        this.courses = [];
-        this.sections.forEach((section, index) => {
-          this.sectionService.getCourseById(section.course_id).subscribe(course => {
-            this.courses[index] = course;
-          })
-        });
-      });
-  }
-
-  /**
-   * @summary: Obtains information of the current user
+   * Obtains information of the current user
    */
   getUser(): void {
     this.userService.getUser("5a37f4500d1126321c11e5e7")
@@ -90,6 +62,27 @@ export class GenSelcourseComponent implements OnInit {
         this.getUserSections(this.user.user_id);
       });
   }
+  
+    /**
+     * Obtains sections and its respective course of the current use
+     * @description Obtains sections and its respective course of the current user by storing it to 'courses' 
+     * and 'section' array respectively
+     * @param user_id id of the user whose array of 
+     */
+    getUserSections(user_id): void {
+      this.sectionService.getUserSections(user_id)
+        .subscribe(sections => {
+          //stores sections
+          this.sections = sections;
+          this.courses = [];
+          this.sections.forEach((section, index) => {
+            this.sectionService.getCourseById(section.course_id).subscribe(course => {
+              //stores courses
+              this.courses[index] = course;
+            })
+          });
+        });
+    }
 
   /**
    * @summary searches the string entered by the user and stores result in 'course_found' variable

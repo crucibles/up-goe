@@ -1,12 +1,17 @@
 //Core Imports
 import {
-  Component, 
+  Component,
   OnInit
 } from '@angular/core';
 
-import { 
-  UserService 
-} from '../user.service';
+import {
+  Router
+} from '@angular/router';
+
+//Application Import 
+import {
+  UserService
+} from '../../shared/services'
 
 @Component({
   selector: 'gen-topnavbar',
@@ -16,6 +21,7 @@ import {
 export class GenTopnavbarComponent implements OnInit {
 
   constructor(
+    private router: Router,
     private userService: UserService
   ) { }
 

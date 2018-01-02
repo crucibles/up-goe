@@ -1,3 +1,4 @@
+//Core Imports
 import { 
   Component, 
   OnInit 
@@ -9,9 +10,10 @@ import {
   FormBuilder 
 } from '@angular/forms';
 
+//Application Imports
 import { 
   SECURITY_QUESTION 
-} from '../security-questions';
+} from '../shared/models';
 
 @Component({
   selector: 'app-sign-up',

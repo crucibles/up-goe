@@ -4,16 +4,19 @@ import {
   OnInit
 } from '@angular/core';
 
+import {
+  Router
+} from '@angular/router';
+
 //Application Imports
 import {
   CommentPost
-} from '../comment-post'
+} from '../../../shared/models'
 
 import {
-  CommentPostService
-} from '../comment-post.service';
-import { Router } from '@angular/router';
-import { UserService } from '../user.service';
+  CommentPostService,
+  UserService
+} from '../../../shared/services';
 
 @Component({
   selector: 'app-gen-news',
@@ -37,44 +40,63 @@ export class GenNewsComponent implements OnInit {
     this.getAllCommentPost();
   }
 
+  /**
+   * Gets the commentposts of the current user
+   * @description Gets the commentposts of current user by adding the obtained commentpost into
+   * 'commentposts' array
+   */
   getAllCommentPost() {
     this.commentPostService.getSectionPosts("11").subscribe(commentPosts => {
+      //chooses the commentposts that are main posts (ignores comments)
       this.commentPosts = commentPosts.filter(post => post.is_post == true);
 
+      //sorts the commentpost by date (from recent 'on top' to oldest)
       this.commentPosts.sort((a, b) => {
         return this.getTime(b.post_date) - this.getTime(a.post_date);
       });
 
-      this.commentPosts.forEach((post, index)=>{
+      //gets the poster of each commentpost
+      this.commentPosts.forEach((post, index) => {
         this.posters = [];
         this.userService.getUser(post.user_id).subscribe(user => {
-          let mname: string = user.user_mname? user.user_mname[0] + ".": ""
+          let mname: string = user.user_mname ? user.user_mname[0] + "." : ""
           this.posters[index] = user.user_fname + " " + mname + " " + user.user_lname;
         });
       });
     });
   }
 
-
-
   
   /*Below are the helper functions for this component */
 
-  openCoursePage(section_id: string) {
+  /**
+   * Redirects user to the section's news page
+   * @param section_id 
+   */
+  openClassNewsPage(section_id: string) {
     console.warn(section_id);
     this.router.navigate(['/specific-news', section_id]);
   }
 
   /**
-   * For undefined checking 
-   * @param date 
+   * Returns time of the received date; useful for undefined checking 
+   * @param date date whose time is to be retrieved
    */
   private getTime(date?: Date) {
     date = new Date(date);
     return date != null ? date.getTime() : 0;
   }
 
-  displayTimeDate(date: Date) {
+  /**
+   * Returns the appropriate datetimestring given a date
+   * @param date date to be formatted
+   * 
+   * @returns dateTime string of the formatted date
+   * 
+   * @see formatDate()
+   * @see formatTime()
+   */
+  displayTimeDate(date: Date): string {
     date = new Date(date);
     let displayDateTime: string = date ?
       this.formatDate(date) + " "
@@ -82,7 +104,13 @@ export class GenNewsComponent implements OnInit {
       : "";
     return displayDateTime;
   }
-  
+
+  /**
+   * Returns the appropriate datestring given a date object
+   * @param date_obj date to be formatted
+   * 
+   * @returns string of the formatted date
+   */
   formatDate(date_obj) {
     var month = this.months[date_obj.getMonth()];
     var day = date_obj.getDate();
@@ -91,6 +119,12 @@ export class GenNewsComponent implements OnInit {
     return datestring;
   }
 
+  /**
+   * Returns the appropriate timestring given a date object
+   * @param date_obj date to be formatted
+   * 
+   * @returns formatted time string
+   */
   formatTime(date_obj) {
     // formats a javascript Date object into a 12h AM/PM time string
     var hour = date_obj.getHours();
@@ -106,6 +140,4 @@ export class GenNewsComponent implements OnInit {
     }
     return hour + ":" + minute + amPM;
   }
-
-
 }

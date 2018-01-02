@@ -10,22 +10,16 @@ import {
 
 //Application Imports
 import {
-  Course
-} from '../course';
-
-import {
-  Quest
-} from '../quest'
-
-import {
+  Course,
+  Quest,
   User,
   TOTXP,
   MAXXP
-} from '../user';  
+} from '../../../shared/models';
 
 import {
   UserService
-} from '../user.service';    
+} from '../../../shared/services';    
 
 @Component({
   selector: 'app-gen-profile',
