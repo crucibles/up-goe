@@ -4,6 +4,10 @@ import {
   OnInit
 } from '@angular/core';
 
+import { 
+  UserService 
+} from '../user.service';
+
 @Component({
   selector: 'gen-topnavbar',
   templateUrl: './gen-topnavbar.component.html',
@@ -11,7 +15,9 @@ import {
 })
 export class GenTopnavbarComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    private userService: UserService
+  ) { }
 
   ngOnInit() {
   }
@@ -20,5 +26,6 @@ export class GenTopnavbarComponent implements OnInit {
    * Logs out the current user
    */
   logout() {
+    this.userService.logOut();
   }
 }

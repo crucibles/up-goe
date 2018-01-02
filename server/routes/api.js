@@ -27,16 +27,19 @@ let response = {
 };
 
 // Log-in
-router.get('/users', (req, res) => {
+router.get('/login', (req, res) => {
+    console.log(req.query);
     connection((db) => {
         const myDB = db.db('up-goe-db');
         myDB.collection('users')
-            .find()
+            .find({
+                user_email: req.query.user_email,
+                user_password: req.query.user_password
+            })
             .toArray()
             .then((users) => {
-                console.log("hello im checking users for login");
-                response.data = users;
-                res.json(users);
+                response.data = users[0];
+                res.json(users[0]);
             })
             .catch((err) => {
                 sendError(err, res);
@@ -80,9 +83,7 @@ router.get('/courses', (req, res) => {
 
 // Get sections of user
 router.get('/sections', (req, res) => {
-    console.log("START==============");
-    console.log(req);
-    console.log("END=====================");
+    
     connection((db) => {
         const myDB = db.db('up-goe-db');
         myDB.collection('sections')
@@ -97,7 +98,7 @@ router.get('/sections', (req, res) => {
             .then((sections) => {
                 console.log(sections);
                 //var user_sections = [];
-                console.log("hi");
+                console.log("hi retrieving sections...");
                 /*for(var x=0 ; x< sections.length ; x++){
                     console.log('x: '+x);
                     let students = sections[x].students;
