@@ -138,7 +138,7 @@ export class GenProfileComponent implements OnInit {
   }
 
   getUser(): void {
-    this.userService.getUserById("1")
+    this.userService.getUser("1")
       .subscribe(user => this.user = user);
   }
 

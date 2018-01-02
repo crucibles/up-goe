@@ -89,7 +89,7 @@ export class GenSidetabComponent implements OnInit {
    * @summary Obtains information of the current user
    */
   getUser(): void {
-    this.userService.getUserById("1")
+    this.userService.getUser("1")
       .subscribe(user => {
         this.user = user;
         this.getQuests(this.user.user_id);

@@ -35,8 +35,16 @@ import {
 import {
   Quest
 } from './quest'
-import { Section } from './section';
-import { RequestOptions } from '@angular/http';
+
+import { 
+  Section 
+} from './section';
+
+import {
+  Headers, 
+  RequestOptions 
+} from '@angular/http';
+import { HttpHeaders } from '@angular/common/http';
 
 @Injectable()
 export class SectionService {
@@ -126,10 +134,13 @@ export class SectionService {
    * @returns array of sections
    */
   getUserSections(user_id): Observable<Section[]> {
-    //AHJ: not yet done :3
-    const url = `${this.secUrl}`;
-    let params = new HttpParams().set('section', '11');
-    return this.http.get<Section[]>(url, { params }).pipe(
+      const url = this.secUrl;
+            
+      let params = new HttpParams().set('id', user_id);
+      console.log(url);
+      return this.http.get<Section[]>(url, {
+        params: params
+      }).pipe(
       tap(h => {
         const outcome = h ?
           'fetched sections of user ' + user_id : 'did not find sections of user ' + user_id;

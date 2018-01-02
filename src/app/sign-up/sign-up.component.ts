@@ -1,6 +1,17 @@
-import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
-import { SECURITY_QUESTION } from '../security-questions';
+import { 
+  Component, 
+  OnInit 
+} from '@angular/core';
+
+import { 
+  FormGroup, 
+  FormControl, 
+  FormBuilder 
+} from '@angular/forms';
+
+import { 
+  SECURITY_QUESTION 
+} from '../security-questions';
 
 @Component({
   selector: 'app-sign-up',

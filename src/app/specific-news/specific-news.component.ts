@@ -72,7 +72,7 @@ export class SpecificNewsComponent implements OnInit {
       });
       this.commentPosts.forEach((post, index) => {
         this.posters = [];
-        this.userService.getUserById(post.user_id).subscribe(user => {
+        this.userService.getUser(post.user_id).subscribe(user => {
           let mname: string = user.user_mname ? user.user_mname[0] + "." : ""
           this.posters[index] = user.user_fname + " " + mname + " " + user.user_lname;
         });
@@ -99,7 +99,7 @@ export class SpecificNewsComponent implements OnInit {
   appendComments(comment_info: any) {
     this.commentPostService.getCommentPostById(comment_info.comment_id)
       .subscribe(comment => {
-        this.userService.getUserById(comment.user_id).subscribe(user => {
+        this.userService.getUser(comment.user_id).subscribe(user => {
           let firstName: string = user.user_fname;
           let middleName: string = user.user_mname ? user.user_mname[0] + "." : "";
           let lastName: string = user.user_lname;

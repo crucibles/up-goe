@@ -47,7 +47,7 @@ export class GenNewsComponent implements OnInit {
 
       this.commentPosts.forEach((post, index)=>{
         this.posters = [];
-        this.userService.getUserById(post.user_id).subscribe(user => {
+        this.userService.getUser(post.user_id).subscribe(user => {
           let mname: string = user.user_mname? user.user_mname[0] + ".": ""
           this.posters[index] = user.user_fname + " " + mname + " " + user.user_lname;
         });
