@@ -35,6 +35,7 @@ import {
 import {
   Quest
 } from './quest'
+import { HttpParams } from '@angular/common/http';
 
 @Injectable()
 export class UserService {
@@ -51,11 +52,16 @@ export class UserService {
    * @param password password input of the user logging in
    */
   logIn(email: string, password: string): Observable<User>{
+    console.log(email);
+    console.log(password);
     const url = `${this.userUrl}/?user_email=${email}&user_password=${password}`;
+    let params = new HttpParams();
+    params.append()
     return this.http.get<User[]>(url)
       .pipe(
         map(users => users[0]), // returns a {0|1} element array
         tap(h => {
+          console.log(h);
           const outcome = h ? 'fetched user ' + email : 'did not find user ' + email;
           console.log(outcome);
         }),

@@ -16,10 +16,11 @@ import {
   BrowserModule
 } from '@angular/platform-browser';
 
-//AHJ: remove after server is available
+/*//AHJ: remove after server is available
 import {
   HttpClientInMemoryWebApiModule
 } from 'angular-in-memory-web-api';
+*/
 
 //Third-Party Imports
 import {
@@ -63,10 +64,11 @@ import {
   GenTopnavbarComponent
 } from './gen-topnavbar/gen-topnavbar.component';
 
-//AHJ: remove after server is working
+/*//AHJ: remove after server is working
 import {
   InMemoryDataService
 } from './in-memory-data.service';
+*/
 
 import {
   QuestService
@@ -87,8 +89,14 @@ import {
 import {
   UserService
 } from './user.service';
-import { ItemService } from './item.service';
-import { LogInComponent } from './log-in/log-in.component';
+
+import { 
+  ItemService 
+} from './item.service';
+
+import { 
+  LogInComponent 
+} from './log-in/log-in.component';
 
 
 @NgModule({
@@ -113,9 +121,9 @@ import { LogInComponent } from './log-in/log-in.component';
     // The HttpClientInMemoryWebApiModule module intercepts HTTP requests
     // and returns simulated server responses.
     // Remove it when a real server is ready to receive requests.
-    HttpClientInMemoryWebApiModule.forRoot(
+    /*HttpClientInMemoryWebApiModule.forRoot(
       InMemoryDataService, { dataEncapsulation: false }
-    )
+    )*/
   ],
   providers: [
     BadgeService,
