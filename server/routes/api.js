@@ -6,8 +6,7 @@ const ObjectID = require('mongodb').ObjectID;
 // Connect
 const connection = (closure) => {
     return MongoClient.connect('mongodb://localhost:27017/up-goe-db', (err, db) => {
-        if (err) return console.log(err);
-        
+        if (err) return console.log(err);       
         closure(db);
     });
 };
@@ -27,16 +26,18 @@ let response = {
 };
 
 // Log-in
-router.get('/users', (req, res) => {
+router.get('/login', (req, res) => {
     connection((db) => {
         const myDB = db.db('up-goe-db');
         myDB.collection('users')
-            .find()
+            .find({
+                user_email: req.query.user_email,
+                user_password: req.query.user_password
+            })
             .toArray()
             .then((users) => {
-                console.log("hello im checking users for login");
-                response.data = users;
-                res.json(users);
+                response.data = users[0];
+                res.json(users[0]);
             })
             .catch((err) => {
                 sendError(err, res);
@@ -80,9 +81,7 @@ router.get('/courses', (req, res) => {
 
 // Get sections of user
 router.get('/sections', (req, res) => {
-    console.log("START==============");
-    console.log(req);
-    console.log("END=====================");
+    
     connection((db) => {
         const myDB = db.db('up-goe-db');
         myDB.collection('sections')
@@ -95,25 +94,6 @@ router.get('/sections', (req, res) => {
             })
             .toArray()
             .then((sections) => {
-                console.log(sections);
-                //var user_sections = [];
-                console.log("hi");
-                /*for(var x=0 ; x< sections.length ; x++){
-                    console.log('x: '+x);
-                    let students = sections[x].students;
-
-                    for(var y=0; y<students.length; y++){
-                        console.log('y: '+y);
-                        let student = students[y];
-                        console.log(student);
-                        console.log(req.query.id);
-                        if(student.user_id == req.query.id){
-                            user_sections.push(sections[x]);                            
-                            break;                
-                        }
-                    }
-                    
-                }*/
                 response.data = sections;
                 res.json(sections);
 
