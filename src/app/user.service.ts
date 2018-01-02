@@ -62,14 +62,12 @@ export class UserService {
    */
   logIn(email: string, password: string): Observable<User> {
 
-    console.log(email);
-    console.log(password);
-
     const url = this.loginUrl;
+
     let params = new HttpParams()
       .set('user_email', email)
       .set('user_password', password);
-    console.log(params);
+      
     return this.http.get<User>(url, {
       params: params
     }).pipe(

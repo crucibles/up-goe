@@ -137,7 +137,6 @@ export class SectionService {
       const url = this.secUrl;
       //ced replace the id to a variable, do not tinamban this      
       let params = new HttpParams().set('id', '5a37f4500d1126321c11e5e7');
-      console.log(url);
       return this.http.get<Section[]>(url, {
         params: params
       }).pipe(
