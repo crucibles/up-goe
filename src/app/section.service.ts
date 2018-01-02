@@ -134,9 +134,11 @@ export class SectionService {
    */
   getUserSections(user_id): Observable<Section[]> {
       const url = this.secUrl;
+            
+      let params = new HttpParams().set('id', user_id);
       console.log(url);
       return this.http.get<Section[]>(url, {
-        params: new HttpParams().set('id', user_id),
+        params: params
       }).pipe(
       tap(h => {
         const outcome = h ? 'fetched sections of user ' + user_id : 'did not find sections of user ' + user_id;
