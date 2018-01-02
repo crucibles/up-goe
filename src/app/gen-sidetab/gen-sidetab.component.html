@@ -23,17 +23,23 @@
     </li>
   </ng-container>
   <ng-container *ngIf="isProfile">
+    <li style="text-align: right"><a (click)="editUserInformation()">Edit</a></li>
     <li> Class List: </li>
-    <li *ngFor="let section of userSections">
-      <a (click)=openCoursePage(section.section_id)>{{section.section_id}}</a>
+    <li *ngFor="let section of sections; let i = index">
+      <a *ngIf="courses[i]" (click)=openCoursePage(section.section_id)>{{this.courses[i].course_name}} - {{section.section_name}}</a>
     </li>
     <ng-container *ngIf="user">
       <li> School ID: </li>
-      <li> {{this.user.user_id}} </li>
+      <li><input type="text" [disabled]="!isEditing" [(ngModel)]="user.user_id" class="user-information" [class.remove-border]="!isEditing"/></li>
       <li> Email: </li>
-      <li> {{this.user.user_email}} </li>
+      <li><input type="text" [disabled]="!isEditing" [(ngModel)]="user.user_email" class="user-information" [class.remove-border]="!isEditing"/></li>
       <li> Contact #: </li>
-      <li> {{this.user.user_contact_no}} </li>
+      <li><input type="text" [disabled]="!isEditing" [(ngModel)]="user.user_contact_no" class="user-information" [class.remove-border]="!isEditing"/></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
     </ng-container>
   </ng-container>
 </ul>
