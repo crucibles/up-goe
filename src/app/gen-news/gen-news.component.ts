@@ -40,6 +40,11 @@ export class GenNewsComponent implements OnInit {
   getAllCommentPost() {
     this.commentPostService.getSectionPosts("11").subscribe(commentPosts => {
       this.commentPosts = commentPosts.filter(post => post.is_post == true);
+
+      this.commentPosts.sort((a, b) => {
+        return this.getTime(b.post_date) - this.getTime(a.post_date);
+      });
+
       this.commentPosts.forEach((post, index)=>{
         this.posters = [];
         this.userService.getUserById(post.user_id).subscribe(user => {
@@ -50,6 +55,25 @@ export class GenNewsComponent implements OnInit {
     });
   }
 
+
+
+  
+  /*Below are the helper functions for this component */
+
+  openCoursePage(section_id: string) {
+    console.warn(section_id);
+    this.router.navigate(['/specific-news', section_id]);
+  }
+
+  /**
+   * For undefined checking 
+   * @param date 
+   */
+  private getTime(date?: Date) {
+    date = new Date(date);
+    return date != null ? date.getTime() : 0;
+  }
+
   displayTimeDate(date: Date) {
     date = new Date(date);
     let displayDateTime: string = date ?
@@ -58,7 +82,7 @@ export class GenNewsComponent implements OnInit {
       : "";
     return displayDateTime;
   }
-
+  
   formatDate(date_obj) {
     var month = this.months[date_obj.getMonth()];
     var day = date_obj.getDate();
@@ -83,9 +107,5 @@ export class GenNewsComponent implements OnInit {
     return hour + ":" + minute + amPM;
   }
 
-  openCoursePage(section_id: string) {
-    console.warn(section_id);
-    this.router.navigate(['/specific-news', section_id]);
-  }
 
 }

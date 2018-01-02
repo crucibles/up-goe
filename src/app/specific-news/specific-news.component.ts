@@ -8,6 +8,15 @@ import {
   ActivatedRoute
 } from '@angular/router';
 
+//Third-part Imports
+import {
+  Observable
+} from 'rxjs/Observable';
+
+import {
+  Observer
+} from 'rxjs/Observer';
+
 //Application Imports
 import {
   CommentPost
@@ -16,8 +25,7 @@ import {
 import {
   CommentPostService
 } from '../comment-post.service';
-import { Observable } from 'rxjs/Observable';
-import { Observer } from 'rxjs/Observer';
+import { UserService } from '../user.service';
 
 @Component({
   selector: 'app-specific-news',
@@ -30,6 +38,8 @@ export class SpecificNewsComponent implements OnInit {
 
   commentPosts: CommentPost[];
   comments: CommentPost[][] = [];
+  posters: string[] = [];
+  commenters: string[][] = [];
   months: string[] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   commentContent: string;
   commentObserver: Observer<any>;
@@ -40,6 +50,7 @@ export class SpecificNewsComponent implements OnInit {
 
   constructor(
     private commentPostService: CommentPostService,
+    private userService: UserService,
     private route: ActivatedRoute
   ) { }
 
@@ -57,15 +68,23 @@ export class SpecificNewsComponent implements OnInit {
     this.commentPostService.getSectionPosts(this.section_id).subscribe(commentPosts => {
       this.commentPosts = commentPosts.filter(post => post.is_post == true);
       this.commentPosts.sort((a, b) => {
-        return this.getTime(a.post_date) - this.getTime(b.post_date);
+        return this.getTime(b.post_date) - this.getTime(a.post_date);
+      });
+      this.commentPosts.forEach((post, index) => {
+        this.posters = [];
+        this.userService.getUserById(post.user_id).subscribe(user => {
+          let mname: string = user.user_mname ? user.user_mname[0] + "." : ""
+          this.posters[index] = user.user_fname + " " + mname + " " + user.user_lname;
+        });
       });
       this.getAllComments();
     });
   }
 
-  getAllComments(){
+  getAllComments() {
     for (let i = 0; i < this.commentPosts.length; i++) {
       this.comments[i] = [];
+      this.commenters[i] = [];
 
       this.commentPosts[i].post_comments.forEach(comment_id => {
         this.commentObserver.next({ parent_index: i, comment_id: comment_id });
@@ -80,26 +99,27 @@ export class SpecificNewsComponent implements OnInit {
   appendComments(comment_info: any) {
     this.commentPostService.getCommentPostById(comment_info.comment_id)
       .subscribe(comment => {
-        console.log("here!");
-        this.comments[comment_info.parent_index].push(comment);
+        this.userService.getUserById(comment.user_id).subscribe(user => {
+          let firstName: string = user.user_fname;
+          let middleName: string = user.user_mname ? user.user_mname[0] + "." : "";
+          let lastName: string = user.user_lname;
+          let fullName: string = firstName + " " + middleName + " " + lastName;
+
+          this.commenters[comment_info.parent_index].push(fullName);
+          this.comments[comment_info.parent_index].push(comment);
+        });
       });
   }
 
   submitComment(parentPostIndex: number) {
     let user_id = "1";
-    console.error(new Date());
     let newComment = new CommentPost(this.section_id, user_id, this.commentContent, "", new Date(), true, false);
     this.commentPostService.addCommentPost(newComment).subscribe(comment => {
-      console.log(">>>newly added comment");
-      console.log(comment);
       this.commentPostService.submitComment(comment, this.commentPosts[parentPostIndex]).subscribe(m => {
         this.commentObserver.next({ parent_index: parentPostIndex, comment_id: comment.id });
 
         //update checking
-        this.commentPostService.getSectionPosts("11").subscribe(commentPosts => {
-          console.log("newly updated");
-          console.log(commentPosts);
-        });
+        this.commentPostService.getSectionPosts("11").subscribe();
       });
     });
 

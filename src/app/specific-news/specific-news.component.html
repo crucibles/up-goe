@@ -19,7 +19,7 @@
               <div class="pull-left meta">
                 <div class="title h5">
                   <a href="#">
-                    <b>{{post.id}} - {{post.user_id}}</b>
+                    <b>{{this.posters[i]}}</b>
                   </a>
                   made a post.
                 </div>
@@ -35,7 +35,7 @@
                     <ng-container *ngIf="comments[i][j]">
                       <img id="profile-photo" src="https://en.gravatar.com/userimage/18343163/3fd908393aedf6423ec12cacec9a1f50.jpg?size=200" />
                       <h4>
-                        <a href="#">{{this.comments[i][j].id}}</a>
+                        <a href="#">{{this.commenters? this.commenters[i][j]: ""}}</a>
                         <h6 class="text-muted time">{{displayTimeDate(this.comments[i][j].post_date)}}</h6>
                         <p>{{this.comments[i][j].post_content}}</p>
                       </h4>
