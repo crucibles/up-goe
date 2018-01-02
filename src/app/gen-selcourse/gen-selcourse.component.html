@@ -38,12 +38,12 @@
           <!--Shows if course has been found-->
           <tr *ngIf="course_found && course_found.length != 0" [class.odd]="true">
             <td>
-              <a class="clickable">{{this.course_found[0].course_name}}</a>
+              {{this.course_found[0].course_name}}
             </td>
             <td>{{this.course_found[0].course_name}}</td>
             <td>{{this.course_found[0].instructor}}</td>
             <td>
-              <a>Add</a>
+              <a class=clickable>Add</a>
             </td>
           </tr>
         </ng-container>
@@ -57,7 +57,7 @@
           <ng-container id="mult" *ngIf="sections != null && sections.length != 0">
             <tr *ngFor="let section of sections" [class.odd]="i%2 == 0">
               <td>
-                <a class="clickable">{{section.section_name}}</a>
+                <a class="clickable" (click)=openCoursePage(section.section_id)>{{section.section_name}}</a>
               </td>
               <td>{{section.section_name}}</td>
               <td>{{section.instructor}}</td>

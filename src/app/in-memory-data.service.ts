@@ -32,34 +32,64 @@ export class InMemoryDataService {
 
     const commentposts: CommentPost[] = [
       {
-        post_id: '1',
+        id: 1,
         section_id: '11',
         user_id: '1',
         post_content: "Bootdey is a gallery of free snippets resources templates and utilities for bootstrap css hmtl js framework. Codes for developers and web designers",
-        post_comments: ["2"],
+        post_comments: [2, 3],
         post_date: new Date('2018/05/26'),
-        commentable: true,
+        commentable: false,
         is_post: true
       },
       {
-        post_id: '3',
+        id: 2,
         section_id: '11',
         user_id: '1',
-        post_content: "Bootdey is a gallery of free snippets resources templates and utilities for bootstrap css hmtl js framework. Codes for developers and web designers",
-        post_comments: ["2"],
-        post_date: new Date('2018/05/05'),
-        commentable: true,
-        is_post: true
-      },
-      {
-        post_id: '2',
-        section_id: '22',
-        user_id: '2',
-        post_content: "Comment",
+        post_content: "Post content #2",
         post_comments: [],
         post_date: new Date('2018/05/05'),
         commentable: true,
         is_post: false
+      },
+      {
+        id: 3,
+        section_id: '11',
+        user_id: '1',
+        post_content: "Post content #3.",
+        post_comments: [],
+        post_date: new Date('2017/06/10'),
+        commentable: true,
+        is_post: false
+      },
+      {
+        id: 4,
+        section_id: '11',
+        user_id: '1',
+        post_content: "Bootdey is a gallery of free snippets resources templates and utilities for bootstrap css hmtl js framework. Codes for developers and web designers",
+        post_comments: [2],
+        post_date: new Date('2018/01/05'),
+        commentable: true,
+        is_post: true
+      },
+      {
+        id: 5,
+        section_id: '11',
+        user_id: '2',
+        post_content: "Comment",
+        post_comments: [],
+        post_date: new Date('2017/05/05'),
+        commentable: true,
+        is_post: true
+      },
+      {
+        id: 6,
+        section_id: '22',
+        user_id: '2',
+        post_content: "Comment",
+        post_comments: [],
+        post_date: new Date('2017/05/05'),
+        commentable: true,
+        is_post: true
       }
     ];
 
@@ -67,26 +97,22 @@ export class InMemoryDataService {
       {
         course_id: "11",
         course_name: 'CMSC 128',
-        course_description: "Fly hiiiiigh",
-        sections: ["11", "22", "33"]
+        course_description: "Fly hiiiiigh"
       },
       {
         course_id: "22",
         course_name: 'CMSC 141',
-        course_description: "Fly hiiiiigh",
-        sections: ["11", "22", "33"]
+        course_description: "Fly hiiiiigh"
       },
       {
         course_id: "33",
         course_name: 'CMSC 170',
-        course_description: "Fly hiiiiigh",
-        sections: ["11", "22", "33"]
+        course_description: "Fly hiiiiigh"
       },
       {
         course_id: "44",
         course_name: 'NSM 192',
-        course_description: "Fly hiiiiigh",
-        sections: ["11", "22", "33"]
+        course_description: "Fly hiiiiigh"
       }
     ];
 
@@ -195,14 +221,12 @@ export class InMemoryDataService {
         user_mname: 'Densing',
         user_lname: 'Hynson',
         user_birthdate: new Date('1997/05/26'),
-        user_email: 'ddhynson@up.edu.ph',
+        user_email: 'ddhynson',
         user_password: 'p',
         user_type: 'student',
         user_contact_no: '09499709292',
         user_security_question: 'What is your name?',
-        user_security_answer: 'Donevir',
-        user_course: ["11", "22"],
-        user_quests: ["22", "33"]
+        user_security_answer: 'Donevir'
       },
       {
         user_id: '2',
@@ -210,14 +234,12 @@ export class InMemoryDataService {
         user_mname: 'Yao',
         user_lname: 'Alvaro',
         user_birthdate: new Date('1997/08/02'),
-        user_email: 'cyalvaron@up.edu.ph',
+        user_email: 'cyalvaro@up.edu.ph',
         user_password: 'c',
         user_type: 'student',
         user_contact_no: '09499709292',
         user_security_question: 'What is your name?',
-        user_security_answer: 'Cedric',
-        user_course: ["11", "22"],
-        user_quests: ["22", "33"]
+        user_security_answer: 'Cedric'
       }
     ];
 

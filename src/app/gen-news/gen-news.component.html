@@ -10,7 +10,7 @@
       <div class="row">
 
 
-        <div class="col-sm-offset-1 col-sm-8" *ngFor="let post of commentPosts">
+        <div class="col-sm-offset-1 col-sm-8" *ngFor="let post of commentPosts; let i = index">
           <div class="panel panel-white post panel-shadow" (click)="openCoursePage(post.section_id)">
             <div class="post-heading">
               <div class="pull-left image">
@@ -19,7 +19,7 @@
               <div class="pull-left meta">
                 <div class="title h5">
                   <a href="#">
-                    <b>{{post.user_id}}</b>
+                    <b>{{this.posters? this.posters[i]: ""}}</b>
                   </a>
                   made a post.
                 </div>

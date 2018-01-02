@@ -22,6 +22,10 @@ import {
 } from './gen-selcourse/gen-selcourse.component';
 
 import {
+  LogInComponent
+} from './log-in/log-in.component';
+
+import {
   SignUpComponent
 } from './sign-up/sign-up.component';
 
@@ -30,14 +34,14 @@ import {
 } from './specific-news/specific-news.component';
 
 
+
 const routes: Routes = [
-  /*{
-    path: '',
-    redirectTo: '/select-course',
-    pathMatch: 'full'
-  },*/
   {
     path: '',
+    component: LogInComponent
+  },
+  {
+    path: 'sign-up',
     component: SignUpComponent
   },
   {
@@ -53,7 +57,7 @@ const routes: Routes = [
     component: GenProfileComponent
   },
   {
-    path: 'specific-news',
+    path: 'specific-news/:section_id',
     component: SpecificNewsComponent
   }
 ];

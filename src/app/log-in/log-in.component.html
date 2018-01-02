@@ -1,0 +1,45 @@
+<br>
+<h2>Sign Up</h2>
+<br><br>
+
+<form class="form-horizontal" [formGroup]="signupForm" (ngSubmit)="logIn()">
+  <table>
+    <tr>
+      <td>
+        <label for="email">Email:</label>
+      </td>
+      <td>
+        <div class="form-group">
+          <div class="col-sm-10">
+            <input  type="text" 
+                    class="form-control" 
+                    formControlName="email"
+                    id="email" 
+                    placeholder="Input your email here">
+          </div>
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <label for="password">Password:</label>
+      </td>
+      <td>
+        <div class="form-group">
+          <div class="col-sm-10">
+            <input  type="password"
+                    class="form-control"
+                    formControlName="password"
+                    id="password"
+                    placeholder="Password">
+          </div>
+        </div>
+      </td>
+    </tr>
+  </table>
+  <br>
+    <button type="submit"
+            class="btn btn-primary">Log In
+    </button>
+</form>

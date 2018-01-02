@@ -17,7 +17,7 @@ export class Section {
     instructor: string;
 }
 
-/** 
+/**
  * A class to represent students
  * @class
  * 

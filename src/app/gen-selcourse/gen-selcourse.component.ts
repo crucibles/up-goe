@@ -27,6 +27,7 @@ import {
 } from '../user.service';  
 import { SectionService } from '../section.service';
 import { Section } from '../section';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-gen-selcourse',
@@ -46,7 +47,8 @@ export class GenSelcourseComponent implements OnInit {
   
   constructor(
     private userService: UserService,
-    private sectionService: SectionService
+    private sectionService: SectionService,
+    private router: Router
   ) {}
   
   ngOnInit() {
@@ -58,12 +60,9 @@ export class GenSelcourseComponent implements OnInit {
    * @summary: Obtains courses of the current user and stores it to 'courses' variable
    */
   getCourses(): void {
-    //ced test id
-    this.sectionService.getUserSections("5a37f4500d1126321c11e5e7")
+    this.sectionService.getUserSections("1")
     .subscribe(sections => {
-      this.sections = sections
-      console.log("sections: array HER");
-      console.log(sections);
+      this.sections = sections;
     });
   }
 
@@ -79,7 +78,6 @@ export class GenSelcourseComponent implements OnInit {
    * @summary searches the string entered by the user and stores result in 'course_found' variable
    */
   search() {
-    console.log(this.course_search);
     if(this.course_search == null || this.course_search.length == 0){
       this.isSearching = false;
     } else {
@@ -95,6 +93,11 @@ export class GenSelcourseComponent implements OnInit {
    */
   getAllCourses(): Course[]{
     return courses;
+  }
+
+  openCoursePage(section_id: string) {
+    console.log(section_id);
+    this.router.navigate(['/specific-news', section_id]);
   }
 
 

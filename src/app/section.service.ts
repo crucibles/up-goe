@@ -141,10 +141,11 @@ export class SectionService {
         params: params
       }).pipe(
       tap(h => {
-        const outcome = h ? 'fetched sections of user ' + user_id : 'did not find sections of user ' + user_id;
+        const outcome = h ?
+          'fetched sections of user ' + user_id : 'did not find sections of user ' + user_id;
       }),
       catchError(this.handleError<Section[]>(`getUserSections user_id=${user_id}`))
-      );
+    );
   }
 
   /**

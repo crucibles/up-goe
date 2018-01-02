@@ -14,47 +14,32 @@
  *  true if it is a post (a parent post) and false if it is a comment
  */
 export class CommentPost {
-    post_id: string;
+    id: number;
     section_id: string;
     user_id: string;
     post_content: string;
-    post_comments: string[];
+    post_comments: number[];
     post_date: Date;
     commentable: boolean;
     is_post: boolean;
-};
 
-
-export const commentposts: CommentPost[]= [
-    {
-      post_id: '1',
-      section_id: '11',
-      user_id: '1',
-      post_content: "Bootdey is a gallery of free snippets resources templates and utilities for bootstrap css hmtl js framework. Codes for developers and web designers",
-      post_comments: ["2"],
-      post_date: new Date('2018/05/26'),
-      commentable: true,
-      is_post: true
-    },
-    {
-      post_id: '3',
-      section_id: '11',
-      user_id: '1',
-      post_content: "Bootdey is a gallery of free snippets resources templates and utilities for bootstrap css hmtl js framework. Codes for developers and web designers",
-      post_comments: ["2"],
-      post_date: new Date('2018/05/26'),
-      commentable: true,
-      is_post: true
-    },
-    {
-      post_id: '2',
-      section_id: '22',
-      user_id: '2',
-      post_content: "Comment",
-      post_comments: [],
-      post_date: new Date('2018/05/26'),
-      commentable: true,
-      is_post: false
+    constructor(
+      section_id,
+      user_id,
+      post_content,
+      post_comments,
+      post_date,
+      commentable,
+      is_post,
+    ){
+      this.section_id = section_id;
+      this.user_id = user_id;
+      this.post_content = post_content;
+      this.post_comments = post_comments;
+      this.post_date = post_date;
+      this.commentable = commentable;
+      this.is_post = is_post;
     }
-  ];
 
+    
+};

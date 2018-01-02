@@ -135,7 +135,6 @@ export class GenProfileComponent implements OnInit {
       label: 'CMSC 128'
     };
     this.lineChartData.push(dataLine);
-    console.log(this.lineChartData);
   }
 
   getUser(): void {

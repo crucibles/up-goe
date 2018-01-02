@@ -1,15 +1,54 @@
 //Core Imports
-import { Component, OnInit } from '@angular/core';
-import { NgModel } from '@angular/forms';
+import {
+  Component,
+  OnInit,
+  Input
+} from '@angular/core';
+
+import {
+  NgModel
+} from '@angular/forms';
+
+import {
+  Router
+} from '@angular/router';
 
 //Application Imports
-import { CommentPost } from '../comment-post'
-import { CommentPostService } from '../comment-post.service'
-import { Course } from '../course';
-import { Quest } from '../quest'
-import { User } from '../user';
-import { UserService } from '../user.service';
-import { QuestService } from '../quest.service'
+import {
+  CommentPost
+} from '../comment-post';
+
+import {
+  CommentPostService
+} from '../comment-post.service';
+
+import {
+  Course
+} from '../course';
+
+import {
+  Quest
+} from '../quest';
+
+import {
+  QuestService
+} from '../quest.service'
+
+import {
+  Section
+} from '../section';
+
+import {
+  SectionService
+} from '../section.service';
+
+import {
+  User
+} from '../user';
+
+import {
+  UserService
+} from '../user.service';
 
 @Component({
   selector: 'gen-sidetab',
@@ -17,6 +56,8 @@ import { QuestService } from '../quest.service'
   styleUrls: ['./gen-sidetab.component.css']
 })
 export class GenSidetabComponent implements OnInit {
+  @Input('isProfile') isProfile: boolean = false;
+
   quests: Quest[] = [];
   user: User;
 
@@ -25,16 +66,26 @@ export class GenSidetabComponent implements OnInit {
   progressBarClass: string[];
   questTimePercentage: string[];
   questTimeDisplay: string[];
+  userSections: Section[] = [];
 
   constructor(
-    private userService: UserService,
     private commentPostService: CommentPostService,
-    private questService: QuestService
+    private questService: QuestService,
+    private sectionService: SectionService,
+    private userService: UserService,
+    private router: Router
   ) { }
 
   ngOnInit() {
     this.defaultPBClass = 'progress-bar progress-bar-striped active';
     this.getUser();
+  }
+
+  getUserSection(user_id: string) {
+    console.log(user_id);
+    this.sectionService.getUserSections(user_id).subscribe(sections =>
+      this.userSections = sections
+    );
   }
 
   /**
@@ -45,6 +96,9 @@ export class GenSidetabComponent implements OnInit {
       .subscribe(user => {
         this.user = user;
         this.getQuests(this.user.user_id);
+        if (this.isProfile) {
+          this.getUserSection(this.user.user_id);
+        }
       });
   }
 
@@ -68,6 +122,13 @@ export class GenSidetabComponent implements OnInit {
       });
   }
 
+  /*Below are the helper functions for this component */
+
+  openCoursePage(section_id: string) {
+    console.warn(section_id);
+    this.router.navigate(['/specific-news', section_id]);
+  }
+
   /**
    * @summary Returns the difference in minutes of two dates
    * 
@@ -83,7 +144,7 @@ export class GenSidetabComponent implements OnInit {
     let time1 = date1.getTime();
     let time2 = date2.getTime();
     let diffInMs: number = time1 - time2;
-    
+
     return diffInMs;
   }
 

@@ -1,11 +1,12 @@
 <ul class="vert-tab">
-    <li>
-      <img src="https://image.freepik.com/free-photo/cute-cat-picture_1122-449.jpg" alt="Cat">
-    </li>
-    <li *ngIf="user">
-      {{user.user_fname}} {{user.user_mname}} {{user.user_lname}}
-    </li>
-    <!--displays quests-->
+  <li>
+    <img src="https://image.freepik.com/free-photo/cute-cat-picture_1122-449.jpg" alt="Cat">
+  </li>
+  <li *ngIf="user">
+    {{user.user_fname}} {{user.user_mname}} {{user.user_lname}}
+  </li>
+  <!--displays quests-->
+  <ng-container *ngIf="!isProfile">
     <li style="font-weight: bold">
       Quest(s):
     </li>
@@ -20,4 +21,19 @@
         {{quest.quest_description}}
       </a>
     </li>
-  </ul>
+  </ng-container>
+  <ng-container *ngIf="isProfile">
+    <li> Class List: </li>
+    <li *ngFor="let section of userSections">
+      <a (click)=openCoursePage(section.section_id)>{{section.section_id}}</a>
+    </li>
+    <ng-container *ngIf="user">
+      <li> School ID: </li>
+      <li> {{this.user.user_id}} </li>
+      <li> Email: </li>
+      <li> {{this.user.user_email}} </li>
+      <li> Contact #: </li>
+      <li> {{this.user.user_contact_no}} </li>
+    </ng-container>
+  </ng-container>
+</ul>
