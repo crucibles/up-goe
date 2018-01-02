@@ -81,7 +81,7 @@ export class UserService {
   /**
    * @summary: Obtains user from server
    */
-  getUserById(id: string): Observable<User> {
+  getUser(id: string): Observable<User> {
     const url = `${this.userUrl}/?user_id=${id}`;
     return this.http.get<User[]>(url)
       .pipe(
@@ -92,6 +92,12 @@ export class UserService {
         }),
         catchError(this.handleError<User>(`getUserById user_id=${id}`))
       );
+  }
+
+  /**
+   * @summary: Edit existing user from server
+   */
+  editUser(id: string){
   }
 
   /**

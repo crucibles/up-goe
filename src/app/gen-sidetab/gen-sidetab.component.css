@@ -48,3 +48,11 @@
     color:black;
     font-size: 0.85em;
 }
+
+.remove-border {
+    border: none;
+}
+
+.user-information {
+    width: 100%;
+}
