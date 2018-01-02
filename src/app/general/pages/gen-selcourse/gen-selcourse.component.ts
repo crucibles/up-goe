@@ -56,11 +56,11 @@ export class GenSelcourseComponent implements OnInit {
    * Obtains information of the current user
    */
   getUser(): void {
-    this.userService.getUser("1")
-    .subscribe(user => {
-      this.user = user;
-      this.getUserSections(this.user.user_id);
-    });
+    this.userService.getUser("5a37f4500d1126321c11e5e7")
+      .subscribe(user => {
+        this.user = user;
+        this.getUserSections(this.user.user_id);
+      });
   }
   
     /**

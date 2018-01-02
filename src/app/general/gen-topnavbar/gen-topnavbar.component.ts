@@ -8,6 +8,11 @@ import {
   Router
 } from '@angular/router';
 
+//Application Import 
+import {
+  UserService
+} from '../../shared/services'
+
 @Component({
   selector: 'gen-topnavbar',
   templateUrl: './gen-topnavbar.component.html',
@@ -16,7 +21,8 @@ import {
 export class GenTopnavbarComponent implements OnInit {
 
   constructor(
-    private router: Router
+    private router: Router,
+    private userService: UserService
   ) { }
 
   ngOnInit() {
@@ -26,6 +32,6 @@ export class GenTopnavbarComponent implements OnInit {
    * Logs out the current user
    */
   logout() {
-    this.router.navigate(['/log-in']);
+    this.userService.logOut();
   }
 }
