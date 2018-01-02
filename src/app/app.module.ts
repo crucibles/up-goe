@@ -88,6 +88,7 @@ import {
   UserService
 } from './user.service';
 import { ItemService } from './item.service';
+import { LogInComponent } from './log-in/log-in.component';
 
 
 @NgModule({
@@ -99,7 +100,8 @@ import { ItemService } from './item.service';
     GenSidetabComponent,
     GenNewsComponent,
     SpecificNewsComponent,
-    SignUpComponent
+    SignUpComponent,
+    LogInComponent
   ],
   imports: [
     AppRoutingModule,

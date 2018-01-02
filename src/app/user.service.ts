@@ -47,10 +47,20 @@ export class UserService {
 
   /**
    * Lets the user log in (if user enters valid email and password) and be able to navigate to the correct pages
-   * @param user_id id of the user to be logged in
+   * @param email email input of the user logging in
+   * @param password password input of the user logging in
    */
-  logIn(user_id) {
-
+  logIn(email: string, password: string): Observable<User>{
+    const url = `${this.userUrl}/?user_email=${email}&user_password=${password}`;
+    return this.http.get<User[]>(url)
+      .pipe(
+        map(users => users[0]), // returns a {0|1} element array
+        tap(h => {
+          const outcome = h ? 'fetched user ' + email : 'did not find user ' + email;
+          console.log(outcome);
+        }),
+        catchError(this.handleError<User>(`logIn user_id=${email}`))
+      );
   }
 
   /**
@@ -83,7 +93,6 @@ export class UserService {
         catchError(this.handleError<User>(`getUserById user_id=${id}`))
       );
   }
-
 
   /**
    * Handle Http operation that failed.

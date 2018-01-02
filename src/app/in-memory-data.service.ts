@@ -221,14 +221,12 @@ export class InMemoryDataService {
         user_mname: 'Densing',
         user_lname: 'Hynson',
         user_birthdate: new Date('1997/05/26'),
-        user_email: 'ddhynson@up.edu.ph',
+        user_email: 'ddhynson',
         user_password: 'p',
         user_type: 'student',
         user_contact_no: '09499709292',
         user_security_question: 'What is your name?',
-        user_security_answer: 'Donevir',
-        user_course: ["11", "22"],
-        user_quests: ["22", "33"]
+        user_security_answer: 'Donevir'
       },
       {
         user_id: '2',
@@ -236,14 +234,12 @@ export class InMemoryDataService {
         user_mname: 'Yao',
         user_lname: 'Alvaro',
         user_birthdate: new Date('1997/08/02'),
-        user_email: 'cyalvaron@up.edu.ph',
+        user_email: 'cyalvaro@up.edu.ph',
         user_password: 'c',
         user_type: 'student',
         user_contact_no: '09499709292',
         user_security_question: 'What is your name?',
-        user_security_answer: 'Cedric',
-        user_course: ["11", "22"],
-        user_quests: ["22", "33"]
+        user_security_answer: 'Cedric'
       }
     ];
 
