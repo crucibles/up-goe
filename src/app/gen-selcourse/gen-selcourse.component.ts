@@ -8,6 +8,9 @@ import {
   NgModel
 } from '@angular/forms';
 
+import {
+  Router
+} from '@angular/router';
 //Application Imports
 import {
   Course,
@@ -19,15 +22,20 @@ import {
 } from '../quest'
 
 import {
+  Section
+} from '../section';
+
+import {
+  SectionService
+} from '../section.service';
+
+import {
   User
-} from '../user';  
+} from '../user';
 
 import {
   UserService
-} from '../user.service';  
-import { SectionService } from '../section.service';
-import { Section } from '../section';
-import { Router } from '@angular/router';
+} from '../user.service';
 
 @Component({
   selector: 'app-gen-selcourse',
@@ -35,35 +43,41 @@ import { Router } from '@angular/router';
   styleUrls: ['./gen-selcourse.component.css']
 })
 export class GenSelcourseComponent implements OnInit {
-  
+
   sections: Section[];
+  courses: Course[];
   user: User;
   allcourses: Course[];
-  
+
   //for search bar
   course_search: string;
-  isSearching: boolean = false; 
+  isSearching: boolean = false;
   course_found: Course[];
-  
+
   constructor(
     private userService: UserService,
     private sectionService: SectionService,
     private router: Router
-  ) {}
-  
+  ) { }
+
   ngOnInit() {
-    this.getCourses();
     this.getUser();
   }
-  
+
   /**
    * @summary: Obtains courses of the current user and stores it to 'courses' variable
    */
-  getCourses(): void {
-    this.sectionService.getUserSections("1")
-    .subscribe(sections => {
-      this.sections = sections;
-    });
+  getUserSections(user_id): void {
+    this.sectionService.getUserSections(user_id)
+      .subscribe(sections => {
+        this.sections = sections;
+        this.courses = [];
+        this.sections.forEach((section, index) => {
+          this.sectionService.getCourseById(section.course_id).subscribe(course => {
+            this.courses[index] = course;
+          })
+        });
+      });
   }
 
   /**
@@ -71,14 +85,17 @@ export class GenSelcourseComponent implements OnInit {
    */
   getUser(): void {
     this.userService.getUserById("1")
-      .subscribe(user => this.user = user);
+      .subscribe(user => {
+        this.user = user;
+        this.getUserSections(this.user.user_id);
+      });
   }
-  
+
   /**
    * @summary searches the string entered by the user and stores result in 'course_found' variable
    */
   search() {
-    if(this.course_search == null || this.course_search.length == 0){
+    if (this.course_search == null || this.course_search.length == 0) {
       this.isSearching = false;
     } else {
       this.isSearching = true;
@@ -91,7 +108,7 @@ export class GenSelcourseComponent implements OnInit {
    * 
    * @returns all courses from the database
    */
-  getAllCourses(): Course[]{
+  getAllCourses(): Course[] {
     return courses;
   }
 

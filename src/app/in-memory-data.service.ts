@@ -208,9 +208,9 @@ export class InMemoryDataService {
       {
         section_id: "22",
         course_id: "11",
-        section_name: "A",
+        section_name: "B",
         students: [new Student("1", "E"), new Student("2", "E"), new Student("3", "E"), new Student("4", "E")],
-        instructor: "Miguel Guillermo"
+        instructor: "Vic Calag"
       }
     ];
 
