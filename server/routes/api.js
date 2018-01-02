@@ -6,8 +6,7 @@ const ObjectID = require('mongodb').ObjectID;
 // Connect
 const connection = (closure) => {
     return MongoClient.connect('mongodb://localhost:27017/up-goe-db', (err, db) => {
-        if (err) return console.log(err);
-        
+        if (err) return console.log(err);       
         closure(db);
     });
 };
@@ -28,7 +27,6 @@ let response = {
 
 // Log-in
 router.get('/login', (req, res) => {
-    console.log(req.query);
     connection((db) => {
         const myDB = db.db('up-goe-db');
         myDB.collection('users')
@@ -96,25 +94,6 @@ router.get('/sections', (req, res) => {
             })
             .toArray()
             .then((sections) => {
-                console.log(sections);
-                //var user_sections = [];
-                console.log("hi retrieving sections...");
-                /*for(var x=0 ; x< sections.length ; x++){
-                    console.log('x: '+x);
-                    let students = sections[x].students;
-
-                    for(var y=0; y<students.length; y++){
-                        console.log('y: '+y);
-                        let student = students[y];
-                        console.log(student);
-                        console.log(req.query.id);
-                        if(student.user_id == req.query.id){
-                            user_sections.push(sections[x]);                            
-                            break;                
-                        }
-                    }
-                    
-                }*/
                 response.data = sections;
                 res.json(sections);
 
