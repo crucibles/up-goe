@@ -50,6 +50,7 @@ import { HttpHeaders } from '@angular/common/http';
 export class SectionService {
 
   private secUrl = "api/sections"
+  private courseUrl = "api/courses"
 
   constructor(
     private http: HttpClient
@@ -145,6 +146,24 @@ export class SectionService {
           'fetched sections of user ' + user_id : 'did not find sections of user ' + user_id;
       }),
       catchError(this.handleError<Section[]>(`getUserSections user_id=${user_id}`))
+    );
+  }
+
+  /**
+   * Returns the course information based by course id
+   * @param course_id id of the course whose information are to be retrieved
+   * 
+   * @returns course information of the course
+   */
+  getCourseById(course_id): Observable<Course> {
+    const url = `${this.courseUrl}/?course_id=${course_id}`;
+    return this.http.get<Course>(url).pipe(
+      map(sections => sections[0]),
+      tap(h => {
+        const outcome = h ?
+          'fetched course ' + course_id : 'did not find course ' + course_id;
+      }),
+      catchError(this.handleError<Course>(`getCourseById course_id=${course_id}`))
     );
   }
 

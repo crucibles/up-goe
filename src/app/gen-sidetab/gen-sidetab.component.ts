@@ -66,7 +66,10 @@ export class GenSidetabComponent implements OnInit {
   progressBarClass: string[];
   questTimePercentage: string[];
   questTimeDisplay: string[];
-  userSections: Section[] = [];
+  sections: Section[] = [];
+  courses: Course[] = [];
+
+  isEditing: boolean = false;
 
   constructor(
     private commentPostService: CommentPostService,
@@ -79,27 +82,35 @@ export class GenSidetabComponent implements OnInit {
   ngOnInit() {
     this.defaultPBClass = 'progress-bar progress-bar-striped active';
     this.getUser();
-  }
-
-  getUserSection(user_id: string) {
-    console.log(user_id);
-    this.sectionService.getUserSections(user_id).subscribe(sections =>
-      this.userSections = sections
-    );
+    this.isEditing = false;
   }
 
   /**
    * @summary Obtains information of the current user
    */
   getUser(): void {
-    this.userService.getUserById("1")
+    this.userService.getUser("1")
       .subscribe(user => {
         this.user = user;
         this.getQuests(this.user.user_id);
         if (this.isProfile) {
-          this.getUserSection(this.user.user_id);
+          this.getUserSections(this.user.user_id);
         }
       });
+  }
+
+  getUserSections(user_id: string) {
+    console.log(user_id);
+    this.sectionService.getUserSections(user_id).subscribe(sections => {
+      this.sections = sections;
+      this.courses = [];
+      this.sections.forEach((section, index) => {
+        this.sectionService.getCourseById(section.course_id).subscribe(course => {
+          this.courses[index] = course;
+          console.log(this.courses);
+        })
+      });
+    });
   }
 
   getNumOfPost() {
@@ -120,6 +131,10 @@ export class GenSidetabComponent implements OnInit {
         this.quests = quests;
         this.timeDisplays();
       });
+  }
+
+  editUserInformation(){
+    this.isEditing = !this.isEditing;
   }
 
   /*Below are the helper functions for this component */

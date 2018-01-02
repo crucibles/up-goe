@@ -52,16 +52,22 @@ export class UserService {
    * @param password password input of the user logging in
    */
   logIn(email: string, password: string): Observable<User>{
+
     console.log(email);
     console.log(password);
-    const url = `${this.userUrl}/?user_email=${email}&user_password=${password}`;
+
+    const url = this.userUrl;
     let params = new HttpParams();
-    params.append()
-    return this.http.get<User[]>(url)
+    params.append('user_email', email);
+    params.append('user_password', password);
+
+    return this.http.get<User[]>(url, {
+      params: params
+    })
       .pipe(
         map(users => users[0]), // returns a {0|1} element array
         tap(h => {
-          console.log(h);
+          console.log("hello: "+h);
           const outcome = h ? 'fetched user ' + email : 'did not find user ' + email;
           console.log(outcome);
         }),
@@ -87,7 +93,7 @@ export class UserService {
   /**
    * @summary: Obtains user from server
    */
-  getUserById(id: string): Observable<User> {
+  getUser(id: string): Observable<User> {
     const url = `${this.userUrl}/?user_id=${id}`;
     return this.http.get<User[]>(url)
       .pipe(
@@ -98,6 +104,12 @@ export class UserService {
         }),
         catchError(this.handleError<User>(`getUserById user_id=${id}`))
       );
+  }
+
+  /**
+   * @summary: Edit existing user from server
+   */
+  editUser(id: string){
   }
 
   /**

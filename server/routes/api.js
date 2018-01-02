@@ -26,6 +26,24 @@ let response = {
     message: null
 };
 
+// Log-in
+router.get('/users', (req, res) => {
+    connection((db) => {
+        const myDB = db.db('up-goe-db');
+        myDB.collection('users')
+            .find()
+            .toArray()
+            .then((users) => {
+                console.log("hello im checking users for login");
+                response.data = users;
+                res.json(users);
+            })
+            .catch((err) => {
+                sendError(err, res);
+            });
+    });
+});
+
 // Get users
 router.get('/users', (req, res) => {
     connection((db) => {
@@ -106,6 +124,5 @@ router.get('/sections', (req, res) => {
     });
 });
 
-router.route('/')
 
 module.exports = router;
