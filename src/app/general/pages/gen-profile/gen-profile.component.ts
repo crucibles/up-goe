@@ -15,11 +15,11 @@ import {
   User,
   TOTXP,
   MAXXP
-} from '../../../shared/models';
+} from 'shared/models';
 
 import {
   UserService
-} from '../../../shared/services';    
+} from 'shared/services';    
 
 @Component({
   selector: 'app-gen-profile',

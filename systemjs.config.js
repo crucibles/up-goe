@@ -12,7 +12,6 @@
     map: {
       // our app is within the app folder
       'app': 'app',
-      'shared': 'app/shared',
 
       // angular bundles
       '@angular/animations': 'npm:@angular/animations/bundles/animations.umd.js',

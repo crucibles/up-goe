@@ -35,7 +35,7 @@ import {
   Quest,
   Section, 
   User,
-} from '../../shared/models';
+} from 'shared/models';
 
 @Injectable()
 export class SectionService {

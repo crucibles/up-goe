@@ -20,12 +20,12 @@ import {
 //Application Imports
 import {
   CommentPost
-} from '../../shared/models'
+} from 'shared/models'
 
 import {
   CommentPostService,
   UserService
-} from '../../shared/services';
+} from 'shared/services';
 
 @Component({
   selector: 'app-specific-news',
