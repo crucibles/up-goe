@@ -1,6 +1,18 @@
-import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
-import { SECURITY_QUESTION } from '../security-questions';
+import {
+  Component,
+  OnInit
+} from '@angular/core';
+
+import {
+  FormGroup,
+  FormControl,
+  FormBuilder,
+  Validators
+} from '@angular/forms';
+
+import {
+  SECURITY_QUESTION
+} from '../security-questions';
 
 @Component({
   selector: 'app-sign-up',
@@ -9,7 +21,8 @@ import { SECURITY_QUESTION } from '../security-questions';
 })
 export class SignUpComponent implements OnInit {
 
-  public signupForm: FormGroup;
+  private signupForm: FormGroup;
+  private signal: boolean = false;
   questions = SECURITY_QUESTION;
 
   constructor(fb: FormBuilder) {
@@ -27,8 +40,55 @@ export class SignUpComponent implements OnInit {
     });
   }
 
+  get firstName() {
+    return this.signupForm.get('firstName') as FormControl;
+  }
+  
+  get middleName() {
+    return this.signupForm.get('middleName') as FormControl;
+  }
+
+  get lastName() {
+    return this.signupForm.get('lastName') as FormControl;
+  }
+
+  get birthdate() {
+    return this.signupForm.get('birthdate') as FormControl;
+  }
+
+  get schoolId() {
+    return this.signupForm.get('schoolId') as FormControl;
+  }
+
+  get email() {
+    return this.signupForm.get('email') as FormControl;
+  }
+
+  get password() {
+    return this.signupForm.get('password') as FormControl;
+  }
+
+  get confirmPassword() {
+    return this.signupForm.get('confirmPassword') as FormControl;
+  }
+
+  get securityQuestion() {
+    return this.signupForm.get('securityQuestion') as FormControl;
+  }
+
+  get securityAnswer() {
+    return this.signupForm.get('securityAnswer') as FormControl;
+  }
+
   submit() {
-    console.log(this.signupForm.value);
+    if(this.signupForm.invalid) {
+      console.log("Invalid inputs!");
+    }
+
+    else {
+      console.log(this.signupForm.value);
+      // this.signal = false;
+    }
   }
 
   reset() {

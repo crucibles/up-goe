@@ -11,12 +11,17 @@
       <td>
         <div class="form-group">
           <div class="col-sm-10">
-            <input  type="text" 
-                    class="form-control" 
+            <input  ng-keyup="signalclose()"
+                    type="text" 
+                    class="form-control"
+                    required
                     formControlName="firstName"
                     id="first-name" 
                     placeholder="First name">
           </div>
+          <small  *ngIf="((firstName.invalid && firstName.dirty) || signal)"
+                  class="form-text text-danger">This field is required.
+          </small>
         </div>
       </td>
     </tr>
@@ -30,10 +35,14 @@
           <div class="col-sm-10">
             <input  type="text" 
                     class="form-control" 
+                    required
                     formControlName="middleName"
                     id="middle-name" 
                     placeholder="Middle name">
           </div>
+          <small  *ngIf="((middleName.invalid && middleName.dirty) || signal)"
+                  class="form-text text-danger">This field is required.
+          </small>
         </div>
       </td>
     </tr>
@@ -47,10 +56,14 @@
           <div class="col-sm-10">
             <input  type="text"
                     class="form-control" 
+                    required
                     formControlName="lastName"
                     id="last-name" 
                     placeholder="Last name">
           </div>
+          <small  *ngIf="((lastName.invalid && lastName.dirty) || signal)"
+                  class="form-text text-danger">This field is required.
+          </small>
         </div>
       </td>
     </tr>
@@ -64,10 +77,14 @@
           <div class="col-sm-10">
             <input  type="date"
                     class="form-control" 
+                    required
                     formControlName="birthdate"
                     id="birthdate" 
                     placeholder="Birthdate">
           </div>
+          <small  *ngIf="((birthdate.invalid && birthdate.dirty) || signal)"
+                  class="form-text text-danger">This field is required.
+          </small>
         </div>
       </td>
     </tr>
@@ -81,10 +98,14 @@
           <div class="col-sm-10">
             <input  type="text" 
                     class="form-control" 
+                    required
                     formControlName="schoolId"
                     id="school-id" 
                     placeholder="School ID">
           </div>
+          <small  *ngIf="((schoolId.invalid && schoolId.dirty) || signal)"
+                  class="form-text text-danger">This field is required.
+          </small>
         </div>
       </td>
     </tr>
@@ -98,10 +119,14 @@
           <div class="col-sm-10">
             <input  type="email" 
                     class="form-control" 
+                    required
                     formControlName="email"
                     id="email" 
                     placeholder="Email Address">
           </div>
+          <small  *ngIf="((email.invalid && email.dirty) || signal)"
+                  class="form-text text-danger">This field is required.
+          </small>
         </div>
       </td>
     </tr>
@@ -115,10 +140,14 @@
           <div class="col-sm-10">
             <input  type="password"
                     class="form-control"
+                    required
                     formControlName="password"
                     id="password"
                     placeholder="Password">
           </div>
+          <small  *ngIf="((password.invalid && password.dirty) || signal)"
+                  class="form-text text-danger">This field is required.
+          </small>
         </div>
       </td>
     </tr>
@@ -131,11 +160,15 @@
         <div class="form-group">
           <div class="col-sm-10">
             <input  type="password" 
-                    class="form-control" 
+                    class="form-control"
+                    required
                     formControlName="confirmPassword"
                     id="confirm-password" 
                     placeholder="Confirm password">
           </div>
+          <small  *ngIf="((confirmPassword.invalid && confirmPassword.dirty) || signal)"
+                  class="form-text text-danger">This field is required.
+          </small>
         </div>
       </td>
     </tr>
@@ -149,10 +182,14 @@
           <div class="col-sm-10">
             <select type="text" 
                     class="form-control" 
+                    required
                     formControlName="securityQuestion"
                     id="security-question">
               <option *ngFor="let question of questions" [value]="question">{{ question.securityQuestion }}</option>
             </select>
+            <small  *ngIf="((securityQuestion.invalid && securityQuestion.dirty) || signal)"
+                    class="form-text text-danger">This field is required.
+            </small>
           </div>
         </div>
       </td>
@@ -167,10 +204,14 @@
           <div class="col-sm-10">
             <input  type="text" 
                     class="form-control" 
+                    required
                     formControlName="securityAnswer"
                     id="security-answer" 
                     placeholder="Answer">
           </div>
+          <small  *ngIf="((securityAnswer.invalid && securityAnswer.dirty) || signal)"
+                  class="form-text text-danger">This field is required.
+          </small>
         </div>
       </td>
     </tr>
