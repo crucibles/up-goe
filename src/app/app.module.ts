@@ -1,16 +1,7 @@
 //Core Imports
 import {
-  HttpClientModule
-} from '@angular/common/http';
-
-import {
   NgModule
 } from '@angular/core';
-
-import {
-  FormsModule,
-  ReactiveFormsModule
-} from '@angular/forms';
 
 import {
   BrowserModule
@@ -55,6 +46,10 @@ import {
 } from './shared/services';*/
 
 import {
+  SharedModule
+} from './shared/shared.module';
+
+import {
   SignUpComponent
 } from 'sign-up/sign-up.component';
 
@@ -72,10 +67,8 @@ import {
   imports: [
     AppRoutingModule,
     BrowserModule,
-    FormsModule,
+    SharedModule,
     GeneralModule,
-    HttpClientModule,
-    ReactiveFormsModule,
     SpecificModule
     // The HttpClientInMemoryWebApiModule module intercepts HTTP requests
     // and returns simulated server responses.
