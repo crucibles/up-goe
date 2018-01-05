@@ -31,18 +31,13 @@ import {
 
 const routes: Routes = [
   {
-    path: '', 
-    redirectTo: '/log-in', 
-    pathMatch: 'full'
-  },
-  {
-    path: 'log-in',
-    component: LogInComponent
-  },
-  {
     path: '',
     redirectTo: '/log-in',
     pathMatch: 'full'
+  },
+  {
+    path: 'general',
+    loadChildren: './general/general.module#GeneralModule'
   },
   {
     path: 'log-in',
@@ -53,20 +48,8 @@ const routes: Routes = [
     component: SignUpComponent
   },
   {
-    path: 'select-course',
-    component: GenSelcourseComponent
-  },
-  {
-    path: 'general-news',
-    component: GenNewsComponent
-  },
-  {
-    path: 'general-profile',
-    component: GenProfileComponent
-  },
-  {
-    path: 'specific-news/:section_id',
-    component: SpecificNewsComponent
+    path: 'specific',
+    loadChildren: './specific/specific.module#SpecificModule'
   }
 ];
 

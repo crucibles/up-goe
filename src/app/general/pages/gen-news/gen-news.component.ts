@@ -15,6 +15,7 @@ import {
 
 import {
   CommentPostService,
+  PageService,
   UserService
 } from 'shared/services';
 
@@ -32,9 +33,12 @@ export class GenNewsComponent implements OnInit {
 
   constructor(
     private commentPostService: CommentPostService,
+    private pageService: PageService,
     private userService: UserService,
     private router: Router
-  ) { }
+  ) {
+    this.pageService.isProfilePage(false);
+  }
 
   ngOnInit() {
     this.getAllCommentPost();
@@ -46,9 +50,9 @@ export class GenNewsComponent implements OnInit {
    * 'commentposts' array
    */
   getAllCommentPost() {
-    this.commentPostService.getSectionPosts("11").subscribe(commentPosts => {
+    this.commentPostService.getSectionPosts("5a3807410d1126321c11e5ee").subscribe(commentPosts => {
       //chooses the commentposts that are main posts (ignores comments)
-      this.commentPosts = commentPosts.filter(post => post.is_post == true);
+      this.commentPosts = commentPosts ? commentPosts.filter(post => post.is_post == true) : [];
 
       //sorts the commentpost by date (from recent 'on top' to oldest)
       this.commentPosts.sort((a, b) => {
@@ -66,7 +70,7 @@ export class GenNewsComponent implements OnInit {
     });
   }
 
-  
+
   /*Below are the helper functions for this component */
 
   /**

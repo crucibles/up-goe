@@ -25,6 +25,8 @@ export class User {
   user_password: string;
   user_type: string;
   user_contact_no: string;
+  user_photo: string;
+  user_school_id: string;
   user_security_question: string;
   user_security_answer: string;
 };
