@@ -128,12 +128,12 @@ export class SectionService {
       const url = this.secUrl;
       //ced replace the id to a variable, do not tinamban this      
       let params = new HttpParams()
-        .set('id', '5a37f4500d1126321c11e5e7')
-        .set('method', 'getUserSections');
+        .set('id', '5a37f4500d1126321c11e5e7');
       return this.http.get<Section[]>(url, {
         params: params
       }).pipe(
       tap(h => {
+        console.log(h);
         const outcome = h ?
           'fetched sections of user ' + user_id : 'did not find sections of user ' + user_id;
       }),

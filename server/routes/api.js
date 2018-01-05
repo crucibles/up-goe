@@ -95,7 +95,6 @@ router.get('/sections', (req, res) => {
     connection((db) => {
         const myDB = db.db('up-goe-db');
 
-        if (req.query.method == "getUserSections") {
             myDB.collection('sections')
             .find({
 
@@ -109,42 +108,36 @@ router.get('/sections', (req, res) => {
             })
             .toArray()
             .then((sections) => {
-                response.data = sections;
-                res = res.json(sections);
+
+                if(req.query.method){
+                    let questsOnly = sections.map(a => a.quests);
+                    let userQuests = [];
+
+                    questsOnly.forEach(quests => {
+
+                        quests.forEach(quest => {
+                        
+                            if( quest.quest_participants == req.query.id ){
+                                userQuests.push(quest.quest_id);
+                            }
+
+                        })
+                    
+                    });
+
+                    response.data = userQuests;
+                    res = res.json(userQuests);
+
+                } else {
+                    response.data = sections;
+                    res = res.json(sections);
+                }
+                
                 
             })
             .catch((err) => {
                 sendError(err, res);
             });
-            
-        } else if(req.query.method == "getUserSectionQuests"){
-            console.log("hi");
-            myDB.collection('sections')
-            .find({
-
-                students: { 
-                    $elemMatch: {
-                        status: "E",
-                        user_id: req.query.id
-                    }                    
-                }              
-                         
-            })
-            .toArray()
-            .then((quests) => {
-                let userquests = quests.map(a => a.quests);
-                console.log(userquests);
-                response.data = quests;
-                res = res.json(quests);
-                
-            })
-            .catch((err) => {
-                sendError(err, res);
-            });
-        }
-        
-
-
     });
 
 });
