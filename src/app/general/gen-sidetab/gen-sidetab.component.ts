@@ -59,13 +59,7 @@ export class GenSidetabComponent implements OnInit {
   isShowMenuButton: boolean = false;
 
   windowWidth: number = window.innerWidth;
-
-  //initial values, The window object may still be undefined during this hook, let me know if that's the case and we'll figure out a better hook for the initial value
-  ngAfterViewInit() {
-      this.windowWidth = window.innerWidth;
-      this.checkSize();
-  }
-
+  
   //if screen size changes it'll update
   @HostListener('window:resize', ['$event'])
   resize(event) {
@@ -97,6 +91,7 @@ export class GenSidetabComponent implements OnInit {
     this.defaultPBClass = 'progress-bar progress-bar-striped active';
     this.getUser();
     this.isEditing = false;
+    this.checkSize();
     this.pageService.isProfile.subscribe(isProfile => {
       this.isProfile = isProfile;
     });
