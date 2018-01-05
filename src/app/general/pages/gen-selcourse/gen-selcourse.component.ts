@@ -111,7 +111,7 @@ export class GenSelcourseComponent implements OnInit {
 
   openCoursePage(section_id: string) {
     console.log(section_id);
-    this.router.navigate(['/specific-news', section_id]);
+    this.router.navigate(['/specific/specific-news', section_id]);
   }
 
 

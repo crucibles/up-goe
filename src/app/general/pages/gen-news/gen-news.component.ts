@@ -79,7 +79,7 @@ export class GenNewsComponent implements OnInit {
    */
   openClassNewsPage(section_id: string) {
     console.warn(section_id);
-    this.router.navigate(['/specific-news', section_id]);
+    this.router.navigate(['/specific/specific-news', section_id]);
   }
 
   /**

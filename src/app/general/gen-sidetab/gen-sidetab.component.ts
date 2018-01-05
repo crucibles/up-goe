@@ -176,7 +176,7 @@ export class GenSidetabComponent implements OnInit {
   openSectionPage(section_id: string) {
     //AHJ: must navigate to the specific section's home page yet it is still not available
     console.warn(section_id);
-    this.router.navigate(['/specific-news', section_id]);
+    this.router.navigate(['/specific/specific-news', section_id]);
   }
 
   /**
