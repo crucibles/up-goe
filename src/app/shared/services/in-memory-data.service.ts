@@ -230,7 +230,9 @@ export class InMemoryDataService {
         user_type: 'student',
         user_contact_no: '09499709292',
         user_security_question: 'What is your name?',
-        user_security_answer: 'Donevir'
+        user_security_answer: 'Donevir',
+        user_photo: "",
+        user_school_id: ""
       },
       {
         user_id: '2',
@@ -243,7 +245,9 @@ export class InMemoryDataService {
         user_type: 'student',
         user_contact_no: '09499709292',
         user_security_question: 'What is your name?',
-        user_security_answer: 'Cedric'
+        user_security_answer: 'Cedric',
+        user_photo: "",
+        user_school_id: ""
       }
     ];
 

@@ -22,12 +22,6 @@ import {
 } from 'angular-in-memory-web-api';*/
 
 
-//Third-Party Imports
-import {
-  ChartsModule
-} from 'ng2-charts';
-
-
 //Application Imports
 import {
   AppComponent
@@ -38,24 +32,18 @@ import {
 } from './app-routing.module';
 
 import {
-  GenNewsComponent,
-  GenProfileComponent,
-  GenSelcourseComponent
-} from 'general/pages'
+  GeneralModule
+} from 'general/general.module';
 
 import {
-  GenSidetabComponent,
-  GenTopnavbarComponent
-} from 'general/index'
-
-import { 
- LogInComponent 
+  LogInComponent
 } from 'log-in/log-in.component';
 
 import {
   BadgeService,
   CommentPostService,
-  ItemService, 
+  ItemService,
+  PageService,
   QuestService,
   SectionService,
   UserService
@@ -71,29 +59,24 @@ import {
 } from 'sign-up/sign-up.component';
 
 import {
-  SpecificNewsComponent
-} from 'specific/pages';
+  SpecificModule
+} from 'specific/specific.module';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    GenSelcourseComponent,
-    GenProfileComponent,
-    GenTopnavbarComponent,
-    GenSidetabComponent,
-    GenNewsComponent,
-    SpecificNewsComponent,
-    SignUpComponent,
-    LogInComponent
+    LogInComponent,
+    SignUpComponent
   ],
   imports: [
     AppRoutingModule,
     BrowserModule,
-    ChartsModule,
     FormsModule,
+    GeneralModule,
     HttpClientModule,
     ReactiveFormsModule,
+    SpecificModule
     // The HttpClientInMemoryWebApiModule module intercepts HTTP requests
     // and returns simulated server responses.
     // Remove it when a real server is ready to receive requests.
@@ -105,6 +88,7 @@ import {
     BadgeService,
     CommentPostService,
     QuestService,
+    PageService,
     SectionService,
     UserService,
     ItemService

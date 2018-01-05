@@ -22,7 +22,8 @@ import {
 
 import {
   SectionService,
-  UserService
+  UserService,
+  PageService
 } from 'shared/services';
 
 @Component({
@@ -43,10 +44,13 @@ export class GenSelcourseComponent implements OnInit {
   course_found: Course[];
 
   constructor(
-    private userService: UserService,
+    private pageService: PageService,
     private sectionService: SectionService,
+    private userService: UserService,
     private router: Router
-  ) { }
+  ) {
+    this.pageService.isProfilePage(false);
+  }
 
   ngOnInit() {
     this.getUser();

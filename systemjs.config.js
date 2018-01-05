@@ -6,7 +6,8 @@
   System.config({
     paths: {
       // paths serve as alias
-      'npm:': 'node_modules/'
+      'npm:': 'node_modules/',
+      'ng2-charts': 'node_modules/ng2-charts/bundles/ng2-charts.umd.min.js'
     },
     // map tells the System loader where to look for things
     map: {
@@ -47,6 +48,10 @@
         }
       },
       rxjs: {
+        defaultExtension: 'js'
+      },
+      'ng2-charts': {
+        main: 'ng2-charts.js',
         defaultExtension: 'js'
       }
     }
