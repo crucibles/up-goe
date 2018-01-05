@@ -31,7 +31,7 @@ export class LogInComponent implements OnInit {
 
     this.userService.logIn(email, password).subscribe(user => {
       if (user) {
-        this.router.navigate(['/select-course']);
+        this.router.navigate(['/select-course', {user}]);
       } else {
         console.log("does not exists!");
       }

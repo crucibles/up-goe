@@ -28,11 +28,13 @@ import {
   Quest,
   User
 } from '../../shared/models';
+import { HttpParams } from '@angular/common/http';
 
 @Injectable()
 export class QuestService {
 
   private questUrl = "api/quests";
+  private sectionUrl = "api/sections";
 
   constructor(
     private http: HttpClient
@@ -117,8 +119,14 @@ export class QuestService {
   //AHJ: not finished! 
   getUserSectionQuests(user_id/*, section_id*/): Observable<Quest[]> {
     // used for side tabs; aaaand di ko sure pero basin pwede makuha ang section quest by using getSectionQuests() function
-    return this.http.get<Quest[]>(this.questUrl).pipe(
-      tap(quests => quests ? console.log('fetched quests') : console.log('did not fetched quests')),
+    let params = new HttpParams()
+    .set('id', '5a37f4500d1126321c11e5e7')
+    .set('method', 'getUserSectionQuests');
+
+    return this.http.get<Quest[]>(this.sectionUrl, {
+      params: params
+    }).pipe(
+      tap(quests => quests ? console.log(quests) : console.log('did not fetched quests')),
       catchError(this.handleError(`getUserSectionQuests`, []))
     );
   }

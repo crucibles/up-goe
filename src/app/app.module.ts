@@ -70,6 +70,7 @@ import {
 import {
   SpecificNewsComponent
 } from './specific';
+import { CookieService } from 'ngx-cookie-service';
 
 
 @NgModule({
@@ -104,7 +105,8 @@ import {
     QuestService,
     SectionService,
     UserService,
-    ItemService
+    ItemService,
+    CookieService
   ],
   bootstrap: [AppComponent]
 })

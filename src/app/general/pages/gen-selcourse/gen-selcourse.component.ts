@@ -56,7 +56,8 @@ export class GenSelcourseComponent implements OnInit {
    * Obtains information of the current user
    */
   getUser(): void {
-    this.userService.getUser("5a37f4500d1126321c11e5e7")
+    let currentUserId = JSON.parse(localStorage.getItem("currentUser"));
+    this.userService.getUser(currentUserId._id)
       .subscribe(user => {
         this.user = user;
         this.getUserSections(this.user.user_id);
