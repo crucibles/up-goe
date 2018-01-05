@@ -1,6 +1,9 @@
+<input type="checkbox" id="slide" name="" value="" />
+<div class=container>
+<label for="slide" style="margin: 30px 10px" *ngIf="isShowMenuButton" class="toggle">☰</label>
 <ul class="vert-tab">
   <li>
-    <img src="https://image.freepik.com/free-photo/cute-cat-picture_1122-449.jpg" alt="Cat">
+    <img [src]="image" alt="Cat">
   </li>
   <li *ngIf="user">
     {{user.user_fname}} {{user.user_mname}} {{user.user_lname}}
@@ -30,12 +33,13 @@
     </li>
     <li> Class List: </li>
     <li *ngFor="let section of sections; let i = index">
+      <div *ngIf="!sections || sections.length == 0">You have no course yet!</div>
       <a *ngIf="courses[i]" (click)=openCoursePage(section.section_id)>{{this.courses[i].course_name}} - {{section.section_name}}</a>
     </li>
     <ng-container *ngIf="user">
       <li> School ID: </li>
       <li>
-        <input type="text" [disabled]="!isEditing" [(ngModel)]="user.user_id" class="user-information" [class.remove-border]="!isEditing"
+        <input type="text" [disabled]="!isEditing" [(ngModel)]="user.user_school_id" class="user-information" [class.remove-border]="!isEditing"
         />
       </li>
       <li> Email: </li>
@@ -57,3 +61,4 @@
   </ng-container>
 
 </ul>
+</div>

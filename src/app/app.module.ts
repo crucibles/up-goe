@@ -1,16 +1,7 @@
 //Core Imports
 import {
-  HttpClientModule
-} from '@angular/common/http';
-
-import {
   NgModule
 } from '@angular/core';
-
-import {
-  FormsModule,
-  ReactiveFormsModule
-} from '@angular/forms';
 
 import {
   BrowserModule
@@ -20,13 +11,10 @@ import {
 /*import {
   HttpClientInMemoryWebApiModule
 } from 'angular-in-memory-web-api';*/
-
-
 //Third-Party Imports
 import {
-  ChartsModule
-} from 'ng2-charts';
-
+  CookieService
+} from 'ngx-cookie-service';
 
 //Application Imports
 import {
@@ -38,25 +26,22 @@ import {
 } from './app-routing.module';
 
 import {
-  GenNewsComponent,
-  GenProfileComponent,
-  GenSelcourseComponent,
-  GenSidetabComponent,
-  GenTopnavbarComponent
-} from './general'
+  GeneralModule
+} from 'general/general.module';
 
-import { 
- LogInComponent 
-} from './log-in/log-in.component';
+import {
+  LogInComponent
+} from 'log-in/log-in.component';
 
 import {
   BadgeService,
   CommentPostService,
-  ItemService, 
+  ItemService,
+  PageService,
   QuestService,
   SectionService,
   UserService
-} from './shared/services';
+} from 'shared/services';
 
 //AHJ: remove after server is working
 /*import {
@@ -64,34 +49,33 @@ import {
 } from './shared/services';*/
 
 import {
-  SignUpComponent
-} from './sign-up/sign-up.component';
+  SharedModule
+} from './shared/shared.module';
 
 import {
-  SpecificNewsComponent
-} from './specific';
-import { CookieService } from 'ngx-cookie-service';
+  SignUpComponent
+} from 'sign-up/sign-up.component';
+
+import {
+  SpecificModule
+} from 'specific/specific.module';
+
+
+
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    GenSelcourseComponent,
-    GenProfileComponent,
-    GenTopnavbarComponent,
-    GenSidetabComponent,
-    GenNewsComponent,
-    SpecificNewsComponent,
-    SignUpComponent,
-    LogInComponent
+    LogInComponent,
+    SignUpComponent
   ],
   imports: [
     AppRoutingModule,
     BrowserModule,
-    ChartsModule,
-    FormsModule,
-    HttpClientModule,
-    ReactiveFormsModule,
+    SharedModule,
+    GeneralModule,
+    SpecificModule
     // The HttpClientInMemoryWebApiModule module intercepts HTTP requests
     // and returns simulated server responses.
     // Remove it when a real server is ready to receive requests.
@@ -103,6 +87,7 @@ import { CookieService } from 'ngx-cookie-service';
     BadgeService,
     CommentPostService,
     QuestService,
+    PageService,
     SectionService,
     UserService,
     ItemService,

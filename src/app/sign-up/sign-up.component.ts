@@ -13,7 +13,7 @@ import {
 //Application Imports
 import { 
   SECURITY_QUESTION 
-} from '../shared/models';
+} from 'shared/models';
 
 @Component({
   selector: 'app-sign-up',

@@ -10,45 +10,38 @@ import {
 
 //Application Imports
 import {
-  GenNewsComponent
-} from './general';
-
-import {
-  GenProfileComponent
-} from './general';
-
-import {
+  GenNewsComponent,
+  GenProfileComponent,
   GenSelcourseComponent
-} from './general';
+} from 'general/pages';
 
 import {
   LogInComponent
-} from './log-in/log-in.component';
+} from 'log-in/log-in.component';
+
+import {
+  PageNotFoundComponent
+} from 'shared/pages';
 
 import {
   SignUpComponent
-} from './sign-up/sign-up.component';
+} from 'sign-up/sign-up.component';
 
 import {
   SpecificNewsComponent
-} from './specific';
+} from 'specific/pages';
 
 
 
 const routes: Routes = [
   {
-    path: '', 
-    redirectTo: '/log-in', 
-    pathMatch: 'full'
-  },
-  {
-    path: 'log-in',
-    component: LogInComponent
-  },
-  {
     path: '',
     redirectTo: '/log-in',
     pathMatch: 'full'
+  },
+  {
+    path: 'general',
+    loadChildren: './general/general.module#GeneralModule'
   },
   {
     path: 'log-in',
@@ -59,20 +52,12 @@ const routes: Routes = [
     component: SignUpComponent
   },
   {
-    path: 'select-course',
-    component: GenSelcourseComponent
+    path: 'specific',
+    loadChildren: './specific/specific.module#SpecificModule'
   },
   {
-    path: 'general-news',
-    component: GenNewsComponent
-  },
-  {
-    path: 'general-profile',
-    component: GenProfileComponent
-  },
-  {
-    path: 'specific-news/:section_id',
-    component: SpecificNewsComponent
+    path: '**',
+    component: PageNotFoundComponent
   }
 ];
 

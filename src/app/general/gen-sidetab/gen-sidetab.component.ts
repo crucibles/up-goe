@@ -2,7 +2,8 @@
 import {
   Component,
   OnInit,
-  Input
+  Input,
+  HostListener
 } from '@angular/core';
 
 import {
@@ -20,14 +21,15 @@ import {
   Quest,
   Section,
   User
-} from '../../shared/models';
+} from 'shared/models';
 
 import {
   CommentPostService,
+  PageService,
   QuestService,
   SectionService,
   UserService
-} from '../../shared/services';
+} from 'shared/services';
 
 @Component({
   selector: 'gen-sidetab',
@@ -39,6 +41,7 @@ export class GenSidetabComponent implements OnInit {
 
   //current user
   user: User;
+  image: string;
 
   //for pages other than profile page  
   quests: Quest[] = []; //user's quests
@@ -53,19 +56,45 @@ export class GenSidetabComponent implements OnInit {
   sections: Section[] = [];
   courses: Course[] = [];
 
+  isShowMenuButton: boolean = false;
+
+  windowWidth: number = window.innerWidth;
+  
+  //if screen size changes it'll update
+  @HostListener('window:resize', ['$event'])
+  resize(event) {
+      this.checkSize();
+  }
+
+  checkSize() {
+      this.windowWidth = window.innerWidth;
+      if(this.windowWidth <= 600){
+        this.isShowMenuButton = true;
+      } else {
+        this.isShowMenuButton = false;
+      }
+  }
+
 
   constructor(
     private commentPostService: CommentPostService,
+    private pageService: PageService,
     private questService: QuestService,
     private sectionService: SectionService,
     private userService: UserService,
     private router: Router
-  ) { }
+  ) { 
+  }
 
   ngOnInit() {
+    this.image = "/assets/images/not-found.jpg"
     this.defaultPBClass = 'progress-bar progress-bar-striped active';
     this.getUser();
     this.isEditing = false;
+    this.checkSize();
+    this.pageService.isProfile.subscribe(isProfile => {
+      this.isProfile = isProfile;
+    });
   }
 
   /**
@@ -75,9 +104,14 @@ export class GenSidetabComponent implements OnInit {
    * section quests are for other pages except general-profile page
    */
   getUser(): void {
-    this.userService.getUser("1")
+    this.userService.getUser("5a37f4500d1126321c11e5e7")
       .subscribe(user => {
+        console.log(user);
         this.user = user;
+
+        let image: string = this.user.user_photo? this.user.user_photo: "avatar.jpg";
+        this.image = "/assets/images/" + image;
+
         if (this.isProfile) {
           this.getUserSections(this.user.user_id);
         } else {
@@ -98,6 +132,7 @@ export class GenSidetabComponent implements OnInit {
     console.log(user_id);
     this.sectionService.getUserSections(user_id).subscribe(sections => {
       this.sections = sections;
+      console.log(sections);
       this.courses = [];
       this.sections.forEach((section, index) => {
         this.sectionService.getCourseById(section.course_id).subscribe(course => {
@@ -141,7 +176,7 @@ export class GenSidetabComponent implements OnInit {
   openSectionPage(section_id: string) {
     //AHJ: must navigate to the specific section's home page yet it is still not available
     console.warn(section_id);
-    this.router.navigate(['/specific-news', section_id]);
+    this.router.navigate(['/specific/specific-news', section_id]);
   }
 
   /**

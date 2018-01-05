@@ -18,12 +18,13 @@ import {
   Quest,
   Section,
   User
-} from '../../../shared/models';
+} from 'shared/models';
 
 import {
   SectionService,
-  UserService
-} from '../../../shared/services';
+  UserService,
+  PageService
+} from 'shared/services';
 
 @Component({
   selector: 'app-gen-selcourse',
@@ -43,10 +44,13 @@ export class GenSelcourseComponent implements OnInit {
   course_found: Course[];
 
   constructor(
-    private userService: UserService,
+    private pageService: PageService,
     private sectionService: SectionService,
+    private userService: UserService,
     private router: Router
-  ) { }
+  ) {
+    this.pageService.isProfilePage(false);
+  }
 
   ngOnInit() {
     this.getUser();
@@ -108,7 +112,7 @@ export class GenSelcourseComponent implements OnInit {
 
   openCoursePage(section_id: string) {
     console.log(section_id);
-    this.router.navigate(['/specific-news', section_id]);
+    this.router.navigate(['/specific/specific-news', section_id]);
   }
 
 

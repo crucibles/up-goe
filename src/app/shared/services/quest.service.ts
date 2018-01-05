@@ -1,6 +1,6 @@
 //Core Imports
 import {
-  HttpClient
+  HttpClient, HttpParams
 } from '@angular/common/http';
 
 import {
@@ -27,8 +27,7 @@ import {
   Course,
   Quest,
   User
-} from '../../shared/models';
-import { HttpParams } from '@angular/common/http';
+} from 'shared/models';
 
 @Injectable()
 export class QuestService {
