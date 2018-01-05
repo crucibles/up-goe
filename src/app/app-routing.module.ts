@@ -20,6 +20,10 @@ import {
 } from 'log-in/log-in.component';
 
 import {
+  PageNotFoundComponent
+} from 'shared/pages';
+
+import {
   SignUpComponent
 } from 'sign-up/sign-up.component';
 
@@ -50,6 +54,10 @@ const routes: Routes = [
   {
     path: 'specific',
     loadChildren: './specific/specific.module#SpecificModule'
+  },
+  {
+    path: '**',
+    component: PageNotFoundComponent
   }
 ];
 

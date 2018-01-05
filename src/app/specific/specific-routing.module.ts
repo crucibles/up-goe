@@ -9,6 +9,10 @@ import {
 
 //Application Imports
 import {
+  PageNotFoundComponent
+} from 'shared/pages';
+
+import {
   SpecificComponent
 } from 'specific/specific.component';
 
@@ -16,7 +20,7 @@ import {
   SpecificNewsComponent
 } from 'specific/pages';
 
-const generalRoutes: Routes = [
+const specificRoutes: Routes = [
 
   {
     path: '',
@@ -25,13 +29,17 @@ const generalRoutes: Routes = [
       {
         path: 'specific-news',
         component: SpecificNewsComponent
+      },
+      {
+        path: '**',
+        component: PageNotFoundComponent
       }
     ]
   }
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(generalRoutes)],
+  imports: [RouterModule.forChild(specificRoutes)],
   exports: [RouterModule]
 })
 

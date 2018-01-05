@@ -3,25 +3,11 @@ import {
   NgModule
 } from '@angular/core';
 
-import {
-  CommonModule
-} from '@angular/common';
-
-import {
-  HttpClientModule
-} from '@angular/common/http';
-
-import {
-  FormsModule,
-  ReactiveFormsModule
-} from '@angular/forms';
-
-//Third-party Imports
-import {
-  ChartsModule
-} from 'ng2-charts';
-
 //Application Imports
+import {
+  SharedModule
+} from 'shared/shared.module';
+
 import {
   SpecificNewsComponent
 } from 'specific/pages';
@@ -36,11 +22,7 @@ import {
 
 @NgModule({
   imports: [
-    CommonModule,
-    ChartsModule,
-    FormsModule,
-    HttpClientModule,
-    ReactiveFormsModule,
+    SharedModule,
     SpecificRoutingModule
   ],
   declarations: [

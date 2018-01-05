@@ -4,27 +4,9 @@ import {
 } from '@angular/core';
 
 import {
-  CommonModule
-} from '@angular/common';
-
-import {
-  HttpClientModule
-} from '@angular/common/http';
-
-import {
-  FormsModule,
-  ReactiveFormsModule
-} from '@angular/forms';
-
-import {
   Routes,
   RouterModule
 } from '@angular/router';
-
-//Third-Party Imports
-import {
-  ChartsModule
-} from 'ng2-charts';
 
 //Application Imports
 import {
@@ -46,13 +28,13 @@ import {
   GeneralRoutingModule
 } from 'general/general-routing.module';
 
+import {
+  SharedModule
+} from 'shared/shared.module';
+
 @NgModule({
   imports: [
-    CommonModule,
-    ChartsModule,
-    FormsModule,
-    HttpClientModule,
-    ReactiveFormsModule,
+    SharedModule,
     GeneralRoutingModule
   ],
   declarations: [

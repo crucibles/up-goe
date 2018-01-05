@@ -19,6 +19,10 @@ import {
     GeneralComponent
 } from 'general/general.component';
 
+import {
+    PageNotFoundComponent
+} from 'shared/pages';
+
 const generalRoutes: Routes = [
 
     {
@@ -36,7 +40,12 @@ const generalRoutes: Routes = [
             {
                 path: 'select-course',
                 component: GenSelcourseComponent
+            },
+            {
+                path: '**',
+                component: PageNotFoundComponent
             }
+
         ]
     }
 ];
