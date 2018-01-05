@@ -18,12 +18,12 @@ import {
   Quest,
   Section,
   User
-} from '../../../shared/models';
+} from 'shared/models';
 
 import {
   SectionService,
   UserService
-} from '../../../shared/services';
+} from 'shared/services';
 
 @Component({
   selector: 'app-gen-selcourse',

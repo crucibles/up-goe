@@ -20,14 +20,14 @@ import {
   Quest,
   Section,
   User
-} from '../../shared/models';
+} from 'shared/models';
 
 import {
   CommentPostService,
   QuestService,
   SectionService,
   UserService
-} from '../../shared/services';
+} from 'shared/services';
 
 @Component({
   selector: 'gen-sidetab',

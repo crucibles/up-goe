@@ -13,7 +13,7 @@ import {
   Student,
   Section,
   User
-} from '../../shared/models';
+} from 'shared/models';
 
 /* Mock DB */
 export class InMemoryDataService {

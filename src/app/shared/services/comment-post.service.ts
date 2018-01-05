@@ -26,7 +26,7 @@ import {
 //Application Imports
 import {
   CommentPost
-} from '../../shared/models'
+} from 'shared/models'
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })

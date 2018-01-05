@@ -32,7 +32,7 @@ import {
   Course,
   Quest,
   User
-} from '../../shared/models';
+} from 'shared/models';
 
 
 @Injectable()

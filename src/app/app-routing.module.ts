@@ -10,28 +10,22 @@ import {
 
 //Application Imports
 import {
-  GenNewsComponent
-} from './general';
-
-import {
-  GenProfileComponent
-} from './general';
-
-import {
+  GenNewsComponent,
+  GenProfileComponent,
   GenSelcourseComponent
-} from './general';
+} from 'general/pages';
 
 import {
   LogInComponent
-} from './log-in/log-in.component';
+} from 'log-in/log-in.component';
 
 import {
   SignUpComponent
-} from './sign-up/sign-up.component';
+} from 'sign-up/sign-up.component';
 
 import {
   SpecificNewsComponent
-} from './specific';
+} from 'specific/pages';
 
 
 

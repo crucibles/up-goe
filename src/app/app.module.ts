@@ -40,14 +40,17 @@ import {
 import {
   GenNewsComponent,
   GenProfileComponent,
-  GenSelcourseComponent,
+  GenSelcourseComponent
+} from 'general/pages'
+
+import {
   GenSidetabComponent,
   GenTopnavbarComponent
-} from './general'
+} from 'general/index'
 
 import { 
  LogInComponent 
-} from './log-in/log-in.component';
+} from 'log-in/log-in.component';
 
 import {
   BadgeService,
@@ -56,7 +59,7 @@ import {
   QuestService,
   SectionService,
   UserService
-} from './shared/services';
+} from 'shared/services';
 
 //AHJ: remove after server is working
 /*import {
@@ -65,11 +68,11 @@ import {
 
 import {
   SignUpComponent
-} from './sign-up/sign-up.component';
+} from 'sign-up/sign-up.component';
 
 import {
   SpecificNewsComponent
-} from './specific';
+} from 'specific/pages';
 
 
 @NgModule({
