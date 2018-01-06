@@ -21,21 +21,30 @@ import {
   ChartsModule
 } from 'ng2-charts';
 
+import {
+  TooltipModule
+} from 'ngx-bootstrap/tooltip';
+
 //Application Imports
 import {
   PageNotFoundComponent
 } from 'shared/pages';
+import { CollapseModule } from 'ngx-bootstrap/collapse/collapse.module';
 
 @NgModule({
   imports: [
-    CommonModule
+    CollapseModule.forRoot(),
+    CommonModule,
+    TooltipModule.forRoot()
   ],
   exports: [
+    CollapseModule,
     CommonModule,
     ChartsModule,
     FormsModule,
     HttpClientModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    TooltipModule
   ],
   declarations: [PageNotFoundComponent]
 })

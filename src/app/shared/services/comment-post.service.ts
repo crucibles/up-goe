@@ -51,7 +51,7 @@ export class CommentPostService {
   addCommentPost(comment: CommentPost): Observable<CommentPost> {
     return this.http.post<CommentPost>(this.postUrl, comment, httpOptions).pipe(
       tap((commentPost: CommentPost) =>
-        console.log("comment " + comment.post_content + " is added")),
+        console.log("comment " + comment.getPostContent() + " is added")),
       catchError(this.handleError<CommentPost>('addComment'))
     );
   }
@@ -72,12 +72,12 @@ export class CommentPostService {
     //however, this could be done in the Component side... so error checking here kay madouble lang... 
     //in case, wla naquery ug tarung ang main post tapos wla niya na block ang comments
     //let newCommentObservable: Observable<CommentPost>;
-    mainPost.post_comments.push(comment.id);
+    mainPost.getPostComments().push(comment.getPostCommentId());
     console.log("comment.id");
     console.log(mainPost);
     return this.http.put<CommentPost>(this.postUrl, mainPost, httpOptions).pipe(
       tap(_ => {
-        console.log(`updated post id=${mainPost.id}`);
+        console.log(`updated post id=${mainPost.getPostCommentId()}`);
       }),
       catchError(this.handleError<CommentPost>('submitComment'))
     );

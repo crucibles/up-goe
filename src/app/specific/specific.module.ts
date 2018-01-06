@@ -9,8 +9,10 @@ import {
 } from 'shared/shared.module';
 
 import {
-  SpecificNewsComponent
+  SpecificNewsComponent,
+  SpecificProfileComponent
 } from 'specific/pages';
+
 import {
   SpecificComponent
 } from 'specific/specific.component';
@@ -18,6 +20,10 @@ import {
 import {
   SpecificRoutingModule
 } from 'specific/specific-routing.module';
+
+import {
+  SpecificTopnavbarComponent
+} from 'app/specific';
 
 
 @NgModule({
@@ -27,7 +33,9 @@ import {
   ],
   declarations: [
     SpecificComponent,
-    SpecificNewsComponent
+    SpecificNewsComponent,
+    SpecificProfileComponent,
+    SpecificTopnavbarComponent
   ]
 })
 export class SpecificModule { }

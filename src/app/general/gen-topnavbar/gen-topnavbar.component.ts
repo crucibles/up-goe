@@ -19,6 +19,7 @@ import {
   styleUrls: ['./gen-topnavbar.component.css']
 })
 export class GenTopnavbarComponent implements OnInit {
+  isCollapsed: boolean;
 
   constructor(
     private router: Router,
@@ -26,12 +27,14 @@ export class GenTopnavbarComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.isCollapsed = true;
   }
 
   /**
    * Logs out the current user
    */
-  logout() {
+  logOut() {
+    console.log("logout");
     this.userService.logOut();
   }
 }
