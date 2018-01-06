@@ -60,24 +60,22 @@ export class UserService {
 
     const url = this.loginUrl;
 
-    let params = new HttpParams()
-      .set('user_email', email)
-      .set('user_password', password);
+    let body = {
+      user_email: email,
+      user_password: password
+    }
 
-    return this.http.get<User>(url, {
-      params: params
-    }).pipe(
+    return this.http.post(url, body).pipe(
       tap(data => {
         const outcome = data ? 'fetched user ' + email : 'did not find user ' + email;
-        if(data){
+        if (data) {
         let currentUser = data['user_email']; 
-        console.log(currentUser);
         localStorage.setItem('currentUser', JSON.stringify(data));
         this.cookieService.set('currentUser', currentUser);
         }
         return data;
       }),
-      catchError(this.handleError<User>(`logIn user_id=${email}`))
+      catchError(this.handleError<any>(`logIn user_id=${email}`))
       );
   }
 
@@ -102,11 +100,11 @@ export class UserService {
   }
 
   /**
-   * @summary: Obtains user from server
+   * @summary: Obtains a user from server by id
    */
   getUser(id: string): Observable<User> {
     const url = this.userUrl;
-    let params = new HttpParams().set('id', '5a37f4500d1126321c11e5e7');
+    let params = new HttpParams().set('id', id);
     return this.http.get<User[]>(url, {
       params: params
     })
@@ -114,7 +112,6 @@ export class UserService {
       map(users => users[0]), // returns a {0|1} element array
       tap(h => {
         const outcome = h ? 'fetched user ' + id : 'did not find user ' + id;
-        console.log(outcome);
       }),
       catchError(this.handleError<User>(`getUserById user_id=${id}`))
       );

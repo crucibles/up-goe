@@ -119,7 +119,7 @@ export class QuestService {
   getUserSectionQuests(user_id/*, section_id*/): Observable<Quest[]> {
     // used for side tabs; aaaand di ko sure pero basin pwede makuha ang section quest by using getSectionQuests() function
     let params = new HttpParams()
-    .set('id', '5a37f4500d1126321c11e5e7')
+    .set('id', user_id)
     .set('method', 'getUserSectionQuests');
 
     return this.http.get<Quest[]>(this.sectionUrl, {

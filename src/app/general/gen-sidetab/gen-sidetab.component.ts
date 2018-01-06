@@ -59,20 +59,20 @@ export class GenSidetabComponent implements OnInit {
   isShowMenuButton: boolean = false;
 
   windowWidth: number = window.innerWidth;
-  
+
   //if screen size changes it'll update
   @HostListener('window:resize', ['$event'])
   resize(event) {
-      this.checkSize();
+    this.checkSize();
   }
 
   checkSize() {
-      this.windowWidth = window.innerWidth;
-      if(this.windowWidth <= 600){
-        this.isShowMenuButton = true;
-      } else {
-        this.isShowMenuButton = false;
-      }
+    this.windowWidth = window.innerWidth;
+    if (this.windowWidth <= 600) {
+      this.isShowMenuButton = true;
+    } else {
+      this.isShowMenuButton = false;
+    }
   }
 
 
@@ -83,7 +83,7 @@ export class GenSidetabComponent implements OnInit {
     private sectionService: SectionService,
     private userService: UserService,
     private router: Router
-  ) { 
+  ) {
   }
 
   ngOnInit() {
@@ -104,7 +104,22 @@ export class GenSidetabComponent implements OnInit {
    * section quests are for other pages except general-profile page
    */
   getUser(): void {
-    this.userService.getUser("5a37f4500d1126321c11e5e7")
+    // ced: I think this should be in the User model, by the get method. Current user will be used temporarily
+    let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    
+    console.info(currentUser);
+    this.user = currentUser;
+
+    let image: string = this.user.user_photo ? this.user.user_photo : "avatar.jpg";
+    this.image = "/assets/images/" + image;
+
+    if (this.isProfile) {
+      this.getUserSections(currentUser._id);
+    } else {
+      this.getQuests(currentUser._id);
+    }
+
+    /*this.userService.getUser(currentUser._id)
       .subscribe(user => {
         console.log(user);
         this.user = user;
@@ -117,7 +132,7 @@ export class GenSidetabComponent implements OnInit {
         } else {
           this.getQuests(this.user.user_id);
         }
-      });
+      });*/
   }
 
   /**
@@ -207,10 +222,10 @@ export class GenSidetabComponent implements OnInit {
     this.questTimePercentage = [];
     setInterval(() => {
       for (let i = 0; i < this.quests.length; i++) {
-        let timePerc: number = 100 - this.timeDiff(this.quests[i].quest_end_time_date, new Date()) / this.timeDiff(this.quests[i].quest_end_time_date, this.quests[i].quest_start_time_date) * 100;
-        let totalMinRem: number = this.timeDiff(this.quests[i].quest_end_time_date, new Date());
+        let timePerc: number = 100 - this.timeDiff(this.quests[i].quest_end_date, new Date()) / this.timeDiff(this.quests[i].quest_end_date, this.quests[i].quest_start_date) * 100;
+        let totalMinRem: number = this.timeDiff(this.quests[i].quest_end_date, new Date());
         let hourRem: number = Math.floor(totalMinRem / 1000 / 60 / 60);
-        
+
         this.toggleClass(hourRem, i);
         string = this.getTimeLabel(totalMinRem, hourRem);
         if (totalMinRem <= 0) {
@@ -232,7 +247,7 @@ export class GenSidetabComponent implements OnInit {
    * 
    * @returns string label for the progress bar
    */
-  getTimeLabel(totalMinRem: number, hourRem: number): string{
+  getTimeLabel(totalMinRem: number, hourRem: number): string {
     let string = "";
     if (totalMinRem <= 0) {
       string = "Time's up!";
@@ -251,7 +266,7 @@ export class GenSidetabComponent implements OnInit {
     return string;
   }
 
-  /**
+  /** 
    * @summary changes the color of the progress bar by changing its class
    * 
    * @param hourRem hours remaining for quest of index i

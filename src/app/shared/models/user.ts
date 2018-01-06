@@ -16,7 +16,7 @@
  * @member user_security_answer user's answer to the chosen security question
  */
 export class User {
-  user_id: string;
+  _id: string;
   user_fname: string;
   user_mname: string;
   user_lname: string;

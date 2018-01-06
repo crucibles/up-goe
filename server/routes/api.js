@@ -6,7 +6,7 @@ const ObjectID = require('mongodb').ObjectID;
 // Connect
 const connection = (closure) => {
     return MongoClient.connect('mongodb://localhost:27017/up-goe-db', (err, db) => {
-        if (err) return console.log(err);       
+        if (err) return console.log(err);
         closure(db);
     });
 };
@@ -26,17 +26,16 @@ let response = {
 };
 
 // api/login
-router.get('/login', (req, res) => {
+router.post('/login', (req, res) => {
     connection((db) => {
         const myDB = db.db('up-goe-db');
         myDB.collection('users')
             .findOne({
-                user_email: req.query.user_email,
-                user_password: req.query.user_password
+                user_email: req.body.user_email,
+                user_password: req.body.user_password
             })
             .then((user) => {
                 user.user_password = '';
-                console.log(user);
                 response.data = user;
                 res.json(user);
             })
@@ -48,7 +47,6 @@ router.get('/login', (req, res) => {
 
 // api/users
 router.get('/users', (req, res) => {
-    console.log(req);
     connection((db) => {
         const myDB = db.db('up-goe-db');
         myDB.collection('users')
@@ -57,7 +55,6 @@ router.get('/users', (req, res) => {
             )
             .toArray()
             .then((users) => {
-                console.log(users);
                 response.data = users;
                 res.json(users);
             })
@@ -91,49 +88,75 @@ router.get('/courses', (req, res) => {
 
 // api/sections
 router.get('/sections', (req, res) => {
-    
+
     connection((db) => {
         const myDB = db.db('up-goe-db');
 
-            myDB.collection('sections')
+        myDB.collection('sections')
             .find({
 
-                students: { 
+                students: {
                     $elemMatch: {
                         status: "E",
                         user_id: req.query.id
-                    }                    
-                }      
+                    }
+                }
 
             })
             .toArray()
             .then((sections) => {
 
-                if(req.query.method){
-                    let questsOnly = sections.map(a => a.quests);
+                if (req.query.method) {
+                    let questsOnly = sections.map(section => section.quests);
                     let userQuests = [];
 
                     questsOnly.forEach(quests => {
 
                         quests.forEach(quest => {
-                        
-                            if( quest.quest_participants == req.query.id ){
+
+                            if (quest.quest_participants == req.query.id) {
                                 userQuests.push(quest.quest_id);
                             }
 
                         })
-                    
+
                     });
 
-                    response.data = userQuests;
-                    res = res.json(userQuests);
+                    myDB.collection('quests')
+                        .find()
+                        .toArray()
+                        .then((quests) => {
+                            
+                            
+                            let AllUserQuests = [];
+
+                            quests.forEach(quest => {
+                                userQuests.forEach(userQuest => {
+                                    if (quest._id == userQuest) {
+                                        AllUserQuests.push(quest);
+                                    }
+
+                                })
+
+                            })
+
+                            
+
+                            response.data = AllUserQuests;
+                            res = res.json(AllUserQuests);
+
+                        }).catch((err) => {
+                            sendError(err, res);
+                        });
+
+
 
                 } else {
                     response.data = sections;
                     res = res.json(sections);
                 }
-                
-                
+
+
             })
             .catch((err) => {
                 sendError(err, res);
@@ -144,7 +167,7 @@ router.get('/sections', (req, res) => {
 
 // api/quests
 router.get('/quests', (req, res) => {
-    
+
     connection((db) => {
         const myDB = db.db('up-goe-db');
         myDB.collection('quests')
