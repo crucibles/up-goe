@@ -1,0 +1,151 @@
+<!--General Top Navigation Bar-->
+<gen-topnavbar></gen-topnavbar>
+
+<body>
+  <!--Side Tab-->
+  <gen-sidetab></gen-sidetab>
+
+  <div class="side-body">
+    <div class="container">
+      <div class="row">
+
+
+        <div class="col-sm-offset-1 col-sm-8" *ngFor="let post of commentPosts; let i = index">
+          <div class="panel panel-white post panel-shadow">
+            <div class="post-heading">
+              <div class="pull-left image">
+                <img src="http://bootdey.com/img/Content/user_1.jpg" class="img-circle avatar" alt="user profile image">
+              </div>
+              <div class="pull-left meta">
+                <div class="title h5">
+                  <a href="#">
+                    <b>{{this.posters[i]}}</b>
+                  </a>
+                  made a post.
+                </div>
+                <h6 class="text-muted time">{{this.displayTimeDate(post.post_date)}}</h6>
+              </div>
+            </div>
+            <div class="post-description">
+              <p>{{post.post_content}}</p>
+              <br class="clear" />
+              <div class="action-box" style="padding-top: 20px" *ngIf="post.post_comments && post.post_comments.length != 0">
+                <div id="app" class="comments">
+                  <article *ngFor="let comment_id of post.post_comments; let j = index">
+                    <ng-container *ngIf="comments[i][j]">
+                      <img id="profile-photo" src="https://en.gravatar.com/userimage/18343163/3fd908393aedf6423ec12cacec9a1f50.jpg?size=200" />
+                      <h4>
+                        <a href="#">{{this.commenters? this.commenters[i][j]: ""}}</a>
+                        <h6 class="text-muted time">{{displayTimeDate(this.comments[i][j].post_date)}}</h6>
+                        <p>{{this.comments[i][j].post_content}}</p>
+                      </h4>
+                    </ng-container>
+                  </article>
+                </div>
+                <!--<div id="app" class="comments">
+                  <article>
+                    <img id="profile-photo" src="https://en.gravatar.com/userimage/18343163/3fd908393aedf6423ec12cacec9a1f50.jpg?size=200" />
+                    <h4>
+                      <a href="#">chrisburton</a>
+                    </h4>
+                    <h6 class="text-muted time">1 minute ago</h6>
+                    <p>Thank you for visiting all the way from New York. This is just a test to determine if the Twitter API
+                      is working as it should. You should see your profile image and your username at the very top that links
+                      to your account. You should also see that I wrote in a thank you introduction with your location.</p>
+                  </article>
+
+                  <article>
+                    <img id="profile-photo" src="https://d17oy1vhnax1f7.cloudfront.net/items/0W2c1j2B0S0v3X0Z4407/Screen%20Shot%202017-01-28%20at%201.01.44%20AM.png"
+                    />
+                    <h4>
+                      <a href="#">AnnaWintour</a>
+                    </h4>
+                    <h6 class="text-muted time">1 minute ago</h6>
+                    <p>
+                      <span class="reply">@chrisburton</span> +1. Really interesting reply.
+                    </p>
+                  </article>
+
+                  <article>
+                    <img id="profile-photo" src="https://25.media.tumblr.com/avatar_c5eeb4b2e95b_128.png" />
+                    <h4>
+                      <a href="#">wooster</a>
+                    </h4>
+                    <time>2 weeks ago</time>
+                    <p>Thank you for visiting all the way from an unknown location. This is just a test to determine if the
+                      Twitter API is working as it should. You should see your profile image and your username at the very
+                      top that links to your account. You should also see that I wrote in a thank you introduction with your
+                      location.
+                    </p>
+                  </article>
+
+                  <article>
+                    <img id="profile-photo" src="https://randomuser.me/api/portraits/men/32.jpg" />
+                    <h4>
+                      <a href="#">randomuser3</a>
+                    </h4>
+                    <time>1 week ago</time>
+                    <p>Thank you for visiting all the way from NYC. This is just a test to determine if the Twitter API is working
+                      as it should. You should see your profile image and your username at the very top that links to your
+                      account. You should also see that I wrote in a thank you introduction with your location.</p>
+                  </article>
+                </div>-->
+              </div>
+              <div class="action-box" style="padding-top: 20px">
+                <div *ngIf="!post.commentable">
+                  You cannot comment to this post.
+                </div>
+                <div *ngIf="post.commentable" class="widget-area no-padding blank">
+                  <div class="status-upload">
+                    <div>
+                      <textarea [(ngModel)]="commentContent" placeholder="Reply to this post..."></textarea>
+                      <ul>
+                        <li>
+                          <a title="" data-toggle="tooltip" data-placement="bottom" data-original-title="Audio">
+                            <i class="fa fa-music"></i>
+                          </a>
+                        </li>
+                        <li>
+                          <a title="" data-toggle="tooltip" data-placement="bottom" data-original-title="Video">
+                            <i class="fa fa-video-camera"></i>
+                          </a>
+                        </li>
+                        <li>
+                          <a title="" data-toggle="tooltip" data-placement="bottom" data-original-title="Sound Record">
+                            <i class="fa fa-microphone"></i>
+                          </a>
+                        </li>
+                        <li>
+                          <a title="" data-toggle="tooltip" data-placement="bottom" data-original-title="Picture">
+                            <i class="fa fa-picture-o"></i>
+                          </a>
+                        </li>
+                      </ul>
+                      <button [disabled]="!commentContent || commentContent.length == 0" type="submit" class="btn btn-success green" (click)=submitComment(i)>
+                        <i class="fa fa-share"></i> Submit</button>
+                    </div>
+                  </div>
+                  <!-- Status Upload  -->
+                </div>
+                <!-- Widget Area -->
+              </div>
+              <br class="clear" />
+
+              <!--<div class="stats">
+                <a href="#" class="btn btn-default stat-item">
+                  <i class="fa fa-thumbs-up icon"></i>2
+                </a>
+                <a href="#" class="btn btn-default stat-item">
+                  <i class="fa fa-thumbs-down icon"></i>12
+                </a>
+              </div>-->
+
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+</body>

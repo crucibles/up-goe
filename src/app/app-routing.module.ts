@@ -11,33 +11,51 @@ import {
 //Application Imports
 import {
   GenNewsComponent
-} from './gen-news/gen-news.component';
+} from './general';
 
 import {
   GenProfileComponent
-} from './gen-profile/gen-profile.component';
+} from './general';
 
 import {
   GenSelcourseComponent
-} from './gen-selcourse/gen-selcourse.component';
+} from './general';
 
-
-import { SpecificNewsComponent } from './specific-news/specific-news.component';
+import {
+  LogInComponent
+} from './log-in/log-in.component';
 
 import {
   SignUpComponent
 } from './sign-up/sign-up.component';
 
+import {
+  SpecificNewsComponent
+} from './specific';
+
 
 
 const routes: Routes = [
-  /*{
-    path: '',
-    redirectTo: '/select-course',
+  {
+    path: '', 
+    redirectTo: '/log-in', 
     pathMatch: 'full'
-  },*/
+  },
+  {
+    path: 'log-in',
+    component: LogInComponent
+  },
   {
     path: '',
+    redirectTo: '/log-in',
+    pathMatch: 'full'
+  },
+  {
+    path: 'log-in',
+    component: LogInComponent
+  },
+  {
+    path: 'sign-up',
     component: SignUpComponent
   },
   {
@@ -53,7 +71,7 @@ const routes: Routes = [
     component: GenProfileComponent
   },
   {
-    path: 'specific-news',
+    path: 'specific-news/:section_id',
     component: SpecificNewsComponent
   }
 ];

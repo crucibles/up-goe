@@ -1,22 +1,34 @@
 //Core Imports
-import { NgModule } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { BrowserModule } from '@angular/platform-browser';
-
 import {
   HttpClientModule
 } from '@angular/common/http';
 
-//AHJ: remove after server is available
 import {
+  NgModule
+} from '@angular/core';
+
+import {
+  FormsModule,
+  ReactiveFormsModule
+} from '@angular/forms';
+
+import {
+  BrowserModule
+} from '@angular/platform-browser';
+
+//AHJ: remove after server is available
+/*import {
   HttpClientInMemoryWebApiModule
-} from 'angular-in-memory-web-api';
+} from 'angular-in-memory-web-api';*/
+
 
 //Third-Party Imports
-import { ChartsModule } from 'ng2-charts';
+import {
+  ChartsModule
+} from 'ng2-charts';
+
 
 //Application Imports
-
 import {
   AppComponent
 } from './app.component';
@@ -26,53 +38,38 @@ import {
 } from './app-routing.module';
 
 import {
-  CommentPostService
-} from './comment-post.service';
-
-import {
-  GenNewsComponent
-} from './gen-news/gen-news.component';
-
-import {
-  GenProfileComponent
-} from './gen-profile/gen-profile.component';
-
-import {
-  GenSelcourseComponent
-} from './gen-selcourse/gen-selcourse.component';
-
-import {
-  GenSidetabComponent
-} from './gen-sidetab/gen-sidetab.component';
-
-import {
+  GenNewsComponent,
+  GenProfileComponent,
+  GenSelcourseComponent,
+  GenSidetabComponent,
   GenTopnavbarComponent
-} from './gen-topnavbar/gen-topnavbar.component';
+} from './general'
+
+import { 
+ LogInComponent 
+} from './log-in/log-in.component';
 
 import {
-  QuestService
-} from './quest.service';
-
-import {
-  SectionService
-} from './section.service';
-
-import {
+  BadgeService,
+  CommentPostService,
+  ItemService, 
+  QuestService,
+  SectionService,
   UserService
-} from './user.service';
+} from './shared/services';
 
 //AHJ: remove after server is working
-import {
+/*import {
   InMemoryDataService
-} from './in-memory-data.service';
+} from './shared/services';*/
 
-import { 
-  SpecificNewsComponent 
-} from './specific-news/specific-news.component';
-
-import { 
-  SignUpComponent 
+import {
+  SignUpComponent
 } from './sign-up/sign-up.component';
+
+import {
+  SpecificNewsComponent
+} from './specific';
 
 
 @NgModule({
@@ -84,7 +81,8 @@ import {
     GenSidetabComponent,
     GenNewsComponent,
     SpecificNewsComponent,
-    SignUpComponent
+    SignUpComponent,
+    LogInComponent
   ],
   imports: [
     AppRoutingModule,
@@ -96,16 +94,17 @@ import {
     // The HttpClientInMemoryWebApiModule module intercepts HTTP requests
     // and returns simulated server responses.
     // Remove it when a real server is ready to receive requests.
-    HttpClientInMemoryWebApiModule.forRoot(
+    /*HttpClientInMemoryWebApiModule.forRoot(
       InMemoryDataService, { dataEncapsulation: false }
-    )
-    
+    )*/
   ],
   providers: [
+    BadgeService,
     CommentPostService,
     QuestService,
     SectionService,
-    UserService
+    UserService,
+    ItemService
   ],
   bootstrap: [AppComponent]
 })

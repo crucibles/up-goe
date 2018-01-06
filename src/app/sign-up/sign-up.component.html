@@ -2,7 +2,9 @@
 <h2>Sign Up</h2>
 <br><br>
 
-<form class="form-horizontal" [formGroup]="signupForm" (ngSubmit)="submit()">
+<form class="form-horizontal"
+      [formGroup]="signupForm" 
+      (ngSubmit)="submit()">
   <table>
     <tr>
       <td>
@@ -11,16 +13,16 @@
       <td>
         <div class="form-group">
           <div class="col-sm-10">
-            <input  ng-keyup="signalclose()"
-                    type="text" 
+            <input  type="text" 
                     class="form-control"
                     required
                     formControlName="firstName"
+                    name="firstName"
                     id="first-name" 
                     placeholder="First name">
           </div>
-          <small  *ngIf="((firstName.invalid && firstName.dirty) || signal)"
-                  class="form-text text-danger">This field is required.
+          <small  *ngIf="firstName.invalid && firstName.dirty"
+                  class="form-text text-danger">First name is required.
           </small>
         </div>
       </td>
@@ -37,11 +39,12 @@
                     class="form-control" 
                     required
                     formControlName="middleName"
+                    name="middleName"
                     id="middle-name" 
                     placeholder="Middle name">
           </div>
-          <small  *ngIf="((middleName.invalid && middleName.dirty) || signal)"
-                  class="form-text text-danger">This field is required.
+          <small  *ngIf="middleName.invalid && middleName.dirty"
+                  class="form-text text-danger">Middle name is required.
           </small>
         </div>
       </td>
@@ -58,11 +61,12 @@
                     class="form-control" 
                     required
                     formControlName="lastName"
+                    name="lastName"
                     id="last-name" 
                     placeholder="Last name">
           </div>
-          <small  *ngIf="((lastName.invalid && lastName.dirty) || signal)"
-                  class="form-text text-danger">This field is required.
+          <small  *ngIf="lastName.invalid && lastName.dirty"
+                  class="form-text text-danger">Last name is required.
           </small>
         </div>
       </td>
@@ -79,17 +83,18 @@
                     class="form-control" 
                     required
                     formControlName="birthdate"
+                    name="birthdate"
                     id="birthdate" 
                     placeholder="Birthdate">
           </div>
-          <small  *ngIf="((birthdate.invalid && birthdate.dirty) || signal)"
-                  class="form-text text-danger">This field is required.
+          <small  *ngIf="birthdate.invalid && birthdate.dirty"
+                  class="form-text text-danger">Birthdate is required.
           </small>
         </div>
       </td>
     </tr>
 
-    <tr>
+    <!-- <tr>
       <td>
         <label for="school-id">School ID:</label>
       </td>
@@ -100,11 +105,34 @@
                     class="form-control" 
                     required
                     formControlName="schoolId"
+                    name="schoolId"
                     id="school-id" 
                     placeholder="School ID">
           </div>
-          <small  *ngIf="((schoolId.invalid && schoolId.dirty) || signal)"
-                  class="form-text text-danger">This field is required.
+          <small  *ngIf="schoolId.invalid && schoolId.dirty"
+                  class="form-text text-danger">School ID is required.
+          </small>
+        </div>
+      </td>
+    </tr> -->
+
+    <tr>
+      <td>
+        <label for="contact-no">Contact No.:</label>
+      </td>
+      <td>
+        <div class="form-group">
+          <div class="col-sm-10">
+            <input  type="text" 
+                    class="form-control" 
+                    required
+                    formControlName="contactNumber"
+                    name="contactNumber"
+                    id="contact-no" 
+                    placeholder="Contact number">
+          </div>
+          <small  *ngIf="contactNumber.invalid && contactNumber.dirty"
+                  class="form-text text-danger">Contact number is required.
           </small>
         </div>
       </td>
@@ -121,11 +149,12 @@
                     class="form-control" 
                     required
                     formControlName="email"
+                    name="email"
                     id="email" 
                     placeholder="Email Address">
           </div>
-          <small  *ngIf="((email.invalid && email.dirty) || signal)"
-                  class="form-text text-danger">This field is required.
+          <small  *ngIf="email.dirty && email.errors?.email"
+                  class="form-text text-danger">E-mail has invalid format.
           </small>
         </div>
       </td>
@@ -142,11 +171,12 @@
                     class="form-control"
                     required
                     formControlName="password"
+                    name="password"
                     id="password"
                     placeholder="Password">
           </div>
-          <small  *ngIf="((password.invalid && password.dirty) || signal)"
-                  class="form-text text-danger">This field is required.
+          <small  *ngIf="password.invalid && password.dirty"
+                  class="form-text text-danger">Password is required.
           </small>
         </div>
       </td>
@@ -166,8 +196,8 @@
                     id="confirm-password" 
                     placeholder="Confirm password">
           </div>
-          <small  *ngIf="((confirmPassword.invalid && confirmPassword.dirty) || signal)"
-                  class="form-text text-danger">This field is required.
+          <small  *ngIf="confirmPassword.dirty && (password.value != confirmPassword.value)"
+                  class="form-text text-danger">Input is not equal with password.
           </small>
         </div>
       </td>
@@ -184,11 +214,12 @@
                     class="form-control" 
                     required
                     formControlName="securityQuestion"
+                    name="securityQuestion"
                     id="security-question">
               <option *ngFor="let question of questions" [value]="question">{{ question.securityQuestion }}</option>
             </select>
-            <small  *ngIf="((securityQuestion.invalid && securityQuestion.dirty) || signal)"
-                    class="form-text text-danger">This field is required.
+            <small  *ngIf="securityQuestion.invalid && securityQuestion.dirty"
+                    class="form-text text-danger">Security question is required.
             </small>
           </div>
         </div>
@@ -206,18 +237,33 @@
                     class="form-control" 
                     required
                     formControlName="securityAnswer"
+                    name="securityAnswer"
                     id="security-answer" 
                     placeholder="Answer">
           </div>
-          <small  *ngIf="((securityAnswer.invalid && securityAnswer.dirty) || signal)"
-                  class="form-text text-danger">This field is required.
+          <small  *ngIf="securityAnswer.invalid && securityAnswer.dirty"
+                  class="form-text text-danger">Security question answer is required.
           </small>
         </div>
       </td>
     </tr>
   </table>
   <br>
+    <input  type="radio" 
+            name="type"
+            value="student" 
+            formControlName="type" 
+            required> Student 
+  <br>
+    <input  type="radio" 
+            name="type" 
+            value="teacher" 
+            formControlName="type" 
+            required> Teacher
+  <br>
+  <br>
     <button type="submit"
+            [disabled]="signupForm.invalid || (password.value != confirmPassword.value)"
             class="btn btn-primary">Sign up
     </button>
     <button type="button"
