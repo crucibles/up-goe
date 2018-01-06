@@ -44,6 +44,9 @@ export class UserService {
 
   private userUrl = 'api/users';  // URL to: server/routes/api.js for users
   private loginUrl = 'api/login'; // URL to: server/routes/api.js for login
+  private signupUrl = 'api/login';// URL to: server/routes/api.js for sign up
+
+  
 
   constructor(
     private http: HttpClient,
@@ -95,8 +98,40 @@ export class UserService {
    * Registers the received user parameter to the database 
    * @param user user to be registered to the database
    */
-  register(user: User) {
+  register(
+    // schoolID: string, 
+    firstName: string, 
+    middleName: string, 
+    lastName: string, 
+    birthdate: string, 
+    email: string, 
+    password: string, 
+    type: string,
+    contactNumber: string,
+    securityQuestion: string, 
+    securityAnswer: string
+  ): Observable<User> {
+    const url = this.signupUrl;
 
+    return this.http.post<User>(url, {
+      // schoolID, 
+      firstName, 
+      middleName, 
+      lastName, 
+      birthdate, 
+      email, 
+      password, 
+      type,
+      contactNumber,
+      securityQuestion, 
+      securityAnswer
+    }).pipe(
+      tap(h => {
+        console.log(h);
+        return h;
+      }),
+      catchError(this.handleError<User>(`signup user_id=${email}`))
+      );
   }
 
   /**

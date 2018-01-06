@@ -25,6 +25,23 @@ let response = {
     message: null
 };
 
+// api/courses
+router.get('/courses', (req, res) => {
+    connection((db) => {
+        const myDB = db.db('up-goe-db');
+        myDB.collection('courses')
+            .find()
+            .toArray()
+            .then((courses) => {
+                response.data = courses;
+                res.json(courses);
+            })
+            .catch((err) => {
+                sendError(err, res);
+            });
+    });
+});
+
 // api/login
 router.post('/login', (req, res) => {
     connection((db) => {
@@ -45,46 +62,24 @@ router.post('/login', (req, res) => {
     });
 });
 
-// api/users
-router.get('/users', (req, res) => {
-    connection((db) => {
-        const myDB = db.db('up-goe-db');
-        myDB.collection('users')
-            .find(
-                ObjectID(req.query.id)
-            )
-            .toArray()
-            .then((users) => {
-                response.data = users;
-                res.json(users);
-            })
-            .catch((err) => {
-                sendError(err, res);
-            });
-    });
-});
+// api/quests
+router.get('/quests', (req, res) => {
 
-// api/courses
-router.get('/courses', (req, res) => {
     connection((db) => {
         const myDB = db.db('up-goe-db');
-        myDB.collection('courses')
+        myDB.collection('quests')
             .find()
             .toArray()
-            .then((courses) => {
-                response.data = courses;
-                res.json(courses);
+            .then((sections) => {
+                response.data = sections;
+                res.json(sections);
             })
             .catch((err) => {
                 sendError(err, res);
             });
     });
+
 });
-
-
-
-
-
 
 // api/sections
 router.get('/sections', (req, res) => {
@@ -165,24 +160,54 @@ router.get('/sections', (req, res) => {
 
 });
 
-// api/quests
-router.get('/quests', (req, res) => {
-
+// api/signup
+router.post('/signup', (req, res) => {
     connection((db) => {
         const myDB = db.db('up-goe-db');
-        myDB.collection('quests')
-            .find()
+        var myObj = {
+            user_fname: req.body.firstName,
+            user_mname: req.body.middleName,
+            user_lname: req.body.lastName,
+            user_birthdate: req.body.birthdate,
+            user_email: req.body.email,
+            user_password: req.body.password,
+            user_type: req.body.type,
+            user_contact_no: req.body.contactNumber,
+            user_security_question: req.body.securityQuestion,
+            user_security_answer: req.body.securityAnswer
+        };
+
+        myDB.collection('users').insertOne(myObj, function (err, res) {
+            if (err) {
+                console.log(err);
+                throw err;
+            }
+        });
+
+        myDB.collection('users').find().toArray().then(() => {
+            response.data = myObj;
+            res.json(myObj);
+        });
+    });
+});
+
+// api/users
+router.get('/users', (req, res) => {
+    connection((db) => {
+        const myDB = db.db('up-goe-db');
+        myDB.collection('users')
+            .find(
+                ObjectID(req.query.id)
+            )
             .toArray()
-            .then((sections) => {
-                response.data = sections;
-                res.json(sections);
+            .then((users) => {
+                response.data = users;
+                res.json(users);
             })
             .catch((err) => {
                 sendError(err, res);
             });
     });
-
 });
-
 
 module.exports = router;
