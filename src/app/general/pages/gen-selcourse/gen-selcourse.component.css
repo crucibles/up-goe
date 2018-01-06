@@ -1,8 +1,3 @@
-/*Padding added so body will not be overlapped by topnavbar*/
-body {
-    padding: 50px 0px 50px 0;
-}
-
 /*Course/Search-Result List Table*/
 #hor-zebra {
     font-family: Helvetica, Times ,"Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
@@ -11,7 +6,7 @@ body {
     text-align: left;
     border-collapse: collapse;
     margin: auto;
-    margin-top: 100px;
+    margin-top: 20px;
     display: block;
 }
 
@@ -42,26 +37,23 @@ body {
 .search-container {
     float: right;
     border: 0.1px rgba(252, 242, 242, 0.849);
+    margin-top:-20px;
 }
   
 .search-container input[type=text]{
     border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;
-    padding: 6px;
-    margin-top: 8px;
-    font-size: 17px;
-    
+    padding: 5px;
 }
   
 .search-container button {
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px;
     float: right;
-    padding: 6px 10px;
-    margin-top: 8px;
+    padding: 4px 10px;
     margin-right: 16px;
     background: #ddd;
-    font-size: 17px;
+    font-size: 16px;
     cursor: pointer;
 }
   
@@ -69,26 +61,23 @@ body {
     background: #ccc;
 }
   
-@media screen and (max-width: 600px) {
-.search-container {
+@media screen and (max-width: 765px) {
+    .search-container {
       float: none;
-}
-.topnav a, .search-container input[type=text], .search-container button {
+    }
+    .search-container input[type=text], .search-container button {
+      border-radius: 10px;
       float: none;
       display: block;
       text-align: left;
-      width: 100%;
-      margin: 0;
-      padding: 14px;
-}
-
-.search-container input[type=text] {
-      border: 1px solid #ccc;  
+      width: 90%;
+      padding: 10px;
+      margin-bottom: 10px;
     }
-  }
 
-/*Side body - Complement of Vertical Tab & Top Navbar*/
-.side-body {
-    margin-left:25%;
-    padding:1px 16px;
+
+    .search-container input[type=text] {
+      border: 1px solid #ccc;  
+      margin-top: 30px;
+    }
 }

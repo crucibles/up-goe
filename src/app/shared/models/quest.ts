@@ -20,16 +20,169 @@
  * 
 */
 export class Quest {
-    quest_id: number;
-    quest_title: string;
-    quest_description: string;
-    quest_retakable: boolean;
-    quest_badge: string;
-    quest_item: string[]; 
-    quest_xp: number;
-    quest_hp: number;
-    quest_start_time_date: Date;
-    quest_end_time_date: Date;
-    quest_party: boolean;
-    quest_prerequisite: string[];
+    private _id: string;
+    private quest_title: string;
+    private quest_description: string;
+    private quest_retakable: boolean;
+    private quest_badge: string;
+    private quest_item: string[];
+    private quest_xp: number;
+    private quest_hp: number;
+    private quest_start_time_date: Date;
+    private quest_end_time_date: Date;
+    private quest_party: boolean;
+    private quest_prerequisite: string[];
+
+    constructor(
+        quest?: any
+    ) {
+        if(quest){
+            this._id = quest._id;
+            this.quest_title = quest.quest_title? quest.quest_title: "";
+            this.quest_description = quest.quest_description? quest.quest_description: "";
+            this.quest_retakable = quest.quest_retakable? quest.quest_retakable: false;
+            this.quest_badge = quest.quest_badge? quest.quest_badge: "";
+            this.quest_item = quest.quest_item? quest.quest_item: [];
+            this.quest_xp = quest.quest_xp? quest.quest_xp: 0;
+            this.quest_hp = quest.quest_hp? quest.quest_hp: 0;
+            this.quest_start_time_date = quest.quest_start_time_date? new Date(quest.quest_start_time_date): new Date();
+            this.quest_end_time_date = quest.quest_end_time_date? new Date(quest.quest_end_time_date): new Date();
+            this.quest_party = quest.quest_party? quest.quest_party: false;
+            this.quest_prerequisite = quest.quest_prerequisite? quest.quest_prerequisite: [];
+        } else {
+            this.quest_title =  "";
+            this.quest_description = "";
+            this.quest_retakable = false;
+            this.quest_badge = "";
+            this.quest_item = [];
+            this.quest_xp = 0;
+            this.quest_hp = 0;
+            this.quest_start_time_date =  new Date();
+            this.quest_end_time_date = new Date();
+            this.quest_party = false;
+            this.quest_prerequisite = [];
+        }
+    }
+
+    setQuest(
+        quest_title,
+        quest_description,
+        quest_retakable,
+        quest_badge,
+        quest_item,
+        quest_xp,
+        quest_hp,
+        quest_start_time_date,
+        quest_end_time_date,
+        quest_party,
+        quest_prerequisite
+    ) {
+        this.quest_title = quest_title;
+        this.quest_description = quest_description;
+        this.quest_retakable = quest_retakable;
+        this.quest_badge = quest_badge;
+        this.quest_item = quest_item;
+        this.quest_xp = quest_xp;
+        this.quest_hp = quest_hp;
+        this.quest_start_time_date = new Date(quest_start_time_date);
+        this.quest_end_time_date = new Date(quest_end_time_date);
+        this.quest_party = quest_party;
+        this.quest_prerequisite = quest_prerequisite;
+    }
+    
+    getQuestId() {
+        return this._id;
+    }
+
+    getQuestTitle() {
+        return this.quest_title;
+    }
+
+    getQuestDescription() {
+        return this.quest_description;
+    }
+
+    getQuestRetakable() {
+        return this.quest_retakable;
+    }
+
+    getQuestBadge() {
+        return this.quest_badge;
+    }
+
+    getQuestItem() {
+        return this.quest_item;
+    }
+
+    getQuestXp() {
+        return this.quest_xp;
+    }
+
+    getQuestHp() {
+        return this.quest_hp;
+    }
+
+    getQuestStartTimeDate() {
+        return this.quest_start_time_date;
+    }
+
+    getQuestEndTimeDate() {
+        return this.quest_end_time_date;
+    }
+
+    getQuestParty() {
+        return this.quest_party;
+    }
+
+    getQuestPrerequisite() {
+        return this.quest_prerequisite;
+    }
+
+    setQuestId(_id) {
+        this._id = _id;
+    }
+
+    setQuestTitle(quest_title) {
+        this.quest_title = quest_title;
+    }
+
+    setQuestDescription(quest_description) {
+        this.quest_description = quest_description;
+    }
+
+    setQuestRetakable(quest_retakable) {
+        this.quest_retakable = quest_retakable;
+    }
+
+    setQuestBadge(quest_badge) {
+        this.quest_badge = quest_badge;
+    }
+
+    setQuestItem(quest_item) {
+        this.quest_item = quest_item;
+    }
+
+    setQuestXp(quest_xp) {
+        this.quest_xp = quest_xp;
+    }
+
+    setQuestHp(quest_hp) {
+        this.quest_hp = quest_hp;
+    }
+
+    setQuestStarttimedate(quest_start_time_date) {
+        this.quest_start_time_date = quest_start_time_date;
+    }
+
+    setQuestEndtimedate(quest_end_time_date) {
+        this.quest_end_time_date = quest_end_time_date;
+    }
+
+    setQuestParty(quest_party) {
+        this.quest_party = quest_party;
+    }
+
+    setQuestPrerequisite(quest_prerequisite) {
+        this.quest_prerequisite = quest_prerequisite;
+    }
 }

@@ -1,1 +1,2 @@
-export * from './pages/specific-news.component'
+
+export * from './specific-topnavbar/specific-topnavbar.component';

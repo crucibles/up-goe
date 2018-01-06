@@ -19,13 +19,13 @@
       "testTsconfig": "tsconfig.spec.json",
       "prefix": "app",
       "styles": [
-        "styles.css",
         "../node_modules/bootstrap/dist/css/bootstrap.css",
         "../node_modules/bootstrap/dist/css/bootstrap.min.css",
-        "../node_modules/font-awesome/css/font-awesome.css"
+        "../node_modules/font-awesome/css/font-awesome.css",
+        "styles.css"
       ],
       "scripts": [
-        "../node_modules/chart.js/src/chart.js"
+        "../node_modules/chart.js/dist/Chart.min.js"
       ],
       "environmentSource": "environments/environment.ts",
       "environments": {
@@ -61,6 +61,12 @@
   "defaults": {
     "styleExt": "css",
     "component": {
+      "spec": false
+    },
+    "service": {
+      "spec": false
+    },
+    "module": {
       "spec": false
     }
   }

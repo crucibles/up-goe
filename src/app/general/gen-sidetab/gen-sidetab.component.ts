@@ -2,7 +2,8 @@
 import {
   Component,
   OnInit,
-  Input
+  Input,
+  HostListener
 } from '@angular/core';
 
 import {
@@ -20,14 +21,15 @@ import {
   Quest,
   Section,
   User
-} from '../../shared/models';
+} from 'shared/models';
 
 import {
   CommentPostService,
+  PageService,
   QuestService,
   SectionService,
   UserService
-} from '../../shared/services';
+} from 'shared/services';
 
 @Component({
   selector: 'gen-sidetab',
@@ -39,6 +41,7 @@ export class GenSidetabComponent implements OnInit {
 
   //current user
   user: User;
+  image: string;
 
   //for pages other than profile page  
   quests: Quest[] = []; //user's quests
@@ -53,19 +56,45 @@ export class GenSidetabComponent implements OnInit {
   sections: Section[] = [];
   courses: Course[] = [];
 
+  isShowMenuButton: boolean = false;
+
+  windowWidth: number = window.innerWidth;
+
+  //if screen size changes it'll update
+  @HostListener('window:resize', ['$event'])
+  resize(event) {
+    this.checkSize();
+  }
+
+  checkSize() {
+      this.windowWidth = window.innerWidth;
+      if(this.windowWidth <= 765){
+        this.isShowMenuButton = true;
+      } else {
+        this.isShowMenuButton = false;
+      }
+  }
+
 
   constructor(
     private commentPostService: CommentPostService,
+    private pageService: PageService,
     private questService: QuestService,
     private sectionService: SectionService,
     private userService: UserService,
     private router: Router
-  ) { }
+  ) {
+    this.checkSize();
+  }
 
   ngOnInit() {
+    this.image = "/assets/images/not-found.jpg"
     this.defaultPBClass = 'progress-bar progress-bar-striped active';
     this.getUser();
     this.isEditing = false;
+    this.pageService.isProfile.subscribe(isProfile => {
+      this.isProfile = isProfile;
+    });
   }
 
   /**
@@ -75,15 +104,33 @@ export class GenSidetabComponent implements OnInit {
    * section quests are for other pages except general-profile page
    */
   getUser(): void {
-    this.userService.getUser("1")
+    // ced: I think this should be in the User model, by the get method. Current user will be used temporarily
+    let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    
+    this.user = new User(currentUser);
+
+    let image: string = this.user.getUserPhoto() ? this.user.getUserPhoto() : "avatar.jpg";
+    this.image = "/assets/images/" + image;
+
+    if (this.isProfile) {
+      this.getUserSections(currentUser._id);
+    } else {
+      this.getQuests(currentUser._id);
+    }
+
+    /*this.userService.getUser(currentUser._id)
       .subscribe(user => {
-        this.user = user;
+        this.user = new User(user);
+
+        let image: string = this.user.getUserPhoto()? this.user.getUserPhoto(): "avatar.jpg";
+        this.image = "/assets/images/" + image;
+
         if (this.isProfile) {
-          this.getUserSections(this.user.user_id);
+          this.getUserSections(this.user.getUserId());
         } else {
-          this.getQuests(this.user.user_id);
+          this.getQuests(this.user.getUserId());
         }
-      });
+      });*/
   }
 
   /**
@@ -98,6 +145,7 @@ export class GenSidetabComponent implements OnInit {
     console.log(user_id);
     this.sectionService.getUserSections(user_id).subscribe(sections => {
       this.sections = sections;
+      console.log(sections);
       this.courses = [];
       this.sections.forEach((section, index) => {
         this.sectionService.getCourseById(section.course_id).subscribe(course => {
@@ -116,10 +164,11 @@ export class GenSidetabComponent implements OnInit {
    * @param user_id the id of the user that asks for the list of quests
    */
   getQuests(user_id): void {
-    this.questService.getUserSectionQuests(user_id)
-      .subscribe(quests => {
-        this.quests = quests;
-        this.timeDisplays();
+    this.questService.getUserQuests(user_id)
+      .subscribe(object => {
+        //AHJ: need more fixes
+        //this.quests = quests;
+        //this.timeDisplays();
       });
   }
 
@@ -141,7 +190,7 @@ export class GenSidetabComponent implements OnInit {
   openSectionPage(section_id: string) {
     //AHJ: must navigate to the specific section's home page yet it is still not available
     console.warn(section_id);
-    this.router.navigate(['/specific-news', section_id]);
+    this.router.navigate(['/specific/specific-news', section_id]);
   }
 
   /**
@@ -172,10 +221,10 @@ export class GenSidetabComponent implements OnInit {
     this.questTimePercentage = [];
     setInterval(() => {
       for (let i = 0; i < this.quests.length; i++) {
-        let timePerc: number = 100 - this.timeDiff(this.quests[i].quest_end_time_date, new Date()) / this.timeDiff(this.quests[i].quest_end_time_date, this.quests[i].quest_start_time_date) * 100;
-        let totalMinRem: number = this.timeDiff(this.quests[i].quest_end_time_date, new Date());
+        let timePerc: number = 100 - this.timeDiff(this.quests[i].getQuestEndTimeDate(), new Date()) / this.timeDiff(this.quests[i].getQuestEndTimeDate(), this.quests[i].getQuestStartTimeDate()) * 100;
+        let totalMinRem: number = this.timeDiff(this.quests[i].getQuestEndTimeDate(), new Date());
         let hourRem: number = Math.floor(totalMinRem / 1000 / 60 / 60);
-        
+
         this.toggleClass(hourRem, i);
         string = this.getTimeLabel(totalMinRem, hourRem);
         if (totalMinRem <= 0) {
@@ -197,7 +246,7 @@ export class GenSidetabComponent implements OnInit {
    * 
    * @returns string label for the progress bar
    */
-  getTimeLabel(totalMinRem: number, hourRem: number): string{
+  getTimeLabel(totalMinRem: number, hourRem: number): string {
     let string = "";
     if (totalMinRem <= 0) {
       string = "Time's up!";
@@ -216,7 +265,7 @@ export class GenSidetabComponent implements OnInit {
     return string;
   }
 
-  /**
+  /** 
    * @summary changes the color of the progress bar by changing its class
    * 
    * @param hourRem hours remaining for quest of index i

@@ -32,20 +32,27 @@ import {
   Course,
   Quest,
   User
-} from '../../shared/models';
+} from 'shared/models';
+
+import { 
+  CookieService 
+} from 'ngx-cookie-service';
 
 
 @Injectable()
 export class UserService {
 
-  private userUrl = 'api/users';    // URL to: server/routes/api.js for users
-  private loginUrl = 'api/login';   // URL to: server/routes/api.js for login
-  private signupUrl = 'api/signup'; // URL to: server/routes/api.js for signup
+  private userUrl = 'api/users';  // URL to: server/routes/api.js for users
+  private loginUrl = 'api/login'; // URL to: server/routes/api.js for login
+  private signupUrl = 'api/login';// URL to: server/routes/api.js for sign up
+
+  
 
   constructor(
     private http: HttpClient,
-    private router: Router
-  ) { } 
+    private router: Router,
+    private cookieService: CookieService
+  ) { }
 
   /**
    * Lets the user log in (if user enters valid email and password) and be able to navigate to the correct pages
@@ -56,20 +63,22 @@ export class UserService {
 
     const url = this.loginUrl;
 
-    let params = new HttpParams()
-      .set('user_email', email)
-      .set('user_password', password);
-      
-    return this.http.get<User>(url, {
-      params: params
-    }).pipe(
-      tap(h => {
-        console.log(h);
-        const outcome = h ? 'fetched user ' + email : 'did not find user ' + email;
-        localStorage.setItem('currentUser', JSON.stringify(h));
-        return h;
+    let body = {
+      user_email: email,
+      user_password: password
+    }
+
+    return this.http.post(url, body).pipe(
+      tap(data => {
+        const outcome = data ? 'fetched user ' + email : 'did not find user ' + email;
+        if (data) {
+        let currentUser = data['user_email']; 
+        localStorage.setItem('currentUser', JSON.stringify(data));
+        this.cookieService.set('currentUser', currentUser);
+        }
+        return data;
       }),
-      catchError(this.handleError<User>(`logIn user_id=${email}`))
+      catchError(this.handleError<any>(`logIn user_id=${email}`))
       );
   }
 
@@ -77,12 +86,13 @@ export class UserService {
    * Logs out the user
    * add subscribe when have server side
    * and when it is observable
-   */ 
+   */
   logOut() {
     // remove user from local storage to log user out
     localStorage.removeItem('currentUser');
+    this.cookieService.delete('currentUser');
     this.router.navigate(['/log-in'])
-  } 
+  }
 
   /**
    * Registers the received user parameter to the database 
@@ -125,16 +135,18 @@ export class UserService {
   }
 
   /**
-   * @summary: Obtains user from server
+   * @summary: Obtains a user from server by id
    */
   getUser(id: string): Observable<User> {
-    const url = `${this.userUrl}/?user_id=${id}`;
-    return this.http.get<User[]>(url)
+    const url = this.userUrl;
+    let params = new HttpParams().set('id', id);
+    return this.http.get<User[]>(url, {
+      params: params
+    })
       .pipe(
       map(users => users[0]), // returns a {0|1} element array
       tap(h => {
         const outcome = h ? 'fetched user ' + id : 'did not find user ' + id;
-        console.log(outcome);
       }),
       catchError(this.handleError<User>(`getUserById user_id=${id}`))
       );

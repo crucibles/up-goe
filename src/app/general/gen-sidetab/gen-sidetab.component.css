@@ -2,15 +2,19 @@
 .vert-tab {
     list-style-type: none;
     padding: 0;
-    width: 22%;
+    width: 250px;
     background-color: #f1f1f1;
     height: 100%; /* Full height */
     position: fixed; /* Make it stick, even on scroll */
     overflow: auto; /* Enable scrolling if the sidenav has too much content */
+    left: -1px;
+    top: 30px;
+    overflow-y: scroll;
 }
 
 /*Adjusts image inside the side tab*/
 .vert-tab img {
+    padding-top: 30px;
     max-width: 100%;
     max-height: 50%;
     height: auto;
@@ -56,3 +60,35 @@
 .user-information {
     width: 100%;
 }
+
+@media screen and (max-width: 765px) {
+    .toggle {
+        position: fixed;
+        font-size: 1.3em;
+        cursor: pointer;
+        left: 0px;
+    }
+
+    .vert-tab {
+        width: 250px;
+    }
+
+    #slide {
+        display: none; 
+    }
+
+    #slide:not(:checked) + .container .vert-tab {
+        left: -250px;
+    }
+
+    #slide:checked + .container .toggle {
+        left: 250px;
+    }
+
+    #slide:checked + .container .vert-tab {
+        left: 0px;
+    }
+}
+
+
+

@@ -11,10 +11,18 @@ import {
   Validators
 } from '@angular/forms';
 
+import {
+  Router
+} from '@angular/router';
+
 //Application Imports
-import { SECURITY_QUESTION } from '../shared/models';
-import { UserService } from '../shared/services';
-import { Router } from '@angular/router';
+import { 
+  SECURITY_QUESTION 
+} from 'shared/models';
+
+import {
+  UserService
+} from '../shared/services';
 
 @Component({
   selector: 'app-sign-up',

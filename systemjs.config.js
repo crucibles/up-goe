@@ -6,13 +6,13 @@
   System.config({
     paths: {
       // paths serve as alias
-      'npm:': 'node_modules/'
+      'npm:': 'node_modules/',
+      'ng2-charts': 'node_modules/ng2-charts/bundles/ng2-charts.umd.min.js'
     },
     // map tells the System loader where to look for things
     map: {
       // our app is within the app folder
       'app': 'app',
-      'shared': 'app/shared',
 
       // angular bundles
       '@angular/animations': 'npm:@angular/animations/bundles/animations.umd.js',
@@ -48,6 +48,10 @@
         }
       },
       rxjs: {
+        defaultExtension: 'js'
+      },
+      'ng2-charts': {
+        main: 'ng2-charts.js',
         defaultExtension: 'js'
       }
     }

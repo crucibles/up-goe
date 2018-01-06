@@ -25,44 +25,7 @@ let response = {
     message: null
 };
 
-// Log-in
-router.get('/login', (req, res) => {
-    connection((db) => {
-        const myDB = db.db('up-goe-db');
-        myDB.collection('users')
-            .find({
-                user_email: req.query.user_email,
-                user_password: req.query.user_password
-            })
-            .toArray()
-            .then((users) => {
-                response.data = users[0];
-                res.json(users[0]);
-            })
-            .catch((err) => {
-                sendError(err, res);
-            });
-    });
-});
-
-// Get users
-router.get('/users', (req, res) => {
-    connection((db) => {
-        const myDB = db.db('up-goe-db');
-        myDB.collection('users')
-            .find()
-            .toArray()
-            .then((users) => {
-                response.data = users;
-                res.json(users);
-            })
-            .catch((err) => {
-                sendError(err, res);
-            });
-    });
-});
-
-// Get courses
+// api/courses
 router.get('/courses', (req, res) => {
     connection((db) => {
         const myDB = db.db('up-goe-db');
@@ -79,24 +42,19 @@ router.get('/courses', (req, res) => {
     });
 });
 
-// Get sections of user
-router.get('/sections', (req, res) => {
-
+// api/login
+router.post('/login', (req, res) => {
     connection((db) => {
         const myDB = db.db('up-goe-db');
-        myDB.collection('sections')
-            .find({
-                students: {
-                    $elemMatch: {
-                        user_id: req.query.id
-                    }
-                }
+        myDB.collection('users')
+            .findOne({
+                user_email: req.body.user_email,
+                user_password: req.body.user_password
             })
-            .toArray()
-            .then((sections) => {
-                response.data = sections;
-                res.json(sections);
-
+            .then((user) => {
+                user.user_password = '';
+                response.data = user;
+                res.json(user);
             })
             .catch((err) => {
                 sendError(err, res);
@@ -104,7 +62,105 @@ router.get('/sections', (req, res) => {
     });
 });
 
-// Store new user to databse
+// api/quests
+router.get('/quests', (req, res) => {
+
+    connection((db) => {
+        const myDB = db.db('up-goe-db');
+        myDB.collection('quests')
+            .find()
+            .toArray()
+            .then((sections) => {
+                response.data = sections;
+                res.json(sections);
+            })
+            .catch((err) => {
+                sendError(err, res);
+            });
+    });
+
+});
+
+// api/sections
+router.get('/sections', (req, res) => {
+
+    connection((db) => {
+        const myDB = db.db('up-goe-db');
+
+        myDB.collection('sections')
+            .find({
+
+                students: {
+                    $elemMatch: {
+                        status: "E",
+                        user_id: req.query.id
+                    }
+                }
+
+            })
+            .toArray()
+            .then((sections) => {
+
+                if (req.query.method) {
+                    let questsOnly = sections.map(section => section.quests);
+                    let userQuests = [];
+
+                    questsOnly.forEach(quests => {
+
+                        quests.forEach(quest => {
+
+                            if (quest.quest_participants == req.query.id) {
+                                userQuests.push(quest.quest_id);
+                            }
+
+                        })
+
+                    });
+
+                    myDB.collection('quests')
+                        .find()
+                        .toArray()
+                        .then((quests) => {
+                            
+                            
+                            let AllUserQuests = [];
+
+                            quests.forEach(quest => {
+                                userQuests.forEach(userQuest => {
+                                    if (quest._id == userQuest) {
+                                        AllUserQuests.push(quest);
+                                    }
+
+                                })
+
+                            })
+
+                            
+
+                            response.data = AllUserQuests;
+                            res = res.json(AllUserQuests);
+
+                        }).catch((err) => {
+                            sendError(err, res);
+                        });
+
+
+
+                } else {
+                    response.data = sections;
+                    res = res.json(sections);
+                }
+
+
+            })
+            .catch((err) => {
+                sendError(err, res);
+            });
+    });
+
+});
+
+// api/signup
 router.post('/signup', (req, res) => {
     connection((db) => {
         const myDB = db.db('up-goe-db');
@@ -135,5 +191,23 @@ router.post('/signup', (req, res) => {
     });
 });
 
+// api/users
+router.get('/users', (req, res) => {
+    connection((db) => {
+        const myDB = db.db('up-goe-db');
+        myDB.collection('users')
+            .find(
+                ObjectID(req.query.id)
+            )
+            .toArray()
+            .then((users) => {
+                response.data = users;
+                res.json(users);
+            })
+            .catch((err) => {
+                sendError(err, res);
+            });
+    });
+});
 
 module.exports = router;

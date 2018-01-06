@@ -11,12 +11,13 @@ import {
 //Application Imports
 import {
   CommentPost
-} from '../../../shared/models'
+} from 'shared/models'
 
 import {
   CommentPostService,
+  PageService,
   UserService
-} from '../../../shared/services';
+} from 'shared/services';
 
 @Component({
   selector: 'app-gen-news',
@@ -32,9 +33,12 @@ export class GenNewsComponent implements OnInit {
 
   constructor(
     private commentPostService: CommentPostService,
+    private pageService: PageService,
     private userService: UserService,
     private router: Router
-  ) { }
+  ) {
+    this.pageService.isProfilePage(false);
+  }
 
   ngOnInit() {
     this.getAllCommentPost();
@@ -46,27 +50,27 @@ export class GenNewsComponent implements OnInit {
    * 'commentposts' array
    */
   getAllCommentPost() {
-    this.commentPostService.getSectionPosts("11").subscribe(commentPosts => {
+    this.commentPostService.getSectionPosts("5a3807410d1126321c11e5ee").subscribe(commentPosts => {
       //chooses the commentposts that are main posts (ignores comments)
-      this.commentPosts = commentPosts.filter(post => post.is_post == true);
+      this.commentPosts = commentPosts ? commentPosts.filter(post => post.getIsPost() == true) : [];
 
       //sorts the commentpost by date (from recent 'on top' to oldest)
       this.commentPosts.sort((a, b) => {
-        return this.getTime(b.post_date) - this.getTime(a.post_date);
+        return this.getTime(b.getPostDate()) - this.getTime(a.getPostDate());
       });
 
       //gets the poster of each commentpost
       this.commentPosts.forEach((post, index) => {
         this.posters = [];
-        this.userService.getUser(post.user_id).subscribe(user => {
-          let mname: string = user.user_mname ? user.user_mname[0] + "." : ""
-          this.posters[index] = user.user_fname + " " + mname + " " + user.user_lname;
+        this.userService.getUser(post.getUserId()).subscribe(user => {
+          let mname: string = user.getUserId() ? user.getUserMname()[0] + "." : ""
+          this.posters[index] = user.getUserFname() + " " + mname + " " + user.getUserLname();
         });
       });
     });
   }
 
-  
+
   /*Below are the helper functions for this component */
 
   /**
@@ -75,7 +79,7 @@ export class GenNewsComponent implements OnInit {
    */
   openClassNewsPage(section_id: string) {
     console.warn(section_id);
-    this.router.navigate(['/specific-news', section_id]);
+    this.router.navigate(['/specific/specific-news', section_id]);
   }
 
   /**

@@ -1,14 +1,11 @@
 <!--General Top Navigation Bar-->
-<gen-topnavbar></gen-topnavbar>
 
 <body>
   <!--Side Tab-->
-  <gen-sidetab></gen-sidetab>
 
   <div class="side-body">
     <div class="container">
       <div class="row">
-
 
         <div class="col-sm-offset-1 col-sm-8" *ngFor="let post of commentPosts; let i = index">
           <div class="panel panel-white post panel-shadow">
@@ -98,7 +95,7 @@
                 <div *ngIf="post.commentable" class="widget-area no-padding blank">
                   <div class="status-upload">
                     <div>
-                      <textarea [(ngModel)]="commentContent" placeholder="Reply to this post..."></textarea>
+                      <textarea [(ngModel)]="commentContent[i]" placeholder="Reply to this post..."></textarea>
                       <ul>
                         <li>
                           <a title="" data-toggle="tooltip" data-placement="bottom" data-original-title="Audio">

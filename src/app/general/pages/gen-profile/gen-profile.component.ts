@@ -15,11 +15,12 @@ import {
   User,
   TOTXP,
   MAXXP
-} from '../../../shared/models';
+} from 'shared/models';
 
 import {
+  PageService,
   UserService
-} from '../../../shared/services';    
+} from 'shared/services';    
 
 @Component({
   selector: 'app-gen-profile',
@@ -84,12 +85,15 @@ export class GenProfileComponent implements OnInit {
    * @param userService uses the UserService to obtains data needed for user
    */
   constructor(
+    private pageService: PageService,
     private userService: UserService
-  ) { }
+  ) {
+  }
 
   ngOnInit() {
     this.getUser();
     this.getGrades();
+    this.pageService.isProfilePage(true);
   }
 
 

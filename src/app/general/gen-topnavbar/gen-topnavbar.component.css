@@ -5,19 +5,14 @@
     position: fixed; /* Make it stick, even on scroll */
     width: 100%;
 }
-  
-.navbar li a {
-    float: left;
-    display: block;
-    color: black;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
+
+.navbar img {
+    height: 40px;
 }
   
-.navbar li a:hover, #log-out:hover{
-    background-color: #ddd;
-    color: black;
+.navbar li a:hover{
+    background-color: #2196F3;
+    color: white;
     cursor: pointer;
 }
   
