@@ -17,7 +17,8 @@ import {
 } from 'specific/specific.component';
 
 import {
-  SpecificNewsComponent
+  SpecificNewsComponent, 
+  SpecificProfileComponent
 } from 'specific/pages';
 
 const specificRoutes: Routes = [
@@ -29,6 +30,10 @@ const specificRoutes: Routes = [
       {
         path: 'specific-news',
         component: SpecificNewsComponent
+      },
+      {
+        path: 'specific-profile',
+        component: SpecificProfileComponent
       },
       {
         path: '**',

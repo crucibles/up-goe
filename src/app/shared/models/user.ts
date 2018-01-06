@@ -31,6 +31,40 @@ export class User {
   private user_security_answer: string;
 
   constructor(
+    user: any
+  ) {
+    if(user){
+      this._id = user._id;
+      this.user_fname = user.user_fname? user.user_fname: "";
+      this.user_mname = user.user_mname? user.user_mname: "";
+      this.user_lname = user.user_lname? user.user_lname: "";
+      this.user_birthdate = user.user_birthdate? new Date(user.user_birthdate): new Date();
+      this.user_email = user.user_email? user.user_email: "";
+      this.user_password = user.user_password? user.user_password: "";
+      this.user_type = user.user_type? user.user_type: "";
+      this.user_contact_no = user.user_contact_no? user.user_contact_no: "";
+      this.user_photo = user.user_photo? user.user_photo: "";
+      this.user_school_id = user.user_school_id? user.user_school_id: "";
+      this.user_security_question = user.user_security_question? user.user_security_question: "";
+      this.user_security_answer = user.user_security_answer? user.user_security_answer: "";
+    } else {
+      this.user_fname = "";
+      this.user_mname = "";
+      this.user_lname = "";
+      this.user_birthdate = new Date();
+      this.user_email = "";
+      this.user_password = "";
+      this.user_type = "";
+      this.user_contact_no = "";
+      this.user_photo = "";
+      this.user_school_id = "";
+      this.user_security_question = "";
+      this.user_security_answer = "";
+      
+    }
+  }
+
+  setUser(
     user_fname,
     user_mname,
     user_lname,
@@ -47,7 +81,7 @@ export class User {
     this.user_fname = user_fname;
     this.user_mname = user_mname;
     this.user_lname = user_lname;
-    this.user_birthdate = user_birthdate;
+    this.user_birthdate = new Date(user_birthdate);
     this.user_email = user_email;
     this.user_password = user_password;
     this.user_type = user_type;

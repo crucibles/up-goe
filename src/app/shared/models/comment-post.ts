@@ -6,7 +6,7 @@
  * @property section_id identifies which section the post belongs to
  * @property user_id id of the user who posted the commentpost
  * @property post_content content of the post
- * @property post_comments[] array of postcomment replies of the commentpost
+ * @property post_comments[] array of postcomment comment's ids of the commentpost
  * @property post_date date the commentpost was posted
  * @property commentable identifies if a post is commentable or not; 
  *  true if commentable and false if otherwise
@@ -14,16 +14,39 @@
  *  true if it is a post (a parent post) and false if it is a comment
  */
 export class CommentPost {
-  private _id: number;
+  private _id: string;
   private section_id: string;
   private user_id: string;
   private post_content: string;
-  private post_comments: number[];
+  private post_comments: string[];
   private post_date: Date;
   private commentable: boolean;
   private is_post: boolean;
 
   constructor(
+    commentPost?: any
+  ) {
+    if (commentPost) {
+      this._id = commentPost._id;
+      this.section_id = commentPost.section_id? commentPost.section_id: "";
+      this.user_id = commentPost.user_id? commentPost.user_id: "";
+      this.post_content = commentPost.post_content? commentPost.post_content: "";
+      this.post_comments = commentPost.post_comments? commentPost.post_comments: [];
+      this.post_date = commentPost.post_date? new Date(commentPost.post_date): new Date();
+      this.commentable = commentPost.commentable? commentPost.commentable: true;
+      this.is_post = commentPost.is_post? commentPost.is_post: false;
+    } else {
+      this.section_id = "";
+      this.user_id = "";
+      this.post_content = "";
+      this.post_comments = [];
+      this.post_date = new Date();
+      this.commentable = true;
+      this.is_post = false;
+    }
+  }
+
+  setCommentPost(
     section_id,
     user_id,
     post_content,
@@ -73,7 +96,7 @@ export class CommentPost {
     this._id = _id;
   }
 
-  setCommentPoster(user_id){
+  setCommentPoster(user_id) {
     this.user_id = user_id;
   }
 

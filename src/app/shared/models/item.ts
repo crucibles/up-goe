@@ -23,6 +23,29 @@ export class Item {
     private item_ailment: string;
 
     constructor(
+        item?: any
+    ) {
+        if(item){
+            this._id = item._id;
+            this.item_type = item.item_type ? item.item_type : "";
+            this.item_name = item.item_name ? item.item_name : "";
+            this.item_photo = item.item_photo ? item.item_photo : "";
+            this.item_description = item.item_description ? item.item_description : "";
+            this.item_hp = item.item_hp ? item.item_hp : "";
+            this.item_xp = item.item_xp ? item.item_xp : "";
+            this.item_ailment = item.item_ailment ? item.item_ailment : "";
+        } else {
+            this.item_type = "";
+            this.item_name = "";
+            this.item_photo = "";
+            this.item_description = "";
+            this.item_hp = "";
+            this.item_xp = "";
+            this.item_ailment = "";
+        }
+    }
+
+    createItem(
         item_type,
         item_name,
         item_photo,
@@ -39,6 +62,7 @@ export class Item {
         this.item_xp = item_xp;
         this.item_ailment = item_ailment;
     }
+
     getItemId() {
         return this._id;
     }

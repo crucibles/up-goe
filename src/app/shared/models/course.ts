@@ -13,14 +13,26 @@ export class Course {
   private course_description: string;
 
   constructor(
-    _id: string,
-    course_name: string,
-    course_description: string
+    course?: any
   ) {
-    this._id = _id;
+    if(course){
+      this._id = course._id;
+      this.course_name = course.course_name;
+      this.course_description = course.course_description;
+    } else {
+      this.course_name = "";
+      this.course_description = "";
+    }
+  }
+
+  setCourse(
+    course_name,
+    course_description
+  ){
     this.course_name = course_name;
     this.course_description = course_description;
   }
+
   getCourseId() {
     return this._id;
   }

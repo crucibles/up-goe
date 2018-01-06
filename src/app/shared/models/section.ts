@@ -20,6 +20,36 @@ export class Section {
     badges: string[];
 
     constructor(
+        section?: any
+    ) {
+        if (section) {
+            this._id = section.course_id ? section.course_id : "";
+            this.course_id = section.course_id ? section.course_id : "";
+            this.section_name = section.section_name ? section.section_name : "";
+            if (section.students) {
+                section.students.array.forEach(student => {
+                    let newStudent: Student = new Student(student);
+                    this.students.push(newStudent);
+                });
+            } else {
+                this.students = [];
+            }
+            this.instructor = section.instructor ? section.instructor : "";
+            this.quests = section.quests ? section.quests : [];
+            this.items = section.items ? section.items : [];
+            this.badges = section.badges ? section.badges : [];
+        } else {
+            this.course_id = "";
+            this.section_name = "";
+            this.students = [];
+            this.instructor = "";
+            this.quests = [];
+            this.items = [];
+            this.badges = [];
+        }
+    }
+
+    setSection(
         course_id,
         section_name,
         students,
@@ -36,6 +66,7 @@ export class Section {
         this.items = items;
         this.badges = badges;
     }
+
     getSectionId() {
         return this._id;
     }
@@ -116,13 +147,25 @@ export class Student {
     status: string;
 
     constructor(
+        student
+    ) {
+        if(student){
+            this.user_id = student.user_id? student.user_id: "";
+            this.status = student.status? student.status: "";
+        } else {
+            this.user_id = "";
+            this.status = "";
+        }
+    }
+
+    setStudent(
         user_id,
         status
     ) {
         this.user_id = user_id;
         this.status = status;
     }
-    
+
     getStudentUserId() {
         return this.user_id;
     }

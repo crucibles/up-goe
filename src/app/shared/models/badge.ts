@@ -14,13 +14,28 @@ export class Badge {
     private badge_conditions: Conditions;
 
     constructor(
-        badge_photo: string,
-        badge_description: string,
-        badge_conditions: Conditions
+        badge?: any
     ) {
-        this.badge_photo = badge_photo;
-        this.badge_description = badge_description;
-        this.badge_conditions = badge_conditions;
+        if (badge) {
+            this._id = badge._id;
+            this.badge_photo = badge.badge_photo ? badge.badge_photo : "";
+            this.badge_description = badge.badge_description ? badge.badge_description : "";
+            this.badge_conditions = badge.badge_conditions ? new Conditions(badge.badge_conditions) : new Conditions();
+        } else {
+            this.badge_photo = "";
+            this.badge_description = "";
+            this.badge_conditions = new Conditions();
+        }
+    }
+
+    setBadge(
+        badge_photo,
+        badge_description,
+        badge_conditions
+    ) {
+        this.badge_photo = badge_photo ? badge_photo : "";
+        this.badge_description = badge_description ? badge_description : "";
+        this.badge_conditions = badge_conditions ? badge_conditions : new Conditions();
     }
 
     getBadgeId(): string {
@@ -72,21 +87,37 @@ export class Conditions {
     right_arm: string;
 
     constructor(
-        hp, xp, ailment, log_in_streak, log_in_total, items, items_used, items_owned, head, left_leg, right_leg, left_arm, right_arm
+        conditions?: any
     ) {
-        this.hp = hp;
-        this.xp = xp;
-        this.ailment = ailment;
-        this.log_in_streak = log_in_streak;
-        this.log_in_total = log_in_total;
-        this.items = items;
-        this.items_used = items_used;
-        this.items_owned = items_owned;
-        this.head = head;
-        this.left_leg = left_leg;
-        this.right_leg = right_leg;
-        this.left_arm = left_arm;
-        this.right_arm = right_arm;
+        if (conditions) {
+            this.hp = conditions.hp;
+            this.xp = conditions.xp;
+            this.ailment = conditions.ailment;
+            this.log_in_streak = conditions.log_in_streak;
+            this.log_in_total = conditions.log_in_total;
+            this.items = conditions.items;
+            this.items_used = conditions.items_used;
+            this.items_owned = conditions.items_owned;
+            this.head = conditions.head;
+            this.left_leg = conditions.left_leg;
+            this.right_leg = conditions.right_leg;
+            this.left_arm = conditions.left_arm;
+            this.right_arm = conditions.right_arm;
+        } else {
+            this.hp = 0;
+            this.xp = 0;
+            this.ailment = "";
+            this.log_in_streak = "";
+            this.log_in_total = "";
+            this.items = [];
+            this.items_used = "";
+            this.items_owned = "";
+            this.head = "";
+            this.left_leg = "";
+            this.right_leg = "";
+            this.left_arm = "";
+            this.right_arm = "";
+        }
     }
 
     getHp() {

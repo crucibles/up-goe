@@ -141,8 +141,9 @@ export class SpecificNewsComponent implements OnInit {
    */
   submitComment(parentPostIndex: number) {
     let user_id = "1";
-    let newComment = new CommentPost(this.section_id, user_id, this.commentContent[parentPostIndex], "", new Date(), true, false);
-
+    let newComment: CommentPost = new CommentPost();
+    newComment.setCommentPost(this.section_id, user_id, this.commentContent[parentPostIndex], "", new Date(), true, false);
+    
     this.commentPostService.addCommentPost(newComment).subscribe(comment => {
       this.commentPostService.submitComment(comment, this.commentPosts[parentPostIndex]).subscribe(m => {
         this.commentObserver.next(

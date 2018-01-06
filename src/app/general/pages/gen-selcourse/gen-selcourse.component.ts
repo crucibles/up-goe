@@ -61,7 +61,7 @@ export class GenSelcourseComponent implements OnInit {
   getUser(): void {
     this.userService.getUser("5a37f4500d1126321c11e5e7")
       .subscribe(user => {
-        this.user = user;
+        this.user = new User(user);
         this.getUserSections(this.user.getUserId());
       });
   }

@@ -2,13 +2,14 @@
 .vert-tab {
     list-style-type: none;
     padding: 0;
-    width: 22%;
+    width: 250px;
     background-color: #f1f1f1;
     height: 100%; /* Full height */
     position: fixed; /* Make it stick, even on scroll */
     overflow: auto; /* Enable scrolling if the sidenav has too much content */
     left: -1px;
     top: 30px;
+    overflow-y: scroll;
 }
 
 /*Adjusts image inside the side tab*/
@@ -60,7 +61,7 @@
     width: 100%;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 765px) {
     .toggle {
         position: fixed;
         font-size: 1.3em;
@@ -69,7 +70,7 @@
     }
 
     .vert-tab {
-        width: 200px;
+        width: 250px;
     }
 
     #slide {
@@ -77,11 +78,11 @@
     }
 
     #slide:not(:checked) + .container .vert-tab {
-        left: -200px;
+        left: -250px;
     }
 
     #slide:checked + .container .toggle {
-        left: 200px;
+        left: 250px;
     }
 
     #slide:checked + .container .vert-tab {

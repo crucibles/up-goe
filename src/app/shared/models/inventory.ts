@@ -13,6 +13,21 @@ export class Inventory {
     private items: string[];
 
     constructor(
+        inventory?: any
+    ) {
+        if (inventory) {
+            this._id = inventory._id ? inventory._id : "";
+            this.user_id = inventory.user_id ? inventory.user_id : "";
+            this.section_id = inventory.section_id ? inventory.section_id : "";
+            this.items = inventory.items ? inventory.items : "";
+        } else {
+            this.user_id = "";
+            this.section_id = "";
+            this.items = [];
+        }
+    }
+
+    setInventory(
         user_id,
         section_id,
         items,
@@ -21,7 +36,7 @@ export class Inventory {
         this.section_id = section_id;
         this.items = items;
     }
-    
+
     getInventoryId() {
         return this._id;
     }

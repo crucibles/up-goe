@@ -20,7 +20,7 @@
  * 
 */
 export class Quest {
-    private _id: number;
+    private _id: string;
     private quest_title: string;
     private quest_description: string;
     private quest_retakable: boolean;
@@ -34,6 +34,37 @@ export class Quest {
     private quest_prerequisite: string[];
 
     constructor(
+        quest?: any
+    ) {
+        if(quest){
+            this._id = quest._id;
+            this.quest_title = quest.quest_title? quest.quest_title: "";
+            this.quest_description = quest.quest_description? quest.quest_description: "";
+            this.quest_retakable = quest.quest_retakable? quest.quest_retakable: false;
+            this.quest_badge = quest.quest_badge? quest.quest_badge: "";
+            this.quest_item = quest.quest_item? quest.quest_item: [];
+            this.quest_xp = quest.quest_xp? quest.quest_xp: 0;
+            this.quest_hp = quest.quest_hp? quest.quest_hp: 0;
+            this.quest_start_time_date = quest.quest_start_time_date? new Date(quest.quest_start_time_date): new Date();
+            this.quest_end_time_date = quest.quest_end_time_date? new Date(quest.quest_end_time_date): new Date();
+            this.quest_party = quest.quest_party? quest.quest_party: false;
+            this.quest_prerequisite = quest.quest_prerequisite? quest.quest_prerequisite: [];
+        } else {
+            this.quest_title =  "";
+            this.quest_description = "";
+            this.quest_retakable = false;
+            this.quest_badge = "";
+            this.quest_item = [];
+            this.quest_xp = 0;
+            this.quest_hp = 0;
+            this.quest_start_time_date =  new Date();
+            this.quest_end_time_date = new Date();
+            this.quest_party = false;
+            this.quest_prerequisite = [];
+        }
+    }
+
+    setQuest(
         quest_title,
         quest_description,
         quest_retakable,
@@ -53,8 +84,8 @@ export class Quest {
         this.quest_item = quest_item;
         this.quest_xp = quest_xp;
         this.quest_hp = quest_hp;
-        this.quest_start_time_date = quest_start_time_date;
-        this.quest_end_time_date = quest_end_time_date;
+        this.quest_start_time_date = new Date(quest_start_time_date);
+        this.quest_end_time_date = new Date(quest_end_time_date);
         this.quest_party = quest_party;
         this.quest_prerequisite = quest_prerequisite;
     }

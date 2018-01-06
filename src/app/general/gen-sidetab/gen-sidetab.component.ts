@@ -68,7 +68,7 @@ export class GenSidetabComponent implements OnInit {
 
   checkSize() {
       this.windowWidth = window.innerWidth;
-      if(this.windowWidth <= 600){
+      if(this.windowWidth <= 765){
         this.isShowMenuButton = true;
       } else {
         this.isShowMenuButton = false;
@@ -106,8 +106,7 @@ export class GenSidetabComponent implements OnInit {
   getUser(): void {
     this.userService.getUser("5a37f4500d1126321c11e5e7")
       .subscribe(user => {
-        console.log(user);
-        this.user = user;
+        this.user = new User(user);
 
         let image: string = this.user.getUserPhoto()? this.user.getUserPhoto(): "avatar.jpg";
         this.image = "/assets/images/" + image;

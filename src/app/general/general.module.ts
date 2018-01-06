@@ -31,6 +31,7 @@ import {
 import {
   SharedModule
 } from 'shared/shared.module';
+import { CollapseModule } from 'ngx-bootstrap/collapse/collapse.module';
 
 @NgModule({
   imports: [

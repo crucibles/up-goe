@@ -12,7 +12,6 @@ import {
   HttpClientInMemoryWebApiModule
 } from 'angular-in-memory-web-api';*/
 
-
 //Application Imports
 import {
   AppComponent
@@ -21,10 +20,6 @@ import {
 import {
   AppRoutingModule
 } from './app-routing.module';
-
-import {
-  GeneralModule
-} from 'general/general.module';
 
 import {
   LogInComponent
@@ -40,6 +35,8 @@ import {
   UserService
 } from 'shared/services';
 
+
+
 //AHJ: remove after server is working
 /*import {
   InMemoryDataService
@@ -53,23 +50,17 @@ import {
   SignUpComponent
 } from 'sign-up/sign-up.component';
 
-import {
-  SpecificModule
-} from 'specific/specific.module';
-
-
 @NgModule({
   declarations: [
     AppComponent,
     LogInComponent,
-    SignUpComponent
+    SignUpComponent,
+
   ],
   imports: [
     AppRoutingModule,
     BrowserModule,
-    SharedModule,
-    GeneralModule,
-    SpecificModule
+    SharedModule
     // The HttpClientInMemoryWebApiModule module intercepts HTTP requests
     // and returns simulated server responses.
     // Remove it when a real server is ready to receive requests.
