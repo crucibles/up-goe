@@ -84,6 +84,7 @@ export class GenSidetabComponent implements OnInit {
     private userService: UserService,
     private router: Router
   ) {
+    this.checkSize();
   }
 
   ngOnInit() {
@@ -91,7 +92,6 @@ export class GenSidetabComponent implements OnInit {
     this.defaultPBClass = 'progress-bar progress-bar-striped active';
     this.getUser();
     this.isEditing = false;
-    this.checkSize();
     this.pageService.isProfile.subscribe(isProfile => {
       this.isProfile = isProfile;
     });
@@ -107,8 +107,7 @@ export class GenSidetabComponent implements OnInit {
     // ced: I think this should be in the User model, by the get method. Current user will be used temporarily
     let currentUser = JSON.parse(localStorage.getItem("currentUser"));
     
-    console.info(currentUser);
-    this.user = currentUser;
+    this.user = new User(currentUser);
 
     let image: string = this.user.getUserPhoto() ? this.user.getUserPhoto() : "avatar.jpg";
     this.image = "/assets/images/" + image;
@@ -165,10 +164,11 @@ export class GenSidetabComponent implements OnInit {
    * @param user_id the id of the user that asks for the list of quests
    */
   getQuests(user_id): void {
-    this.questService.getUserSectionQuests(user_id)
-      .subscribe(quests => {
-        this.quests = quests;
-        this.timeDisplays();
+    this.questService.getUserQuests(user_id)
+      .subscribe(object => {
+        //AHJ: need more fixes
+        //this.quests = quests;
+        //this.timeDisplays();
       });
   }
 
