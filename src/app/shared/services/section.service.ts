@@ -1,7 +1,7 @@
 //Core Imports
 import {
-  HttpClient, 
-  HttpParams, 
+  HttpClient,
+  HttpParams,
   HttpHeaders
 } from '@angular/common/http';
 
@@ -10,8 +10,8 @@ import {
 } from '@angular/core';
 
 import {
-  Headers, 
-  RequestOptions 
+  Headers,
+  RequestOptions
 } from '@angular/http';
 
 //Third-Party Imports
@@ -33,7 +33,7 @@ import {
 import {
   Course,
   Quest,
-  Section, 
+  Section,
   User,
 } from 'shared/models';
 
@@ -125,18 +125,22 @@ export class SectionService {
    * @returns array of sections
    */
   getUserSections(user_id): Observable<Section[]> {
-      const url = this.secUrl;
-      //ced replace the id to a variable, do not tinamban this      
-      let params = new HttpParams().set('id', '5a37f4500d1126321c11e5e7');
-      return this.http.get<Section[]>(url, {
+
+    const url = this.secUrl;
+
+    let params = new HttpParams().set('id', user_id);
+
+    return this.http.get<Section[]>(
+      url, {
         params: params
-      }).pipe(
-      tap(h => {
-        const outcome = h ?
+      })
+      .pipe(
+      tap(data => {
+        const outcome = data ?
           'fetched sections of user ' + user_id : 'did not find sections of user ' + user_id;
       }),
       catchError(this.handleError<Section[]>(`getUserSections user_id=${user_id}`))
-    );
+      );
   }
 
   /**
