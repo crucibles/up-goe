@@ -1,6 +1,6 @@
 //Core Imports
 import {
-  HttpClient
+  HttpClient, HttpParams
 } from '@angular/common/http';
 
 import {
@@ -33,6 +33,7 @@ import {
 export class QuestService {
 
   private questUrl = "api/quests";
+  private sectionUrl = "api/sections";
 
   constructor(
     private http: HttpClient
@@ -117,8 +118,14 @@ export class QuestService {
   //AHJ: not finished! 
   getUserSectionQuests(user_id/*, section_id*/): Observable<Quest[]> {
     // used for side tabs; aaaand di ko sure pero basin pwede makuha ang section quest by using getSectionQuests() function
-    return this.http.get<Quest[]>(this.questUrl).pipe(
-      tap(quests => quests ? console.log('fetched quests') : console.log('did not fetched quests')),
+    let params = new HttpParams()
+    .set('id', user_id)
+    .set('method', 'getUserSectionQuests');
+
+    return this.http.get<Quest[]>(this.sectionUrl, {
+      params: params
+    }).pipe(
+      tap(quests => quests ? console.log(quests) : console.log('did not fetched quests')),
       catchError(this.handleError(`getUserSectionQuests`, []))
     );
   }

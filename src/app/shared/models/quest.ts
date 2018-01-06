@@ -28,8 +28,8 @@ export class Quest {
     quest_item: string[]; 
     quest_xp: number;
     quest_hp: number;
-    quest_start_time_date: Date;
-    quest_end_time_date: Date;
+    quest_start_date: Date;
+    quest_end_date: Date;
     quest_party: boolean;
     quest_prerequisite: string[];
 }

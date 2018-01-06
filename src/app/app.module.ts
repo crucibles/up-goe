@@ -11,7 +11,10 @@ import {
 /*import {
   HttpClientInMemoryWebApiModule
 } from 'angular-in-memory-web-api';*/
-
+//Third-Party Imports
+import {
+  CookieService
+} from 'ngx-cookie-service';
 
 //Application Imports
 import {
@@ -58,6 +61,9 @@ import {
 } from 'specific/specific.module';
 
 
+
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -84,7 +90,8 @@ import {
     PageService,
     SectionService,
     UserService,
-    ItemService
+    ItemService,
+    CookieService
   ],
   bootstrap: [AppComponent]
 })

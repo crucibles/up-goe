@@ -166,8 +166,8 @@ export class InMemoryDataService {
         quest_xp: 1000,
         quest_hp: 10,
         quest_item: [],
-        quest_start_time_date: new Date('2017/12/15'),
-        quest_end_time_date: new Date('2017/12/22'),
+        quest_start_date: new Date('2017/12/15'),
+        quest_end_date: new Date('2017/12/22'),
         quest_party: false,
         quest_prerequisite: []
       },
@@ -180,8 +180,8 @@ export class InMemoryDataService {
         quest_xp: 1000,
         quest_hp: 10,
         quest_item: [],
-        quest_start_time_date: new Date('2017/12/15'),
-        quest_end_time_date: new Date('2017/12/30'),
+        quest_start_date: new Date('2017/12/15'),
+        quest_end_date: new Date('2017/12/30'),
         quest_party: false,
         quest_prerequisite: []
       },
@@ -194,8 +194,8 @@ export class InMemoryDataService {
         quest_xp: 1000,
         quest_hp: 10,
         quest_item: [],
-        quest_start_time_date: new Date('2017/12/15'),
-        quest_end_time_date: new Date('2017/12/30'),
+        quest_start_date: new Date('2017/12/15'),
+        quest_end_date: new Date('2017/12/30'),
         quest_party: false,
         quest_prerequisite: []
       }
@@ -220,7 +220,7 @@ export class InMemoryDataService {
 
     const users: User[] = [
       {
-        user_id: '1',
+        _id: '1',
         user_fname: 'Donevir',
         user_mname: 'Densing',
         user_lname: 'Hynson',
@@ -235,7 +235,7 @@ export class InMemoryDataService {
         user_school_id: ""
       },
       {
-        user_id: '2',
+        _id: '2',
         user_fname: 'Cedric',
         user_mname: 'Yao',
         user_lname: 'Alvaro',
@@ -253,5 +253,5 @@ export class InMemoryDataService {
 
     return { badges, commentposts, courses, inventories, items, quests, sections, users };
   }
-
+  
 }
