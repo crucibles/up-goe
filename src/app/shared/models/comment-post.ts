@@ -14,32 +14,88 @@
  *  true if it is a post (a parent post) and false if it is a comment
  */
 export class CommentPost {
-    id: number;
-    section_id: string;
-    user_id: string;
-    post_content: string;
-    post_comments: number[];
-    post_date: Date;
-    commentable: boolean;
-    is_post: boolean;
+  private _id: number;
+  private section_id: string;
+  private user_id: string;
+  private post_content: string;
+  private post_comments: number[];
+  private post_date: Date;
+  private commentable: boolean;
+  private is_post: boolean;
 
-    constructor(
-      section_id,
-      user_id,
-      post_content,
-      post_comments,
-      post_date,
-      commentable,
-      is_post,
-    ){
-      this.section_id = section_id;
-      this.user_id = user_id;
-      this.post_content = post_content;
-      this.post_comments = post_comments;
-      this.post_date = post_date;
-      this.commentable = commentable;
-      this.is_post = is_post;
-    }
+  constructor(
+    section_id,
+    user_id,
+    post_content,
+    post_comments,
+    post_date,
+    commentable,
+    is_post,
+  ) {
+    this.section_id = section_id;
+    this.user_id = user_id;
+    this.post_content = post_content;
+    this.post_comments = post_comments;
+    this.post_date = post_date;
+    this.commentable = commentable;
+    this.is_post = is_post;
+  }
 
-    
+  getPostCommentId() {
+    return this._id;
+  }
+
+  getUserId() {
+    return this.user_id;
+  }
+
+  getPostContent() {
+    return this.post_content;
+  }
+
+  getPostComments() {
+    return this.post_comments;
+  }
+
+  getPostDate() {
+    return this.post_date;
+  }
+
+  getCommentable() {
+    return this.commentable;
+  }
+
+  getIsPost() {
+    return this.is_post;
+  }
+
+  setCommentPostId(_id) {
+    this._id = _id;
+  }
+
+  setCommentPoster(user_id){
+    this.user_id = user_id;
+  }
+
+  setPostContent(post_content) {
+    this.post_content = post_content;
+  }
+
+  setPostComments(post_comments) {
+    this.post_comments = post_comments;
+  }
+
+  setPostDate(post_date) {
+    this.post_date = post_date;
+  }
+
+  setCommentable(commentable) {
+    this.commentable = commentable;
+  }
+
+  setIsPost(is_post) {
+    this.is_post = is_post;
+  }
+
+
 };

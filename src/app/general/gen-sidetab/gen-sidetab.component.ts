@@ -109,13 +109,13 @@ export class GenSidetabComponent implements OnInit {
         console.log(user);
         this.user = user;
 
-        let image: string = this.user.user_photo? this.user.user_photo: "avatar.jpg";
+        let image: string = this.user.getUserPhoto()? this.user.getUserPhoto(): "avatar.jpg";
         this.image = "/assets/images/" + image;
 
         if (this.isProfile) {
-          this.getUserSections(this.user.user_id);
+          this.getUserSections(this.user.getUserId());
         } else {
-          this.getQuests(this.user.user_id);
+          this.getQuests(this.user.getUserId());
         }
       });
   }
@@ -207,8 +207,8 @@ export class GenSidetabComponent implements OnInit {
     this.questTimePercentage = [];
     setInterval(() => {
       for (let i = 0; i < this.quests.length; i++) {
-        let timePerc: number = 100 - this.timeDiff(this.quests[i].quest_end_time_date, new Date()) / this.timeDiff(this.quests[i].quest_end_time_date, this.quests[i].quest_start_time_date) * 100;
-        let totalMinRem: number = this.timeDiff(this.quests[i].quest_end_time_date, new Date());
+        let timePerc: number = 100 - this.timeDiff(this.quests[i].getQuestEndTimeDate(), new Date()) / this.timeDiff(this.quests[i].getQuestEndTimeDate(), this.quests[i].getQuestStartTimeDate()) * 100;
+        let totalMinRem: number = this.timeDiff(this.quests[i].getQuestEndTimeDate(), new Date());
         let hourRem: number = Math.floor(totalMinRem / 1000 / 60 / 60);
         
         this.toggleClass(hourRem, i);

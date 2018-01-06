@@ -7,20 +7,50 @@
  * @property items[] array of item ids stored in this inventory
  */
 export class Inventory {
-    user_id: string;
-    section_id: string;
-    items: string[];
-}
+    private _id: string;
+    private user_id: string;
+    private section_id: string;
+    private items: string[];
 
-export const inventories: Inventory[] = [
-    {
-      user_id: "1",
-      section_id: "11",
-      items: ["111", "222"]
-    },
-    {
-      user_id: "1",
-      section_id: "22",
-      items: ["111", "222"]
+    constructor(
+        user_id,
+        section_id,
+        items,
+    ) {
+        this.user_id = user_id;
+        this.section_id = section_id;
+        this.items = items;
     }
-  ];
+    
+    getInventoryId() {
+        return this._id;
+    }
+
+    getUserId() {
+        return this.user_id;
+    }
+
+    getSectionId() {
+        return this.section_id;
+    }
+
+    getItems() {
+        return this.items;
+    }
+
+    setInventoryId(_id) {
+        this._id = _id;
+    }
+
+    setUserId(user_id) {
+        this.user_id = user_id;
+    }
+
+    setSectionId(section_id) {
+        this.section_id = section_id;
+    }
+
+    setItems(items) {
+        this.items = items;
+    }
+}

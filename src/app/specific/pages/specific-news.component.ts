@@ -41,7 +41,7 @@ export class SpecificNewsComponent implements OnInit {
   posters: string[] = [];
   commenters: string[][] = [];
   months: string[] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-  commentContent: string;
+  commentContent: string[] = [];
   commentObserver: Observer<any>;
   commentObservable: Observable<any> = new Observable(observer =>
     this.commentObserver = observer
@@ -74,15 +74,17 @@ export class SpecificNewsComponent implements OnInit {
    */
   getAllCommentPosts() {
     this.commentPostService.getSectionPosts(this.section_id).subscribe(commentPosts => {
-      this.commentPosts = commentPosts.filter(post => post.is_post == true);
+      this.commentPosts = commentPosts.filter(post => post.getIsPost() == true);
       this.commentPosts.sort((a, b) => {
-        return this.getTime(b.post_date) - this.getTime(a.post_date);
+        return this.getTime(b.getPostDate()) - this.getTime(a.getPostDate());
       });
       this.commentPosts.forEach((post, index) => {
         this.posters = [];
-        this.userService.getUser(post.user_id).subscribe(user => {
-          let mname: string = user.user_mname ? user.user_mname[0] + "." : ""
-          this.posters[index] = user.user_fname + " " + mname + " " + user.user_lname;
+        this.userService.getUser(post.getUserId()).subscribe(user => {
+          let firstName: string = user.getUserFname();
+          let middleInitial: string = user.getUserMname() ? user.getUserMname()[0] + "." : ""
+          let lastName: string = user.getUserLname();
+          this.posters[index] = firstName + " " + middleInitial + " " + lastName;
         });
       });
       this.getAllComments();
@@ -97,12 +99,12 @@ export class SpecificNewsComponent implements OnInit {
       this.comments[i] = [];
       this.commenters[i] = [];
 
-      this.commentPosts[i].post_comments.forEach(comment_id => {
+      this.commentPosts[i].getPostComments().forEach(comment_id => {
         this.commentObserver.next({ parent_index: i, comment_id: comment_id });
       });
 
       this.comments[i].sort((a, b) => {
-        return this.getTime(a.post_date) - this.getTime(b.post_date);
+        return this.getTime(a.getPostDate()) - this.getTime(b.getPostDate());
       });
     }
   }
@@ -121,10 +123,10 @@ export class SpecificNewsComponent implements OnInit {
   appendComments(comment_info: any) {
     this.commentPostService.getCommentPostById(comment_info.comment_id)
       .subscribe(comment => {
-        this.userService.getUser(comment.user_id).subscribe(user => {
-          let firstName: string = user.user_fname;
-          let middleName: string = user.user_mname ? user.user_mname[0] + "." : "";
-          let lastName: string = user.user_lname;
+        this.userService.getUser(comment.getUserId()).subscribe(user => {
+          let firstName: string = user.getUserFname();
+          let middleName: string = user.getUserMname() ? user.getUserMname()[0] + "." : "";
+          let lastName: string = user.getUserLname();
           let fullName: string = firstName + " " + middleName + " " + lastName;
 
           this.commenters[comment_info.parent_index].push(fullName);
@@ -139,17 +141,22 @@ export class SpecificNewsComponent implements OnInit {
    */
   submitComment(parentPostIndex: number) {
     let user_id = "1";
-    let newComment = new CommentPost(this.section_id, user_id, this.commentContent, "", new Date(), true, false);
+    let newComment = new CommentPost(this.section_id, user_id, this.commentContent[parentPostIndex], "", new Date(), true, false);
+
     this.commentPostService.addCommentPost(newComment).subscribe(comment => {
       this.commentPostService.submitComment(comment, this.commentPosts[parentPostIndex]).subscribe(m => {
-        this.commentObserver.next({ parent_index: parentPostIndex, comment_id: comment.id });
-
+        this.commentObserver.next(
+          {
+            parent_index: parentPostIndex,
+            comment_id: comment.getPostCommentId()
+          }
+        );
         //update checking
         this.commentPostService.getSectionPosts("11").subscribe();
       });
     });
 
-    this.commentContent = ""; //resets the comment
+    this.commentContent[parentPostIndex] = ""; //resets the comment
   }
 
 

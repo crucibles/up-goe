@@ -10,12 +10,98 @@
  * @property instructor the section's instructor
  */
 export class Section {
-    section_id: string;
+    _id: string;
     course_id: string;
     section_name: string;
     students: Student[];
     instructor: string;
+    quests: string[];
+    items: string[];
+    badges: string[];
+
+    constructor(
+        course_id,
+        section_name,
+        students,
+        instructor,
+        quests,
+        items,
+        badges
+    ) {
+        this.course_id = course_id;
+        this.section_name = section_name;
+        this.students = students;
+        this.instructor = instructor;
+        this.quests = quests;
+        this.items = items;
+        this.badges = badges;
+    }
+    getSectionId() {
+        return this._id;
+    }
+
+    getCourseId() {
+        return this.course_id;
+    }
+
+    getSectionName() {
+        return this.section_name;
+    }
+
+    getStudents() {
+        return this.students;
+    }
+
+    getInstructor() {
+        return this.instructor;
+    }
+
+    getQuests() {
+        return this.quests;
+    }
+
+    getItems() {
+        return this.items;
+    }
+
+    getBadges() {
+        return this.badges;
+    }
+
+    setSectionId(_id) {
+        this._id = _id;
+    }
+
+    setCourseId(course_id) {
+        this.course_id = course_id;
+    }
+
+    setSectionName(section_name) {
+        this.section_name = section_name;
+    }
+
+    setStudents(students) {
+        this.students = students;
+    }
+
+    setInstructor(instructor) {
+        this.instructor = instructor;
+    }
+
+    setQuests(quests) {
+        this.quests = quests;
+    }
+
+    setItems(items) {
+        this.items = items;
+    }
+
+    setBadges(badges) {
+        this.badges = badges;
+    }
 }
+
+
 
 /**
  * A class to represent students
@@ -29,9 +115,28 @@ export class Student {
     user_id: string;
     status: string;
 
-    constructor(u_id, stat){
-        this.user_id = u_id;
-        this.status = stat;
+    constructor(
+        user_id,
+        status
+    ) {
+        this.user_id = user_id;
+        this.status = status;
+    }
+    
+    getStudentUserId() {
+        return this.user_id;
+    }
+
+    getStatus() {
+        return this.status;
+    }
+
+    setStudentUserId(user_id) {
+        this.user_id = user_id;
+    }
+
+    setStatus(status) {
+        this.status = status;
     }
 };
 

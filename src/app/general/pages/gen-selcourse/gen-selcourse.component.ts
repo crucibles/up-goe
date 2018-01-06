@@ -14,7 +14,6 @@ import {
 //Application Imports
 import {
   Course,
-  courses,
   Quest,
   Section,
   User
@@ -55,7 +54,7 @@ export class GenSelcourseComponent implements OnInit {
   ngOnInit() {
     this.getUser();
   }
-  
+
   /**
    * Obtains information of the current user
    */
@@ -63,30 +62,30 @@ export class GenSelcourseComponent implements OnInit {
     this.userService.getUser("5a37f4500d1126321c11e5e7")
       .subscribe(user => {
         this.user = user;
-        this.getUserSections(this.user.user_id);
+        this.getUserSections(this.user.getUserId());
       });
   }
-  
-    /**
-     * Obtains sections and its respective course of the current use
-     * @description Obtains sections and its respective course of the current user by storing it to 'courses' 
-     * and 'section' array respectively
-     * @param user_id id of the user whose array of 
-     */
-    getUserSections(user_id): void {
-      this.sectionService.getUserSections(user_id)
-        .subscribe(sections => {
-          //stores sections
-          this.sections = sections;
-          this.courses = [];
-          this.sections.forEach((section, index) => {
-            this.sectionService.getCourseById(section.course_id).subscribe(course => {
-              //stores courses
-              this.courses[index] = course;
-            })
-          });
+
+  /**
+   * Obtains sections and its respective course of the current use
+   * @description Obtains sections and its respective course of the current user by storing it to 'courses' 
+   * and 'section' array respectively
+   * @param user_id id of the user whose array of 
+   */
+  getUserSections(user_id): void {
+    this.sectionService.getUserSections(user_id)
+      .subscribe(sections => {
+        //stores sections
+        this.sections = sections;
+        this.courses = [];
+        this.sections.forEach((section, index) => {
+          this.sectionService.getCourseById(section.course_id).subscribe(course => {
+            //stores courses
+            this.courses[index] = course;
+          })
         });
-    }
+      });
+  }
 
   /**
    * @summary searches the string entered by the user and stores result in 'course_found' variable
@@ -96,20 +95,15 @@ export class GenSelcourseComponent implements OnInit {
       this.isSearching = false;
     } else {
       this.isSearching = true;
-      this.course_found = this.getAllCourses().filter(course => (course.course_id == this.course_search) || (course.course_name == this.course_search));
+      //AHJ: use this.course_search for searching the database 
+      /*this.course_found = this.getAllCourses().filter(course =>
+        (course.getCourseId() == this.course_search) ||
+        (course.getCourseName() == this.course_search)
+      );*/
     }
   }
 
-  /**
-   * @summary Gets all courses from the database
-   * 
-   * @returns all courses from the database
-   */
-  getAllCourses(): Course[] {
-    return courses;
-  }
-
-  openCoursePage(section_id: string) {
+  openSectionPage(section_id: string) {
     console.log(section_id);
     this.router.navigate(['/specific/specific-news', section_id]);
   }

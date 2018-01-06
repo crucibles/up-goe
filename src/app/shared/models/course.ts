@@ -8,31 +8,40 @@
  * @property sections[] array of section names belonging to this course
  */
 export class Course {
-  course_id: string;
-  course_name: string;
-  course_description: string;
-};
+  private _id: string;
+  private course_name: string;
+  private course_description: string;
 
-
-export const courses: Course[] = [
-  {
-    course_id: "11",
-    course_name: 'CMSC 128',
-    course_description: "Fly hiiiiigh"
-  },
-  {
-    course_id: "22",
-    course_name: 'CMSC 141',
-    course_description: "Fly hiiiiigh"
-  },
-  {
-    course_id: "33",
-    course_name: 'CMSC 170',
-    course_description: "Fly hiiiiigh"
-  },
-  {
-    course_id: "44",
-    course_name: 'NSM 192',
-    course_description: "Fly hiiiiigh"
+  constructor(
+    _id: string,
+    course_name: string,
+    course_description: string
+  ) {
+    this._id = _id;
+    this.course_name = course_name;
+    this.course_description = course_description;
   }
-];
+  getCourseId() {
+    return this._id;
+  }
+
+  getCourseName() {
+    return this.course_name;
+  }
+
+  getCourseDescription() {
+    return this.course_description;
+  }
+
+  setCourseId(_id) {
+    this._id = _id;
+  }
+
+  setCourseName(course_name) {
+    this.course_name = course_name;
+  }
+
+  setCourseDescription(course_description) {
+    this.course_description = course_description;
+  }
+};
