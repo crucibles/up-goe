@@ -27,11 +27,6 @@ import {
   SignUpComponent
 } from 'sign-up/sign-up.component';
 
-import {
-  SpecificNewsComponent
-} from 'specific/pages';
-
-
 
 const routes: Routes = [
   {
