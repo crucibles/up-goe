@@ -3,12 +3,13 @@ import {
   Component,
   OnInit,
   Input,
-  HostListener
+  HostListener,
+  ElementRef
 } from '@angular/core';
 
 import {
   FormBuilder,
-  FormGroup, 
+  FormGroup,
   NgModel
 } from '@angular/forms';
 
@@ -36,18 +37,22 @@ import {
 @Component({
   selector: 'gen-sidetab',
   templateUrl: './gen-sidetab.component.html',
+  host: {
+    '(document:click)': 'handleClick($event)',
+  },
   styleUrls: ['./gen-sidetab.component.css']
 })
 export class GenSidetabComponent implements OnInit {
+  elementRef: ElementRef;
   @Input('isProfile') isProfile: boolean = false;
 
   //current user
   user: User;
   image: string;
 
-  public editForm: FormGroup;
 
   //for pages other than profile page  
+  editForm: FormGroup;
   quests: Quest[] = []; //user's quests
   //for progress bar; 
   defaultPBClass: string = 'progress-bar progress-bar-striped active';
@@ -57,12 +62,12 @@ export class GenSidetabComponent implements OnInit {
 
   //for profile page only
   isEditing: boolean = false;
-  sections: Section[] = [];
-  courses: Course[] = [];
+  sections: any[] = [];
 
+  //for collapsible navigation bar
   isShowMenuButton: boolean = false;
-
   windowWidth: number = window.innerWidth;
+  showSideTab: boolean;
 
   //if screen size changes it'll update
   @HostListener('window:resize', ['$event'])
@@ -70,18 +75,9 @@ export class GenSidetabComponent implements OnInit {
     this.checkSize();
   }
 
-  checkSize() {
-      this.windowWidth = window.innerWidth;
-      if(this.windowWidth <= 765){
-        this.isShowMenuButton = true;
-      } else {
-        this.isShowMenuButton = false;
-      }
-  }
-
-
   constructor(
     private commentPostService: CommentPostService,
+    private myElement: ElementRef,
     private formBuilder: FormBuilder,
     private pageService: PageService,
     private questService: QuestService,
@@ -91,17 +87,28 @@ export class GenSidetabComponent implements OnInit {
   ) {
     this.checkSize();
     this.editForm = formBuilder.group({
-      schoolId : null,
-      email     : null,
-      contactNo  : null
+      schoolId: null,
+      email: null,
+      contactNo: null
     });
+    this.editForm.disable();
+    this.elementRef = myElement;
   }
 
   ngOnInit() {
+    this.setDefault();
+    this.getUser();
+    if (this.isProfile) {
+      this.getUserSections(this.user.getUserId());
+    } else {
+      this.getQuests(this.user.getUserId());
+    }
+  }
+
+  setDefault() {
+    this.isEditing = false;
     this.image = "/assets/images/not-found.jpg"
     this.defaultPBClass = 'progress-bar progress-bar-striped active';
-    this.getUser();
-    this.isEditing = false;
     this.pageService.isProfile.subscribe(isProfile => {
       this.isProfile = isProfile;
     });
@@ -116,17 +123,10 @@ export class GenSidetabComponent implements OnInit {
   getUser(): void {
     // ced: I think this should be in the User model, by the get method. Current user will be used temporarily
     let currentUser = JSON.parse(localStorage.getItem("currentUser"));
-    
-    this.user = new User(currentUser);
+    this.user = new User(this.userService.getCurrentUser());
 
     let image: string = this.user.getUserPhoto() ? this.user.getUserPhoto() : "avatar.jpg";
     this.image = "/assets/images/" + image;
-
-    if (this.isProfile) {
-      this.getUserSections(currentUser._id);
-    } else {
-      this.getQuests(currentUser._id);
-    }
 
     /*this.userService.getUser(currentUser._id)
       .subscribe(user => {
@@ -152,17 +152,27 @@ export class GenSidetabComponent implements OnInit {
    * 
    */
   getUserSections(user_id: string) {
+    //AHJ: unimplemented (must be section with attached course_name)
     console.log(user_id);
-    this.sectionService.getUserSections(user_id).subscribe(sections => {
+    this.sectionService.getUserSections(user_id).subscribe(courseSections => {
+      //AHJ: Remove everything below this line until marker encountered
+      let section = new Section();
+      section.setSection("1", "A", [], "Miguel Guillermo", [], [], []);
+      const sections = [
+        {
+          course_name: "CMSC 128",
+          section: section
+        },
+        {
+          course_name: "CMSC 141",
+          section: section
+        }
+      ]
+      //AHJ: Remove until here 
+
+
+      //change 'sections' variable to courseSections if getUserSections() functions correctly
       this.sections = sections;
-      console.log(sections);
-      this.courses = [];
-      this.sections.forEach((section, index) => {
-        this.sectionService.getCourseById(section.course_id).subscribe(course => {
-          this.courses[index] = course;
-          console.log(this.courses);
-        })
-      });
     });
   }
 
@@ -187,11 +197,26 @@ export class GenSidetabComponent implements OnInit {
    * @description Edits the user's information; changes isEditing variable which changes the
    * features of the input fields
    */
-  editUserInformation() {
+  endEditing() {
     this.isEditing = !this.isEditing;
+    this.editForm.disable();
+  }
+
+  startEditing() {
+    this.isEditing = !this.isEditing;
+    this.editForm.enable();
   }
 
   /*Below are the helper functions for this component */
+
+  checkSize() {
+    this.windowWidth = window.innerWidth;
+    if (this.windowWidth <= 765) {
+      this.isShowMenuButton = true;
+    } else {
+      this.isShowMenuButton = false;
+    }
+  }
 
   /**
    * Navigates to the specific section's page
@@ -288,6 +313,20 @@ export class GenSidetabComponent implements OnInit {
       this.progressBarClass[i] = 'progress-bar-danger';
     } else {
       this.progressBarClass[i] = 'progress-bar-success';
+    }
+  }
+
+  handleClick(event) {
+    var clickedComponent = event.target;
+    var inside = false;
+    do {
+      if (clickedComponent === this.elementRef.nativeElement) {
+        inside = true;
+      }
+      clickedComponent = clickedComponent.parentNode;
+    } while (clickedComponent);
+    if (!inside && this.windowWidth <= 765) {
+      this.showSideTab = false;
     }
   }
 }

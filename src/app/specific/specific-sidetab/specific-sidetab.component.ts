@@ -56,20 +56,26 @@ export class SpecificSidetabComponent implements OnInit {
   }
 
   ngOnInit() {
-    let user = new User();
-    user.setUser("Ced", "Yao", "Alvaro", new Date("08/02/1997"), "alvaro_cedric@yahoo.com", "p", "S", "09499709292", "cute-cat.jpg", "2014-60690", "Who are you?", "I am me");
-    this.user = user;
+    this.getUser();
     this.editForm = this.formBuilder.group({
       schoolId: new FormControl(this.user.getUserSchoolId(), Validators.required),
       email: new FormControl(this.user.getUserEmail(), Validators.required),
       contactNo: new FormControl(this.user.getUserContactNo(), Validators.required),
     });
     this.editForm.disable();
+    this.checkSize();
+  }
+
+  getUser() {
+    //AHJ: current user is not yet obtained
+    let user = new User();
+    user.setUser("Ced", "Yao", "Alvaro", new Date("08/02/1997"), "alvaro_cedric@yahoo.com", "p", "S", "09499709292", "cute-cat.jpg", "2014-60690", "Who are you?", "I am me");
+    this.user = user;
+
     let image: string = this.user.getUserPhoto() ?
       this.user.getUserPhoto() :
       "avatar.jpg";
     this.image = "/assets/images/" + image;
-    this.checkSize();
   }
 
   endEditing() {

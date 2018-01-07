@@ -123,9 +123,18 @@ export class SectionService {
    * @param user_id id of the user whose array of sections are to be retrieved
    * 
    * @returns array of sections
+   * array[i].course_name - the name of the section's course where the user is enrolled in
+   * array[i].section     - enrolled section of the user 
+   * 
+   * @example
+   * array[i] = {
+   * course_name: "CMSC 128",
+   * section: section
+   * };
+   * The expected values of array is the section's information and the attached course_name
    */
   getUserSections(user_id): Observable<Section[]> {
-
+    // AHJ: Remove the dummy content in gen-selcourse and gen-sidetab when this functin is working
     const url = this.secUrl;
 
     let params = new HttpParams().set('id', user_id);

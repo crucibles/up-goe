@@ -32,6 +32,9 @@ import {
   templateUrl: './specific-news.component.html',
   styleUrls: ['./specific-news.component.css']
 })
+
+
+
 export class SpecificNewsComponent implements OnInit {
   section_id: string;
   private parameters: any;
@@ -121,7 +124,7 @@ export class SpecificNewsComponent implements OnInit {
    * the comment is to be appended
    */
   appendComments(comment_info: any) {
-    this.commentPostService.getCommentPostById(comment_info.comment_id)
+    this.commentPostService.getCommentPost(comment_info.comment_id)
       .subscribe(comment => {
         this.userService.getUser(comment.getUserId()).subscribe(user => {
           let firstName: string = user.getUserFname();
@@ -145,7 +148,7 @@ export class SpecificNewsComponent implements OnInit {
     newComment.setCommentPost(this.section_id, user_id, this.commentContent[parentPostIndex], "", new Date(), true, false);
     
     this.commentPostService.addCommentPost(newComment).subscribe(comment => {
-      this.commentPostService.submitComment(comment, this.commentPosts[parentPostIndex]).subscribe(m => {
+      this.commentPostService.attachComment(comment, this.commentPosts[parentPostIndex]).subscribe(() => {
         this.commentObserver.next(
           {
             parent_index: parentPostIndex,

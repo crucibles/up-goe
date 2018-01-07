@@ -1,113 +1,120 @@
 //Core Imports
 import {
-  Component,
-  OnInit
+	Component,
+	OnInit
 } from '@angular/core';
 
 import {
-  NgModel
+	NgModel
 } from '@angular/forms';
 
 import {
-  Router
+	Router
 } from '@angular/router';
 //Application Imports
 import {
-  Course,
-  Quest,
-  Section,
-  User
+	Course,
+	Quest,
+	Section,
+	User
 } from 'shared/models';
 
 import {
-  SectionService,
-  UserService,
-  PageService
+	SectionService,
+	UserService,
+	PageService
 } from 'shared/services';
 
 @Component({
-  selector: 'app-gen-selcourse',
-  templateUrl: './gen-selcourse.component.html',
-  styleUrls: ['./gen-selcourse.component.css']
+	selector: 'app-gen-selcourse',
+	templateUrl: './gen-selcourse.component.html',
+	styleUrls: ['./gen-selcourse.component.css']
 })
 export class GenSelcourseComponent implements OnInit {
 
-  sections: Section[];
-  courses: Course[];
-  user: User;
-  allcourses: Course[];
+	sections: any[];
+	user: User;
 
-  //for search bar
-  course_search: string;
-  isSearching: boolean = false;
-  course_found: Course[];
+	//for search bar
+	course_search: string;
+	isSearching: boolean = false;
+	course_found: Course[];
 
-  constructor(
-    private pageService: PageService,
-    private sectionService: SectionService,
-    private userService: UserService,
-    private router: Router
-  ) {
-    this.pageService.isProfilePage(false);
-  }
+	constructor(
+		private pageService: PageService,
+		private sectionService: SectionService,
+		private userService: UserService,
+		private router: Router
+	) {
+		this.pageService.isProfilePage(false);
+	}
 
-  ngOnInit() {
-    this.getUser();
-  }
+	ngOnInit() {
+		this.getUser();
+	}
 
-  /**
-   * Obtains information of the current user
-   */
-  getUser(): void {
-    let currentUserId = JSON.parse(localStorage.getItem("currentUser"));
-    this.userService.getUser(currentUserId._id)
-      .subscribe(user => {
-        this.user = new User(user);
-        this.getUserSections(this.user.getUserId());
-      });
-  }
+	/**
+	 * Obtains information of the current user
+	 */
+	getUser(): void {
+		let currentUserId = JSON.parse(localStorage.getItem("currentUser"));
+		this.userService.getUser(currentUserId._id)
+			.subscribe(user => {
+				this.user = new User(user);
+				this.getUserSections(this.user.getUserId());
+			});
+	}
 
-  /**
-   * Obtains sections and its respective course of the current use
-   * @description Obtains sections and its respective course of the current user by storing it to 'courses' 
-   * and 'section' array respectively
-   * @param user_id id of the user whose array of 
-   */
-  getUserSections(user_id): void {
-    this.sectionService.getUserSections(user_id)
-      .subscribe(sections => {
-        //stores sections
-        this.sections = sections;
-        this.courses = [];
-        this.sections.forEach((section, index) => {
-          this.sectionService.getCourseById(section.course_id).subscribe(course => {
-            //stores courses
-            this.courses[index] = course;
-          })
-        });
-      });
-  }
+	/**
+	 * Obtains sections and its respective course of the current use
+	 * @description Obtains sections and its respective course of the current user by storing it to 'courses' 
+	 * and 'section' array respectively
+	 * @param user_id id of the user whose array of 
+	 */
+	getUserSections(user_id): void {
+		this.sectionService.getUserSections(user_id)
+			.subscribe(courseSections => {
+				//stores sections
+				//AHJ: Remove everything below this line until marker encountered
+				let section = new Section();
+				section.setSection("1", "A", [], "Miguel Guillermo", [], [], []);
+				const sections = [
+					{
+						course_name: "CMSC 128",
+						section: section
+					},
+					{
+						course_name: "CMSC 141",
+						section: section
+					}
+				]
+				//AHJ: Remove until here 
 
-  /**
-   * @summary searches the string entered by the user and stores result in 'course_found' variable
-   */
-  search() {
-    if (this.course_search == null || this.course_search.length == 0) {
-      this.isSearching = false;
-    } else {
-      this.isSearching = true;
-      //AHJ: use this.course_search for searching the database 
-      /*this.course_found = this.getAllCourses().filter(course =>
-        (course.getCourseId() == this.course_search) ||
-        (course.getCourseName() == this.course_search)
-      );*/
-    }
-  }
+				//change 'sections' variable to courseSections if getUserSections() functions correctly
+				this.sections = sections;
+			});
+	}
 
-  openSectionPage(section_id: string) {
-    console.log(section_id);
-    this.router.navigate(['/specific/specific-news', section_id]);
-  }
+	/**
+	 * @summary searches the string entered by the user and stores result in 'course_found' variable
+	 */
+	search() {
+		if (this.course_search == null || this.course_search.length == 0) {
+			this.isSearching = false;
+		} else {
+			this.isSearching = true;
+			//AHJ: use this.course_search for searching the database 
+			/*this.course_found = this.getAllCourses().filter(course =>
+			  (course.getCourseId() == this.course_search) ||
+			  (course.getCourseName() == this.course_search)
+			);*/
+		}
+	}
+
+	openSectionPage(section_id: string) {
+		console.log(section_id);
+		this.router.navigate(['/specific/specific-news', section_id]);
+	}
 
 
 }

@@ -1,4 +1,4 @@
-<input type="checkbox" id="slide" name="" value="" />
+<input type="checkbox" id="slide" name="" value="" (click)="showSideTab = !showSideTab" [checked]="showSideTab"/>
 <div class=container>
   <label for="slide" style="margin: 30px 10px" *ngIf="isShowMenuButton" class="toggle">☰</label>
   <ul class="vert-tab">
@@ -28,29 +28,34 @@
 
     <!--displays user information if page navigated is a profile page-->
     <ng-container *ngIf="isProfile">
-      <form class="form-horizontal" [formGroup]="editForm" (ngSubmit)="editUserInformation()">
+      <form class="form-horizontal" [formGroup]="editForm" (ngSubmit)="endEditing()">
         <li style="text-align: right">
-          <a><button type="submit" style="border: none;">Edit</button></a>
+          <button *ngIf="isEditing" type="submit" class="btn btn-primary" [disabled]="!editForm.valid">
+            Submit
+          </button>
+          <button *ngIf="!isEditing" class="btn btn-primary" (click)="startEditing()">
+            Edit
+          </button>
         </li>
         <li> Class List: </li>
         <li *ngFor="let section of sections; let i = index">
           <div *ngIf="!sections || sections.length == 0">You have no course yet!</div>
-          <a *ngIf="courses[i]" (click)=openCoursePage(section.getSectionId())>{{this.courses[i].getCourseName()}} - {{section.getSectionName()}}</a>
+          <a (click)=openSectionPage(section.section.getSectionId())>{{section.course_name}} - {{section.section.getSectionName()}}</a>
         </li>
         <ng-container *ngIf="user">
           <li> School ID: </li>
           <li>
-            <input type="text" formControlName="schoolId" [disabled]="!isEditing" [(ngModel)]="user.user_school_id" class="user-information"
+            <input type="text" formControlName="schoolId" [(ngModel)]="user.user_school_id" class="user-information"
               [class.remove-border]="!isEditing" />
           </li>
           <li> Email: </li>
           <li>
-            <input type="text" formControlName="email" [disabled]="!isEditing" [(ngModel)]="user.user_email" class="user-information"
+            <input type="text" formControlName="email" [(ngModel)]="user.user_email" class="user-information"
               [class.remove-border]="!isEditing" />
           </li>
           <li> Contact #: </li>
           <li>
-            <input type="text" formControlName="contactNo" [disabled]="!isEditing" [(ngModel)]="user.user_contact_no" class="user-information"
+            <input type="text" formControlName="contactNo" [(ngModel)]="user.user_contact_no" class="user-information"
               [class.remove-border]="!isEditing" />
           </li>
           <li></li>
