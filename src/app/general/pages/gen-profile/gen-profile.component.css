@@ -1,18 +1,9 @@
-/*Padding added so body will not be overlapped by topnavbar*/
-body {
-    padding: 50px 50px 50px 0;
-}
-
-/*Main body - Complement of Vertical Tab*/
-.side-body {
-    margin-left:25%;
-}
-
 /*Header3 Design*/
 h3:after {
     content:' ';
     margin-top: 5px;
     display:block;
+    width: 90%;
     border:2px solid #d0d0d0;
     border-radius:4px;
     -webkit-border-radius:4px;

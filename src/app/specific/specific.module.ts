@@ -9,8 +9,11 @@ import {
 } from 'shared/shared.module';
 
 import {
+  SpecificCharacterComponent,
+  SpecificMyCourseComponent,
   SpecificNewsComponent,
-  SpecificProfileComponent
+  SpecificProfileComponent,
+  SpecificQuestMapComponent
 } from 'specific/pages';
 
 import {
@@ -22,8 +25,13 @@ import {
 } from 'specific/specific-routing.module';
 
 import {
+  SpecificSidetabComponent
+} from 'app/specific';
+
+import {
   SpecificTopnavbarComponent
 } from 'app/specific';
+
 
 
 @NgModule({
@@ -32,9 +40,13 @@ import {
     SpecificRoutingModule
   ],
   declarations: [
+    SpecificCharacterComponent,
     SpecificComponent,
+    SpecificMyCourseComponent,
     SpecificNewsComponent,
     SpecificProfileComponent,
+    SpecificQuestMapComponent,
+    SpecificSidetabComponent,
     SpecificTopnavbarComponent
   ]
 })

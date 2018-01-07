@@ -7,6 +7,8 @@ import {
 } from '@angular/core';
 
 import {
+  FormBuilder,
+  FormGroup, 
   NgModel
 } from '@angular/forms';
 
@@ -43,6 +45,8 @@ export class GenSidetabComponent implements OnInit {
   user: User;
   image: string;
 
+  public editForm: FormGroup;
+
   //for pages other than profile page  
   quests: Quest[] = []; //user's quests
   //for progress bar; 
@@ -78,6 +82,7 @@ export class GenSidetabComponent implements OnInit {
 
   constructor(
     private commentPostService: CommentPostService,
+    private formBuilder: FormBuilder,
     private pageService: PageService,
     private questService: QuestService,
     private sectionService: SectionService,
@@ -85,6 +90,11 @@ export class GenSidetabComponent implements OnInit {
     private router: Router
   ) {
     this.checkSize();
+    this.editForm = formBuilder.group({
+      schoolId : null,
+      email     : null,
+      contactNo  : null
+    });
   }
 
   ngOnInit() {
