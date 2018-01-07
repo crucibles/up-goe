@@ -6,9 +6,8 @@
   <!--Line Graph for performance-->
   <div class="row">
     <div style="display: block">
-      <canvas baseChart width="600" height="200" [datasets]="lineChartData" [labels]="lineChartLabels" [options]="lineChartOptions"
-        [colors]="lineChartColors" [legend]="lineChartLegend" [chartType]="lineChartType" (chartHover)="chartHovered($event)"
-        (chartClick)="chartClicked($event)"></canvas>
+      <canvas baseChart width="650" height="300" [datasets]="lineChartData" [labels]="lineChartLabels" [options]="lineChartOptions"
+        [colors]="lineChartColors" [legend]="true" [chartType]="'line'" (chartHover)="chartHovered($event)" (chartClick)="chartClicked($event)"></canvas>
     </div>
   </div>
 
@@ -25,7 +24,7 @@
       </table>
     </div>
   </div>-->
-  
+
 </section>
 
 <!--Badges Section-->
