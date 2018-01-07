@@ -34,6 +34,7 @@ export class QuestService {
 
   private questUrl = "api/quests";
   private sectionUrl = "api/sections";
+  private sectionQuestsUrl = 'api/sections/quests';
 
   constructor(
     private http: HttpClient
@@ -122,9 +123,9 @@ export class QuestService {
     // used for side tabs; aaaand di ko sure pero basin pwede makuha ang section quest by using getSectionQuests() function
     let params = new HttpParams()
     .set('id', user_id)
-    .set('method', 'getUserSectionQuests');
+    .set('method', 'getUserQuests');
 
-    return this.http.get<Quest[]>(this.sectionUrl, {
+    return this.http.get<Quest[]>(this.sectionQuestsUrl, {
       params: params
     }).pipe(
       tap(quests => quests ? console.log(quests) : console.log('did not fetched quests')),
