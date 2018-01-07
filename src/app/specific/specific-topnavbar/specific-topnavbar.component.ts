@@ -1,4 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+//Core Imports
+import {
+  Component, 
+  OnInit
+} from '@angular/core';
 
 @Component({
   selector: 'specific-topnavbar',
@@ -7,9 +11,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SpecificTopnavbarComponent implements OnInit {
 
+  isCollapsed: boolean;
+  
   constructor() { }
 
   ngOnInit() {
+    this.isCollapsed = true;
   }
 
 }

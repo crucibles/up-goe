@@ -17,8 +17,11 @@ import {
 } from 'specific/specific.component';
 
 import {
+  SpecificCharacterComponent,
+  SpecificMyCourseComponent,
   SpecificNewsComponent, 
-  SpecificProfileComponent
+  SpecificProfileComponent,
+  SpecificQuestMapComponent
 } from 'specific/pages';
 
 const specificRoutes: Routes = [
@@ -28,12 +31,24 @@ const specificRoutes: Routes = [
     component: SpecificComponent,
     children: [
       {
+        path: 'specific-character',
+        component: SpecificCharacterComponent
+      },
+      {
         path: 'specific-news',
         component: SpecificNewsComponent
       },
       {
+        path: 'specific-my-course',
+        component: SpecificMyCourseComponent
+      },
+      {
         path: 'specific-profile',
         component: SpecificProfileComponent
+      },
+      {
+        path: 'specific-quest-map',
+        component: SpecificQuestMapComponent
       },
       {
         path: '**',

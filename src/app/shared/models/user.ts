@@ -31,7 +31,7 @@ export class User {
   private user_security_answer: string;
 
   constructor(
-    user: any
+    user?: any
   ) {
     if(user){
       this._id = user._id;

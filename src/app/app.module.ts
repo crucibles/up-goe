@@ -7,11 +7,6 @@ import {
   BrowserModule
 } from '@angular/platform-browser';
 
-//AHJ: remove after server is available
-/*import {
-  HttpClientInMemoryWebApiModule
-} from 'angular-in-memory-web-api';*/
-
 //Third-Party Imports
 import {
   CookieService
@@ -40,13 +35,6 @@ import {
   UserService
 } from 'shared/services';
 
-
-
-//AHJ: remove after server is working
-/*import {
-  InMemoryDataService
-} from './shared/services';*/
-
 import {
   SharedModule
 } from './shared/shared.module';
@@ -59,19 +47,12 @@ import {
   declarations: [
     AppComponent,
     LogInComponent,
-    SignUpComponent,
-
+    SignUpComponent
   ],
   imports: [
     AppRoutingModule,
     BrowserModule,
     SharedModule
-    // The HttpClientInMemoryWebApiModule module intercepts HTTP requests
-    // and returns simulated server responses.
-    // Remove it when a real server is ready to receive requests.
-    /*HttpClientInMemoryWebApiModule.forRoot(
-      InMemoryDataService, { dataEncapsulation: false }
-    )*/
   ],
   providers: [
     BadgeService,
