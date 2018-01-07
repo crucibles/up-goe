@@ -64,15 +64,6 @@ export class SectionService {
   }
 
   /**
-   * Adds received newly created section to the database
-   * @param course - new section to be added to the database
-   */
-  searchSection(query) {
-
-  }
-
-
-  /**
    * Adds students to the section's list of pending approval
    * @param user_id id of the user to be added to the section's list of pending approval
    * @param section_id id of the section where the user will be added
