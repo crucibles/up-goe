@@ -6,7 +6,7 @@
       <img [src]="image" alt="Cat">
     </li>
     <li *ngIf="user">
-      {{user.getFname()}} {{user.getMname()}} {{user.getLname()}}
+      {{user.getUserFname()}} {{user.getUserMname()}} {{user.getUserLname()}}
     </li>
     <!--displays quests if navigated page is not a profile page-->
     <ng-container *ngIf="!isProfile">

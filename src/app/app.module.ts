@@ -59,8 +59,7 @@ import {
   declarations: [
     AppComponent,
     LogInComponent,
-    SignUpComponent,
-
+    SignUpComponent
   ],
   imports: [
     AppRoutingModule,
