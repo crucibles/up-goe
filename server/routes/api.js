@@ -165,6 +165,7 @@ router.post('/signup', (req, res) => {
     connection((db) => {
         const myDB = db.db('up-goe-db');
         var myObj = {
+            user_school_id: req.body.schoolId,
             user_fname: req.body.firstName,
             user_mname: req.body.middleName,
             user_lname: req.body.lastName,
@@ -177,17 +178,36 @@ router.post('/signup', (req, res) => {
             user_security_answer: req.body.securityAnswer
         };
 
-        myDB.collection('users').insertOne(myObj, function (err, res) {
-            if (err) {
-                console.log(err);
-                throw err;
-            }
-        });
+        myDB.collection('users')
+            .findOne({
+                user_email: myObj.user_email
+            })
+            .then((email) => {
+                if(email == myObj.user_email) {
+                    console.log("Duplicate email detected: " + email);
+                    response.data = email;
+                    res.json(false);
+                }
 
-        myDB.collection('users').find().toArray().then(() => {
-            response.data = myObj;
-            res.json(myObj);
-        });
+                else {
+                    console.log("New user registered.");
+                    myDB.collection('users')
+                        .insertOne(myObj, function (err, res) {
+                            if (err) {
+                                console.log(err);
+                                throw err;
+                            }
+                        });
+
+                    myDB.collection('users')
+                        .find()
+                        .toArray()
+                        .then(() => {
+                            response.data = myObj;
+                            res.json(myObj);
+                        });
+                }
+            })
     });
 });
 

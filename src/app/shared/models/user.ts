@@ -16,185 +16,184 @@
  * @member user_security_answer user's answer to the chosen security question
  */
 export class User {
-  private _id: string;
-  private user_fname: string;
-  private user_mname: string;
-  private user_lname: string;
-  private user_birthdate: Date;
-  private user_email: string;
-  private user_password: string;
-  private user_type: string;
-  private user_contact_no: string;
-  private user_photo: string;
-  private user_school_id: string;
-  private user_security_question: string;
-  private user_security_answer: string;
+    private _id: string;
+    private user_fname: string;
+    private user_mname: string;
+    private user_lname: string;
+    private user_birthdate: Date;
+    private user_email: string;
+    private user_password: string;
+    private user_type: string;
+    private user_contact_no: string;
+    private user_photo: string;
+    private user_school_id: string;
+    private user_security_question: string;
+    private user_security_answer: string;
 
-  constructor(
-    user: any
-  ) {
-    if(user){
-      this._id = user._id;
-      this.user_fname = user.user_fname? user.user_fname: "";
-      this.user_mname = user.user_mname? user.user_mname: "";
-      this.user_lname = user.user_lname? user.user_lname: "";
-      this.user_birthdate = user.user_birthdate? new Date(user.user_birthdate): new Date();
-      this.user_email = user.user_email? user.user_email: "";
-      this.user_password = user.user_password? user.user_password: "";
-      this.user_type = user.user_type? user.user_type: "";
-      this.user_contact_no = user.user_contact_no? user.user_contact_no: "";
-      this.user_photo = user.user_photo? user.user_photo: "";
-      this.user_school_id = user.user_school_id? user.user_school_id: "";
-      this.user_security_question = user.user_security_question? user.user_security_question: "";
-      this.user_security_answer = user.user_security_answer? user.user_security_answer: "";
-    } else {
-      this.user_fname = "";
-      this.user_mname = "";
-      this.user_lname = "";
-      this.user_birthdate = new Date();
-      this.user_email = "";
-      this.user_password = "";
-      this.user_type = "";
-      this.user_contact_no = "";
-      this.user_photo = "";
-      this.user_school_id = "";
-      this.user_security_question = "";
-      this.user_security_answer = "";
-      
+    constructor(
+        user: any
+    ) {
+        if (user) {
+            this._id = user._id;
+            this.user_fname = user.user_fname ? user.user_fname : "";
+            this.user_mname = user.user_mname ? user.user_mname : "";
+            this.user_lname = user.user_lname ? user.user_lname : "";
+            this.user_birthdate = user.user_birthdate ? new Date(user.user_birthdate) : new Date();
+            this.user_email = user.user_email ? user.user_email : "";
+            this.user_password = user.user_password ? user.user_password : "";
+            this.user_type = user.user_type ? user.user_type : "";
+            this.user_contact_no = user.user_contact_no ? user.user_contact_no : "";
+            this.user_photo = user.user_photo ? user.user_photo : "";
+            this.user_school_id = user.user_school_id ? user.user_school_id : "";
+            this.user_security_question = user.user_security_question ? user.user_security_question : "";
+            this.user_security_answer = user.user_security_answer ? user.user_security_answer : "";
+        } else {
+            this.user_fname = "";
+            this.user_mname = "";
+            this.user_lname = "";
+            this.user_birthdate = new Date();
+            this.user_email = "";
+            this.user_password = "";
+            this.user_type = "";
+            this.user_contact_no = "";
+            this.user_photo = "";
+            this.user_school_id = "";
+            this.user_security_question = "";
+            this.user_security_answer = "";
+        }
     }
-  }
 
-  setUser(
-    user_fname,
-    user_mname,
-    user_lname,
-    user_birthdate,
-    user_email,
-    user_password,
-    user_type,
-    user_contact_no,
-    user_photo,
-    user_school_id,
-    user_security_question,
-    user_security_answer
-  ) {
-    this.user_fname = user_fname;
-    this.user_mname = user_mname;
-    this.user_lname = user_lname;
-    this.user_birthdate = new Date(user_birthdate);
-    this.user_email = user_email;
-    this.user_password = user_password;
-    this.user_type = user_type;
-    this.user_contact_no = user_contact_no;
-    this.user_photo = user_photo;
-    this.user_school_id = user_school_id;
-    this.user_security_question = user_security_question;
-    this.user_security_answer = user_security_answer;
-  }
-  
-  getUserId() {
-    return this._id;
-  }
+    setUser(
+        user_fname,
+        user_mname,
+        user_lname,
+        user_birthdate,
+        user_email,
+        user_password,
+        user_type,
+        user_contact_no,
+        user_photo,
+        user_school_id,
+        user_security_question,
+        user_security_answer
+    ) {
+        this.user_fname = user_fname;
+        this.user_mname = user_mname;
+        this.user_lname = user_lname;
+        this.user_birthdate = new Date(user_birthdate);
+        this.user_email = user_email;
+        this.user_password = user_password;
+        this.user_type = user_type;
+        this.user_contact_no = user_contact_no;
+        this.user_photo = user_photo;
+        this.user_school_id = user_school_id;
+        this.user_security_question = user_security_question;
+        this.user_security_answer = user_security_answer;
+    }
 
-  getUserFname() {
-    return this.user_fname;
-  }
+    getUserId() {
+        return this._id;
+    }
 
-  getUserMname() {
-    return this.user_mname;
-  }
+    getUserFname() {
+        return this.user_fname;
+    }
 
-  getUserLname() {
-    return this.user_lname;
-  }
+    getUserMname() {
+        return this.user_mname;
+    }
 
-  getUserBirthdate() {
-    return this.user_birthdate;
-  }
+    getUserLname() {
+        return this.user_lname;
+    }
 
-  getUserEmail() {
-    return this.user_email;
-  }
+    getUserBirthdate() {
+        return this.user_birthdate;
+    }
 
-  getUserPassword() {
-    return this.user_password;
-  }
+    getUserEmail() {
+        return this.user_email;
+    }
 
-  getUserType() {
-    return this.user_type;
-  }
+    getUserPassword() {
+        return this.user_password;
+    }
 
-  getUserContactNo() {
-    return this.user_contact_no;
-  }
+    getUserType() {
+        return this.user_type;
+    }
 
-  getUserPhoto() {
-    return this.user_photo;
-  }
+    getUserContactNo() {
+        return this.user_contact_no;
+    }
 
-  getUserSchoolId() {
-    return this.user_school_id;
-  }
+    getUserPhoto() {
+        return this.user_photo;
+    }
 
-  getUserSecurityQuestion() {
-    return this.user_security_question;
-  }
+    getUserSchoolId() {
+        return this.user_school_id;
+    }
 
-  getUserSecurityAnswer() {
-    return this.user_security_answer;
-  }
+    getUserSecurityQuestion() {
+        return this.user_security_question;
+    }
 
-  setUserId(_id) {
-    this._id = _id;
-  }
+    getUserSecurityAnswer() {
+        return this.user_security_answer;
+    }
 
-  setUserFname(user_fname) {
-    this.user_fname = user_fname;
-  }
+    setUserId(_id) {
+        this._id = _id;
+    }
 
-  setUserMname(user_mname) {
-    this.user_mname = user_mname;
-  }
+    setUserFname(user_fname) {
+        this.user_fname = user_fname;
+    }
 
-  setUserLname(user_lname) {
-    this.user_lname = user_lname;
-  }
+    setUserMname(user_mname) {
+        this.user_mname = user_mname;
+    }
 
-  setUserBirthdate(user_birthdate) {
-    this.user_birthdate = user_birthdate;
-  }
+    setUserLname(user_lname) {
+        this.user_lname = user_lname;
+    }
 
-  setUserEmail(user_email) {
-    this.user_email = user_email;
-  }
+    setUserBirthdate(user_birthdate) {
+        this.user_birthdate = user_birthdate;
+    }
 
-  setUserPassword(user_password) {
-    this.user_password = user_password;
-  }
+    setUserEmail(user_email) {
+        this.user_email = user_email;
+    }
 
-  setUserType(user_type) {
-    this.user_type = user_type;
-  }
+    setUserPassword(user_password) {
+        this.user_password = user_password;
+    }
 
-  setUserContactno(user_contact_no) {
-    this.user_contact_no = user_contact_no;
-  }
+    setUserType(user_type) {
+        this.user_type = user_type;
+    }
 
-  setUserPhoto(user_photo) {
-    this.user_photo = user_photo;
-  }
+    setUserContactno(user_contact_no) {
+        this.user_contact_no = user_contact_no;
+    }
 
-  setUserSchoolid(user_school_id) {
-    this.user_school_id = user_school_id;
-  }
+    setUserPhoto(user_photo) {
+        this.user_photo = user_photo;
+    }
 
-  setUserSecurityquestion(user_security_question) {
-    this.user_security_question = user_security_question;
-  }
+    setUserSchoolid(user_school_id) {
+        this.user_school_id = user_school_id;
+    }
 
-  setUserSecurityanswer(user_security_answer) {
-    this.user_security_answer = user_security_answer;
-  }
+    setUserSecurityquestion(user_security_question) {
+        this.user_security_question = user_security_question;
+    }
+
+    setUserSecurityanswer(user_security_answer) {
+        this.user_security_answer = user_security_answer;
+    }
 };
 
 export const TOTXP: number[] = [1000, 2123, 3439, 4655, 6053, 6104];
