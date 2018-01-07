@@ -38,7 +38,6 @@
     "ngx-bootstrap": "^2.0.0-rc.0",
     "ngx-cookie-service": "^1.0.9",
     "nodemon": "^1.14.7",
-    "npm-install-missing": "^0.1.4",
     "rxjs": "^5.4.2",
     "zone.js": "^0.8.14"
   },
