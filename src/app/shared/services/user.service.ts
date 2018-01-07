@@ -44,7 +44,7 @@ export class UserService {
 
   private userUrl = 'api/users';  // URL to: server/routes/api.js for users
   private loginUrl = 'api/login'; // URL to: server/routes/api.js for login
-  private signupUrl = 'api/login';// URL to: server/routes/api.js for sign up
+  private signupUrl = 'api/signup';// URL to: server/routes/api.js for sign up
 
   
 

@@ -136,6 +136,7 @@ export class GenProfileComponent implements OnInit {
   }
 
   getUser(): void {
+    //ced make curUser in userService or use localStorage
     this.userService.getUser("1")
       .subscribe(user => this.user = user);
   }

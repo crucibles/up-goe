@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const MongoClient = require('mongodb').MongoClient;
 const ObjectID = require('mongodb').ObjectID;
+const async = require('async');
 
 // Connect
 const connection = (closure) => {
@@ -25,6 +26,7 @@ let response = {
     message: null
 };
 
+// to be edited for functions regarding requests for courses
 // api/courses
 router.get('/courses', (req, res) => {
     connection((db) => {
@@ -70,9 +72,9 @@ router.get('/quests', (req, res) => {
         myDB.collection('quests')
             .find()
             .toArray()
-            .then((sections) => {
-                response.data = sections;
-                res.json(sections);
+            .then((quests) => {
+                response.data = quests;
+                res.json(quests);
             })
             .catch((err) => {
                 sendError(err, res);
@@ -83,6 +85,61 @@ router.get('/quests', (req, res) => {
 
 // api/sections
 router.get('/sections', (req, res) => {
+
+    connection((db) => {
+        const myDB = db.db('up-goe-db');
+
+        myDB.collection('sections')
+            .find({
+
+                students: {
+                    $elemMatch: {
+                        status: "E",
+                        user_id: req.query.id
+                    }
+                }
+
+            })
+            .toArray()
+            .then((sections) => {
+                var myObjArr = [];
+                var myObj = {};
+
+                async.forEach(sections, processEachSection, afterAllSection);
+
+                function processEachSection(section, callback) {
+                    myDB.collection('courses')
+                        .find(ObjectID(section.course_id))
+                        .toArray()
+                        .then((course) => {
+                            myObj["section"] = section;
+                            myObj["course_name"] = course[0].course_name;
+                            myObjArr.push(myObj);
+                            callback();
+                        }, reason => {
+                            callback(reason);
+                        })
+
+                }
+
+                function afterAllSection(err) {
+                    response.data = myObjArr;
+                    res.json(myObjArr);
+                }
+
+
+
+            })
+            .catch((err) => {
+                sendError(err, res);
+            })
+
+    });
+
+});
+
+//  api/sections/quests
+router.get('/sections/quests', (req, res) => {
 
     connection((db) => {
         const myDB = db.db('up-goe-db');
@@ -121,8 +178,8 @@ router.get('/sections', (req, res) => {
                         .find()
                         .toArray()
                         .then((quests) => {
-                            
-                            
+
+
                             let AllUserQuests = [];
 
                             quests.forEach(quest => {
@@ -135,7 +192,7 @@ router.get('/sections', (req, res) => {
 
                             })
 
-                            
+
 
                             response.data = AllUserQuests;
                             res = res.json(AllUserQuests);
@@ -197,7 +254,7 @@ router.get('/users', (req, res) => {
         const myDB = db.db('up-goe-db');
         myDB.collection('users')
             .find(
-                ObjectID(req.query.id)
+            ObjectID(req.query.id)
             )
             .toArray()
             .then((users) => {

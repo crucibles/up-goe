@@ -32,6 +32,7 @@ import {
 })
 export class GenSelcourseComponent implements OnInit {
 
+  course
   sections: Section[];
   courses: Course[];
   user: User;
@@ -72,19 +73,13 @@ export class GenSelcourseComponent implements OnInit {
    * @description Obtains sections and its respective course of the current user by storing it to 'courses' 
    * and 'section' array respectively
    * @param user_id id of the user whose array of 
+   * @returns an Array of objects with a structure of [{section: {Section}, course_name: Section's course_name}, {...}]
    */
   getUserSections(user_id): void {
     this.sectionService.getUserSections(user_id)
       .subscribe(sections => {
-        //stores sections
         this.sections = sections;
-        this.courses = [];
-        this.sections.forEach((section, index) => {
-          this.sectionService.getCourseById(section.course_id).subscribe(course => {
-            //stores courses
-            this.courses[index] = course;
-          })
-        });
+        let x = sections.map(section => new Section(section));
       });
   }
 
