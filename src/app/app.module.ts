@@ -40,8 +40,6 @@ import {
   UserService
 } from 'shared/services';
 
-
-
 //AHJ: remove after server is working
 /*import {
   InMemoryDataService
