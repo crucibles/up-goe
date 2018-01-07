@@ -1,6 +1,6 @@
 <br>
 <h2>Sign Up</h2>
-<br><br>
+<br>
 
 <form class="form-horizontal"
     [formGroup]="signupForm" 
@@ -255,17 +255,22 @@
                 name="type"
                 value="student" 
                 formControlName="type" 
-                id="user-type"
+                class="user-type"
                 required> Student
         <input  type="radio" 
                 name="type" 
                 value="teacher" 
                 style="margin-left: 50px;"
                 formControlName="type" 
-                id="user-type"
+                class="user-type"
                 required> Teacher
     <br>
     <br>
+        <small *ngIf="duplicate"
+            style="text-align: center;"
+            class="form-text text-danger">The email {{ duplicate }} already exists.
+        </small>
+    <br *ngIf="duplicate">
         <button type="submit"
                 [disabled]="signupForm.invalid || (password.value != confirmPassword.value)"
                 class="btn btn-primary">Sign up

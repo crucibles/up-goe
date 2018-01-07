@@ -83,75 +83,56 @@ router.get('/quests', (req, res) => {
 
 // api/sections
 router.get('/sections', (req, res) => {
-
     connection((db) => {
         const myDB = db.db('up-goe-db');
 
         myDB.collection('sections')
             .find({
-
                 students: {
                     $elemMatch: {
                         status: "E",
                         user_id: req.query.id
                     }
                 }
-
             })
             .toArray()
             .then((sections) => {
-
                 if (req.query.method) {
                     let questsOnly = sections.map(section => section.quests);
                     let userQuests = [];
 
                     questsOnly.forEach(quests => {
-
                         quests.forEach(quest => {
-
                             if (quest.quest_participants == req.query.id) {
                                 userQuests.push(quest.quest_id);
                             }
-
                         })
-
                     });
 
                     myDB.collection('quests')
                         .find()
                         .toArray()
                         .then((quests) => {
-                            
-                            
                             let AllUserQuests = [];
-
                             quests.forEach(quest => {
                                 userQuests.forEach(userQuest => {
                                     if (quest._id == userQuest) {
                                         AllUserQuests.push(quest);
                                     }
-
                                 })
-
                             })
-
-                            
 
                             response.data = AllUserQuests;
                             res = res.json(AllUserQuests);
-
-                        }).catch((err) => {
+                        })
+                        .catch((err) => {
                             sendError(err, res);
                         });
-
-
 
                 } else {
                     response.data = sections;
                     res = res.json(sections);
                 }
-
-
             })
             .catch((err) => {
                 sendError(err, res);
@@ -179,34 +160,31 @@ router.post('/signup', (req, res) => {
         };
 
         myDB.collection('users')
-            .findOne({
+            .count({
                 user_email: myObj.user_email
             })
-            .then((email) => {
-                if(email == myObj.user_email) {
-                    console.log("Duplicate email detected: " + email);
-                    response.data = email;
+            .then((count) => {
+                if(count) {
+                    console.log("Duplicate email detected: " + myObj.user_email);
+                    response.data = myObj.user_email;
                     res.json(false);
                 }
 
                 else {
-                    console.log("New user registered.");
                     myDB.collection('users')
-                        .insertOne(myObj, function (err, res) {
+                        .insertOne(myObj, function (err, result) {
                             if (err) {
                                 console.log(err);
+                                response.message = err;
                                 throw err;
                             }
-                        });
-
-                    myDB.collection('users')
-                        .find()
-                        .toArray()
-                        .then(() => {
                             response.data = myObj;
-                            res.json(myObj);
+                            res.json(result);
                         });
                 }
+            })
+            .catch((err) => {
+                sendError(err, res);
             })
     });
 });

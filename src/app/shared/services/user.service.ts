@@ -127,7 +127,7 @@ export class UserService {
             tap(data => {
                 return data;
             }),
-            catchError(this.handleError<User>(`signup user_id=${email}`))
+            catchError(this.handleError<User>(`signup user_email=${email}`))
             );
     }
 
