@@ -37,6 +37,7 @@
     "ng2-cookies": "^1.0.12",
     "ngx-bootstrap": "^2.0.0-rc.0",
     "ngx-cookie-service": "^1.0.9",
+    "ngx-show-hide-password": "^1.2.1",
     "nodemon": "^1.14.7",
     "npm-install-missing": "^0.1.4",
     "rxjs": "^5.4.2",
