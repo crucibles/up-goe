@@ -192,8 +192,25 @@ export class SectionService {
    * Search section by either its class name or code
    * @param string string that contains the typed class name or code
    */
-  searchSection(string) {
+  searchSection(string): Observable<any> {
+    console.log("hi");
+    console.warn("hello");
+    const searchUrl = this.secUrl+'/search/'+string;
 
+    let params = new HttpParams().set('class', string);
+
+    return this.http.get<Observable<any>>(
+      searchUrl, {
+        params: params
+      })
+      .pipe(
+      tap(data => {
+        console.log(data);
+        const outcome = data ?
+          'searched sections ' + string : 'did not find section ' + string;
+      }),
+      catchError(this.handleError<Observable<any>>(`getUserSections user_id=${string}`))
+      );
   }
 
   /**

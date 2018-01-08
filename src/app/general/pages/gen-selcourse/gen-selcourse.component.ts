@@ -91,6 +91,10 @@ export class GenSelcourseComponent implements OnInit {
       this.isSearching = false;
     } else {
       this.isSearching = true;
+      console.log(this.course_search);
+      this.sectionService.searchSection(this.course_search).subscribe((sections) => {
+        console.warn(sections);
+      })
       //AHJ: use this.course_search for searching the database 
       /*this.course_found = this.getAllCourses().filter(course =>
         (course.getCourseId() == this.course_search) ||
