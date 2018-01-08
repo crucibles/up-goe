@@ -184,7 +184,7 @@ export class GenSidetabComponent implements OnInit {
    * @param user_id the id of the user that asks for the list of quests
    */
   getQuests(user_id): void {
-    this.questService.getUserQuests(user_id)
+    this.questService.getUserJoinedQuests(user_id)
       .subscribe(object => {
         //AHJ: need more fixes
         //this.quests = quests;

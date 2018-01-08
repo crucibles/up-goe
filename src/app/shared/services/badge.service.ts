@@ -16,43 +16,8 @@ export class BadgeService {
    */
   private badgeUrl = 'api/users';    // URL to: server/routes/api.js for users
 
-  /**
-   * 
-   */
-  private b = "Asd";
-
   constructor() { }
-
-
-  /**
-   * Adds received new badge to the database
-   * @param badge New badge to be added to the database
-   */
-  createBadge(badge: Badge) {
-    const url = this.badgeUrl;
-
-  }
-
-
-  /**
-   * Edits existing badge in the database 
-   * @description Edit old information of existing badge of id contained in the badge parameter with the new badge received in the parameter
-   * @param badge The badge to be edited from the database
-   * - badge.id - id of the badge in order to identify which badge to edit
-   */
-  editBadge(badge: Badge) {
-    const url = this.badgeUrl;
-  }
-
-  /**
-   * Deletes badge in the database 
-   * @param badge_id id of the badge to be deleted from the database
-   */
-  deleteBadge(badge_id: string) {
-    const url = this.badgeUrl;
-  }
-
-
+  
   /**
    * Adds badge to student
    * @description Adds the badge, either system or section (if section_id variable is available), to the student
@@ -73,6 +38,35 @@ export class BadgeService {
   addBadgeToSection(badge_id: string, student_id: string, section_id: string) {
     const url = this.badgeUrl;
   }
+
+  /**
+   * Adds received new badge to the database
+   * @param badge New badge to be added to the database
+   */
+  createBadge(badge: Badge) {
+    const url = this.badgeUrl;
+    
+  }
+  
+  /**
+   * Deletes badge in the database 
+   * @param badge_id id of the badge to be deleted from the database
+   */
+  deleteBadge(badge_id: string) {
+    const url = this.badgeUrl;
+  }
+
+  /**
+   * Edits existing badge in the database 
+   * @description Edit old information of existing badge of id contained in the badge parameter with the new badge received in the parameter
+   * @param badge The badge to be edited from the database
+   * - badge.id - id of the badge in order to identify which badge to edit
+   */
+  editBadge(badge: Badge) {
+    const url = this.badgeUrl;
+  }
+
+
   
   /**
    * Returns the badge information given the badge id
@@ -83,16 +77,7 @@ export class BadgeService {
   getBadge(badge_id) {
     const url = this.badgeUrl;
   }
-  
-  /**
-   * Gets system-wide badge from database
-   * 
-   * @returns array of system-wide badges
-   */
-  getSystemBadges(student_id) {
-    const url = this.badgeUrl;
-  }
-  
+
   /**
    * Gets section badges from the database
    * @param section_id id of the section whose array of badges are to be retrieved from
@@ -100,6 +85,15 @@ export class BadgeService {
    * @returns array of section-level badges
    */
   getSectionBadges(section_id) {
+    const url = this.badgeUrl;
+  }
+  
+  /**
+   * Gets system-wide badge from database
+   * 
+   * @returns array of system-wide badges
+   */
+  getSystemBadges(student_id) {
     const url = this.badgeUrl;
   }
   

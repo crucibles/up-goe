@@ -92,10 +92,6 @@ export class PageService {
 
   constructor() { }
 
-  isProfilePage(isProfile) {
-    this.isProfile.emit(isProfile);
-  }
-
   /**
 	 * Returns the appropriate datetimestring given a date
 	 * @param date date to be formatted
@@ -105,13 +101,23 @@ export class PageService {
 	 * @see formatDate()
 	 * @see formatTime()
 	 */
-  formatDateTime(date: Date): string {
+  public formatDateTime(date: Date): string {
     date = new Date(date);
     let displayDateTime: string = date ?
       this.formatDate(date) + " "
       + this.formatTime(date)
       : "";
     return displayDateTime;
+  }
+  
+  /**
+   * Used to inform subscribers that the page is either in profile page or not
+   * @param isProfile identifies if page is profile page or not
+   * 
+   * @returns {boolean} returns true if user is navigating on profile page; false if otherwise
+   */
+  public isProfilePage(isProfile: boolean) {
+    this.isProfile.emit(isProfile);
   }
 
   /**

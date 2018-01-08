@@ -51,7 +51,7 @@ export class CommentPostService {
 
   /**
    * Adds the received commentpost in the database
-   * @param comment The comment to be added to the parent post
+   * @param comment The commentpost to be added to the database
    */
   addCommentPost(comment: CommentPost): Observable<CommentPost> {
     const url = this.postUrl;
@@ -101,6 +101,43 @@ export class CommentPostService {
   }
 
   /**
+   * Deletes comment from post 
+   * @description Deletes comment from its parent post's comments and removes the commentpost from the database
+   * @param commentId id of the commentpost in order to identify which commentpost to delete
+   */
+  deleteComment(commentPost: CommentPost) {
+    const url = this.postUrl;
+  }
+
+  /**
+   * Deletes existing commentpost in the database
+   * @param commentId id of the commentpost in order to identify which commentpost to delete
+   */
+  deleteCommentPost(commentId: string) {
+    const url = this.postUrl;
+  }
+
+  /**
+   * Obtains the posts from a section based on section's id.
+   * @param section_id section id of the section whose posts are to be retrieved
+   * 
+   * @returns commentpost array of the chosen section
+   */
+  getCommentPost(postId: number): Observable<CommentPost> {
+    const url = this.postUrl;
+    
+    //const url = `${this.postUrl}/?id=${postId}`;
+    return this.http.get<CommentPost>(url).pipe(
+      map(posts => posts[0]), // returns a {0|1} element array
+      /*tap(h => {
+        const outcome = h ? 'fetched post #' + postId : 'did not find post #' + postId;
+        console.log(outcome);
+      }),*/
+      catchError(this.handleError<CommentPost>(`getCommentPost id=${postId}`))
+    );
+  }
+
+  /**
    * Obtains the posts from a section based on section's id.
    * @param section_id section id of the section whose posts are to be retrieved
    * 
@@ -135,26 +172,6 @@ export class CommentPostService {
         console.log(outcome);
       }),
       catchError(this.handleError<CommentPost[]>(`getSectionPosts section_id=${section_id}`))
-    );
-  }
-
-  /**
-   * Obtains the posts from a section based on section's id.
-   * @param section_id section id of the section whose posts are to be retrieved
-   * 
-   * @returns commentpost array of the chosen section
-   */
-  getCommentPost(postId: number): Observable<CommentPost> {
-    const url = this.postUrl;
-    
-    //const url = `${this.postUrl}/?id=${postId}`;
-    return this.http.get<CommentPost>(url).pipe(
-      map(posts => posts[0]), // returns a {0|1} element array
-      /*tap(h => {
-        const outcome = h ? 'fetched post #' + postId : 'did not find post #' + postId;
-        console.log(outcome);
-      }),*/
-      catchError(this.handleError<CommentPost>(`getCommentPost id=${postId}`))
     );
   }
 

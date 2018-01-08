@@ -108,7 +108,7 @@ export class GenProfileComponent implements OnInit {
         let max: number = MAXXP ? MAXXP : 10;
         
         //AHJ: unimplemented
-        //replace SECTIONQUESTS with this.getUserQuests(user_id) function if the function is working
+        //replace SECTIONS with this.getUserSectionExp(user_id) [section.service] function if the function is working
         SECTIONS.forEach(section => {
             let dataGrade: number[] = [];
 

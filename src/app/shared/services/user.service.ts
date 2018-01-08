@@ -53,8 +53,33 @@ export class UserService {
         private cookieService: CookieService
     ) { }
 
-    getCurrentUser(): User{
+    /**
+     * @summary: Edit existing user from server
+     */
+    editUser(id: string) {
+        const url = this.userUrl;
+    }
+
+    getCurrentUser(): User {
         return this.currentUser;
+    }
+
+    /**
+     * @summary: Obtains a user from server by id
+     */
+    getUser(id: string): Observable<User> {
+        const url = this.userUrl;
+        let params = new HttpParams().set('id', id);
+        return this.http.get<User[]>(url, {
+            params: params
+        })
+            .pipe(
+            map(users => users[0]), // returns a {0|1} element array
+            tap(h => {
+                const outcome = h ? 'fetched user ' + id : 'did not find user ' + id;
+            }),
+            catchError(this.handleError<User>(`getUser user_id=${id}`))
+            );
     }
 
     /**
@@ -134,30 +159,6 @@ export class UserService {
             }),
             catchError(this.handleError<User>(`signup user_id=${email}`))
             );
-    }
-
-    /**
-     * @summary: Obtains a user from server by id
-     */
-    getUser(id: string): Observable<User> {
-        const url = this.userUrl;
-        let params = new HttpParams().set('id', id);
-        return this.http.get<User[]>(url, {
-            params: params
-        })
-            .pipe(
-            map(users => users[0]), // returns a {0|1} element array
-            tap(h => {
-                const outcome = h ? 'fetched user ' + id : 'did not find user ' + id;
-            }),
-            catchError(this.handleError<User>(`getUserById user_id=${id}`))
-            );
-    }
-
-    /**
-     * @summary: Edit existing user from server
-     */
-    editUser(id: string) {
     }
 
     /**

@@ -42,70 +42,13 @@ export class QuestService {
 	private sectionUrl = "api/sections";
 
 	/**
-   * Used for accessing/adding quests in section
-   */
+	 * Used for accessing/adding quests in section
+	 */
 	private sectionQuestUrl = "api/sections/quests";
 
 	constructor(
 		private http: HttpClient
 	) { }
-
-	/**
-	 * Adds newly created quest into the database
-	 * @param quest quest to be added to the database
-	 */
-	createQuest(quest) {
-		const url = this.questUrl;
-	}
-
-	/**
-	 * Edits the existing quest found in the database
-	 * @param quest new quest information to edit the quest of id found in quest parameter
-	 */
-	editQuest(quest) {
-		const url = this.questUrl;
-	}
-
-	/**
-	 * Deletes quest in the database
-	 * @param quest_id id of the quest to be deleted
-	 */
-	deleteQuest(quest_id) {
-		const url = this.questUrl;
-	}
-
-	/**
-	 * Adds a quest to the user's list of section quest
-	 * @param user_id the id of the student who will be adding a new quest to the section quest list
-	 * @param quest_id the id of the quest to be added in the student's section quest list
-	 * @param section_id the id of the section the student adding the new section quest belongs to
-	 */
-	joinQuest(user_id, quest_id, section_id) {
-		const url = this.sectionUrl;
-	}
-
-	/**
-	 * Removes user from the quest participant's list
-	 * @param user_id id of user to be removed from quest participant's list
-	 * @param quest_id if of the quest where the user's participation will be removed
-	 */
-	endQuest(user_id, quest_id) {
-		const url = this.sectionUrl;
-	}
-
-	/**
-	 * Submits student's quest submission.
-	 * @description Submits the user's submission and removes user from the quest participant's list 
-	 * by calling endQuest() 
-	 * 
-	 * @param idk 
-	 * 
-	 * @see endQuest
-	 */
-	submitQuest(idk) {
-		//AHJ: Still needs work here! di ko kabalo unsaon ni xD like ang parameter or unsa atung pagsubmit and all
-		//AHJ: Idk what url to use
-	}
 
 	/**
 	 * Lets the student abandon/quit a quest.
@@ -122,34 +65,91 @@ export class QuestService {
 	}
 
 	/**
-	 * Returns the user's array of joined section quests based on user id
-	 * @param user_id id of the user whose list of section quests are to be retrieved
-	 * @param section_id id of the section where the student's list of quests are to be retrieved
+	 * Adds newly created quest into the database
+	 * @param quest quest to be added to the database
+	 */
+	createQuest(quest) {
+		const url = this.questUrl;
+	}
+
+	/**
+	 * Deletes quest in the database
+	 * @param quest_id id of the quest to be deleted
+	 */
+	deleteQuest(quest_id) {
+		const url = this.questUrl;
+	}
+
+	/**
+	 * Edits the existing quest found in the database
+	 * @param quest new quest information to edit the quest of id found in quest parameter
+	 */
+	editQuest(quest) {
+		const url = this.questUrl;
+	}
+
+	/**
+	 * Removes user from the quest participant's list
+	 * @param user_id id of user to be removed from quest participant's list
+	 * @param quest_id if of the quest where the user's participation will be removed
+	 */
+	endQuest(user_id, quest_id) {
+		const url = this.sectionUrl;
+	}
+
+	/**
+	 * Returns quest information of a quest with id of quest_id.
+	 * @param quest_id id of the quest whose information are to be retrieved
 	 * 
-	 * @returns user's array of join section quests 
-	 * array[i].course_name - name of the course where the joined quests are obtained 
-	 * array[i].section_name - name of the section where the joined quests are obtained 
-	 * array[i].weekly_quests - joined section quests of the user
-	 * array[i].max_exp - section's max experience points in order to obtain a grade of 1.0
+	 * @returns quest information
+	 */
+	getQuest(quest_id: string): Observable<Quest> {
+		const url = `${this.questUrl}/?quest_id=${quest_id}`;
+		return this.http.get<Quest>(url).pipe(
+			map(quests => quests[0]), // returns a {0|1} element array
+			tap(h => {
+				const outcome = h ? 'fetched quest ' + quest_id : 'did not find quest ' + quest_id;
+				console.log(outcome);
+			}),
+			catchError(this.handleError<User>(`getQuest quest_id=${quest_id}`))
+		);
+	}
+
+	/**
+	 * Returns the section's array quests
+	 * @param section_id id of the section whose array of quests needed to be retrieved
+	 */
+	getSectionQuest(section_id) {
+		// used for quest maps
+		const url = this.sectionQuestUrl;
+	}
+
+	/**
+	 * Returns the user's array of joined section quests based on user id
+	 * @param user_id Id of the user whose list of section quests are to be retrieved
+	 * @param section_id (optional) Id of the section where the student's list of quests are to be retrieved
+	 * 
+	 * @returns 
+	 * If user's joined quests from all enrolled section are to be retrieved (parameter only contains user_id)... 
+	 * 	array[i].course_name 	- {string} name of the course where the joined quests are obtained 
+	 * 	array[i].section_name 	- {string} name of the section where the joined quests are obtained 
+	 * 	array[i].quests 	- {Quest[]} joined section quests of the user
+	 * 
+	 * If user's joined quests from a specific section are to be retrieved (parameter contains user_id and section_id)... 
+	 * 	quest 			- {Quest[]} joined section quests of the user
 	 * 
 	 * @example 
-	 * array[i] = {
+	 * array[i] = { //if all enrolled sections
 	 * course_name: "CMSC 128",
 	 * section_name: "A",
-	 * week_total_exp: [10, 30, 70, 300, 500],
-	 * max_exp: 30000
+	 * quest: someQuest
 	 * }
 	 * 
-	 * The expected values of 'week_exp' are based on weekly grades of user and are accumulative
-	 * Week_total_exp example:
-	 * (total XP points for the following weeks)
-	 * Week 1 total exp - 30
-	 * Week 2 total exp - 20
-	 * Week 3 total exp - 40
-	 * Week 4 total exp - 60
-	 * Expected array from database - [30, 50, 90, 150] 
+	 * OR
+	 * 
+	 * array[i].quest = someQuest //if specific section only
 	 */
-	getUserQuests(user_id): Observable<any> {
+	getUserJoinedQuests(user_id: string, section_id?: string): Observable<any> {
 		// note: This function is used on the general sidetab except for the profile page
 
 		const url = this.sectionQuestUrl;
@@ -166,39 +166,37 @@ export class QuestService {
 	}
 
 	/**
-	 * Returns the section's array quests
-	 * @param section_id id of the section whose array of quests needed to be retrieved
-	 */
-	getSectionQuest(section_id) {
-		// used for quest maps
-		const url = this.sectionQuestUrl;
-	}
-
-	/**
 	 * Grades the student's submitted quest and places it in the database.
 	 * @param user_id id of the student whose quest submission is to be graded
 	 * @param quest_id id of the student's quest that is to be graded
+	 * @param exp experience to grade/give the user on the quest
 	 */
-	gradeQuest(user_id, quest_id) {
+	gradeQuest(user_id, quest_id, exp) {
 
 	}
 
 	/**
-	 * Returns quest information of a quest with id of quest_id.
-	 * @param quest_id id of the quest whose information are to be retrieved
-	 * 
-	 * @returns quest information
+	 * Adds a quest to the user's list of section quest
+	 * @param user_id the id of the student who will be adding a new quest to the section quest list
+	 * @param quest_id the id of the quest to be added in the student's section quest list
+	 * @param section_id the id of the section the student adding the new section quest belongs to
 	 */
-	getQuestById(quest_id: string): Observable<Quest> {
-		const url = `${this.questUrl}/?quest_id=${quest_id}`;
-		return this.http.get<Quest>(url).pipe(
-			map(quests => quests[0]), // returns a {0|1} element array
-			tap(h => {
-				const outcome = h ? 'fetched quest ' + quest_id : 'did not find quest ' + quest_id;
-				console.log(outcome);
-			}),
-			catchError(this.handleError<User>(`getQuestById quest_id=${quest_id}`))
-		);
+	joinQuest(user_id, quest_id, section_id) {
+		const url = this.sectionUrl;
+	}
+
+	/**
+	 * Submits student's quest submission.
+	 * @description Submits the user's submission and removes user from the quest participant's list 
+	 * by calling endQuest() 
+	 * 
+	 * @param idk 
+	 * 
+	 * @see endQuest
+	 */
+	submitQuest(idk) {
+		//AHJ: Still needs work here! di ko kabalo unsaon ni xD like ang parameter or unsa atung pagsubmit and all
+		//AHJ: Idk what url to use
 	}
 
 	/**
