@@ -65,6 +65,7 @@ export class GenProfileComponent implements OnInit {
      * @description Stores the current user to the 'user' variable from the user.service function
      */
     getUser(): void {
+        //ced make curUser in userService or use localStorage
         this.userService.getUser("1")
             .subscribe(user => this.user = user);
     }
@@ -119,9 +120,9 @@ export class GenProfileComponent implements OnInit {
 
     /* Below are the helper functions */
 
-     /**
-     * Sets the performance graph's display and design in the profile page
-     */
+    /**
+    * Sets the performance graph's display and design in the profile page
+    */
     setPerformanceGraph() {
         this.lineChartColors = this.pageService.lineChartColors;
         this.lineChartLabels = ['Week 0', 'Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7', 'Week 8', 'Week 9', 'Week 10', 'Week 11', 'Week 12', 'Week 13', 'Week 14', 'Week 15', 'Week 16'];

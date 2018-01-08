@@ -23,7 +23,6 @@
     "@angular/platform-browser": "^4.2.4",
     "@angular/platform-browser-dynamic": "^4.2.4",
     "@angular/router": "^4.2.4",
-    "angular-in-memory-web-api": "^0.5.2",
     "angular-ui-bootstrap": "^2.5.6",
     "body-parser": "^1.18.2",
     "bootstrap": "^4.0.0-beta.2",
@@ -39,7 +38,6 @@
     "ngx-cookie-service": "^1.0.9",
     "ngx-show-hide-password": "^1.2.1",
     "nodemon": "^1.14.7",
-    "npm-install-missing": "^0.1.4",
     "rxjs": "^5.4.2",
     "zone.js": "^0.8.14"
   },

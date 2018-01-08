@@ -63,7 +63,6 @@ export class SectionService {
 
   }
 
-
   /**
    * Adds students to the section's list of pending approval
    * @param user_id id of the user to be added to the section's list of pending approval
@@ -124,22 +123,23 @@ export class SectionService {
    * 
    * @returns array of sections
    */
-  getUserSections(user_id): Observable<Section[]> {
+  getUserSections(user_id): Observable<any> {
 
     const url = this.secUrl;
 
     let params = new HttpParams().set('id', user_id);
 
-    return this.http.get<Section[]>(
+    return this.http.get<any>(
       url, {
         params: params
       })
       .pipe(
       tap(data => {
+        console.log(data);
         const outcome = data ?
           'fetched sections of user ' + user_id : 'did not find sections of user ' + user_id;
       }),
-      catchError(this.handleError<Section[]>(`getUserSections user_id=${user_id}`))
+      catchError(this.handleError<any>(`getUserSections user_id=${user_id}`))
       );
   }
 
