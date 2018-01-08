@@ -4,7 +4,9 @@ const MongoClient = require('mongodb').MongoClient;
 const ObjectID = require('mongodb').ObjectID;
 const async = require('async');
 
-// Connect
+/*
+*
+*/
 const connection = (closure) => {
     return MongoClient.connect('mongodb://localhost:27017/up-goe-db', (err, db) => {
         if (err) return console.log(err);
@@ -79,6 +81,55 @@ router.get('/quests', (req, res) => {
             .catch((err) => {
                 sendError(err, res);
             });
+    });
+
+});
+
+// api/sections
+router.get('/sections/search/:class', (req, res) => {
+    console.log("searching the class "+ req.params.class);
+    connection((db) => {
+        const myDB = db.db('up-goe-db');
+
+        myDB.collection('sections')
+            .find({
+                _id: req.params.class
+            }, undef => {
+                console.log("null");
+            })
+            .toArray()
+            .then((sections) => {
+                var myObjArr = [];
+                var myObj = {};
+
+                async.forEach(sections, processEachSection, afterAllSection);
+
+                function processEachSection(section, callback) {
+                    myDB.collection('courses')
+                        .find(ObjectID(section.course_id))
+                        .toArray()
+                        .then((course) => {
+                            myObj["section"] = section;
+                            myObj["course_name"] = course[0].course_name;
+                            myObjArr.push(myObj);
+                            callback();
+                        }, reason => {
+                            callback(reason);
+                        })
+
+                }
+
+                function afterAllSection(err) {
+                    response.data = myObjArr;
+                    res.json(myObjArr);
+                }
+
+
+            })
+            .catch((err) => {
+                sendError(err, res);
+            })
+
     });
 
 });
@@ -201,6 +252,7 @@ router.get('/sections/quests', (req, res) => {
 
 // api/signup
 router.post('/signup', (req, res) => {
+    console.log(req);
     connection((db) => {
         const myDB = db.db('up-goe-db');
         var myObj = {
