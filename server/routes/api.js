@@ -85,20 +85,20 @@ router.get('/quests', (req, res) => {
 
 });
 
-// api/sections
-router.get('/sections/search/:class', (req, res) => {
-    console.log("searching the class "+ req.params.class);
+// api/sections/search
+router.get('/search', (req, res) => {
+    console.log("im in and searching the section");
+    var myObjArr = [];
+
     connection((db) => {
         const myDB = db.db('up-goe-db');
+        console.log(req.query.class);
 
         myDB.collection('sections')
-            .find({
-                _id: req.params.class
-            }, undef => {
-                console.log("null");
-            })
+            .find( ObjectID(req.query.class) )
             .toArray()
             .then((sections) => {
+                console.log(sections);
                 var myObjArr = [];
                 var myObj = {};
 
@@ -274,7 +274,7 @@ router.post('/signup', (req, res) => {
                 user_email: myObj.user_email
             })
             .then((count) => {
-                if(count) {
+                if (count) {
                     console.log("Duplicate email detected: " + myObj.user_email);
                     response.data = myObj.user_email;
                     res.json(false);

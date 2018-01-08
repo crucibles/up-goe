@@ -195,7 +195,7 @@ export class SectionService {
   searchSection(string): Observable<any> {
     console.log("hi");
     console.warn("hello");
-    const searchUrl = this.secUrl+'/search/'+string;
+    const searchUrl = "api/search";
 
     let params = new HttpParams().set('class', string);
 
