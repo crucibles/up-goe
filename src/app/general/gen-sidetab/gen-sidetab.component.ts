@@ -185,10 +185,10 @@ export class GenSidetabComponent implements OnInit {
    */
   getQuests(user_id): void {
     this.questService.getUserJoinedQuests(user_id)
-      .subscribe(object => {
+      .subscribe(quests => {
         //AHJ: need more fixes
-        //this.quests = quests;
-        //this.timeDisplays();
+        this.quests = quests.map(quest => new Quest(quest));
+        this.timeDisplays();
       });
   }
 

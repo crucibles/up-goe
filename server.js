@@ -9,7 +9,8 @@ const api = require('./server/routes/api');
 
 // Parsers
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false}));
+// extended set to true: https://stackoverflow.com/questions/29960764/what-does-extended-mean-in-express-4-0
+app.use(bodyParser.urlencoded({ extended: true}));
 
 // Angular DIST output folder (renamed to public for development stage)
 app.use(express.static(path.join(__dirname, 'public')));

@@ -33,6 +33,7 @@ export class SignUpComponent implements OnInit {
 
     private signupForm: FormGroup;
     questions = SECURITY_QUESTION;
+    duplicate: string = null;
 
     constructor(
         fb: FormBuilder,
@@ -53,6 +54,7 @@ export class SignUpComponent implements OnInit {
             securityQuestion: null,
             securityAnswer: null
         });
+        this.duplicate = null;
     }
 
     submit() {
@@ -85,11 +87,15 @@ export class SignUpComponent implements OnInit {
                 console.log("A new user is registered!");
                 this.router.navigate(['/log-in']);
             }
-            else console.log("New user failed to register!");
+            else {
+                console.log("New user failed to register!");
+                this.duplicate = email;
+            }
         });
     }
 
     reset() {
+        this.duplicate = null;
         this.signupForm.reset();
     }
 

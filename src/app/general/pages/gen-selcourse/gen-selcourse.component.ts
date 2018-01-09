@@ -65,51 +65,40 @@ export class GenSelcourseComponent implements OnInit {
 			});
 	}
 
-	/**
-	 * Obtains sections and its respective course of the current use
-	 * @description Obtains sections and its respective course of the current user by storing it to 'courses' 
-	 * and 'section' array respectively
-	 * @param user_id id of the user whose array of 
-	 */
-	getUserSections(user_id): void {
-		this.sectionService.getUserSections(user_id)
-			.subscribe(courseSections => {
-				//stores sections
-				//AHJ: Remove everything below this line until marker encountered
-				let section = new Section();
-				section.setSection("1", "A", [], "Miguel Guillermo", [], [], []);
-				const sections = [
-					{
-						course_name: "CMSC 128",
-						section: section
-					},
-					{
-						course_name: "CMSC 141",
-						section: section
-					}
-				]
-				//AHJ: Remove until here 
+  /**
+   * Obtains sections and its respective course of the current use
+   * @description Obtains sections and its respective course of the current user by storing it to 'courses' 
+   * and 'section' array respectively
+   * @param user_id id of the user whose array of 
+   * @returns an Array of objects with a structure of [{section: {Section}, course_name: Section's course_name}, {...}]
+   */
+  getUserSections(user_id): void {
+    this.sectionService.getUserSections(user_id)
+      .subscribe(sections => {
+        this.sections = sections;
+        let x = sections.map(section => new Section(section));
+      });
+  }
 
-				//change 'sections' variable to courseSections if getUserSections() functions correctly
-				this.sections = sections;
-			});
-	}
-
-	/**
-	 * @summary searches the string entered by the user and stores result in 'course_found' variable
-	 */
-	search() {
-		if (this.course_search == null || this.course_search.length == 0) {
-			this.isSearching = false;
-		} else {
-			this.isSearching = true;
-			//AHJ: use this.course_search for searching the database 
-			/*this.course_found = this.getAllCourses().filter(course =>
-			  (course.getCourseId() == this.course_search) ||
-			  (course.getCourseName() == this.course_search)
-			);*/
-		}
-	}
+  /**
+   * @summary searches the string entered by the user and stores result in 'course_found' variable
+   */
+  search() {
+    if (this.course_search == null || this.course_search.length == 0) {
+      this.isSearching = false;
+    } else {
+      this.isSearching = true;
+      console.log(this.course_search);
+      this.sectionService.searchSection(this.course_search).subscribe((sections) => {
+        console.warn(sections);
+      })
+      //AHJ: use this.course_search for searching the database 
+      /*this.course_found = this.getAllCourses().filter(course =>
+        (course.getCourseId() == this.course_search) ||
+        (course.getCourseName() == this.course_search)
+      );*/
+    }
+  }
 
 	openSectionPage(section_id: string) {
 		console.log(section_id);
