@@ -3,10 +3,10 @@
   <label for="slide" style="margin: 30px 10px" *ngIf="isShowMenuButton" class="toggle">☰</label>
   <ul class="vert-tab">
     <li>
-      <img [src]="image" alt="Cat">
+      <img [src]="imageDir + currentUser.getUserPhoto()" alt="Cat">
     </li>
-    <li *ngIf="user">
-      {{this.user.getUserFullName()}}
+    <li *ngIf="currentUser">
+      {{this.currentUser.getUserFullName()}}
     </li>
     <!--displays quests if navigated page is not a profile page-->
     <!--<ng-container *ngIf="!isProfile">
@@ -28,7 +28,7 @@
 
     <!--displays user information if page navigated is a profile page-->
     <ng-container *ngIf="isProfile">
-      <form *ngIf="user" class="form-horizontal" [formGroup]="editForm" (ngSubmit)="endEditing()">
+      <form *ngIf="currentUser" class="form-horizontal" [formGroup]="editForm" (ngSubmit)="endEditing()">
         <li style="text-align: right">
           <button *ngIf="isEditing" type="submit" class="btn btn-primary" [disabled]="!editForm.valid">
             Submit
@@ -42,7 +42,7 @@
           <div *ngIf="!sections || sections.length == 0">You have no course yet!</div>
           <a *ngIf="courses[i]" (click)=openCoursePage(section.getSectionId())>{{this.courses[i].getCourseName()}} - {{section.getSectionName()}}</a>
         </li>
-        <ng-container *ngIf="user">
+        <ng-container *ngIf="currentUser">
           <li> School ID: </li>
           <li>
             <input type="text" formControlName="schoolId" class="user-information" [class.remove-border]="!isEditing" />

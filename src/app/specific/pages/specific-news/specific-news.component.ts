@@ -68,7 +68,7 @@ export class SpecificNewsComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
-		this.pageService.isProfilePage(false);
+		this.setDefault();
 		this.parameters = this.route.params.subscribe(params => {
 			this.section_id = params['section_id'];
 			this.getUser();
@@ -79,11 +79,13 @@ export class SpecificNewsComponent implements OnInit {
 		});
 	}
 
+	setDefault(){
+		this.pageService.isProfilePage(false);
+	}
+
 	getUser(){
 		//return this function once working okay
-		//this.currentUser = this.userService.getCurrentUser();
-		this.currentUser = new User();
-		this.currentUser.setUserId("1");
+		this.currentUser = this.userService.getCurrentUser();
 	}
 
 	/**
