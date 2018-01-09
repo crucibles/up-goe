@@ -51,7 +51,9 @@ export class UserService {
         private http: HttpClient,
         private router: Router,
         private cookieService: CookieService
-    ) { }
+    ) { 
+        this.currentUser = new User(JSON.parse(localStorage.getItem("currentUser")));
+    }
 
     /**
      * @summary: Edit existing user from server

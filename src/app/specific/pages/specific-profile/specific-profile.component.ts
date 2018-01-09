@@ -60,8 +60,7 @@ export class SpecificProfileComponent implements OnInit {
    * @description Stores the current user to the 'user' variable from the user.service function
    */
   getUser(): void {
-      this.userService.getUser("1")
-          .subscribe(user => this.user = user);
+      this.user = this.userService.getCurrentUser();
   }
 
   /**

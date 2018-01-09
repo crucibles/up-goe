@@ -18,6 +18,10 @@ import {
   User
 } from 'shared/models';
 
+import {
+  UserService
+} from 'shared/services';
+
 @Component({
   selector: 'specific-sidetab',
   templateUrl: './specific-sidetab.component.html',
@@ -51,7 +55,8 @@ export class SpecificSidetabComponent implements OnInit {
   }
 
   constructor(
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private userService: UserService
   ) {
   }
 
@@ -68,10 +73,7 @@ export class SpecificSidetabComponent implements OnInit {
 
   getUser() {
     //AHJ: current user is not yet obtained
-    let user = new User();
-    user.setUser("Ced", "Yao", "Alvaro", new Date("08/02/1997"), "alvaro_cedric@yahoo.com", "p", "S", "09499709292", "cute-cat.jpg", "2014-60690", "Who are you?", "I am me");
-    this.user = user;
-
+    this.user = this.userService.getCurrentUser();
     let image: string = this.user.getUserPhoto() ?
       this.user.getUserPhoto() :
       "avatar.jpg";

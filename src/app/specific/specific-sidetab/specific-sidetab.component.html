@@ -6,7 +6,7 @@
       <img [src]="image" alt="Cat">
     </li>
     <li *ngIf="user">
-      {{this.user.getUserFname()}} {{this.user.getUserMname()}} {{this.user.getUserLname()}}
+      {{this.user.getUserFullName()}}
     </li>
     <!--displays quests if navigated page is not a profile page-->
     <!--<ng-container *ngIf="!isProfile">
@@ -28,7 +28,7 @@
 
     <!--displays user information if page navigated is a profile page-->
     <ng-container *ngIf="isProfile">
-      <form class="form-horizontal" [formGroup]="editForm" (ngSubmit)="endEditing()">
+      <form *ngIf="user" class="form-horizontal" [formGroup]="editForm" (ngSubmit)="endEditing()">
         <li style="text-align: right">
           <button *ngIf="isEditing" type="submit" class="btn btn-primary" [disabled]="!editForm.valid">
             Submit
