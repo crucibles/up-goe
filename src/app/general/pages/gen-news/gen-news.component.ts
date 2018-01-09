@@ -26,6 +26,7 @@ import {
     styleUrls: ['./gen-news.component.css']
 })
 export class GenNewsComponent implements OnInit {
+  
     m: string;
     commentPosts: CommentPost[];
     posters: User[];

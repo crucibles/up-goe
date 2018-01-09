@@ -40,6 +40,8 @@ import {
 @Injectable()
 export class SectionService {
 
+  private currentUserSections: any;
+  
   private secUrl = "api/sections";
 
   /**
@@ -69,7 +71,17 @@ export class SectionService {
 
   constructor(
     private http: HttpClient
-  ) { }
+  ) { 
+    this.currentUserSections = JSON.parse(localStorage.getItem('currentUserSections'));
+  }
+
+  /**
+   * Adds received newly created course to the database
+   * @param course - new course to be added to the database
+   */
+  getCurrentUserSections() {
+    return this.currentUserSections;
+  }
 
   /**
    * Adds received newly created course to the database
@@ -160,6 +172,58 @@ export class SectionService {
    */
   endSection(section) {
     // murag graduation ang peg... di ko sure... feeling nko murag syag create section pro wipe out lng ang other information
+  }
+
+  /**
+   * Returns the array of sections based on user id
+   * @param user_id id of the user whose array of sections are to be retrieved
+   * 
+   * @returns array of sections
+   * array[i].course_name - the name of the section's course where the user is enrolled in
+   * array[i].section     - enrolled section of the user 
+   * 
+   * @example
+   * array[i] = {
+   * course_name: "CMSC 128",
+   * section: section
+   * };
+   * The expected values of array is the section's information and the attached course_name
+   */
+  getUserSections(user_id): Observable<any[]> {
+
+    const url = this.secUrl;
+
+    let params = new HttpParams().set('id', user_id);
+
+    return this.http.get<any>(
+      url, {
+        params: params
+      })
+      .pipe(
+      tap(sections => {
+        console.warn(sections);
+
+        localStorage.setItem("currentUserSections", JSON.stringify(sections));
+          
+        console.warn(this.currentUserSections);
+        const outcome = sections ? 
+          'fetched sections of user ' + user_id : 'did not find sections of user ' + user_id;
+      }),
+      catchError(this.handleError<any>(`getUserSections user_id=${user_id}`))
+      );
+  }
+
+  /**
+   * Returns the array of sections based on user id
+   * @param user_id id of the user whose array of sections are to be retrieved
+   * 
+   * @returns array of sections
+   */
+  getStatusOfUserSections(){
+
+  }
+
+  /**
     const url = this.secUrl;
   }
 
@@ -216,39 +280,6 @@ export class SectionService {
     const url = this.userSectionUrl;
   }
   
-  /**
-   * Returns the array of sections based on user id
-   * @param user_id id of the user whose array of sections are to be retrieved
-   * 
-   * @returns array of sections
-   * array[i].course_name - the name of the section's course where the user is enrolled in
-   * array[i].section     - enrolled section of the user 
-   * 
-   * @example
-   * array[i] = {
-   * course_name: "CMSC 128",
-   * section: section
-   * };
-   * The expected values of array is the section's information and the attached course_name
-   */
-  getUserSections(user_id): Observable<Section[]> {
-    // AHJ: Remove the dummy content in gen-selcourse and gen-sidetab when this functin is working
-    const url = this.secUrl;
-
-    let params = new HttpParams().set('id', user_id);
-
-    return this.http.get<Section[]>(
-      url, {
-        params: params
-      })
-      .pipe(
-      tap(data => {
-        const outcome = data ?
-          'fetched sections of user ' + user_id : 'did not find sections of user ' + user_id;
-      }),
-      catchError(this.handleError<Section[]>(`getUserSections user_id=${user_id}`))
-      );
-  }
 
   /**
 	 * Returns user's array of section grades(or xp).
@@ -301,7 +332,7 @@ export class SectionService {
   searchSection(string): Observable<any> {
     console.log("hi");
     console.warn("hello");
-    const searchUrl = this.secUrl+'/search/'+string;
+    const searchUrl = "api/search";
 
     let params = new HttpParams().set('class', string);
 
