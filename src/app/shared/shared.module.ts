@@ -22,19 +22,24 @@ import {
 } from 'ng2-charts';
 
 import {
+  CollapseModule
+} from 'ngx-bootstrap/collapse/collapse.module';
+
+import {
+  PopoverModule,
   TooltipModule
-} from 'ngx-bootstrap/tooltip';
+} from 'ngx-bootstrap';
 
 //Application Imports
 import {
   PageNotFoundComponent
 } from 'shared/pages';
-import { CollapseModule } from 'ngx-bootstrap/collapse/collapse.module';
 
 @NgModule({
   imports: [
     CollapseModule.forRoot(),
     CommonModule,
+    PopoverModule.forRoot(),
     TooltipModule.forRoot()
   ],
   exports: [
@@ -43,6 +48,7 @@ import { CollapseModule } from 'ngx-bootstrap/collapse/collapse.module';
     ChartsModule,
     FormsModule,
     HttpClientModule,
+    PopoverModule,
     ReactiveFormsModule,
     TooltipModule
   ],

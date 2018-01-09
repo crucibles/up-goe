@@ -2,7 +2,8 @@
 import {
 	Component,
 	OnInit,
-	HostListener
+	HostListener,
+	ElementRef
 } from '@angular/core';
 
 import {
@@ -28,7 +29,10 @@ const imageDir: string = "/assets/images/";
 @Component({
 	selector: 'specific-sidetab',
 	templateUrl: './specific-sidetab.component.html',
-	styleUrls: ['./specific-sidetab.component.css']
+	styleUrls: ['./specific-sidetab.component.css'],
+	host: {
+		'(document:click)': 'handleClick($event)',
+	}
 })
 
 
@@ -42,30 +46,16 @@ export class SpecificSidetabComponent implements OnInit {
 	image: string = "";	
 
 	// for collapsible sidetab
-	isShowMenuButton: boolean = false;
+	isShowSideTab: boolean = false;
 	windowWidth: number = window.innerWidth;
 
-	//if screen size changes it'll update
-	@HostListener('window:resize', ['$event'])
-	resize(event) {
-		this.checkSize();
-	}
-
-	checkSize() {
-		this.windowWidth = window.innerWidth;
-		if (this.windowWidth <= 765) {
-			this.isShowMenuButton = true;
-		} else {
-			this.isShowMenuButton = false;
-		}
-	}
-
 	constructor(
+		private elementRef: ElementRef,
 		private formBuilder: FormBuilder,
 		private pageService: PageService,
 		private userService: UserService
 	) {
-		this.image = imageDir + "not-found.jpg"
+		this.image = imageDir + "not-found.jpg";
 	}
 
 	ngOnInit() {
@@ -102,5 +92,40 @@ export class SpecificSidetabComponent implements OnInit {
 	startEditing() {
 		this.isEditing = !this.isEditing;
 		this.editForm.enable();
+	}
+
+	/* Below are helper functions */
+
+	handleClick(event) {
+		var clickedComponent = event.target;
+		var inside = false;
+		do {
+			if (clickedComponent === this.elementRef.nativeElement) {
+				inside = true;
+			}
+			clickedComponent = clickedComponent.parentNode;
+		} while (clickedComponent);
+		if (!inside && this.windowWidth <= 765) {
+			this.isShowSideTab = false;
+		}
+	}
+
+	clickMenuButton() {
+		this.isShowSideTab = !this.isShowSideTab;
+	}
+
+	//if screen size changes it'll update
+	@HostListener('window:resize', ['$event'])
+	resize(event) {
+		this.checkSize();
+	}
+
+	checkSize() {
+		this.windowWidth = window.innerWidth;
+		if (this.windowWidth <= 765) {
+			this.isShowSideTab = false;
+		} else {
+			this.isShowSideTab = true;
+		}
 	}
 }

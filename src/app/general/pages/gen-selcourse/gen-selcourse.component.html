@@ -40,8 +40,10 @@
     <ng-container *ngIf="!isSearching">
       <!--Shows if user has no enrolled course-->
       <tr *ngIf="!sections || sections.length == 0">
-        <td colspan="3" style="text-align: center">You have no course enrolled yet!
-          <br>Search course name or course code now.</td>
+        <td colspan="3" style="text-align: center">
+          You have no course enrolled yet!
+          <br>Search course name or course code now.
+        </td>
       </tr>
       <!--AHJ: Fix zebra form-->
       <ng-container id="mult" *ngIf="sections != null && sections.length != 0">
