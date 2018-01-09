@@ -33,20 +33,20 @@ export class User {
   constructor(
     user?: any
   ) {
-    if(user){
+    if (user) {
       this._id = user._id;
-      this.user_fname = user.user_fname? user.user_fname: "";
-      this.user_mname = user.user_mname? user.user_mname: "";
-      this.user_lname = user.user_lname? user.user_lname: "";
-      this.user_birthdate = user.user_birthdate? new Date(user.user_birthdate): new Date();
-      this.user_email = user.user_email? user.user_email: "";
-      this.user_password = user.user_password? user.user_password: "";
-      this.user_type = user.user_type? user.user_type: "";
-      this.user_contact_no = user.user_contact_no? user.user_contact_no: "";
-      this.user_photo = user.user_photo? user.user_photo: "";
-      this.user_school_id = user.user_school_id? user.user_school_id: "";
-      this.user_security_question = user.user_security_question? user.user_security_question: "";
-      this.user_security_answer = user.user_security_answer? user.user_security_answer: "";
+      this.user_fname = user.user_fname ? user.user_fname : "";
+      this.user_mname = user.user_mname ? user.user_mname : "";
+      this.user_lname = user.user_lname ? user.user_lname : "";
+      this.user_birthdate = user.user_birthdate ? new Date(user.user_birthdate) : new Date();
+      this.user_email = user.user_email ? user.user_email : "";
+      this.user_password = user.user_password ? user.user_password : "";
+      this.user_type = user.user_type ? user.user_type : "";
+      this.user_contact_no = user.user_contact_no ? user.user_contact_no : "";
+      this.user_photo = user.user_photo ? user.user_photo : "";
+      this.user_school_id = user.user_school_id ? user.user_school_id : "";
+      this.user_security_question = user.user_security_question ? user.user_security_question : "";
+      this.user_security_answer = user.user_security_answer ? user.user_security_answer : "";
     } else {
       this.user_fname = "";
       this.user_mname = "";
@@ -60,7 +60,7 @@ export class User {
       this.user_school_id = "";
       this.user_security_question = "";
       this.user_security_answer = "";
-      
+
     }
   }
 
@@ -91,21 +91,30 @@ export class User {
     this.user_security_question = user_security_question;
     this.user_security_answer = user_security_answer;
   }
-  
+
   getUserId() {
     return this._id;
   }
 
-  getUserFname() {
+  getUserFirstName() {
     return this.user_fname;
   }
 
-  getUserMname() {
+  getUserMiddleName() {
     return this.user_mname;
   }
 
-  getUserLname() {
+  getUserLastName() {
     return this.user_lname;
+  }
+
+  getUserFullName() {
+    let firstName: string = this.user_fname;
+    let middleName: string = this.user_mname && this.user_mname.length != 0? this.user_mname[0] + "." : "";
+    let lastName: string = this.user_lname;
+    let fullName: string = firstName + " " + middleName + " " + lastName;
+
+    return fullName;
   }
 
   getUserBirthdate() {

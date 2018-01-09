@@ -52,11 +52,36 @@ export class UserService {
         private router: Router,
         private cookieService: CookieService
     ) { 
-        this.currentUser = JSON.parse(localStorage.getItem("currentUser"));
+        this.currentUser = new User(JSON.parse(localStorage.getItem("currentUser")));
     }
 
-    getCurrentUser() {
+    /**
+     * @summary: Edit existing user from server
+     */
+    editUser(id: string) {
+        const url = this.userUrl;
+    }
+
+    getCurrentUser(): User {
         return this.currentUser;
+    }
+
+    /**
+     * @summary: Obtains a user from server by id
+     */
+    getUser(id: string): Observable<User> {
+        const url = this.userUrl;
+        let params = new HttpParams().set('id', id);
+        return this.http.get<User[]>(url, {
+            params: params
+        })
+            .pipe(
+            map(users => users[0]), // returns a {0|1} element array
+            tap(h => {
+                const outcome = h ? 'fetched user ' + id : 'did not find user ' + id;
+            }),
+            catchError(this.handleError<User>(`getUser user_id=${id}`))
+            );
     }
 
     /**
@@ -79,7 +104,7 @@ export class UserService {
                 if (data) {
                     this.currentUser = new User(data);
                     localStorage.setItem('currentUser', JSON.stringify(data));
-                    this.cookieService.set('currentUser', data['user_email']);
+                    this.cookieService.set('currentUser', this.currentUser.getUserEmail());
                 }
                 return data;
             }),
@@ -136,30 +161,6 @@ export class UserService {
             }),
             catchError(this.handleError<User>(`signup user_email=${email}`))
             );
-    }
-
-    /**
-     * @summary: Obtains a user from server by id
-     */
-    getUser(id: string): Observable<User> {
-        const url = this.userUrl;
-        let params = new HttpParams().set('id', id);
-        return this.http.get<User[]>(url, {
-            params: params
-        })
-            .pipe(
-            map(users => users[0]), // returns a {0|1} element array
-            tap(h => {
-                const outcome = h ? 'fetched user ' + id : 'did not find user ' + id;
-            }),
-            catchError(this.handleError<User>(`getUserById user_id=${id}`))
-            );
-    }
-
-    /**
-     * @summary: Edit existing user from server
-     */
-    editUser(id: string) {
     }
 
     /**

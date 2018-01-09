@@ -1,61 +1,60 @@
 //Core Imports
 import {
-  Component,
-  OnInit
+	Component,
+	OnInit
 } from '@angular/core';
 
 import {
-  NgModel
+	NgModel
 } from '@angular/forms';
 
 import {
-  Router
+	Router
 } from '@angular/router';
 //Application Imports
 import {
-  Course,
-  Quest,
-  Section,
-  User
+	Course,
+	Quest,
+	Section,
+	User
 } from 'shared/models';
 
 import {
-  SectionService,
-  UserService,
-  PageService
+	SectionService,
+	UserService,
+	PageService
 } from 'shared/services';
 
 @Component({
-  selector: 'app-gen-selcourse',
-  templateUrl: './gen-selcourse.component.html',
-  styleUrls: ['./gen-selcourse.component.css']
+	selector: 'app-gen-selcourse',
+	templateUrl: './gen-selcourse.component.html',
+	styleUrls: ['./gen-selcourse.component.css']
 })
 export class GenSelcourseComponent implements OnInit {
 
-  course
   sections: Section[];
   table: any;
   courses: Course[];
   user: User;
   allcourses: Course[];
 
-  //for search bar
-  course_search: string;
-  isSearching: boolean = false;
-  course_found: Course[];
+	//for search bar
+	course_search: string;
+	isSearching: boolean = false;
+	course_found: Course[];
 
-  constructor(
-    private pageService: PageService,
-    private sectionService: SectionService,
-    private userService: UserService,
-    private router: Router
-  ) {
-    this.pageService.isProfilePage(false);
-  }
+	constructor(
+		private pageService: PageService,
+		private sectionService: SectionService,
+		private userService: UserService,
+		private router: Router
+	) {
+		this.pageService.isProfilePage(false);
+	}
 
-  ngOnInit() {
-    this.getUser();
-  }
+	ngOnInit() {
+		this.getUser();
+	}
 
   /**
    * Obtains information of the current user
@@ -114,10 +113,10 @@ export class GenSelcourseComponent implements OnInit {
     }
   }
 
-  openSectionPage(section_id: string) {
-    console.log(section_id);
-    this.router.navigate(['/specific/specific-news', section_id]);
-  }
+	openSectionPage(section_id: string) {
+		console.log(section_id);
+		this.router.navigate(['/specific/specific-news', section_id]);
+	}
 
 
 }

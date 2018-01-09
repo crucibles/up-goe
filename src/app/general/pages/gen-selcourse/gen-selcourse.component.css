@@ -26,12 +26,12 @@
 #hor-zebra td a{
     text-decoration: none;
     cursor: pointer;
+    color: rgb(118, 143, 243)
 }
 
 #hor-zebra .odd {
     background: #e8edff;
 }
-
 
 /*Search Bar*/
 .search-container {
