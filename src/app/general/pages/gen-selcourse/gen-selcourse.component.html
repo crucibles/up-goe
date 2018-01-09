@@ -46,13 +46,11 @@
       <!--AHJ: Fix zebra form-->
       <ng-container id="mult" *ngIf="sections != null && sections.length != 0">
         <tr *ngFor="let section of sections; let i = index" [class.odd]="i%2 == 0">
-          <ng-container>
-            <td>
-              <a class="clickable" (click)=openSectionPage(section.section._id)>{{section.course_name}}</a>
-            </td>
-            <td>{{section.section.section_name}}</td>
-            <td>{{section.section.instructor}}</td>
-          </ng-container>
+          <td>
+            <a class="clickable" (click)=openSectionPage(section.section._id)>{{section.course_name}}</a>
+          </td>
+          <td>{{section.section.section_name}}</td>
+          <td>{{section.section.instructor}}</td>
         </tr>
       </ng-container>
     </ng-container>

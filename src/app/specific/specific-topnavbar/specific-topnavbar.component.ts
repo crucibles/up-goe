@@ -1,8 +1,13 @@
 //Core Imports
 import {
-  Component, 
+  Component,
   OnInit
 } from '@angular/core';
+
+//Application Imports
+import {
+  UserService
+} from 'shared/services';
 
 @Component({
   selector: 'specific-topnavbar',
@@ -12,11 +17,20 @@ import {
 export class SpecificTopnavbarComponent implements OnInit {
 
   isCollapsed: boolean;
-  
-  constructor() { }
+
+  constructor(
+    private userService: UserService
+  ) { }
 
   ngOnInit() {
     this.isCollapsed = true;
   }
 
+  /**
+   * Logs out the current user
+   */
+  logOut() {
+    console.log("logout");
+    this.userService.logOut();
+  }
 }
