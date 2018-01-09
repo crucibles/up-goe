@@ -121,7 +121,7 @@ export class UserService {
         // remove user from local storage to log user out
         localStorage.removeItem('currentUser');
         this.cookieService.delete('currentUser');
-        this.router.navigate(['/log-in'])
+        this.router.navigate(['/log-in']);
     }
 
     /**
