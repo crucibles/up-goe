@@ -13,6 +13,7 @@ import {
     PageService,
     UserService
 } from 'shared/services';
+import { ActivatedRoute } from '@angular/router';
 
 const TOTXP: number[] = [10, 20, 30, 40];
 const MAXXP: number = 200;
@@ -44,14 +45,23 @@ export class SpecificProfileComponent implements OnInit {
      */
     constructor(
         private pageService: PageService,
+        private route: ActivatedRoute,
         private userService: UserService
     ) {
     }
 
     ngOnInit() {
         this.getUser();
+        this.getCurrentSection();
         this.getGrades();
         this.setDefault();
+    }
+
+
+    getCurrentSection(){
+        this.route.paramMap.subscribe(params => {
+			let sectionId = params.get('sectionId');
+		});
     }
 
     setDefault() {

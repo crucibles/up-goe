@@ -10,6 +10,7 @@
     left: -1px;
     top: 30px;
     overflow-y: scroll;
+    box-shadow: 1px 1px 13px #888888;
 }
 
 /*Adjusts image inside the side tab*/
@@ -61,16 +62,23 @@
     width: 100%;
 }
 
+.toggle {
+    position: fixed;
+}
+
 @media screen and (max-width: 765px) {
     .toggle {
         position: fixed;
         font-size: 1.3em;
         cursor: pointer;
         left: 0px;
+        -webkit-transition: left 0.5s; /* Safari */
+        transition: left 0.5s;
     }
 
     .vert-tab {
         width: 250px;
+        box-shadow: 0.2px 0.2px 13px #8f8e8e;
     }
 
     #slide {
@@ -79,14 +87,20 @@
 
     #slide:not(:checked) + .container .vert-tab {
         left: -250px;
+        -webkit-transition: left 0.5s; /* Safari */
+        transition: left 0.5s;
     }
 
     #slide:checked + .container .toggle {
         left: 250px;
+        -webkit-transition: left 0.5s; /* Safari */
+        transition: left 0.5s;
     }
 
     #slide:checked + .container .vert-tab {
         left: 0px;
+        -webkit-transition: left 0.5s; /* Safari */
+        transition: left 0.5s;
     }
 }
 

@@ -1,12 +1,12 @@
-<input type="checkbox" id="slide" name="" value="" />
+<input type="checkbox" id="slide" name="" value="" (click)="clickMenuButton()" [checked]="isShowSideTab"/>
 <div class=container>
-  <label for="slide" style="margin: 30px 10px" *ngIf="isShowMenuButton" class="toggle">☰</label>
+  <label for="slide" style="margin: 30px 10px" class="toggle">☰</label>
   <ul class="vert-tab">
     <li>
-      <img [src]="imageDir + currentUser.getUserPhoto()" alt="Cat">
+      <img [src]="image" alt="Cat">
     </li>
     <li *ngIf="currentUser">
-      {{this.currentUser.getUserFullName()}}
+      {{currentUser.getUserFullName()}}
     </li>
     <!--displays quests if navigated page is not a profile page-->
     <!--<ng-container *ngIf="!isProfile">

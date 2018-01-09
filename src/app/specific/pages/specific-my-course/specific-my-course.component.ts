@@ -1,32 +1,61 @@
 //Core Imports
 import {
-  Component,
-  OnInit
+	Component,
+	OnInit
 } from '@angular/core';
+
+import {
+	ActivatedRoute
+} from '@angular/router';
+
+//Third-Party Imports
+import 'rxjs/add/operator/switchMap';
 
 //Application Imports
 import {
-  PageService
+	Section
+} from 'shared/models';
+
+import {
+	PageService,
+	SectionService
 } from 'shared/services';
 
-
 @Component({
-  selector: 'app-specific-my-course',
-  templateUrl: './specific-my-course.component.html',
-  styleUrls: ['./specific-my-course.component.css']
+	selector: 'app-specific-my-course',
+	templateUrl: './specific-my-course.component.html',
+	styleUrls: ['./specific-my-course.component.css']
 })
 export class SpecificMyCourseComponent implements OnInit {
 
-  constructor(
-    private pageService: PageService
-  ) { }
+	private currentSection: Section;
 
-  ngOnInit() {
-    this.setDefault();
-  }
+	constructor(
+		private pageService: PageService,
+		private sectionService: SectionService,
+		private route: ActivatedRoute
+	) { }
 
-  setDefault() {
-    this.pageService.isProfilePage(false);
-  }
+	ngOnInit() {
+		this.setDefault();
+		this.getCurrentSection();
 
+	}
+
+	/**
+	 * Sets all the default less-related functions/properties of the component
+	 */
+	setDefault() {
+		this.pageService.isProfilePage(false);
+	}
+
+	/**
+	 * Obtains the user's navigated section
+	 * @description Obtains the current section and stores it into 'currentSection' variable
+	 */
+	getCurrentSection() {
+		this.route.paramMap.subscribe(params => {
+			let sectionId = params.get('sectionId');
+		});
+	}
 }

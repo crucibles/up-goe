@@ -1,6 +1,6 @@
-<input type="checkbox" id="slide" name="" value="" (click)="showSideTab = !showSideTab" [checked]="showSideTab" />
+<input type="checkbox" id="slide" name="" value="" (click)="clickMenuButton()" [checked]="isShowSideTab" />
 <div class=container>
-  <label for="slide" style="margin: 30px 10px" *ngIf="isShowMenuButton" class="toggle">☰</label>
+  <label for="slide" style="margin: 30px 10px" class="toggle">☰</label>
   <ul class="vert-tab">
     <li>
       <img [src]="image" alt="Cat">
@@ -14,14 +14,21 @@
         Quest(s):
       </li>
       <li *ngFor="let quest of quests; let i = index">
-        <a>{{quest.getQuestTitle()}}
+        <ng-template #popTemplate>
+          <div style="font-weight: bold">Description:</div>
+          <div>{{quest.getQuestDescription()}}</div>
+          <div style="font-weight: bold">Started on:</div>
+          <div>{{this.formatDateTime(quest.getQuestStartTimeDate())}}</div>
+          <div style="font-weight: bold">Deadline:</div>
+          <div>{{this.formatDateTime(quest.getQuestEndTimeDate())}}</div>
+        </ng-template>
+        <a [popover]="popTemplate" popoverTitle="{{quest.getQuestTitle()}}" placement="auto" container="body" [outsideClick]="true">{{quest.getQuestTitle()}}
           <div class="progress">
             <div ngClass="{{this.defaultPBClass}} {{this.progressBarClass? this.progressBarClass[i]: ''}}" role="progressbar" aria-valuenow="40"
               aria-valuemin="0" aria-valuemax="100" [style.width]="this.questTimePercentage? this.questTimePercentage[i]: '0%'">
             </div>
             <span>{{this.questTimeDisplay? this.questTimeDisplay[i]: '0%'}}</span>
           </div>
-          {{quest.getQuestDescription()}}
         </a>
       </li>
     </ng-container>
@@ -45,7 +52,7 @@
         <ng-container *ngIf="currentUser">
           <li> School ID: </li>
           <li>
-            <input type="text" [disabled]="true" class="user-information remove-border"/>
+            <input type="text" [disabled]="true" class="user-information remove-border" />
           </li>
           <li> Email: </li>
           <li>

@@ -20,6 +20,10 @@ import {
 } from 'rxjs/Observable';
 
 import {
+  Observer
+} from 'rxjs/Observer';
+
+import {
   of
 } from 'rxjs/observable/of';
 
@@ -63,7 +67,7 @@ export class SectionService {
    * Used for obtaining student's experiences from sections at api.js
    */
   private sectionExpUrl = "api/sections/experiences";
-  
+
   /**
    * Used for adding/obtaining experiences at api.js
    */
@@ -107,7 +111,7 @@ export class SectionService {
   sendApprovalToSection(user_id: string, section_id: string) {
     const url = this.secUrl;
   }
-  
+
   /**
    * Approves the student entry to the section 
    * @param user_id id of the user whose entry is to be approved
@@ -116,7 +120,7 @@ export class SectionService {
   approveUserToSection(user_id: string, section_id: string) {
     const url = this.secUrl;
   }
-  
+
   /**
    * Removes/reject the student from the section
    * @param user_id id of the user to be rejected/removed
@@ -125,7 +129,7 @@ export class SectionService {
   deleteUserFromSection(user_id: string, section_id: string) {
     const url = this.secUrl;
   }
-  
+
   /**
    * Edits existing section in the database.
    * @description Edit old information of existing section of id contained in the section parameter
@@ -147,7 +151,7 @@ export class SectionService {
   editCourse(course: Course) {
     const url = this.secUrl;
   }
-  
+
   /**
    * Deletes course from the database.
    * @description Deletes course from the database as well as the section underneath it
@@ -164,7 +168,7 @@ export class SectionService {
   deleteSection(section_id) {
     const url = this.secUrl;
   }
-  
+
   /**
    * Ends the section by finalizing and exporting the grades, removing all the students in the section
    * while retaining the section name, description, etc.
@@ -175,64 +179,15 @@ export class SectionService {
   }
 
   /**
-   * Returns the array of sections based on user id
-   * @param user_id id of the user whose array of sections are to be retrieved
-   * 
-   * @returns array of sections
-   * array[i].course_name - the name of the section's course where the user is enrolled in
-   * array[i].section     - enrolled section of the user 
-   * 
-   * @example
-   * array[i] = {
-   * course_name: "CMSC 128",
-   * section: section
-   * };
-   * The expected values of array is the section's information and the attached course_name
-   */
-  getUserSections(user_id): Observable<any[]> {
-
-    const url = this.secUrl;
-
-    let params = new HttpParams().set('id', user_id);
-
-    return this.http.get<any>(
-      url, {
-        params: params
-      })
-      .pipe(
-      tap(sections => {
-        console.warn(sections);
-
-        localStorage.setItem("currentUserSections", JSON.stringify(sections));
-          
-        console.warn(this.currentUserSections);
-        const outcome = sections ? 
-          'fetched sections of user ' + user_id : 'did not find sections of user ' + user_id;
-      }),
-      catchError(this.handleError<any>(`getUserSections user_id=${user_id}`))
-      );
-  }
-
-  /**
-   * Returns the array of sections based on user id
-   * @param user_id id of the user whose array of sections are to be retrieved
-   * 
-   * @returns array of sections
-   */
-  getStatusOfUserSections(){
-
-  }
-
-  /**
     const url = this.secUrl;
   }
 
-   /**
-   * Returns the course information based by course id
-   * @param course_id id of the course whose information are to be retrieved
-   * 
-   * @returns course information of the course
-   */
+  /**
+  * Returns the course information based by course id
+  * @param course_id id of the course whose information are to be retrieved
+  * 
+  * @returns course information of the course
+  */
   getCourse(course_id): Observable<Course> {
     const url = `${this.courseUrl}/?course_id=${course_id}`;
     return this.http.get<Course>(url).pipe(
@@ -266,18 +221,37 @@ export class SectionService {
     const url = this.courseSectionUrl;
   }
 
-    /**
-   * Returns students of the section based on section id
-   * @description Returns the information of section's enrolled student as provided in the User class.
-   * @param section_id id of the section whose array of students are to be retrieved
+  /**
+   * Returns current section to its subscribers
    * 
-   * @returns {User[]} array of students enrolled in the section of User class
-   * 
-   * @example 
-   * arrayReturned = [new User(user1), new User(user2)]
+   * @returns {Section} section information of the current section being navigated
    */
+  getCurrentSection(){
+  }
+
+
+  /**
+ * Returns students of the section based on section id
+ * @description Returns the information of section's enrolled student as provided in the User class.
+ * @param section_id id of the section whose array of students are to be retrieved
+ * 
+ * @returns {User[]} array of students enrolled in the section of User class
+ * 
+ * @example 
+ * arrayReturned = [new User(user1), new User(user2)]
+ */
   getSectionStudents(section_id) {
     const url = this.userSectionUrl;
+  }
+
+  /**
+   * Returns the array of sections based on user id
+   * @param user_id id of the user whose array of sections are to be retrieved
+   * 
+   * @returns array of sections
+   */
+  getStatusOfUserSections(){
+
   }
   
 
@@ -317,12 +291,51 @@ export class SectionService {
 	 * Week 4 total exp - 60
 	 * Expected week_total_exp array from database - [30, 50, 90, 150] 
 	 */
-	getUserSectionExp(user_id: string, section_id?: string) {
+  getUserSectionExp(user_id: string, section_id?: string) {
     //this function is used for general-profile page (all sections) and specific-profile-page (one section)
     let url = this.sectionExpUrl;
-    if(section_id){
+    if (section_id) {
       url = this.expUrl;
     }
+  }
+
+  /**
+   * Returns the array of sections based on user id
+   * @param user_id id of the user whose array of sections are to be retrieved
+   * 
+   * @returns array of sections
+   * array[i].course_name - the name of the section's course where the user is enrolled in
+   * array[i].section     - enrolled section of the user 
+   * 
+   * @example
+   * array[i] = {
+   * course_name: "CMSC 128",
+   * section: section
+   * };
+   * The expected values of array is the section's information and the attached course_name
+   */
+  getUserSections(user_id): Observable<any[]> {
+
+    const url = this.secUrl;
+
+    let params = new HttpParams().set('id', user_id);
+
+    return this.http.get<any>(
+      url, {
+        params: params
+      })
+      .pipe(
+      tap(sections => {
+        console.warn(sections);
+
+        localStorage.setItem("currentUserSections", JSON.stringify(sections));
+          
+        console.warn(this.currentUserSections);
+        const outcome = sections ? 
+          'fetched sections of user ' + user_id : 'did not find sections of user ' + user_id;
+      }),
+      catchError(this.handleError<any>(`getUserSections user_id=${user_id}`))
+      );
   }
 
   /**

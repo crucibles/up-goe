@@ -36,21 +36,22 @@ import {
 	UserService
 } from 'shared/services';
 
+const imageDir: string = "/assets/images/";
+
 @Component({
 	selector: 'gen-sidetab',
 	templateUrl: './gen-sidetab.component.html',
+	styleUrls: ['./gen-sidetab.component.css'],
 	host: {
 		'(document:click)': 'handleClick($event)',
-	},
-	styleUrls: ['./gen-sidetab.component.css']
+	}
 })
 export class GenSidetabComponent implements OnInit {
-	elementRef: ElementRef;
 	@Input('isProfile') isProfile: boolean = false;
 
 	//current user
 	currentUser: User;
-	image: string;
+	image: string = "";
 
 
 	//for pages other than profile page  
@@ -66,10 +67,9 @@ export class GenSidetabComponent implements OnInit {
 	isEditing: boolean = false;
 	sections: any[] = [];
 
-	//for collapsible navigation bar
-	isShowMenuButton: boolean = false;
+	//for collapsible sidetab
+	isShowSideTab: boolean = false;
 	windowWidth: number = window.innerWidth;
-	showSideTab: boolean;
 
 	//if screen size changes it'll update
 	@HostListener('window:resize', ['$event'])
@@ -79,7 +79,7 @@ export class GenSidetabComponent implements OnInit {
 
 	constructor(
 		private commentPostService: CommentPostService,
-		private myElement: ElementRef,
+		private elementRef: ElementRef,
 		private formBuilder: FormBuilder,
 		private pageService: PageService,
 		private questService: QuestService,
@@ -87,9 +87,10 @@ export class GenSidetabComponent implements OnInit {
 		private userService: UserService,
 		private router: Router
 	) {
+		this.image = imageDir + "not-found.jpg";
 		this.getUser();
 		this.initializeForm();
-		this.elementRef = myElement;
+		//for hiding sidetab on outside clicking
 	}
 
 	ngOnInit() {
@@ -113,7 +114,6 @@ export class GenSidetabComponent implements OnInit {
 
 	setDefault() {
 		this.isEditing = false;
-		this.image = "/assets/images/not-found.jpg"
 		this.defaultPBClass = 'progress-bar progress-bar-striped active';
 		this.pageService.isProfile.subscribe(isProfile => {
 			this.isProfile = isProfile;
@@ -129,9 +129,9 @@ export class GenSidetabComponent implements OnInit {
 	getUser(): void {
 		// ced: I think this should be in the User model, by the get method. Current user will be used temporarily
 		this.currentUser = this.userService.getCurrentUser();
-
-		let image: string = this.currentUser.getUserPhoto() ? this.currentUser.getUserPhoto() : "avatar.jpg";
-		this.image = "/assets/images/" + image;
+		this.image = this.currentUser.getUserPhoto() ?
+			imageDir + this.currentUser.getUserPhoto() :
+			imageDir + "avatar.jpg";
 
 		/*this.userService.getUser(currentUser._id)
 		  .subscribe(user => {
@@ -199,9 +199,9 @@ export class GenSidetabComponent implements OnInit {
 	checkSize() {
 		this.windowWidth = window.innerWidth;
 		if (this.windowWidth <= 765) {
-			this.isShowMenuButton = true;
+			this.isShowSideTab = false;
 		} else {
-			this.isShowMenuButton = false;
+			this.isShowSideTab = true;
 		}
 	}
 
@@ -210,9 +210,7 @@ export class GenSidetabComponent implements OnInit {
 	 * @param section_id id of the section where the user must be redirected to
 	 */
 	openSectionPage(section_id: string) {
-		//AHJ: must navigate to the specific section's home page yet it is still not available
-		console.warn(section_id);
-		this.router.navigate(['/specific/specific-news', section_id]);
+		this.pageService.openSectionPage(section_id);
 	}
 
 	/**
@@ -313,7 +311,15 @@ export class GenSidetabComponent implements OnInit {
 			clickedComponent = clickedComponent.parentNode;
 		} while (clickedComponent);
 		if (!inside && this.windowWidth <= 765) {
-			this.showSideTab = false;
+			this.isShowSideTab = false;
 		}
+	}
+
+	clickMenuButton() {
+		this.isShowSideTab = !this.isShowSideTab;
+	}
+
+	formatDateTime(date){
+		return this.pageService.formatDateTime(date);
 	}
 }
