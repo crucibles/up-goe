@@ -50,6 +50,7 @@ export class GenNewsComponent implements OnInit {
    * 'commentposts' array
    */
   getAllCommentPost() {
+    
     this.commentPostService.getSectionPosts("5a3807410d1126321c11e5ee").subscribe(commentPosts => {
       //chooses the commentposts that are main posts (ignores comments)
       this.commentPosts = commentPosts ? commentPosts.filter(post => post.getIsPost() == true) : [];

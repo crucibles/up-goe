@@ -42,10 +42,21 @@ export class SectionService {
 
   private secUrl = "api/sections"
   private courseUrl = "api/courses"
+  private currentUserSections: any;
 
   constructor(
     private http: HttpClient
-  ) { }
+  ) { 
+    this.currentUserSections = JSON.parse(localStorage.getItem('currentUserSections'));
+  }
+
+  /**
+   * Adds received newly created course to the database
+   * @param course - new course to be added to the database
+   */
+  getCurrentUserSections() {
+    return this.currentUserSections;
+  }
 
   /**
    * Adds received newly created course to the database
@@ -123,7 +134,7 @@ export class SectionService {
    * 
    * @returns array of sections
    */
-  getUserSections(user_id): Observable<any> {
+  getUserSections(user_id): Observable<any[]> {
 
     const url = this.secUrl;
 
@@ -134,13 +145,27 @@ export class SectionService {
         params: params
       })
       .pipe(
-      tap(data => {
-        console.log(data);
-        const outcome = data ?
+      tap(sections => {
+        console.warn(sections);
+
+        localStorage.setItem("currentUserSections", JSON.stringify(sections));
+          
+        console.warn(this.currentUserSections);
+        const outcome = sections ? 
           'fetched sections of user ' + user_id : 'did not find sections of user ' + user_id;
       }),
       catchError(this.handleError<any>(`getUserSections user_id=${user_id}`))
       );
+  }
+
+  /**
+   * Returns the array of sections based on user id
+   * @param user_id id of the user whose array of sections are to be retrieved
+   * 
+   * @returns array of sections
+   */
+  getStatusOfUserSections(){
+
   }
 
   /**
@@ -169,6 +194,7 @@ export class SectionService {
    */
   getCourseBySection(section_id) {
     // useful to know which course the section belongs to which will be useful in the select-course table
+
   }
 
   /**

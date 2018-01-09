@@ -34,6 +34,7 @@ export class GenSelcourseComponent implements OnInit {
 
   course
   sections: Section[];
+  table: any;
   courses: Course[];
   user: User;
   allcourses: Course[];
@@ -60,12 +61,26 @@ export class GenSelcourseComponent implements OnInit {
    * Obtains information of the current user
    */
   getUser(): void {
-    let currentUserId = JSON.parse(localStorage.getItem("currentUser"));
-    this.userService.getUser(currentUserId._id)
+    let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    this.userService.getUser(currentUser._id)
       .subscribe(user => {
         this.user = new User(user);
         this.getUserSections(this.user.getUserId());
       });
+  }
+
+  /**
+   * Obtains status of user's sections
+   */
+  getStatusOfSection(students) {
+    let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    let status = students.filter(user => user.user_id == currentUser._id)[0].status;
+    if (status == "E") {
+      return "Enrolled";
+    } else if (status == "R") {
+      return "Requesting";
+    }
+
   }
 
   /**
@@ -79,7 +94,7 @@ export class GenSelcourseComponent implements OnInit {
     this.sectionService.getUserSections(user_id)
       .subscribe(sections => {
         this.sections = sections;
-        let x = sections.map(section => new Section(section));
+        //this.sections = sections.map(section => new Section(section));
       });
   }
 
@@ -94,12 +109,8 @@ export class GenSelcourseComponent implements OnInit {
       console.log(this.course_search);
       this.sectionService.searchSection(this.course_search).subscribe((sections) => {
         console.warn(sections);
+        this.course_found = sections;
       })
-      //AHJ: use this.course_search for searching the database 
-      /*this.course_found = this.getAllCourses().filter(course =>
-        (course.getCourseId() == this.course_search) ||
-        (course.getCourseName() == this.course_search)
-      );*/
     }
   }
 

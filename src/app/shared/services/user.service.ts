@@ -45,12 +45,19 @@ export class UserService {
     private userUrl = 'api/users';    // URL to: server/routes/api.js for users
     private loginUrl = 'api/login';   // URL to: server/routes/api.js for login
     private signupUrl = 'api/signup'; // URL to: server/routes/api.js for sign up
+    private currentUser: User;
 
     constructor(
         private http: HttpClient,
         private router: Router,
         private cookieService: CookieService
-    ) { }
+    ) { 
+        this.currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    }
+
+    getCurrentUser() {
+        return this.currentUser;
+    }
 
     /**
      * Lets the user log in (if user enters valid email and password) and be able to navigate to the correct pages
@@ -70,9 +77,9 @@ export class UserService {
             tap(data => {
                 const outcome = data ? 'fetched user ' + email : 'did not find user ' + email;
                 if (data) {
-                    let currentUser = data['user_email'];
+                    this.currentUser = new User(data);
                     localStorage.setItem('currentUser', JSON.stringify(data));
-                    this.cookieService.set('currentUser', currentUser);
+                    this.cookieService.set('currentUser', data['user_email']);
                 }
                 return data;
             }),
@@ -89,7 +96,7 @@ export class UserService {
         // remove user from local storage to log user out
         localStorage.removeItem('currentUser');
         this.cookieService.delete('currentUser');
-        this.router.navigate(['/log-in'])
+        this.router.navigate(['/log-in']);
     }
 
     /**

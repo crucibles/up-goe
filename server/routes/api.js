@@ -3,7 +3,6 @@ const router = express.Router();
 const MongoClient = require('mongodb').MongoClient;
 const ObjectID = require('mongodb').ObjectID;
 const async = require('async');
-
 /*
 *
 */
@@ -85,6 +84,55 @@ router.get('/quests', (req, res) => {
 
 });
 
+// api/commentposts
+router.get('/commentposts', (req, res) => {
+    console.log("im in and searching the posts");
+    var myObjArr = [];
+
+    connection((db) => {
+        const myDB = db.db('up-goe-db');
+        console.log(req.query.class);
+
+        myDB.collection('posts')
+            .find(ObjectID(req.query.class))
+            .toArray()
+            .then((sections) => {
+                console.log(sections);
+                var myObjArr = [];
+                var myObj = {};
+
+                async.forEach(sections, processEachSection, afterAllSection);
+
+                function processEachSection(section, callback) {
+                    myDB.collection('courses')
+                        .find(ObjectID(section.course_id))
+                        .toArray()
+                        .then((course) => {
+                            myObj["section"] = section;
+                            myObj["course_name"] = course[0].course_name;
+                            myObjArr.push(myObj);
+                            callback();
+                        }, reason => {
+                            callback(reason);
+                        })
+
+                }
+
+                function afterAllSection(err) {
+                    response.data = myObjArr;
+                    res.json(myObjArr);
+                }
+
+
+            })
+            .catch((err) => {
+                sendError(err, res);
+            })
+
+    });
+
+});
+
 // api/sections/search
 router.get('/search', (req, res) => {
     console.log("im in and searching the section");
@@ -95,7 +143,7 @@ router.get('/search', (req, res) => {
         console.log(req.query.class);
 
         myDB.collection('sections')
-            .find( ObjectID(req.query.class) )
+            .find(ObjectID(req.query.class))
             .toArray()
             .then((sections) => {
                 console.log(sections);
@@ -136,6 +184,8 @@ router.get('/search', (req, res) => {
 
 // api/sections
 router.get('/sections', (req, res) => {
+    var myObjArr = [];
+
     connection((db) => {
         const myDB = db.db('up-goe-db');
 
@@ -143,36 +193,35 @@ router.get('/sections', (req, res) => {
             .find({
                 students: {
                     $elemMatch: {
-                        status: "E",
                         user_id: req.query.id
                     }
                 }
             })
             .toArray()
             .then((sections) => {
-                var myObjArr = [];
-                var myObj = {};
 
                 async.forEach(sections, processEachSection, afterAllSection);
 
                 function processEachSection(section, callback) {
+
                     myDB.collection('courses')
                         .find(ObjectID(section.course_id))
                         .toArray()
                         .then((course) => {
-                            myObj["section"] = section;
-                            myObj["course_name"] = course[0].course_name;
-                            myObjArr.push(myObj);
-                            callback();
-                        }, reason => {
-                            callback(reason);
-                        })
+                            Promise.all(course[0].course_name).then(() => {
+                                myObjArr.push({
+                                    section: section,
+                                    course_name: course[0].course_name
+                                });
+                                callback(null);
+                            });
+                        });
 
                 }
 
                 function afterAllSection(err) {
                     response.data = myObjArr;
-                    res.json(myObjArr);
+                    res.send(myObjArr);
                 }
 
 

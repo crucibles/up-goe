@@ -15,7 +15,8 @@
       <th scope="col">Course Name</th>
       <th scope="col">Section</th>
       <th scope="col">Instructor</th>
-      <th scope="col" *ngIf="isSearching && course_found && course_found.length != 0">Add Course</th>
+      <th scope="col">Status</th>
+      <th scope="col" *ngIf="isSearching && course_found && course_found.length != 0">Options</th>
     </tr>
   </thead>
   <tbody>
@@ -30,10 +31,11 @@
         <td>
           {{this.course_found[0].course_name}}
         </td>
-        <td>{{this.course_found[0].course_name}}</td>
-        <td>{{this.course_found[0].instructor}}</td>
-        <td>
-          <a class=clickable>Add</a>
+        <td>{{this.course_found[0].section.section_name}}</td>
+        <td>{{this.course_found[0].section.instructor}}</td>
+        <td>{{this.getStatusOfSection(this.course_found[0].section.students)}}</td>
+        <td >
+          <a *ngIf="this.getStatusOfSection(this.course_found[0].section.students) != 'Enrolled'" class=clickable>Add</a>
         </td>
       </tr>
     </ng-container>
@@ -41,17 +43,18 @@
       <!--Shows if user has no enrolled course-->
       <tr *ngIf="!sections || sections.length == 0">
         <td colspan="3" style="text-align: center">You have no course enrolled yet!
-          <br>Search course name or course code now.</td>
+          <br>Input your class code now.</td>
       </tr>
       <!--AHJ: Fix zebra form-->
       <ng-container id="mult" *ngIf="sections != null && sections.length != 0">
-        <tr *ngFor="let section of sections; let i = index" [class.odd]="i%2 == 0">
+        <tr *ngFor="let section of sections; let i = index;" [class.odd]="i%2 == 0">
           <ng-container>
             <td>
               <a class="clickable" (click)=openSectionPage(section.section._id)>{{section.course_name}}</a>
             </td>
             <td>{{section.section.section_name}}</td>
             <td>{{section.section.instructor}}</td>
+            <td>{{this.getStatusOfSection(section.section.students)}}</td>
           </ng-container>
         </tr>
       </ng-container>
