@@ -67,7 +67,7 @@ export class SpecificSidetabComponent implements OnInit {
 		this.getUser();
 		this.setDefault();
 		this.editForm = this.formBuilder.group({
-			schoolId: new FormControl(this.currentUser.getUserSchoolId(), Validators.required),
+			schoolId: new FormControl(this.currentUser.getUserSchoolId()),
 			email: new FormControl(this.currentUser.getUserEmail(), Validators.required),
 			contactNo: new FormControl(this.currentUser.getUserContactNo(), Validators.required),
 		});
