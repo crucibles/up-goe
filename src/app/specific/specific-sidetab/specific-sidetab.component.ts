@@ -23,11 +23,15 @@ import {
 	UserService
 } from 'shared/services';
 
+const imageDir: string = "/assets/images/";
+
 @Component({
 	selector: 'specific-sidetab',
 	templateUrl: './specific-sidetab.component.html',
 	styleUrls: ['./specific-sidetab.component.css']
 })
+
+
 export class SpecificSidetabComponent implements OnInit {
 	currentUser: User;
 	isProfile: boolean = true;
@@ -35,7 +39,7 @@ export class SpecificSidetabComponent implements OnInit {
 	isEditing: boolean = false;
 
 	//image dir
-	imageDir: string = "/assets/images/";
+	image: string = "";	
 
 	// for collapsible sidetab
 	isShowMenuButton: boolean = false;
@@ -61,6 +65,7 @@ export class SpecificSidetabComponent implements OnInit {
 		private pageService: PageService,
 		private userService: UserService
 	) {
+		this.image = imageDir + "not-found.jpg"
 	}
 
 	ngOnInit() {
@@ -78,10 +83,9 @@ export class SpecificSidetabComponent implements OnInit {
 	getUser() {
 		//AHJ: current user is not yet obtained
 		this.currentUser = this.userService.getCurrentUser();
-		let image: string = this.currentUser.getUserPhoto() ?
-			this.currentUser.getUserPhoto() :
-			"avatar.jpg";
-		this.currentUser.setUserPhoto(image);
+		this.image = this.currentUser.getUserPhoto() ?
+			imageDir + this.currentUser.getUserPhoto() :
+			imageDir + "avatar.jpg";
 	}
 
 	setDefault() {

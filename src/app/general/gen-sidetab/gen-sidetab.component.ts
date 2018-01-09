@@ -50,7 +50,7 @@ export class GenSidetabComponent implements OnInit {
 
 	//current user
 	currentUser: User;
-	image: string;
+	image: string = "/assets/images/not-found.jpg";
 
 
 	//for pages other than profile page  
@@ -113,7 +113,6 @@ export class GenSidetabComponent implements OnInit {
 
 	setDefault() {
 		this.isEditing = false;
-		this.image = "/assets/images/not-found.jpg"
 		this.defaultPBClass = 'progress-bar progress-bar-striped active';
 		this.pageService.isProfile.subscribe(isProfile => {
 			this.isProfile = isProfile;
@@ -129,9 +128,10 @@ export class GenSidetabComponent implements OnInit {
 	getUser(): void {
 		// ced: I think this should be in the User model, by the get method. Current user will be used temporarily
 		this.currentUser = this.userService.getCurrentUser();
-
+		console.log(this.currentUser);
 		let image: string = this.currentUser.getUserPhoto() ? this.currentUser.getUserPhoto() : "avatar.jpg";
 		this.image = "/assets/images/" + image;
+		console.log(this.image);
 
 		/*this.userService.getUser(currentUser._id)
 		  .subscribe(user => {
@@ -210,9 +210,7 @@ export class GenSidetabComponent implements OnInit {
 	 * @param section_id id of the section where the user must be redirected to
 	 */
 	openSectionPage(section_id: string) {
-		//AHJ: must navigate to the specific section's home page yet it is still not available
-		console.warn(section_id);
-		this.router.navigate(['/specific/specific-news', section_id]);
+		this.pageService.openSectionPage(section_id);
 	}
 
 	/**

@@ -3,7 +3,7 @@
   <label for="slide" style="margin: 30px 10px" *ngIf="isShowMenuButton" class="toggle">☰</label>
   <ul class="vert-tab">
     <li>
-      <img [src]="imageDir + currentUser.getUserPhoto()" alt="Cat">
+      <img [src]="image" alt="Cat">
     </li>
     <li *ngIf="currentUser">
       {{this.currentUser.getUserFullName()}}

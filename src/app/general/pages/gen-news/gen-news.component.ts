@@ -80,9 +80,8 @@ export class GenNewsComponent implements OnInit {
 	 * @param section_id 
 	 */
     openSectionPage(section_id: string) {
-        console.warn(section_id);
-        this.router.navigate(['/specific/specific-news', section_id]);
-    }
+		this.pageService.openSectionPage(section_id);
+	}
 
 	/**
 	 * Returns time of the received date; useful for undefined checking 

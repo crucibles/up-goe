@@ -39,7 +39,6 @@ import {
 
 export class SpecificNewsComponent implements OnInit {
 	section_id: string;
-	private parameters: any;
 
 	commentPosts: CommentPost[];
 	comments: CommentPost[][] = [];
@@ -69,8 +68,8 @@ export class SpecificNewsComponent implements OnInit {
 
 	ngOnInit() {
 		this.setDefault();
-		this.parameters = this.route.params.subscribe(params => {
-			this.section_id = params['section_id'];
+		this.route.paramMap.subscribe(params => {
+			this.section_id = params.get('sectionId');
 			this.getUser();
 			this.getAllCommentPosts();
 			let subscription = this.commentObservable.subscribe(value => {
@@ -81,6 +80,7 @@ export class SpecificNewsComponent implements OnInit {
 
 	setDefault(){
 		this.pageService.isProfilePage(false);
+		
 	}
 
 	getUser(){
