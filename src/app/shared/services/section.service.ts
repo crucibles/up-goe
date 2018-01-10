@@ -245,17 +245,6 @@ export class SectionService {
   }
 
   /**
-   * Returns the array of sections based on user id
-   * @param user_id id of the user whose array of sections are to be retrieved
-   * 
-   * @returns array of sections
-   */
-  getStatusOfUserSections(){
-
-  }
-  
-
-  /**
 	 * Returns user's array of section grades(or xp).
    * @param user_id id of the user whose experience points are to be retrieved
    * @param section_id (optional) id of the section where the student belongs to
