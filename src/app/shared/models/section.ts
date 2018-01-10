@@ -15,7 +15,7 @@ export class Section {
     private section_name: string;
     private students: Student[];
     private instructor: string;
-    private quests: string[];
+    private quests: SectionQuest[];
     private items: string[];
     private badges: string[];
 
@@ -27,15 +27,9 @@ export class Section {
             this.course_id = section.course_id ? section.course_id : "";
             this.section_name = section.section_name ? section.section_name : "";
             this.students = [];
-            if (section.students) {
-                this.students = [];
-                section.students.forEach(student => {
-                    let newStudent: Student = new Student(student);
-                    this.students.push(newStudent);
-                });
-            }
+            this.students = section.students? section.students.map(student => new Student(student)) : [];
             this.instructor = section.instructor ? section.instructor : "";
-            this.quests = section.quests ? section.quests : [];
+            this.quests = section.quests ? section.quests.map(quest => new SectionQuest(quest)) : [];
             this.items = section.items ? section.items : [];
             this.badges = section.badges ? section.badges : [];
         } else {
@@ -77,6 +71,33 @@ export class Section {
 
     getSectionName() {
         return this.section_name;
+    }
+    
+    /**
+     * Returns student based on id; returns null if not found
+     * @param user_id 
+     */
+    searchStudent(user_id: string): Student{
+        let student = this.students.filter( student =>
+            student.getStudentUserId() == user_id
+        )[0];
+        return student;
+    }
+
+    /**
+     * Returns a student's status
+     * @param userId id of the user whose status is to be retrieved
+     * @param showFullWord (optional) Shows full word instead of single character; default is false
+     * - True if full word ("Enrolled" or "Requesting")
+     * - False if single character only
+     * 
+     */
+    getStudentStatus(userId: string, showFullWord?: boolean){
+        let studentStatus = this.searchStudent(userId).getStatus();
+        if(showFullWord){
+            studentStatus = studentStatus == "E"? "Enrolled": "Requesting";
+        }
+        return studentStatus;
     }
 
     getStudents() {
@@ -130,6 +151,26 @@ export class Section {
     setBadges(badges) {
         this.badges = badges;
     }
+
+    /**
+     * Identifies whether a student is a participant of a quest or not. Returns true if student is a participant of the quest; false if otherwise
+     * @param user_id Id of the student whose participation is needed to be confirmed
+     * @param quest_id Id of the quest whose participants are needed to be seen
+     */
+    isQuestParticipant(user_id: string, quest_id: string): boolean{
+        //obtains the quest of the clicked quest by filtering the quests of the current section
+		let sectionQuest: SectionQuest = this.quests.filter(quest => quest.getSectionQuestId() == quest_id)[0];
+
+		//obtains the participants and locates the current user by filtering participants of the section quest
+		//returns true if found; false otherwise
+        let isParticipant = sectionQuest.searchParticipant(user_id);
+        if(isParticipant){
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
 }
 
 
@@ -171,16 +212,15 @@ export class Student {
     }
 
     /**
-     * Returns user status
+     * Returns a student's status
      * @param showFullWord (optional) Shows full word instead of single character; default is false
      * - True if full word ("Enrolled" or "Requesting")
      * - False if single character only
-     * 
      */
     getStatus(showFullWord?: boolean) {
         let studentStatus: string = this.status;
         if(showFullWord){
-            studentStatus = this.status == "E"? "Enrolled": "Requesting";
+            studentStatus = studentStatus == "E"? "Enrolled": "Requesting";
         }
         
         return studentStatus;
@@ -195,3 +235,65 @@ export class Student {
     }
 };
 
+export class SectionQuest {
+    private quest_id: string;
+    private quest_participants: string[];
+    private quest_prerequisite: string[];
+
+    constructor(
+        sectionQuest?: any
+    ) {
+        if(sectionQuest){
+            this.quest_id = sectionQuest.quest_id ? sectionQuest.quest_id: "";
+            this.quest_participants = sectionQuest.quest_participants ? sectionQuest.quest_participants: [];
+            this.quest_prerequisite = sectionQuest.quest_prerequisite ? sectionQuest.quest_prerequisite: [];
+        } else {
+            this.quest_id = "";
+            this.quest_participants = [];
+            this.quest_prerequisite = [];
+        }
+    }
+
+    setSectionQuest(
+        quest_id,
+        quest_participants,
+        quest_prerequisite
+    ){
+        this.quest_id = quest_id;
+        this.quest_participants = quest_participants;
+        this.quest_prerequisite = quest_prerequisite;
+    }
+
+    getSectionQuestId(){
+        return this.quest_id;
+    }
+
+    getQuestParticipants(){
+        return this.quest_participants;
+    }
+
+    getQuestPrerequisite(){
+        return this.quest_prerequisite;
+    }
+
+    setSectionQuestId(quest_id){
+        this.quest_id = quest_id;
+    }
+
+    setQuestParticipants(quest_participants){
+        this.quest_participants = quest_participants;
+    }
+
+    setQuestPrerequisite(quest_prerequisite){
+        this.quest_prerequisite = quest_prerequisite;
+    }
+
+    /**
+     * Identifies whether a student is a participant of a quest or not. Returns true if student is a participant of the quest; false if otherwise
+     * @param user_id Id of the student whose participation is needed to be confirmed
+     */
+    searchParticipant(user_id: string): string{
+        let participant = this.quest_participants.filter(id => user_id == id)[0];
+        return participant;
+    }
+}

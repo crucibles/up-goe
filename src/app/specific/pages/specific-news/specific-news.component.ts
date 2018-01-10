@@ -78,12 +78,12 @@ export class SpecificNewsComponent implements OnInit {
 		});
 	}
 
-	setDefault(){
+	setDefault() {
 		this.pageService.isProfilePage(false);
-		
+
 	}
 
-	getUser(){
+	getUser() {
 		//return this function once working okay
 		this.currentUser = this.userService.getCurrentUser();
 	}
@@ -99,25 +99,27 @@ export class SpecificNewsComponent implements OnInit {
 	getAllCommentPosts() {
 		this.commentPostService.getSectionPosts(this.section_id).subscribe(newCommentPosts => {
 			//converts received commentposts into CommentPost class
-			let commentPosts = newCommentPosts.map(posts => new CommentPost(posts));
+			if (newCommentPosts) {
+				let commentPosts = newCommentPosts.map(posts => new CommentPost(posts));
 
-			//stores only main/parent commentposts to 'commentPosts' variable
-			this.commentPosts = commentPosts.filter(post => post.getIsPost() == true);
+				//stores only main/parent commentposts to 'commentPosts' variable
+				this.commentPosts = commentPosts.filter(post => post.getIsPost() == true);
 
-			//sorts commentPosts chronologically from recent to oldest
-			this.commentPosts.sort((a, b) => {
-				return this.getTime(b.getPostDate()) - this.getTime(a.getPostDate());
-			});
-
-			//obtain users/posters of each commentposts and stores it to 'posters' variable
-			this.commentPosts.forEach((post, index) => {
-				this.posters = [];
-				this.userService.getUser(post.getUserId()).subscribe(user => {
-					let newUser = new User(user);
-					this.posters[index] = newUser;
+				//sorts commentPosts chronologically from recent to oldest
+				this.commentPosts.sort((a, b) => {
+					return this.getTime(b.getPostDate()) - this.getTime(a.getPostDate());
 				});
-			});
-			this.getAllComments();
+
+				//obtain users/posters of each commentposts and stores it to 'posters' variable
+				this.commentPosts.forEach((post, index) => {
+					this.posters = [];
+					this.userService.getUser(post.getUserId()).subscribe(user => {
+						let newUser = new User(user);
+						this.posters[index] = newUser;
+					});
+				});
+				this.getAllComments();
+			}
 		});
 	}
 
@@ -175,10 +177,10 @@ export class SpecificNewsComponent implements OnInit {
 
 		//add comment to the database
 		//AHJ: unimplemented; remove this.commentPostService.addCommentPost once attachComment function adds comment to database
-		
+
 		//Note to self: must change appendComment to accomodate comment instead of comment_id for fewer querying
 		this.commentPostService.addCommentPost(newComment).subscribe(comment => {
-			
+
 			newComment = new CommentPost(comment);
 			this.commentPostService.attachComment(newComment, this.commentPosts[parentPostIndex]).subscribe(() => {
 				//appends the comments (by calling appendComment() through commentObserver.next())

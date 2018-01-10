@@ -35,6 +35,7 @@ import {
 import {
   PageNotFoundComponent
 } from 'shared/pages';
+import { ProgressbarModule } from 'ngx-bootstrap/progressbar/progressbar.module';
 
 @NgModule({
   imports: [
@@ -42,6 +43,7 @@ import {
     CommonModule,
     ModalModule.forRoot(),
     PopoverModule.forRoot(),
+    ProgressbarModule.forRoot(),
     TooltipModule.forRoot()
   ],
   exports: [
@@ -52,6 +54,7 @@ import {
     HttpClientModule,
     ModalModule,
     PopoverModule,
+    ProgressbarModule,
     ReactiveFormsModule,
     TooltipModule
   ],

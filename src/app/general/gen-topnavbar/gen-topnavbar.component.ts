@@ -1,7 +1,8 @@
 //Core Imports
 import {
   Component,
-  OnInit
+  OnInit,
+  ElementRef
 } from '@angular/core';
 
 import {
@@ -16,12 +17,18 @@ import {
 @Component({
   selector: 'gen-topnavbar',
   templateUrl: './gen-topnavbar.component.html',
-  styleUrls: ['./gen-topnavbar.component.css']
+  styleUrls: ['./gen-topnavbar.component.css'],
+  host: {
+		'(document:click)': 'handleClick($event)',
+	}
 })
 export class GenTopnavbarComponent implements OnInit {
   isCollapsed: boolean;
 
+  windowWidth: number = window.innerWidth;
+
   constructor(
+    private elementRef: ElementRef,
     private router: Router,
     private userService: UserService
   ) { }
@@ -37,4 +44,19 @@ export class GenTopnavbarComponent implements OnInit {
     console.log("logout");
     this.userService.logOut();
   }
+
+  /* Helper function */
+  handleClick(event) {
+		var clickedComponent = event.target;
+		var inside = false;
+		do {
+			if (clickedComponent === this.elementRef.nativeElement) {
+				inside = true;
+			}
+			clickedComponent = clickedComponent.parentNode;
+		} while (clickedComponent);
+		if (!inside && this.windowWidth <= 765) {
+      this.isCollapsed = true;
+		}
+	}
 }

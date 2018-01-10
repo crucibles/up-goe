@@ -19,13 +19,40 @@ import {
 
 //Application Imports
 import {
-	Section, Quest
+	Quest, 
+	Section, 
+	SectionQuest, 
+	User
 } from 'shared/models';
 
 import {
 	PageService,
-	SectionService
+	SectionService,
+	UserService
 } from 'shared/services';
+
+const SECTION: any = {
+	_id: "2",
+	course_id: "sad3",
+	section_name: "A",
+	students: [
+		{
+			user_id: "1",
+			status: "E"
+		},
+		{
+			user_id: "2",
+			status: "R"
+		}
+	],
+	instructor: "Miguel Guillermo",
+	quests: [
+		new SectionQuest({ quest_id: "1", quest_participants: ["5a37f4500d1126321c11e5e7", "2"], quest_prerequisite: [] }),
+		new SectionQuest({ quest_id: "2", quest_participants: ["1", "2"], quest_prerequisite: [] })
+	],
+	items: [],
+	badges: []
+};
 
 @Component({
 	selector: 'app-specific-quest-map',
@@ -33,6 +60,7 @@ import {
 	styleUrls: ['./specific-quest-map.component.css']
 })
 export class SpecificQuestMapComponent implements OnInit {
+	currentUser: User;
 	//AHJ: unimplemented; remove this when quest is retrieved properly
 	private QUEST: any = {
 		_id: "1",
@@ -57,12 +85,15 @@ export class SpecificQuestMapComponent implements OnInit {
 	constructor(
 		private modalService: BsModalService,
 		private pageService: PageService,
+		private route: ActivatedRoute,
 		private sectionService: SectionService,
-		private route: ActivatedRoute
+		private userService: UserService
+
 	) { }
 
 	ngOnInit() {
 		this.setDefault();
+		this.getCurrentUser();
 		this.getCurrentSection();
 	}
 
@@ -72,8 +103,6 @@ export class SpecificQuestMapComponent implements OnInit {
 		console.log(quest);
 		this.questClicked = new Quest(quest);
 		if (this.questClicked) {
-			console.log("here!");
-			console.log(this.questClicked);
 			this.bsModalRef = this.modalService.show(template);
 		}
 	}
@@ -91,13 +120,38 @@ export class SpecificQuestMapComponent implements OnInit {
 	 */
 	getCurrentSection() {
 		this.route.paramMap.subscribe(params => {
+			console.log("asdasd");
 			let sectionId = params.get('sectionId');
+			//AHJ: unimplemented; dummy section remove when working
+			this.currentSection = new Section(SECTION);
 		});
 	}
 
-	acceptQuest(){
+	getCurrentUser() {
+		//AHJ: unimplemented... or not sure. Di ko sure kung tama na ning pagkuha sa current user
+		this.currentUser = new User(this.userService.getCurrentUser());
+		console.log("currUser");
+		console.log(this.currentUser);
+	}
+
+	acceptQuest() {
 		//AHJ: unimplemented
 		this.bsModalRef.hide();
 	}
 
+	submitQuest() {
+		//AHJ: unimplemented
+		this.bsModalRef.hide();
+	}
+
+	abandonQuest() {
+		//AHJ: unimplemented
+		this.bsModalRef.hide();
+	}
+
+	isParticipating(quest_id: string): boolean {
+		let isParticipant = this.currentSection.isQuestParticipant(this.currentUser.getUserId(), quest_id);
+		
+		return isParticipant;
+	}
 }

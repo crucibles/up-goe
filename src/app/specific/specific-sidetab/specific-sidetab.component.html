@@ -1,4 +1,4 @@
-<input type="checkbox" id="slide" name="" value="" (click)="clickMenuButton()" [checked]="isShowSideTab"/>
+<input type="checkbox" id="slide" name="" value="" (click)="clickMenuButton()" [checked]="isShowSideTab" />
 <div class=container>
   <label for="slide" style="margin: 30px 10px" class="toggle">☰</label>
   <ul class="vert-tab">
@@ -29,6 +29,11 @@
     <!--displays user information if page navigated is a profile page-->
     <ng-container *ngIf="isProfile">
       <form *ngIf="currentUser" class="form-horizontal" [formGroup]="editForm" (ngSubmit)="endEditing()">
+        <li> Class List: </li>
+        <li *ngFor="let section of sections; let i = index">
+          <div *ngIf="!sections || sections.length == 0">You have no course yet!</div>
+          <a *ngIf="courses[i]" (click)=openCoursePage(section.getSectionId())>{{this.courses[i].getCourseName()}} - {{section.getSectionName()}}</a>
+        </li>
         <li style="text-align: right">
           <button *ngIf="isEditing" type="submit" class="btn btn-primary" [disabled]="!editForm.valid">
             Submit
@@ -37,15 +42,10 @@
             Edit
           </button>
         </li>
-        <li> Class List: </li>
-        <li *ngFor="let section of sections; let i = index">
-          <div *ngIf="!sections || sections.length == 0">You have no course yet!</div>
-          <a *ngIf="courses[i]" (click)=openCoursePage(section.getSectionId())>{{this.courses[i].getCourseName()}} - {{section.getSectionName()}}</a>
-        </li>
         <ng-container *ngIf="currentUser">
           <li> School ID: </li>
           <li>
-            <input type="text" [disabled]="true" class="user-information remove-border"/>
+            <input type="text" [disabled]="true" class="user-information remove-border" />
           </li>
           <li> Email: </li>
           <li>

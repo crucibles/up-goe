@@ -9,6 +9,15 @@ import {
 	ActivatedRoute
 } from '@angular/router';
 
+//Third-Party Imports
+import {
+	BsModalRef
+} from 'ngx-bootstrap';
+
+import {
+	BsModalService
+} from 'ngx-bootstrap/modal/bs-modal.service';
+
 //Application Imports
 import {
 	Course,
@@ -23,8 +32,6 @@ import {
 	PageService,
 	SectionService
 } from 'shared/services';
-import { BsModalService } from 'ngx-bootstrap/modal/bs-modal.service';
-import { BsModalRef } from 'ngx-bootstrap';
 
 const BADGES = [
 	{
@@ -244,7 +251,7 @@ export class SpecificMyCourseComponent implements OnInit {
 		});
 	}
 
-	getSectionBadges(){
+	getSectionBadges() {
 		//AHJ: unimplemented; since getting current section badge is unavailable... BADGES variable is being used instead
 		this.sectionBadges = BADGES.map(badge => new Badge(badge));
 	}
@@ -258,10 +265,7 @@ export class SpecificMyCourseComponent implements OnInit {
 	 * @returns user's status
 	 */
 	getStudentStatus(user_id: string): string {
-		let student: Student = this.currentSection.getStudents().filter(student =>
-			student.user_id == user_id
-		)[0];
-		let status = student ? student.getStatus(true) : "N/A";
+		let status: string = this.currentSection.getStudentStatus(user_id, true);
 
 		return status;
 	}
@@ -282,7 +286,7 @@ export class SpecificMyCourseComponent implements OnInit {
 		}
 	}
 
-	getClassmateBadges(){
+	getClassmateBadges() {
 		//AHJ: unimplemented; idk unsay method gamiton pra maobtain ang badges sa isa ka student however I just create an array of dummy
 		//badges to display
 		this.badgesDisplay = BADGES.map(badge => new Badge(badge));
