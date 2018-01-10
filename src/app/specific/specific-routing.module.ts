@@ -31,23 +31,23 @@ const specificRoutes: Routes = [
     component: SpecificComponent,
     children: [
       {
-        path: 'specific-character',
+        path: 'specific-character/:sectionId',
         component: SpecificCharacterComponent
       },
       {
-        path: 'specific-news',
+        path: 'specific-news/:sectionId',
         component: SpecificNewsComponent
       },
       {
-        path: 'specific-my-course',
+        path: 'specific-my-course/:sectionId',
         component: SpecificMyCourseComponent
       },
       {
-        path: 'specific-profile',
+        path: 'specific-profile/:sectionId',
         component: SpecificProfileComponent
       },
       {
-        path: 'specific-quest-map',
+        path: 'specific-quest-map/:sectionId',
         component: SpecificQuestMapComponent
       },
       {

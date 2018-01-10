@@ -1,3 +1,4 @@
+export const imageDir: string = "/assets/images/";
 /**
  * A class to represent users
  * @class
@@ -33,20 +34,20 @@ export class User {
   constructor(
     user?: any
   ) {
-    if(user){
+    if (user) {
       this._id = user._id;
-      this.user_fname = user.user_fname? user.user_fname: "";
-      this.user_mname = user.user_mname? user.user_mname: "";
-      this.user_lname = user.user_lname? user.user_lname: "";
-      this.user_birthdate = user.user_birthdate? new Date(user.user_birthdate): new Date();
-      this.user_email = user.user_email? user.user_email: "";
-      this.user_password = user.user_password? user.user_password: "";
-      this.user_type = user.user_type? user.user_type: "";
-      this.user_contact_no = user.user_contact_no? user.user_contact_no: "";
-      this.user_photo = user.user_photo? user.user_photo: "";
-      this.user_school_id = user.user_school_id? user.user_school_id: "";
-      this.user_security_question = user.user_security_question? user.user_security_question: "";
-      this.user_security_answer = user.user_security_answer? user.user_security_answer: "";
+      this.user_fname = user.user_fname ? user.user_fname : "";
+      this.user_mname = user.user_mname ? user.user_mname : "";
+      this.user_lname = user.user_lname ? user.user_lname : "";
+      this.user_birthdate = user.user_birthdate ? new Date(user.user_birthdate) : new Date();
+      this.user_email = user.user_email ? user.user_email : "";
+      this.user_password = user.user_password ? user.user_password : "";
+      this.user_type = user.user_type ? user.user_type : "";
+      this.user_contact_no = user.user_contact_no ? user.user_contact_no : "";
+      this.user_photo = user.user_photo ? user.user_photo : "";
+      this.user_school_id = user.user_school_id ? user.user_school_id : "";
+      this.user_security_question = user.user_security_question ? user.user_security_question : "";
+      this.user_security_answer = user.user_security_answer ? user.user_security_answer : "";
     } else {
       this.user_fname = "";
       this.user_mname = "";
@@ -60,7 +61,7 @@ export class User {
       this.user_school_id = "";
       this.user_security_question = "";
       this.user_security_answer = "";
-      
+
     }
   }
 
@@ -91,25 +92,48 @@ export class User {
     this.user_security_question = user_security_question;
     this.user_security_answer = user_security_answer;
   }
-  
+
   getUserId() {
     return this._id;
   }
 
-  getUserFname() {
+  getUserFirstName() {
     return this.user_fname;
   }
 
-  getUserMname() {
+  getUserMiddleName() {
     return this.user_mname;
   }
 
-  getUserLname() {
+  getUserLastName() {
     return this.user_lname;
   }
 
+  getUserFullName() {
+    let firstName: string = this.user_fname;
+    let middleName: string = this.user_mname && this.user_mname.length != 0 ? this.user_mname[0] + "." : "";
+    let lastName: string = this.user_lname;
+    let fullName: string = firstName + " " + middleName + " " + lastName;
+
+    return fullName;
+  }
+
+  /**
+   * Returns the user's birthdate
+   */
   getUserBirthdate() {
     return this.user_birthdate;
+  }
+
+  /**
+   * Returns the user's formatted birthdate
+   * @param isFormatted (eoptional) returns a formatted datestring; default value is false
+   * - True if formatted
+   * - False if not formatted or in 'Date' form
+   */
+  getUserFormattedBirthdate() {
+    let birthdate = this.formatDate(this.user_birthdate);
+    return birthdate;
   }
 
   getUserEmail() {
@@ -129,7 +153,16 @@ export class User {
   }
 
   getUserPhoto() {
-    return this.user_photo;
+    let image: string = "";
+
+    // if image does not exist or if user has not set an image
+    if (!this.user_photo || this.user_photo.length == 0) {
+      image = imageDir + "avatar.jpg";
+    } else {
+      image = imageDir + this.user_photo;
+    }
+
+    return image;
   }
 
   getUserSchoolId() {
@@ -195,6 +228,24 @@ export class User {
   setUserSecurityanswer(user_security_answer) {
     this.user_security_answer = user_security_answer;
   }
+
+  /**
+	* Returns the appropriate datestring given a date object
+	* @param date_obj date to be formatted
+	* 
+	* @returns string of the formatted date
+	*/
+	private formatDate(date_obj) {
+    let months: string[] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+		let month = months[date_obj.getMonth()];
+		let day = date_obj.getDate();
+    let year = date_obj.getFullYear();
+    
+		let datestring: string = month + " " + day + ", " + year;
+		return datestring;
+  }
+  
 };
 
 export const TOTXP: number[] = [1000, 2123, 3439, 4655, 6053, 6104];

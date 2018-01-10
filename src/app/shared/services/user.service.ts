@@ -45,12 +45,44 @@ export class UserService {
     private userUrl = 'api/users';    // URL to: server/routes/api.js for users
     private loginUrl = 'api/login';   // URL to: server/routes/api.js for login
     private signupUrl = 'api/signup'; // URL to: server/routes/api.js for sign up
+    private currentUser: User;
 
     constructor(
         private http: HttpClient,
         private router: Router,
         private cookieService: CookieService
-    ) { }
+    ) { 
+        this.currentUser = new User(JSON.parse(localStorage.getItem("currentUser")));
+    }
+
+    /**
+     * @summary: Edit existing user from server
+     */
+    editUser(id: string) {
+        const url = this.userUrl;
+    }
+
+    getCurrentUser(): User {
+        return this.currentUser;
+    }
+
+    /**
+     * @summary: Obtains a user from server by id
+     */
+    getUser(id: string): Observable<User> {
+        const url = this.userUrl;
+        let params = new HttpParams().set('id', id);
+        return this.http.get<User[]>(url, {
+            params: params
+        })
+            .pipe(
+            map(users => users[0]), // returns a {0|1} element array
+            tap(h => {
+                const outcome = h ? 'fetched user ' + id : 'did not find user ' + id;
+            }),
+            catchError(this.handleError<User>(`getUser user_id=${id}`))
+            );
+    }
 
     /**
      * Lets the user log in (if user enters valid email and password) and be able to navigate to the correct pages
@@ -70,9 +102,9 @@ export class UserService {
             tap(data => {
                 const outcome = data ? 'fetched user ' + email : 'did not find user ' + email;
                 if (data) {
-                    let currentUser = data['user_email'];
+                    this.currentUser = new User(data);
                     localStorage.setItem('currentUser', JSON.stringify(data));
-                    this.cookieService.set('currentUser', currentUser);
+                    this.cookieService.set('currentUser', this.currentUser.getUserEmail());
                 }
                 return data;
             }),
@@ -89,7 +121,7 @@ export class UserService {
         // remove user from local storage to log user out
         localStorage.removeItem('currentUser');
         this.cookieService.delete('currentUser');
-        this.router.navigate(['/log-in'])
+        this.router.navigate(['/log-in']);
     }
 
     /**
@@ -131,36 +163,6 @@ export class UserService {
             }),
             catchError(this.handleError<User>(`signup user_email=${email}`))
             );
-    }
-
-    /**
-     * @summary: Obtains a security questions from server by id
-     */
-    getSecurityQuestions(id: string) {
-
-    }
-
-    /**
-     * @summary: Obtains a user from server by id
-     */
-    getUser(id: string): Observable<User> {
-        const url = this.userUrl;
-        let params = new HttpParams().set('id', id);
-        return this.http.get<User[]>(url, {
-            params: params
-        }).pipe(
-            map(users => users[0]), // returns a {0|1} element array
-            tap(h => {
-                const outcome = h ? 'fetched user ' + id : 'did not find user ' + id;
-            }),
-            catchError(this.handleError<User>(`getUserById user_id=${id}`))
-            );
-    }
-
-    /**
-     * @summary: Edit existing user from server
-     */
-    editUser(id: string) {
     }
 
     /**

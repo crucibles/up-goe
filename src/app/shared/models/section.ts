@@ -10,14 +10,14 @@
  * @property instructor the section's instructor
  */
 export class Section {
-    _id: string;
-    course_id: string;
-    section_name: string;
-    students: Student[];
-    instructor: string;
-    quests: string[];
-    items: string[];
-    badges: string[];
+    private _id: string;
+    private course_id: string;
+    private section_name: string;
+    private students: Student[];
+    private instructor: string;
+    private quests: string[];
+    private items: string[];
+    private badges: string[];
 
     constructor(
         section?: any
@@ -26,13 +26,13 @@ export class Section {
             this._id = section.course_id ? section.course_id : "";
             this.course_id = section.course_id ? section.course_id : "";
             this.section_name = section.section_name ? section.section_name : "";
+            this.students = [];
             if (section.students) {
-                section.students.array.forEach(student => {
+                this.students = [];
+                section.students.forEach(student => {
                     let newStudent: Student = new Student(student);
                     this.students.push(newStudent);
                 });
-            } else {
-                this.students = [];
             }
             this.instructor = section.instructor ? section.instructor : "";
             this.quests = section.quests ? section.quests : [];
@@ -170,8 +170,20 @@ export class Student {
         return this.user_id;
     }
 
-    getStatus() {
-        return this.status;
+    /**
+     * Returns user status
+     * @param showFullWord (optional) Shows full word instead of single character; default is false
+     * - True if full word ("Enrolled" or "Requesting")
+     * - False if single character only
+     * 
+     */
+    getStatus(showFullWord?: boolean) {
+        let studentStatus: string = this.status;
+        if(showFullWord){
+            studentStatus = this.status == "E"? "Enrolled": "Requesting";
+        }
+        
+        return studentStatus;
     }
 
     setStudentUserId(user_id) {

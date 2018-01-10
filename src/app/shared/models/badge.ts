@@ -12,6 +12,8 @@ export class Badge {
     private badge_photo: string;
     private badge_description: string;
     private badge_conditions: Conditions;
+    private is_system: boolean;
+    private badge_attainers: string[];
 
     constructor(
         badge?: any
@@ -21,23 +23,31 @@ export class Badge {
             this.badge_photo = badge.badge_photo ? badge.badge_photo : "";
             this.badge_description = badge.badge_description ? badge.badge_description : "";
             this.badge_conditions = badge.badge_conditions ? new Conditions(badge.badge_conditions) : new Conditions();
+            this.is_system = badge.is_system ? badge.is_system : false;
+            this.badge_attainers = badge.badge_attainers ? badge.badge_attainers : [];
         } else {
             this.badge_photo = "";
             this.badge_description = "";
             this.badge_conditions = new Conditions();
+            this.is_system =  false;
+            this.badge_attainers = [];
         }
     }
-
+    
     setBadge(
         badge_photo,
         badge_description,
-        badge_conditions
+        badge_conditions,
+        is_system,
+        badge_attainers
     ) {
         this.badge_photo = badge_photo ? badge_photo : "";
         this.badge_description = badge_description ? badge_description : "";
         this.badge_conditions = badge_conditions ? badge_conditions : new Conditions();
+        this.is_system = is_system ? is_system : false;
+        this.badge_attainers = badge_attainers ? badge_attainers : [];
     }
-
+    
     getBadgeId(): string {
         return this._id;
     }
@@ -54,6 +64,14 @@ export class Badge {
         return this.badge_conditions;
     }
 
+    getisSystem(): boolean {
+        return this.is_system;
+    }
+
+    getBadgeAttainers(): string[] {
+        return this.badge_attainers;
+    }
+
     setBadgeId(_id: string) {
         this._id = _id;
     }
@@ -68,6 +86,14 @@ export class Badge {
 
     setBadgeConditions(badge_conditions) {
         this.badge_conditions = badge_conditions;
+    }
+
+    setIsSystem(is_system) {
+        this.is_system = is_system;
+    }
+
+    setBadgeAttainers(badge_attainers) {
+        this.badge_attainers = badge_attainers;
     }
 }
 
@@ -90,19 +116,19 @@ export class Conditions {
         conditions?: any
     ) {
         if (conditions) {
-            this.hp = conditions.hp;
-            this.xp = conditions.xp;
-            this.ailment = conditions.ailment;
-            this.log_in_streak = conditions.log_in_streak;
-            this.log_in_total = conditions.log_in_total;
-            this.items = conditions.items;
-            this.items_used = conditions.items_used;
-            this.items_owned = conditions.items_owned;
-            this.head = conditions.head;
-            this.left_leg = conditions.left_leg;
-            this.right_leg = conditions.right_leg;
-            this.left_arm = conditions.left_arm;
-            this.right_arm = conditions.right_arm;
+            this.hp = conditions.hp ? conditions.hp: 0;
+            this.xp = conditions.xp ? conditions.xp: 0;
+            this.ailment = conditions.ailment? conditions.ailment: "";
+            this.log_in_streak = conditions.log_in_streak? conditions.log_in_streak: "";
+            this.log_in_total = conditions.log_in_total? conditions.log_in_total: "";
+            this.items = conditions.items? conditions.items: "";
+            this.items_used = conditions.items_used? conditions.items_used: "";
+            this.items_owned = conditions.items_owned? conditions.items_owned: "";
+            this.head = conditions.head? conditions.head: "";
+            this.left_leg = conditions.left_leg? conditions.left_leg: "";
+            this.right_leg = conditions.right_leg? conditions.right_leg: "";
+            this.left_arm = conditions.left_arm? conditions.left_arm: "";
+            this.right_arm = conditions.right_arm? conditions.right_arm: "";
         } else {
             this.hp = 0;
             this.xp = 0;

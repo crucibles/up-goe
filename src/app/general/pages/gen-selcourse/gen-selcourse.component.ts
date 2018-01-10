@@ -1,71 +1,85 @@
 //Core Imports
 import {
-  Component,
-  OnInit
+	Component,
+	OnInit
 } from '@angular/core';
 
 import {
-  NgModel
+	NgModel
 } from '@angular/forms';
 
 import {
-  Router
+	Router
 } from '@angular/router';
 //Application Imports
 import {
-  Course,
-  Quest,
-  Section,
-  User
+	Course,
+	Quest,
+	Section,
+	User
 } from 'shared/models';
 
 import {
-  SectionService,
-  UserService,
-  PageService
+	SectionService,
+	UserService,
+	PageService
 } from 'shared/services';
 
 @Component({
-  selector: 'app-gen-selcourse',
-  templateUrl: './gen-selcourse.component.html',
-  styleUrls: ['./gen-selcourse.component.css']
+	selector: 'app-gen-selcourse',
+	templateUrl: './gen-selcourse.component.html',
+	styleUrls: ['./gen-selcourse.component.css']
 })
 export class GenSelcourseComponent implements OnInit {
 
-  course
   sections: Section[];
+  table: any;
   courses: Course[];
   user: User;
   allcourses: Course[];
 
-  //for search bar
-  course_search: string;
-  isSearching: boolean = false;
-  course_found: Course[];
+	//for search bar
+	course_search: string;
+	isSearching: boolean = false;
+	course_found: Course[];
 
-  constructor(
-    private pageService: PageService,
-    private sectionService: SectionService,
-    private userService: UserService,
-    private router: Router
-  ) {
-    this.pageService.isProfilePage(false);
-  }
+	constructor(
+		private pageService: PageService,
+		private sectionService: SectionService,
+		private userService: UserService,
+		private router: Router
+	) {
+		this.pageService.isProfilePage(false);
+	}
 
-  ngOnInit() {
-    this.getUser();
-  }
+	ngOnInit() {
+		this.getUser();
+	}
 
   /**
    * Obtains information of the current user
    */
   getUser(): void {
-    let currentUserId = JSON.parse(localStorage.getItem("currentUser"));
-    this.userService.getUser(currentUserId._id)
+    let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    this.userService.getUser(currentUser._id)
       .subscribe(user => {
         this.user = new User(user);
         this.getUserSections(this.user.getUserId());
       });
+  }
+
+  /**
+   * Obtains status of user's sections
+   */
+  getStatusOfSection(students) {
+    let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    let status = students.filter(user => user.user_id == currentUser._id)[0].status;
+    if (status == "E") {
+      return "Enrolled";
+    } else if (status == "R") {
+      return "Requesting";
+    }
+
   }
 
   /**
@@ -79,7 +93,7 @@ export class GenSelcourseComponent implements OnInit {
     this.sectionService.getUserSections(user_id)
       .subscribe(sections => {
         this.sections = sections;
-        let x = sections.map(section => new Section(section));
+        //this.sections = sections.map(section => new Section(section));
       });
   }
 
@@ -94,19 +108,14 @@ export class GenSelcourseComponent implements OnInit {
       console.log(this.course_search);
       this.sectionService.searchSection(this.course_search).subscribe((sections) => {
         console.warn(sections);
+        this.course_found = sections;
       })
-      //AHJ: use this.course_search for searching the database 
-      /*this.course_found = this.getAllCourses().filter(course =>
-        (course.getCourseId() == this.course_search) ||
-        (course.getCourseName() == this.course_search)
-      );*/
     }
   }
 
-  openSectionPage(section_id: string) {
-    console.log(section_id);
-    this.router.navigate(['/specific/specific-news', section_id]);
-  }
+	openSectionPage(section_id: string) {
+		this.pageService.openSectionPage(section_id);
+	}
 
 
 }

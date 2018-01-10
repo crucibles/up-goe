@@ -12,9 +12,7 @@ import {
 import {
     Course,
     Quest,
-    User,
-    TOTXP,
-    MAXXP
+    User
 } from 'shared/models';
 
 import {
@@ -22,14 +20,43 @@ import {
     UserService
 } from 'shared/services';
 
+/* AHJ: Remove once the services are implemented properly */
+
+const SECTIONS: any[] = [
+    {
+        course_name: "CMSC 128",
+        section_name: "A",
+        week_total_exp: [10, 30, 70, 300, 500],
+        max_exp: 700
+    },
+    {
+        course_name: "CMSC 128",
+        section_name: "B",
+        week_total_exp: [120, 40, 80, 321, 700],
+        max_exp: 1200
+    },
+    {
+        course_name: "CMSC 141",
+        section_name: "J",
+        week_total_exp: [10, 30, 70, 300, 500],
+        max_exp: 1000
+    },
+];
+
+//TOTXP - total accumulative weekly experience points of current student
+const TOTXP: number[] = [1000, 2123, 3439, 4655, 6053, 6104];
+
+//MAXXP - the max experience points to obtain a 1.0 grade
+const MAXXP: number = 10000;
+
 @Component({
     selector: 'app-gen-profile',
     templateUrl: './gen-profile.component.html',
     styleUrls: ['./gen-profile.component.css']
 })
+
 export class GenProfileComponent implements OnInit {
     user: User;
-    grades: number[];
 
     // lineChart
     lineChartColors: Array<any>;
@@ -45,7 +72,8 @@ export class GenProfileComponent implements OnInit {
     /**
      * @constructor
      * 
-     * @param userService uses the UserService to obtains data needed for user
+     * @param pageService: used to identify that the profile page is currently navigated on 
+     * @param userService used to obtains data needed for user
      */
     constructor(
         private pageService: PageService,
@@ -66,56 +94,42 @@ export class GenProfileComponent implements OnInit {
      */
     getUser(): void {
         //ced make curUser in userService or use localStorage
-        this.userService.getUser("1")
-            .subscribe(user => this.user = user);
+        this.user = this.userService.getCurrentUser()
     }
 
     /**
-     * Stores the user's grades
+     * Display the user's grades in the performance graph
+     * @description Obtains the current user's array of weekly grades (or experience points) in an accumulative manner (e.g [1, 20, 200...]),
+     * computes its relative percentage based on the section's max experience points and sets the performance graph's value with this 
+     * computed array of percentage.
      */
     getGrades(): void {
-        this.grades = TOTXP ? TOTXP : [];
-        let dataGrade: number[] = [];
+        let grades = TOTXP ? TOTXP : [];
         let max: number = MAXXP ? MAXXP : 10;
+        
+        //AHJ: unimplemented
+        //replace SECTIONS with this.getUserSectionExp(user_id) [section.service] function if the function is working
+        SECTIONS.forEach(section => {
+            let dataGrade: number[] = [];
 
-        this.grades.forEach(grade => {
-            // get the decimal percentage
-            let percentage: number = (grade / MAXXP) * 100;
+            //convert the user's section weekly accumulative exp into dataset readable by performance graph
+            section.week_total_exp.forEach(grade => {
+                // get the decimal percentage
+                let percentage: number = (grade / section.max_exp) * 100;
+    
+                // round the decimal up to two decimal points
+                dataGrade.push(Math.round((percentage + 0.00001) * 100) / 100);
+            });
 
-            // round the decimal up to two decimal points
-            dataGrade.push(Math.round((percentage + 0.00001) * 100) / 100);
+            let className = section.course_name + " - " + section.section_name;
+            let dataLine: any = {
+                data: dataGrade,
+                label: className
+            };
+            
+            this.lineChartData.push(dataLine);
         })
 
-        let dataLine: any = {
-            data: dataGrade,
-            label: 'CMSC 128'
-        };
-        let dataLine2: any = {
-            data: [1, 3, 5, 50],
-            label: 'CMSC 128'
-        };
-        let dataLine3: any = {
-            data: [11, 31, 52, 50],
-            label: 'CMSC 128'
-        };
-        let dataLine4: any = {
-            data: [13, 34, 55, 58],
-            label: 'CMSC 128'
-        };
-        let dataLine5: any = {
-            data: [12, 31, 53, 80],
-            label: 'CMSC 128'
-        };
-        let dataLine6: any = {
-            data: [12, 45, 78, 90],
-            label: 'CMSC 128'
-        };
-        this.lineChartData.push(dataLine);
-        this.lineChartData.push(dataLine2);
-        this.lineChartData.push(dataLine3);
-        this.lineChartData.push(dataLine4);
-        this.lineChartData.push(dataLine5);
-        this.lineChartData.push(dataLine6);
     }
 
     /* Below are the helper functions */
