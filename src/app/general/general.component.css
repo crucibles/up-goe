@@ -6,7 +6,7 @@ body {
 /*Side body - Complement of Vertical Tab & Top Navbar*/
 .side-body {
     padding-top: 25px;
-    margin-left: 275px;
+    margin-left: 280px;
 }
 
 @media screen and (max-width: 765px) {

@@ -1,3 +1,35 @@
 <p>
-  specific-quest-map works!
+	specific-quest-map works!
 </p>
+<button type="button" class="btn btn-primary" (click)="openQuest(questTemplate, this.QUEST)">Quest here!</button>
+
+
+<!-- Modal Template for Quests-->
+<ng-template #questTemplate>
+
+	<div class="modal-header">
+		<h4 class="modal-title">{{this.questClicked.getQuestTitle()}}</h4>
+		<button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+
+	<div class="modal-body">
+		{{this.questClicked.getQuestDescription()}}
+		<div class="row" style="margin-top: 20px">
+			<div class="col-sm-6">
+				Type:<br>
+				((Eh? Asa ni sa database?))
+			</div>
+			<div class="col-sm-6">
+				Rewards:<br>
+				+ {{this.questClicked.getQuestXp()}} XP<br>
+				+ {{this.questClicked.getQuestHp()}} HP
+			</div>
+		</div>
+	</div>
+
+	<div class="modal-footer">
+		<button type="submit" class="btn btn-success" (click)="acceptQuest()">Accept the Quest</button>
+	</div>
+</ng-template>

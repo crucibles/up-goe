@@ -1,7 +1,8 @@
 //Core Imports
 import {
 	Component,
-	OnInit
+	OnInit,
+	TemplateRef
 } from '@angular/core';
 
 import {
@@ -10,16 +11,119 @@ import {
 
 //Application Imports
 import {
-	Course, 
-	Section, 
+	Course,
+	Section,
 	Student,
-	User
+	User,
+	Conditions,
+	Badge
 } from 'shared/models';
 
 import {
 	PageService,
 	SectionService
 } from 'shared/services';
+import { BsModalService } from 'ngx-bootstrap/modal/bs-modal.service';
+import { BsModalRef } from 'ngx-bootstrap';
+
+const BADGES = [
+	{
+		_id: "1",
+		badge_photo: "badge1.png",
+		badge_description: "Earn this lol",
+		badge_conditions: new Conditions(),
+		is_system: false,
+		badge_attainers: []
+	},
+	{
+		_id: "2",
+		badge_photo: "badge2.png",
+		badge_description: "Earn this lol",
+		badge_conditions: new Conditions(),
+		is_system: false,
+		badge_attainers: []
+	},
+	{
+		_id: "1",
+		badge_photo: "badge1.png",
+		badge_description: "Earn this lol",
+		badge_conditions: new Conditions(),
+		is_system: false,
+		badge_attainers: []
+	},
+	{
+		_id: "2",
+		badge_photo: "badge2.png",
+		badge_description: "Earn this lol",
+		badge_conditions: new Conditions(),
+		is_system: false,
+		badge_attainers: []
+	},
+	{
+		_id: "1",
+		badge_photo: "badge1.png",
+		badge_description: "Earn this lol",
+		badge_conditions: new Conditions(),
+		is_system: false,
+		badge_attainers: []
+	},
+	{
+		_id: "2",
+		badge_photo: "badge2.png",
+		badge_description: "Earn this lol",
+		badge_conditions: new Conditions(),
+		is_system: false,
+		badge_attainers: []
+	},
+	{
+		_id: "1",
+		badge_photo: "badge1.png",
+		badge_description: "Earn this lol",
+		badge_conditions: new Conditions(),
+		is_system: false,
+		badge_attainers: []
+	},
+	{
+		_id: "2",
+		badge_photo: "badge2.png",
+		badge_description: "Earn this lol",
+		badge_conditions: new Conditions(),
+		is_system: false,
+		badge_attainers: []
+	},
+	{
+		_id: "1",
+		badge_photo: "badge1.png",
+		badge_description: "Earn this lol",
+		badge_conditions: new Conditions(),
+		is_system: false,
+		badge_attainers: []
+	},
+	{
+		_id: "2",
+		badge_photo: "badge2.png",
+		badge_description: "Earn this lol",
+		badge_conditions: new Conditions(),
+		is_system: false,
+		badge_attainers: []
+	},
+	{
+		_id: "1",
+		badge_photo: "badge1.png",
+		badge_description: "Earn this lol",
+		badge_conditions: new Conditions(),
+		is_system: false,
+		badge_attainers: []
+	},
+	{
+		_id: "2",
+		badge_photo: "badge2.png",
+		badge_description: "Earn this lol",
+		badge_conditions: new Conditions(),
+		is_system: false,
+		badge_attainers: []
+	}
+];
 
 const dummyCourseSection: any = {
 	course: {
@@ -74,7 +178,7 @@ const STUDENTS: any[] = [
 		user_password: "p",
 		user_type: "S",
 		user_contact_no: "09499709292",
-		user_photo: "cute-cat.jpg",
+		user_photo: "cute-dog.jpg",
 		user_school_id: "2014-60690",
 		user_security_question: 'Gigil si akoe?',
 		user_security_answer: 'Petmalu!'
@@ -87,11 +191,22 @@ const STUDENTS: any[] = [
 	styleUrls: ['./specific-my-course.component.css']
 })
 export class SpecificMyCourseComponent implements OnInit {
+	//modal
+	private bsModalRef: BsModalRef;
+
+	//currently navigated section and its course 
 	private currentCourse: any;
 	private currentSection: Section;
+	private sectionBadges: Badge[];
+
+	//classmate's properties
 	private classmates: User[];
+	private classmateClicked: User;
+	private badgesDisplay: Badge[];
+
 
 	constructor(
+		private modalService: BsModalService,
 		private pageService: PageService,
 		private sectionService: SectionService,
 		private route: ActivatedRoute
@@ -125,7 +240,13 @@ export class SpecificMyCourseComponent implements OnInit {
 			STUDENTS.forEach(student => {
 				this.classmates.push(new User(student));
 			});
+			this.getSectionBadges();
 		});
+	}
+
+	getSectionBadges(){
+		//AHJ: unimplemented; since getting current section badge is unavailable... BADGES variable is being used instead
+		this.sectionBadges = BADGES.map(badge => new Badge(badge));
 	}
 
 	/**
@@ -143,5 +264,28 @@ export class SpecificMyCourseComponent implements OnInit {
 		let status = student ? student.getStatus(true) : "N/A";
 
 		return status;
+	}
+
+	/**
+	 * Open classmate profile
+	 * @description Open classmate's profile by storing received 'classmate' parameter to 
+	 * @param questTemplate 
+	 * @param classmate 
+	 */
+	openClassmateProfile(studentTemplate: TemplateRef<any>, classmate: User) {
+		this.classmateClicked = classmate;
+		if (this.classmateClicked) {
+			console.log("here!");
+			console.log(this.classmateClicked);
+			this.bsModalRef = this.modalService.show(studentTemplate);
+			this.getClassmateBadges();
+		}
+	}
+
+	getClassmateBadges(){
+		//AHJ: unimplemented; idk unsay method gamiton pra maobtain ang badges sa isa ka student however I just create an array of dummy
+		//badges to display
+		this.badgesDisplay = BADGES.map(badge => new Badge(badge));
+		console.log(this.badgesDisplay);
 	}
 }

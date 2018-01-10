@@ -26,6 +26,7 @@ import {
 } from 'ngx-bootstrap/collapse/collapse.module';
 
 import {
+  ModalModule,
   PopoverModule,
   TooltipModule
 } from 'ngx-bootstrap';
@@ -39,6 +40,7 @@ import {
   imports: [
     CollapseModule.forRoot(),
     CommonModule,
+    ModalModule.forRoot(),
     PopoverModule.forRoot(),
     TooltipModule.forRoot()
   ],
@@ -48,6 +50,7 @@ import {
     ChartsModule,
     FormsModule,
     HttpClientModule,
+    ModalModule,
     PopoverModule,
     ReactiveFormsModule,
     TooltipModule
