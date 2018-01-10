@@ -27,3 +27,12 @@ h2 {
     margin-left: auto;
     margin-right: auto;
 }
+
+.linkers {
+    text-align: center;
+}
+
+.linkers p {
+    display: inline-block;
+    vertical-align: top;
+}

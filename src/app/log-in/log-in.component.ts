@@ -1,7 +1,24 @@
-import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
-import { UserService } from 'shared/services';
-import { Router } from '@angular/router';
+// Core imports
+import { 
+    Component, 
+    OnInit
+} from '@angular/core';
+
+import { 
+    FormBuilder, 
+    FormControl,
+    FormGroup,
+    Validators 
+} from '@angular/forms';
+
+import { 
+    Router 
+} from '@angular/router';
+
+// Application imports
+import { 
+    UserService 
+} from 'shared/services';
 
 @Component({
     selector: 'log-in',
@@ -9,36 +26,55 @@ import { Router } from '@angular/router';
     styleUrls: ['./log-in.component.css']
 })
 export class LogInComponent implements OnInit {
-    public signupForm: FormGroup;
+    private loginForm: FormGroup;
+    private warning: boolean;
 
     constructor(
-        formBuillder: FormBuilder,
+        formBuilder: FormBuilder,
         private userService: UserService,
         private router: Router
     ) {
-        this.signupForm = formBuillder.group({
-            email: null,
+        this.loginForm = formBuilder.group({
+            email: [null, Validators.email],
             password: null
         });
-    }
-
-    ngOnInit() {
+        this.warning = false;
     }
 
     logIn() {
-        let email = this.signupForm.value.email;
-        let password = this.signupForm.value.password;
+        let email = this.loginForm.value.email;
+        let password = this.loginForm.value.password;
 
         this.userService.logIn(email, password).subscribe(user => {
             if (user) {
                 this.router.navigate(['/general/select-course']);
             } else {
-                console.log("does not exists!");
+                console.log("User does not exists!");
+                this.warning = true;
             }
         });
     }
 
-    signup() {
+    keyPressed() {
+        this.warning = false;
+    }
+
+    userSignUp() {
         this.router.navigate(['/sign-up']);
+    }
+
+    userChangePassword() {
+        this.router.navigate(['**']);
+    }
+
+    get email() {
+        return this.loginForm.get('email') as FormControl;
+    }
+
+    get password() {
+        return this.loginForm.get('password') as FormControl;
+    }
+
+    ngOnInit() {
     }
 }
