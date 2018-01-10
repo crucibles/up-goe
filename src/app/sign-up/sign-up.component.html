@@ -278,11 +278,12 @@
     <br>
     <br>
         <!-- Displays warning message if the input email already existed. -->
-        <small *ngIf="duplicate"
-            style="text-align: center;"
+    <div *ngIf="duplicate">
+        <small style="text-align: center;"
             class="form-text text-danger">The email {{ duplicate }} already exists.
         </small>
-    <br *ngIf="duplicate">
+        <br>
+    </div>
         <button type="submit"
                 [disabled]="signupForm.invalid || (password.value != confirmPassword.value)"
                 class="btn btn-primary"

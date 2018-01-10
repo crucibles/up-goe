@@ -5,12 +5,14 @@
 
 <form class="form-horizontal" 
     [formGroup]="loginForm" 
-    (ngSubmit)="logIn()">
+    (ngSubmit)="logIn()"
+    (keyup)="keyPressed()">
 
-    <small  *ngIf="warning"
-            class="form-text text-danger">Email or password is invalid.
-    </small>
-    <br>
+    <div *ngIf="warning">
+        <small class="form-text text-danger">Email or password is invalid.</small>
+        <br>
+    </div>
+    
     <table>
         <tr>
             <td>

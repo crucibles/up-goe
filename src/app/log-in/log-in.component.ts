@@ -55,6 +55,10 @@ export class LogInComponent implements OnInit {
         });
     }
 
+    keyPressed() {
+        this.warning = false;
+    }
+
     userSignUp() {
         this.router.navigate(['/sign-up']);
     }
