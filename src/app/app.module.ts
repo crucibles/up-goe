@@ -43,6 +43,14 @@ import {
   SignUpComponent
 } from 'sign-up/sign-up.component';
 
+import { 
+  AuthGuardService 
+} from 'shared/services/auth-guard.service';
+
+import { 
+  AuthService 
+} from 'shared/services/auth.service';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -52,7 +60,7 @@ import {
   imports: [
     AppRoutingModule,
     BrowserModule,
-    SharedModule
+    SharedModule,
   ],
   providers: [
     BadgeService,
@@ -62,7 +70,9 @@ import {
     SectionService,
     UserService,
     ItemService,
-    CookieService
+    CookieService,
+    AuthGuardService,
+    AuthService
   ],
   bootstrap: [AppComponent]
 })

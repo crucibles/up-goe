@@ -1,7 +1,24 @@
-import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
-import { UserService } from 'shared/services';
-import { Router } from '@angular/router';
+import {
+    Component,
+    OnInit
+} from '@angular/core';
+
+import {
+    FormGroup,
+    FormBuilder
+} from '@angular/forms';
+
+import {
+    UserService
+} from 'shared/services';
+
+import {
+    Router, ActivatedRoute
+} from '@angular/router';
+
+import { 
+    AlertService 
+} from 'shared/services/alert.service';
 
 @Component({
     selector: 'log-in',
@@ -10,11 +27,15 @@ import { Router } from '@angular/router';
 })
 export class LogInComponent implements OnInit {
     public signupForm: FormGroup;
+    
+    returnUrl: string;
 
     constructor(
         formBuillder: FormBuilder,
         private userService: UserService,
-        private router: Router
+        private router: Router,
+        private route: ActivatedRoute,
+        private alertService: AlertService
     ) {
         this.signupForm = formBuillder.group({
             email: null,
@@ -23,18 +44,24 @@ export class LogInComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
     }
 
     logIn() {
         let email = this.signupForm.value.email;
         let password = this.signupForm.value.password;
 
-        this.userService.logIn(email, password).subscribe(user => {
+        this.userService.logIn(email, password)
+        .subscribe(
+            user => {
             if (user) {
                 this.router.navigate(['/general/select-course']);
             } else {
                 console.log("does not exists!");
             }
+        }, error => {
+            // login failed so display error
+            this.alertService.error(error);
         });
     }
 
