@@ -25,7 +25,8 @@ import {
 	Course,
 	Quest,
 	Section,
-	User
+	User,
+	imageDir
 } from 'shared/models';
 
 import {
@@ -35,8 +36,6 @@ import {
 	SectionService,
 	UserService
 } from 'shared/services';
-
-const imageDir: string = "/assets/images/";
 
 @Component({
 	selector: 'gen-sidetab',
@@ -129,16 +128,13 @@ export class GenSidetabComponent implements OnInit {
 	getUser(): void {
 		// ced: I think this should be in the User model, by the get method. Current user will be used temporarily
 		this.currentUser = this.userService.getCurrentUser();
-		this.image = this.currentUser.getUserPhoto() ?
-			imageDir + this.currentUser.getUserPhoto() :
-			imageDir + "avatar.jpg";
+		this.image = this.currentUser.getUserPhoto();
 
 		/*this.userService.getUser(currentUser._id)
 		  .subscribe(user => {
 			this.user = new User(user);
 	
-			let image: string = this.user.getUserPhoto()? this.user.getUserPhoto(): "avatar.jpg";
-			this.image = "/assets/images/" + image;
+			this.image = this.user.getUserPhoto();
 	
 			if (this.isProfile) {
 			  this.getUserSections(this.user.getUserId());

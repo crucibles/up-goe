@@ -47,7 +47,7 @@
         </td>
       </tr>
       <!--AHJ: Fix zebra form-->
-      <ng-container id="mult" *ngIf="sections != null && sections.length != 0">
+      <ng-container *ngIf="sections != null && sections.length != 0">
         <tr *ngFor="let section of sections; let i = index;" [class.odd]="i%2 == 0">
           <ng-container>
             <td>
