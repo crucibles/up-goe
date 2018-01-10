@@ -6,19 +6,19 @@
   <div class="collapse navbar-collapse" id="collapsibleNavbar" [collapse]="isCollapsed">
     <ul class="nav navbar-nav">
       <li class="nav-item">
-        <a class="nav-link" routerLink="/specific/specific-news">News</a>
+        <a class="nav-link" routerLink="/specific/specific-news/{{sectionId}}">News</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" routerLink="/specific/specific-profile">Profile</a>
+        <a class="nav-link" [routerLink]="['/specific/specific-profile', sectionId]">Profile</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" routerLink="/specific/specific-character">Character</a>
+        <a class="nav-link" [routerLink]="['/specific/specific-character', sectionId]">Character</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" routerLink="/specific/specific-quest-map">Quest Map</a>
+        <a class="nav-link" [routerLink]="['/specific/specific-quest-map', sectionId]">Quest Map</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" routerLink="/specific/specific-my-course">CMSC 128</a>
+        <a class="nav-link" [routerLink]="['/specific/specific-my-course', sectionId]">CMSC 128</a>
       </li>
     </ul>
     <ul class="navbar-nav ml-auto">
