@@ -1,1 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
+.hyperlinks {
+    text-decoration: underline;
+    color: blue;
+}
+
+.hyperlinks:hover {
+    cursor: pointer;
+}

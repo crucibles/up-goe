@@ -25,7 +25,3 @@ h2 {
     margin-left: auto;
     margin-right: auto;
 }
-
-#first-name.ng-pristine and #first-name.ng-dirty{
-    border-color: red;
-}

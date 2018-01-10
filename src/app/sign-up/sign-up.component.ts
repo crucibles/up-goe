@@ -32,20 +32,25 @@ import {
 export class SignUpComponent implements OnInit {
 
     private signupForm: FormGroup;
+
+    // Questions to be modified when database is updated.
     questions = SECURITY_QUESTION;
+
+    // To determine the a duplicate email upon input.
     duplicate: string = null;
 
     constructor(
-        fb: FormBuilder,
+        formBuilder: FormBuilder,
         private userService: UserService,
         private router: Router
     ) {
-        this.signupForm = fb.group({
+        this.signupForm = formBuilder.group({
             schoolId: null,
             firstName: null,
             middleName: null,
             lastName: null,
             birthdate: null,
+            // Validates the format of the email input.
             email: [null, Validators.email],
             password: null,
             confirmPassword: null,
@@ -67,7 +72,7 @@ export class SignUpComponent implements OnInit {
         let password = this.signupForm.value.password;
         let type = this.signupForm.value.type;
         let contactNumber = this.signupForm.value.contactNumber;
-        let securityQuestion = this.signupForm.value.securityQuestion;
+        let securityQuestion = this.signupForm.value.securityQuestion; 
         let securityAnswer = this.signupForm.value.securityAnswer;
 
         this.userService.register(
@@ -83,10 +88,13 @@ export class SignUpComponent implements OnInit {
             securityQuestion,
             securityAnswer
         ).subscribe(newUser => {
+            // Successful registration of user and redirects to login page.
             if (newUser) {
                 console.log("A new user is registered!");
                 this.router.navigate(['/log-in']);
             }
+            // Unsuccessful registration of new user because of email already existing.
+            // Sets signal to prompt warning message of already existing email.
             else {
                 console.log("New user failed to register!");
                 this.duplicate = email;
@@ -94,11 +102,16 @@ export class SignUpComponent implements OnInit {
         });
     }
 
+    // Resets the form inputs and the duplicate email warning signal.
     reset() {
         this.duplicate = null;
         this.signupForm.reset();
     }
 
+    userLogin() {
+        this.router.navigate(['/log-in']);
+    }
+    
     get schoolId() {
         return this.signupForm.get('schoolId') as FormControl;
     }
