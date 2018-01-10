@@ -217,7 +217,12 @@ export class SectionService {
    * 
    */
   getCourseSection(section_id) {
-    // useful for specific-page of my-course page
+    // AHJ: useful for specific-page of my-course page; however, nudge me to answer this question
+    // Question: how should the student of the section be obtained? Through another function in this section service (getSectionStudent())
+    // OR should we include it in one of the object properties such that ... objectReturned = {course: Course, section: Section, student: Users}
+
+      // Another note: Since the section is stored in the local storage, then maybe this function is deprecated and we can refer to 
+      // getCourse(section_id) function in this same service instead?
     const url = this.courseSectionUrl;
   }
 

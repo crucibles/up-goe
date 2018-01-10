@@ -25,7 +25,8 @@ import {
 	Course,
 	Quest,
 	Section,
-	User
+	User,
+	imageDir
 } from 'shared/models';
 
 import {
@@ -35,8 +36,6 @@ import {
 	SectionService,
 	UserService
 } from 'shared/services';
-
-const imageDir: string = "/assets/images/";
 
 @Component({
 	selector: 'gen-sidetab',
@@ -90,7 +89,6 @@ export class GenSidetabComponent implements OnInit {
 		this.image = imageDir + "not-found.jpg";
 		this.getUser();
 		this.initializeForm();
-		//for hiding sidetab on outside clicking
 	}
 
 	ngOnInit() {
@@ -127,25 +125,8 @@ export class GenSidetabComponent implements OnInit {
 	 * section quests are for other pages except general-profile page
 	 */
 	getUser(): void {
-		// ced: I think this should be in the User model, by the get method. Current user will be used temporarily
 		this.currentUser = this.userService.getCurrentUser();
-		this.image = this.currentUser.getUserPhoto() ?
-			imageDir + this.currentUser.getUserPhoto() :
-			imageDir + "avatar.jpg";
-
-		/*this.userService.getUser(currentUser._id)
-		  .subscribe(user => {
-			this.user = new User(user);
-	
-			let image: string = this.user.getUserPhoto()? this.user.getUserPhoto(): "avatar.jpg";
-			this.image = "/assets/images/" + image;
-	
-			if (this.isProfile) {
-			  this.getUserSections(this.user.getUserId());
-			} else {
-			  this.getQuests(this.user.getUserId());
-			}
-		  });*/
+		this.image = this.currentUser.getUserPhoto();
 	}
 
 	/**
@@ -157,7 +138,6 @@ export class GenSidetabComponent implements OnInit {
 	 * 
 	 */
 	getUserSections(user_id: string) {
-		//AHJ: unimplemented (must be section with attached course_name)
 		this.sectionService.getUserSections(this.currentUser.getUserId()).subscribe(courseSections => {
 			this.sections = courseSections;
 		});
@@ -173,7 +153,6 @@ export class GenSidetabComponent implements OnInit {
 	getQuests(user_id): void {
 		this.questService.getUserJoinedQuests(user_id)
 			.subscribe(quests => {
-				//AHJ: need more fixes
 				this.quests = quests.map(quest => new Quest(quest));
 				this.timeDisplays();
 			});

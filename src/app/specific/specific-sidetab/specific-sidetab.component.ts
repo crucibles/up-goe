@@ -73,9 +73,7 @@ export class SpecificSidetabComponent implements OnInit {
 	getUser() {
 		//AHJ: current user is not yet obtained
 		this.currentUser = this.userService.getCurrentUser();
-		this.image = this.currentUser.getUserPhoto() ?
-			imageDir + this.currentUser.getUserPhoto() :
-			imageDir + "avatar.jpg";
+		this.image = this.currentUser.getUserPhoto();
 	}
 
 	setDefault() {

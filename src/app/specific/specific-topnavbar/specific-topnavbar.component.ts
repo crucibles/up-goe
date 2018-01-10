@@ -1,7 +1,8 @@
 //Core Imports
 import {
   Component,
-  OnInit
+  OnInit,
+  Input
 } from '@angular/core';
 
 //Application Imports
@@ -15,6 +16,7 @@ import {
   styleUrls: ['./specific-topnavbar.component.css']
 })
 export class SpecificTopnavbarComponent implements OnInit {
+  @Input('sectionId') sectionId: string;
 
   isCollapsed: boolean;
 
