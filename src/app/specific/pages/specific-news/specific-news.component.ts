@@ -42,7 +42,7 @@ export class SpecificNewsComponent implements OnInit {
 
 	commentPosts: CommentPost[];
 	comments: CommentPost[][] = [];
-	posters: string[] = [];
+	posters: User[] = [];
 	currentUser: User;
 
 	/**
@@ -114,7 +114,7 @@ export class SpecificNewsComponent implements OnInit {
 				this.posters = [];
 				this.userService.getUser(post.getUserId()).subscribe(user => {
 					let newUser = new User(user);
-					this.posters[index] = newUser.getUserFullName();
+					this.posters[index] = newUser;
 				});
 			});
 			this.getAllComments();

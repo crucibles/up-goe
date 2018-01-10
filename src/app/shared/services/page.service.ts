@@ -27,7 +27,6 @@ import {
 export class PageService {
 
 	@Output() isProfile: EventEmitter<boolean> = new EventEmitter();
-	months: string[] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 	public lineChartColors: Array<any> = [
 		{ // light grey
@@ -157,9 +156,11 @@ export class PageService {
 	* @returns string of the formatted date
 	*/
 	private formatDate(date_obj) {
-		var month = this.months[date_obj.getMonth()];
-		var day = date_obj.getDate();
-		var year = date_obj.getFullYear();
+		let months: string[] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+		
+		let month = months[date_obj.getMonth()];
+		let day = date_obj.getDate();
+		let year = date_obj.getFullYear();
 		let datestring: string = month + " " + day + ", " + year;
 		return datestring;
 	}

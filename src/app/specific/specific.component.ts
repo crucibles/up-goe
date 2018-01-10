@@ -4,6 +4,10 @@ import {
   OnInit
 } from '@angular/core';
 
+import {
+  ActivatedRoute, ParamMap
+} from '@angular/router';
+
 @Component({
   selector: 'app-specific',
   templateUrl: './specific.component.html',
@@ -11,9 +15,16 @@ import {
 })
 export class SpecificComponent implements OnInit {
 
-  constructor() { }
+  private sectionId: string;
+
+  constructor(
+    private route: ActivatedRoute
+  ) { }
 
   ngOnInit() {
+    this.route.firstChild.paramMap.subscribe((params: ParamMap) => {
+      this.sectionId = params.get("sectionId");
+    });
   }
 
 }

@@ -1,3 +1,52 @@
-<p>
-  specific-my-course works!
-</p>
+<!--If both course & section has been obtained-->
+<ng-container *ngIf="currentCourse && currentSection">
+
+  <h3 class="heading">{{currentCourse.getCourseName()}}</h3>
+  <h6 class="heading">Instructor: {{currentSection.getInstructor()}}</h6>
+
+
+  <h6>My Classmates</h6>
+  <!-- Table for classmate -->
+  <table id="table-classmate" summary="Classmate List">
+    <!-- Table header -->
+    <thead>
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Birthdate</th>
+        <th scope="col">Email</th>
+        <th scope="col">Status</th>
+      </tr>
+    </thead>
+
+    <!-- Table Content -->
+    <tbody>
+      <!--Shows if user has no classmates yet-->
+      <tr *ngIf="!classmates || classmates.length == 0">
+        <td colspan="3" style="text-align: center">You have no course enrolled yet!
+          <br>Input your class code now.
+        </td>
+      </tr>
+      <!--Shows list of classmates and their respective information-->
+      <ng-container *ngIf="classmates != null && classmates.length != 0">
+        <tr *ngFor="let classmate of classmates; let i = index;" [class.odd]="i%2 == 0">
+          <td>
+            <a class="clickable">{{classmate.getUserFullName()}}</a>
+          </td>
+          <td>{{classmate.getUserFormattedBirthdate()}}</td>
+          <td>{{classmate.getUserEmail()}}</td>
+          <td>{{this.getStudentStatus(classmate.getUserId())}}</td>
+        </tr>
+      </ng-container>
+    </tbody>
+  </table>
+
+
+
+</ng-container>
+
+
+
+<!--If either the course & section has not been loading yet-->
+<ng-container *ngIf="!currentCourse || !currentSection">
+  Loading...
+</ng-container>

@@ -11,20 +11,20 @@
           <div class="panel panel-white post panel-shadow">
             <div class="post-heading">
               <div class="pull-left image">
-                <img src="http://bootdey.com/img/Content/user_1.jpg" class="img-circle avatar" alt="user profile image">
+                <img [src]="posters[i].getUserPhoto()" class="img-circle avatar" alt="user profile image">
               </div>
               <div class="pull-left meta">
                 <div class="title h5">
                   <a href="#">
-                    <b>{{this.posters[i]}}</b>
+                    <b>{{this.posters[i].getFullName()}}</b>
                   </a>
                   made a post.
                 </div>
-                <h6 class="text-muted time">{{this.displayTimeDate(post.post_date)}}</h6>
+                <h6 class="text-muted time">{{this.displayTimeDate(post.getPostDate())}}</h6>
               </div>
             </div>
             <div class="post-description">
-              <p>{{post.post_content}}</p>
+              <p>{{post.getPostContent()}}</p>
               <br class="clear" />
               <div class="action-box" style="padding-top: 20px" *ngIf="post.post_comments && post.post_comments.length != 0">
                 <div id="app" class="comments">
@@ -33,8 +33,8 @@
                       <img id="profile-photo" [src]="commenters[i][j].getUserPhoto()" />
                       <h4>
                         <a href="#">{{this.commenters? this.commenters[i][j].getUserFullName(): ""}}</a>
-                        <h6 class="text-muted time">{{displayTimeDate(this.comments[i][j].post_date)}}</h6>
-                        <p>{{this.comments[i][j].post_content}}</p>
+                        <h6 class="text-muted time">{{displayTimeDate(this.comments[i][j].getPostDate())}}</h6>
+                        <p>{{this.comments[i][j].getPostContent()}}</p>
                       </h4>
                     </ng-container>
                   </article>
@@ -89,10 +89,10 @@
                 </div>-->
               </div>
               <div class="action-box" style="padding-top: 20px">
-                <div *ngIf="!post.commentable">
+                <div *ngIf="!post.getCommentable()">
                   You cannot comment to this post.
                 </div>
-                <div *ngIf="post.commentable" class="widget-area no-padding blank">
+                <div *ngIf="post.getCommentable()" class="widget-area no-padding blank">
                   <div class="status-upload">
                     <div>
                       <textarea [(ngModel)]="commentContent[i]" placeholder="Reply to this post..."></textarea>
