@@ -53,6 +53,10 @@
       'ng2-charts': {
         main: 'ng2-charts.js',
         defaultExtension: 'js'
+      },
+      'gojs': {
+        main: 'go.js',
+        defaultExtension: 'js'
       }
     }
   });

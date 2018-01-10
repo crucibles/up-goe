@@ -35,6 +35,10 @@ const specificRoutes: Routes = [
         component: SpecificCharacterComponent
       },
       {
+        path: 'quest-map',
+        component: SpecificQuestMapComponent
+      },
+      {
         path: 'specific-news',
         component: SpecificNewsComponent
       },
