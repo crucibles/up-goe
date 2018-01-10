@@ -76,7 +76,7 @@ export class UserService {
                 }
                 return data;
             }),
-            catchError(this.handleError<any>(`logIn user_id=${email}`))
+            catchError(this.handleError<any>(`logIn user_email=${email}`))
         );
     }
 
@@ -109,6 +109,7 @@ export class UserService {
         securityQuestion: string,
         securityAnswer: string
     ): Observable<User> {
+        // The sign up api URL.
         const url = this.signupUrl;
 
         return this.http.post<User>(url, {
@@ -125,10 +126,18 @@ export class UserService {
             securityAnswer
         }).pipe(
             tap(data => {
+                // Returns data from api.js to sign-up.component.ts.
                 return data;
             }),
             catchError(this.handleError<User>(`signup user_email=${email}`))
             );
+    }
+
+    /**
+     * @summary: Obtains a security questions from server by id
+     */
+    getSecurityQuestions(id: string) {
+
     }
 
     /**
@@ -139,8 +148,7 @@ export class UserService {
         let params = new HttpParams().set('id', id);
         return this.http.get<User[]>(url, {
             params: params
-        })
-            .pipe(
+        }).pipe(
             map(users => users[0]), // returns a {0|1} element array
             tap(h => {
                 const outcome = h ? 'fetched user ' + id : 'did not find user ' + id;

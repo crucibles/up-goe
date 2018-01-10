@@ -21,6 +21,7 @@
                                 id="first-name" 
                                 placeholder="First name">
                     </div>
+                    <!-- Displays warning message if first name is empty upon modification. -->
                     <small  *ngIf="firstName.invalid && firstName.dirty"
                             class="form-text text-danger">First name is required.
                     </small>
@@ -43,6 +44,7 @@
                                 id="middle-name" 
                                 placeholder="Middle name">
                     </div>
+                    <!-- Displays warning message if middle name is empty upon modification. -->
                     <small  *ngIf="middleName.invalid && middleName.dirty"
                             class="form-text text-danger">Middle name is required.
                     </small>
@@ -65,6 +67,7 @@
                                 id="last-name" 
                                 placeholder="Last name">
                     </div>
+                    <!-- Displays warning message if last name is empty upon modification. -->
                     <small  *ngIf="lastName.invalid && lastName.dirty"
                             class="form-text text-danger">Last name is required.
                     </small>
@@ -87,6 +90,7 @@
                                 id="birthdate" 
                                 placeholder="Birthdate">
                     </div>
+                    <!-- Displays warning message if birthdate is empty upon modification. -->
                     <small  *ngIf="birthdate.invalid && birthdate.dirty"
                             class="form-text text-danger">Birthdate is required.
                     </small>
@@ -109,6 +113,7 @@
                                 id="school-id" 
                                 placeholder="School ID">
                     </div>
+                    <!-- Displays warning message if school id is empty upon modification. -->
                     <small  *ngIf="schoolId.invalid && schoolId.dirty"
                             class="form-text text-danger">School ID is required.
                     </small>
@@ -131,6 +136,7 @@
                                 id="contact-no" 
                                 placeholder="Contact number">
                     </div>
+                    <!-- Displays warning message if contact number is empty upon modification. -->
                     <small  *ngIf="contactNumber.invalid && contactNumber.dirty"
                             class="form-text text-danger">Contact number is required.
                     </small>
@@ -153,6 +159,7 @@
                                 id="email" 
                                 placeholder="Email Address">
                     </div>
+                    <!-- Displays warning message if email is empty upon modification. -->
                     <small  *ngIf="email.dirty && email.errors?.email"
                             class="form-text text-danger">E-mail has invalid format.
                     </small>
@@ -175,6 +182,7 @@
                                 id="password"
                                 placeholder="Password">
                     </div>
+                    <!-- Displays warning message if password is empty upon modification. -->
                     <small  *ngIf="password.invalid && password.dirty"
                             class="form-text text-danger">Password is required.
                     </small>
@@ -196,6 +204,7 @@
                                 id="confirm-password" 
                                 placeholder="Confirm password">
                     </div>
+                    <!-- Displays warning message if input is not equal with the password. -->
                     <small  *ngIf="confirmPassword.dirty && (password.value != confirmPassword.value)"
                             class="form-text text-danger">Input is not equal with password.
                     </small>
@@ -216,8 +225,9 @@
                                 formControlName="securityQuestion"
                                 name="securityQuestion"
                                 id="security-question">
-                        <option *ngFor="let question of questions" [value]="question">{{ question.securityQuestion }}</option>
+                        <option *ngFor="let question of questions" [value]="question.securityQuestion">{{ question.securityQuestion }}</option>
                         </select>
+                        <!-- Displays warning message if security question is empty upon modification. -->
                         <small  *ngIf="securityQuestion.invalid && securityQuestion.dirty"
                                 class="form-text text-danger">Security question is required.
                         </small>
@@ -241,6 +251,7 @@
                                 id="security-answer" 
                                 placeholder="Answer">
                     </div>
+                    <!-- Displays warning message if security answer is empty upon modification. -->
                     <small  *ngIf="securityAnswer.invalid && securityAnswer.dirty"
                             class="form-text text-danger">Security question answer is required.
                     </small>
@@ -256,16 +267,17 @@
                 value="student" 
                 formControlName="type" 
                 class="user-type"
-                required> Student
+                required> I am a Student
         <input  type="radio" 
                 name="type" 
                 value="teacher" 
-                style="margin-left: 50px;"
+                style="margin-left: 30px;"
                 formControlName="type" 
                 class="user-type"
-                required> Teacher
+                required> I am a Teacher
     <br>
     <br>
+        <!-- Displays warning message if the input email already existed. -->
         <small *ngIf="duplicate"
             style="text-align: center;"
             class="form-text text-danger">The email {{ duplicate }} already exists.
@@ -273,7 +285,8 @@
     <br *ngIf="duplicate">
         <button type="submit"
                 [disabled]="signupForm.invalid || (password.value != confirmPassword.value)"
-                class="btn btn-primary">Sign up
+                class="btn btn-primary"
+                style="margin-right: 20px;">Sign up
         </button>
         <button type="button"
                 [disabled]="signupForm.untouched"
@@ -281,5 +294,6 @@
                 (click)="reset()">Reset
         </button>
     <br>
-        <a href="../log-in">I already have an account.</a>
+        <p (click)="userLogin()"
+            class="hyperlinks">I already have an account.</p>
 </form>
