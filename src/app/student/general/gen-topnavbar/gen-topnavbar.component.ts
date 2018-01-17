@@ -12,7 +12,7 @@ import {
 //Application Import 
 import {
   UserService
-} from '../../shared/services'
+} from 'shared/services'
 
 @Component({
   selector: 'gen-topnavbar',

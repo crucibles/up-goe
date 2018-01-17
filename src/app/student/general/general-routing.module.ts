@@ -13,11 +13,11 @@ import {
     GenSelcourseComponent,
     GenNewsComponent,
     GenProfileComponent
-} from 'general/pages';
+} from 'student/general/pages';
 
 import {
     GeneralComponent
-} from 'general/general.component';
+} from 'student/general/general.component';
 
 import {
     PageNotFoundComponent
