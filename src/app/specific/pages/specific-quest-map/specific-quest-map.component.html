@@ -1,3 +1,55 @@
 <p>
-  specific-quest-map works!
+	specific-quest-map works!
 </p>
+<button type="button" class="btn btn-primary" (click)="openQuest(questTemplate, this.QUEST)">Quest here!</button>
+
+
+<!-- Modal Template for Quests-->
+<ng-template #questTemplate>
+
+	<!-- Quest Modal Header/Title -->
+	<div class="modal-header">
+		<h4 class="modal-title">
+			{{this.questClicked.getQuestTitle()}}
+			<h6 *ngIf="isParticipating(this.questClicked.getQuestId())" style="text-align: center">(In Progress)</h6>
+		</h4>
+		<button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+
+	<!-- Quest Information -->
+	<div class="modal-body">
+		{{this.questClicked.getQuestDescription()}}
+		<div class="row" style="margin-top: 20px">
+			<div class="col-sm-6">
+				Rewards:
+				<br> + {{this.questClicked.getQuestXp()}} XP
+				<br> + {{this.questClicked.getQuestHp()}} HP
+			</div>
+			<div class="col-sm-6">
+				Started on:
+				<br> {{this.pageService.formatDateTime(this.questClicked.getQuestStartTimeDate())}}
+				<br>
+				<br> Deadline:
+				<br> {{this.pageService.formatDateTime(this.questClicked.getQuestEndTimeDate())}}
+				<br>
+				<br>
+			</div>
+		</div>
+	</div>
+
+	<!-- Quest Modal Buttons -->
+	<div class="modal-footer">
+		<!-- shows submit & abandon buttons if user is a participant -->
+		<ng-container *ngIf="isParticipating(this.questClicked.getQuestId())">
+			<button type="submit" class="btn btn-success mr-auto" (click)="abandonQuest()">Abandon Quest</button>
+			<button type="submit" class="btn btn-success" (click)="submitQuest()">Submit Quest</button>
+		</ng-container>
+		<!-- shows accept button if user is not yet a participant -->
+		<ng-container *ngIf="!isParticipating(this.questClicked.getQuestId())">
+			<button type="submit" class="btn btn-success" (click)="acceptQuest()">Accept the Quest</button>
+		</ng-container>
+	</div>
+</ng-template>
+<!-- quest modal template end -->

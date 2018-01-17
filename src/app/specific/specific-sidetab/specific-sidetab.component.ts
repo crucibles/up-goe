@@ -60,26 +60,30 @@ export class SpecificSidetabComponent implements OnInit {
 
 	ngOnInit() {
 		this.getUser();
-		this.setDefault();
+		this.pageService.isProfile.subscribe(isProfile => {
+			this.isProfile = isProfile;
+			if(isProfile){
+				this.initializeForm();
+			} else {
+				//AHJ: unimplemented must request for quests
+			}
+		});
+		this.checkSize();
+	}
+	
+	initializeForm(){
 		this.editForm = this.formBuilder.group({
 			schoolId: new FormControl(this.currentUser.getUserSchoolId()),
 			email: new FormControl(this.currentUser.getUserEmail(), Validators.required),
 			contactNo: new FormControl(this.currentUser.getUserContactNo(), Validators.required),
 		});
 		this.editForm.disable();
-		this.checkSize();
 	}
 
 	getUser() {
 		//AHJ: current user is not yet obtained
 		this.currentUser = this.userService.getCurrentUser();
 		this.image = this.currentUser.getUserPhoto();
-	}
-
-	setDefault() {
-		this.pageService.isProfile.subscribe(isProfile => {
-			this.isProfile = isProfile;
-		});
 	}
 
 	endEditing() {

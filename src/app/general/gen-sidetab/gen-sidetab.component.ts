@@ -4,7 +4,8 @@ import {
 	OnInit,
 	Input,
 	HostListener,
-	ElementRef
+	ElementRef,
+	TemplateRef
 } from '@angular/core';
 
 import {
@@ -36,6 +37,7 @@ import {
 	SectionService,
 	UserService
 } from 'shared/services';
+import { BsModalService, BsModalRef } from 'ngx-bootstrap';
 
 @Component({
 	selector: 'gen-sidetab',
@@ -52,15 +54,17 @@ export class GenSidetabComponent implements OnInit {
 	currentUser: User;
 	image: string = "";
 
-
 	//for pages other than profile page  
 	editForm: FormGroup;
 	quests: Quest[] = []; //user's quests
+	questClicked: Quest;
 	//for progress bar; 
-	defaultPBClass: string = 'progress-bar progress-bar-striped active';
+	defaultPBClass: string = 'progress-bar progress-bar-striped';
 	progressBarClass: string[];
 	questTimePercentage: string[];
 	questTimeDisplay: string[];
+	//for quest modal
+	bsModalRef: BsModalRef;
 
 	//for profile page only
 	isEditing: boolean = false;
@@ -80,6 +84,7 @@ export class GenSidetabComponent implements OnInit {
 		private commentPostService: CommentPostService,
 		private elementRef: ElementRef,
 		private formBuilder: FormBuilder,
+		private modalService: BsModalService,
 		private pageService: PageService,
 		private questService: QuestService,
 		private sectionService: SectionService,
@@ -171,6 +176,28 @@ export class GenSidetabComponent implements OnInit {
 	startEditing() {
 		this.isEditing = !this.isEditing;
 		this.editForm.enable();
+	}
+
+	openQuest(template: TemplateRef<any>, quest: any) { //'quest: any' in here means the quest has not been converted to Quest type
+		//AHJ: Unimplemented
+		//WARNING!! Remove QUESTS in specific-qm.html when this is implemented
+		console.log(quest);
+		this.questClicked = new Quest(quest);
+		if (this.questClicked) {
+			this.bsModalRef = this.modalService.show(template);
+		}
+	}
+
+	submitQuest() {
+		//AHJ: unimplemented
+		console.log("'" + this.questClicked.getQuestTitle() + "' submitted!");
+		this.bsModalRef.hide();
+	}
+
+	abandonQuest() {
+		console.log("'" + this.questClicked.getQuestTitle() + "' abandoned :(");
+		//AHJ: unimplemented
+		this.bsModalRef.hide();
 	}
 
 	/*Below are the helper functions for this component */
@@ -273,10 +300,12 @@ export class GenSidetabComponent implements OnInit {
 	toggleClass(hourRem, i) {
 		//AHJ: not working; fix this later
 		this.progressBarClass = [];
-		if (hourRem <= 24) {
-			this.progressBarClass[i] = 'progress-bar-danger';
+		if (hourRem <= 0) {
+			this.progressBarClass[i] = 'bg-danger';
+		} else if (hourRem <= 24) {
+			this.progressBarClass[i] = 'progress-bar-animated bg-danger';
 		} else {
-			this.progressBarClass[i] = 'progress-bar-success';
+			this.progressBarClass[i] = 'progress-bar-animated bg-success';
 		}
 	}
 
@@ -298,7 +327,7 @@ export class GenSidetabComponent implements OnInit {
 		this.isShowSideTab = !this.isShowSideTab;
 	}
 
-	formatDateTime(date){
+	formatDateTime(date) {
 		return this.pageService.formatDateTime(date);
 	}
 }

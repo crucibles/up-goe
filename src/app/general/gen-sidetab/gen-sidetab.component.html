@@ -1,75 +1,152 @@
+<!-- input button for hiding/showing sidetab-->
 <input type="checkbox" id="slide" name="" value="" (click)="clickMenuButton()" [checked]="isShowSideTab" />
+
 <div class=container>
-  <label for="slide" style="margin: 30px 10px" class="toggle">☰</label>
-  <ul class="vert-tab">
-    <li>
-      <img [src]="image" alt="Cat">
-    </li>
-    <li *ngIf="currentUser">
-      {{currentUser.getUserFullName()}}
-    </li>
-    <!--displays quests if navigated page is not a profile page-->
-    <ng-container *ngIf="!isProfile">
-      <li style="font-weight: bold">
-        Quest(s):
-      </li>
-      <li *ngFor="let quest of quests; let i = index">
-        <ng-template #popTemplate>
-          <div style="font-weight: bold">Description:</div>
-          <div>{{quest.getQuestDescription()}}</div>
-          <div style="font-weight: bold">Started on:</div>
-          <div>{{this.formatDateTime(quest.getQuestStartTimeDate())}}</div>
-          <div style="font-weight: bold">Deadline:</div>
-          <div>{{this.formatDateTime(quest.getQuestEndTimeDate())}}</div>
-        </ng-template>
-        <a [popover]="popTemplate" popoverTitle="{{quest.getQuestTitle()}}" placement="auto" container="body" [outsideClick]="true">{{quest.getQuestTitle()}}
-          <div class="progress">
-            <div ngClass="{{this.defaultPBClass}} {{this.progressBarClass? this.progressBarClass[i]: ''}}" role="progressbar" aria-valuenow="40"
-              aria-valuemin="0" aria-valuemax="100" [style.width]="this.questTimePercentage? this.questTimePercentage[i]: '0%'">
-            </div>
-            <span>{{this.questTimeDisplay? this.questTimeDisplay[i]: '0%'}}</span>
-          </div>
-        </a>
-      </li>
-    </ng-container>
 
-    <!--displays user information if page navigated is a profile page-->
-    <ng-container *ngIf="isProfile">
-      <form class="form-horizontal" [formGroup]="editForm" (ngSubmit)="endEditing()">
-        <li style="text-align: right">
-          <button *ngIf="isEditing" type="submit" class="btn btn-primary" [disabled]="!editForm.valid">
-            Submit
-          </button>
-          <button *ngIf="!isEditing" class="btn btn-primary" (click)="startEditing()">
-            Edit
-          </button>
-        </li>
-        <li> Class List: </li>
-        <li *ngFor="let section of sections; let i = index">
-          <div *ngIf="!sections || sections.length == 0">You have no course yet!</div>
-          <a (click)=openSectionPage(section.section.getSectionId())>{{section.course_name}} - {{section.section.getSectionName()}}</a>
-        </li>
-        <ng-container *ngIf="currentUser">
-          <li> School ID: </li>
-          <li>
-            <input type="text" [disabled]="true" class="user-information remove-border" />
-          </li>
-          <li> Email: </li>
-          <li>
-            <input type="text" formControlName="email" class="user-information" [class.remove-border]="!isEditing" />
-          </li>
-          <li> Contact #: </li>
-          <li>
-            <input type="text" formControlName="contactNo" class="user-information" [class.remove-border]="!isEditing" />
-          </li>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-        </ng-container>
-      </form>
-    </ng-container>
+	<!-- the displayed button for hiding/showing button-->
+	<label for="slide" style="margin: 30px 10px" class="toggle">☰</label>
 
-  </ul>
+	<!-- the side tab -->
+	<ul class="vert-tab">
+		<!-- image of the current user -->
+		<li>
+			<img [src]="image" alt="Cat">
+		</li>
+
+		<!-- current user's name-->
+		<li *ngIf="currentUser">
+			{{currentUser.getUserFullName()}}
+		</li>
+
+		<!--displays quests if navigated page is not a profile page-->
+		<ng-container *ngIf="!isProfile">
+
+			<!-- Quests-->
+			<li style="font-weight: bold">
+				Quest(s):
+			</li>
+
+			<!-- display all quest for all sections -->
+			<li *ngFor="let quest of quests; let i = index">
+				<!-- the quest progress bar and some basic information -->
+				<a [tooltip]="questTemplate" placement="auto" container="body" (click)="openQuest(questClickedTemplate, quest)">
+					{{quest.getQuestTitle()}}
+					<div class="progress">
+						<div ngClass="{{this.defaultPBClass}} {{this.progressBarClass? this.progressBarClass[i]: ''}}" role="progressbar" aria-valuenow="40"
+						 aria-valuemin="0" aria-valuemax="100" [style.width]="this.questTimePercentage? this.questTimePercentage[i]: '0%'">
+						</div>
+						<span>{{this.questTimeDisplay? this.questTimeDisplay[i]: '0%'}}</span>
+					</div>
+
+					<!-- template for the tooltip quest information -->
+					<ng-template #questTemplate>
+						<div class="quest-display-box">Description:</div>
+						<div>{{quest.getQuestDescription()}}</div>
+						<div class="quest-display-box">Started on:</div>
+						<div>{{this.formatDateTime(quest.getQuestStartTimeDate())}}</div>
+						<div class="quest-display-box">Deadline:</div>
+						<div>{{this.formatDateTime(quest.getQuestEndTimeDate())}}</div>
+					</ng-template>
+
+					<!-- template when quest is clicked -->
+					<ng-template #questClickedTemplate>
+
+						<!-- Quest Modal Header/Title -->
+						<div class="modal-header">
+							<h4 class="modal-title">
+								{{this.questClicked.getQuestTitle()}}
+							</h4>
+							<button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+
+						<!-- Quest Information -->
+						<div class="modal-body">
+							{{this.questClicked.getQuestDescription()}}
+							<div class="row" style="margin-top: 20px">
+								<div class="col-sm-6">
+									Rewards:
+									<br> + {{this.questClicked.getQuestXp()}} XP
+									<br> + {{this.questClicked.getQuestHp()}} HP
+								</div>
+								<div class="col-sm-6">
+									Started on:
+									<br> {{this.pageService.formatDateTime(this.questClicked.getQuestStartTimeDate())}}
+									<br>
+									<br> Deadline:
+									<br> {{this.pageService.formatDateTime(this.questClicked.getQuestEndTimeDate())}}
+									<br>
+									<br>
+								</div>
+							</div>
+						</div>
+
+						<!-- Quest Modal Buttons -->
+						<div class="modal-footer">
+							<!-- shows submit & abandon buttons if user is a participant -->
+							<button type="submit" class="btn btn-success mr-auto" (click)="abandonQuest()">Abandon Quest</button>
+							<button type="submit" class="btn btn-success" (click)="submitQuest()">Submit Quest</button>
+						</div>
+					</ng-template>
+				</a>
+
+			</li>
+		</ng-container>
+		<!-- end of shown quest (for pages other than profile page) -->
+
+		<!--displays user information if page navigated is a profile page-->
+		<ng-container *ngIf="isProfile">
+
+			<!-- User infomation -->
+			<form class="form-horizontal" [formGroup]="editForm" (ngSubmit)="endEditing()">
+
+				<!-- User's current enrolled classes -->
+				<li> Class List: </li>
+				<li *ngFor="let section of sections; let i = index">
+					<div *ngIf="!sections || sections.length == 0">You have no course yet!</div>
+					<a (click)=openSectionPage(section.section.getSectionId())>{{section.course_name}} - {{section.section.getSectionName()}}</a>
+				</li>
+
+				<!-- Edit button -->
+				<li style="text-align: right">
+					<!-- submit button (if done editing)-->
+					<button *ngIf="isEditing" type="submit" class="btn btn-primary" [disabled]="!editForm.valid">
+						Submit
+					</button>
+
+					<!-- edit button (if user wants to edit their information) -->
+					<button *ngIf="!isEditing" class="btn btn-primary" (click)="startEditing()">
+						Edit
+					</button>
+				</li>
+
+				<!-- User personal information -->
+				<ng-container *ngIf="currentUser">
+					<li> School ID: </li>
+					<li>
+						<input type="text" [disabled]="true" class="user-information remove-border" />
+					</li>
+					<li> Email: </li>
+					<li>
+						<input type="text" formControlName="email" class="user-information" [class.remove-border]="!isEditing" />
+					</li>
+					<li> Contact #: </li>
+					<li>
+						<input type="text" formControlName="contactNo" class="user-information" [class.remove-border]="!isEditing" />
+					</li>
+					<li></li>
+					<li></li>
+					<li></li>
+					<li></li>
+					<li></li>
+				</ng-container>
+
+			</form>
+			<!-- end of user information (for general profile) -->
+
+		</ng-container>
+		<!-- end of side tab for general profile -->
+
+	</ul>
 </div>
