@@ -20,6 +20,12 @@ import {
 	Router
 } from '@angular/router';
 
+//Third-Party Imports
+import {
+	BsModalService,
+	BsModalRef
+} from 'ngx-bootstrap';
+
 //Application Imports
 import {
 	CommentPost,
@@ -37,7 +43,7 @@ import {
 	SectionService,
 	UserService
 } from 'shared/services';
-import { BsModalService, BsModalRef } from 'ngx-bootstrap';
+
 
 @Component({
 	selector: 'gen-sidetab',

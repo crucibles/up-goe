@@ -22,7 +22,7 @@ import {
 
 import {
     UserService
-} from '../shared/services';
+} from 'shared/services';
 
 @Component({
     selector: 'app-sign-up',

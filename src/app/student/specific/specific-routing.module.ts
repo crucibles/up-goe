@@ -14,7 +14,7 @@ import {
 
 import {
   SpecificComponent
-} from 'specific/specific.component';
+} from 'student/specific/specific.component';
 
 import {
   SpecificCharacterComponent,
@@ -22,7 +22,7 @@ import {
   SpecificNewsComponent, 
   SpecificProfileComponent,
   SpecificQuestMapComponent
-} from 'specific/pages';
+} from 'student/specific/pages';
 
 const specificRoutes: Routes = [
 

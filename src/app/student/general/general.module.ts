@@ -8,30 +8,34 @@ import {
   RouterModule
 } from '@angular/router';
 
+//Third-Party Imports
+import {
+  CollapseModule
+} from 'ngx-bootstrap/collapse/collapse.module';
+
 //Application Imports
 import {
   GenSelcourseComponent,
   GenNewsComponent,
   GenProfileComponent
-} from 'general/pages';
+} from 'student/general/pages';
 
 import {
   GeneralComponent
-} from 'general/general.component';
+} from 'student/general/general.component';
 
 import {
   GenTopnavbarComponent,
   GenSidetabComponent
-} from 'general/index';
+} from 'student/general/index';
 
 import {
   GeneralRoutingModule
-} from 'general/general-routing.module';
+} from 'student/general/general-routing.module';
 
 import {
   SharedModule
 } from 'shared/shared.module';
-import { CollapseModule } from 'ngx-bootstrap/collapse/collapse.module';
 
 @NgModule({
   imports: [

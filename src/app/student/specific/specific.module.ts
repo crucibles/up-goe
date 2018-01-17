@@ -14,23 +14,21 @@ import {
   SpecificNewsComponent,
   SpecificProfileComponent,
   SpecificQuestMapComponent
-} from 'specific/pages';
+} from 'student/specific/pages';
 
 import {
   SpecificComponent
-} from 'specific/specific.component';
+} from 'student/specific/specific.component';
 
 import {
   SpecificRoutingModule
-} from 'specific/specific-routing.module';
+} from 'student/specific/specific-routing.module';
 
 import {
-  SpecificSidetabComponent
-} from 'app/specific';
-
-import {
+  SpecificSidetabComponent,
   SpecificTopnavbarComponent
-} from 'app/specific';
+} from 'app/student/specific';
+
 
 
 
