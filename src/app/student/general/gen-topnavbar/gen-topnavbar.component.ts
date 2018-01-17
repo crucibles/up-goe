@@ -25,8 +25,6 @@ import {
 export class GenTopnavbarComponent implements OnInit {
   isCollapsed: boolean;
 
-  windowWidth: number = window.innerWidth;
-
   constructor(
     private elementRef: ElementRef,
     private router: Router,
@@ -55,7 +53,7 @@ export class GenTopnavbarComponent implements OnInit {
 			}
 			clickedComponent = clickedComponent.parentNode;
 		} while (clickedComponent);
-		if (!inside && this.windowWidth <= 765) {
+		if (!inside) {
       this.isCollapsed = true;
 		}
 	}
