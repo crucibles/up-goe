@@ -65,8 +65,10 @@ export class GenSelcourseComponent implements OnInit {
 	ngOnInit() {
     let url = this.router.routerState.snapshot.url.split("/");
     //add toaster or warning to student what happened why redirected here
-    if(url[1] == "specific"){
-      this.router.navigate(['general/select-course']);
+    console.log(url[2]);
+    if(url[2] == "specific"){
+      this.pageService.isProfilePage(false);
+      this.router.navigateByUrl('student/general/select-course');
       this.toastr.info("Invalid specific course inputted!", "Info")
     }
 		this.getUser();

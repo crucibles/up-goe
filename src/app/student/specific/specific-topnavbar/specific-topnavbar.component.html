@@ -4,7 +4,7 @@
     <span class="navbar-toggler-icon"></span>
   </button>
   <div class="collapse navbar-collapse" id="collapsibleNavbar" [collapse]="isCollapsed" [ngClass]="{'class-collapsed': isCollapsed }">
-    <ul class="nav navbar-nav">
+    <ul *ngIf="sectionId" class="nav navbar-nav">
       <li class="nav-item">
         <a class="nav-link" (click)="isCollapsed = !isCollapsed" [routerLink]="['/student/specific/specific-news', sectionId]">News</a>
       </li>

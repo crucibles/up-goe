@@ -32,11 +32,11 @@ import {
 
 import { 
   GeneralRoutingModule 
-} from 'general/general-routing.module';
+} from 'student/general/general-routing.module';
 
 import { 
   GeneralModule 
-} from 'general/general.module';
+} from 'student/general/general.module';
 
 
 

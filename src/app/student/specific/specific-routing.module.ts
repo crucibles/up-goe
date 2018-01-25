@@ -28,8 +28,13 @@ import {
   AuthGuardService 
 } from 'shared/services/auth-guard.service';
 
-import { GeneralComponent } from 'general/general.component';
-import { GenSelcourseComponent } from 'general/pages';
+import { 
+  GeneralComponent 
+} from 'student/general/general.component';
+
+import { 
+  GenSelcourseComponent 
+} from 'student/general/pages';
 
 const specificRoutes: Routes = [
 
@@ -39,6 +44,7 @@ const specificRoutes: Routes = [
     children: [
       {
         path: 'specific-profile',
+        loadChildren: './student/general/general.module#GeneralModule',
         component: GenSelcourseComponent
       },
       {
