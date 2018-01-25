@@ -225,7 +225,9 @@
                                 formControlName="securityQuestion"
                                 name="securityQuestion"
                                 id="security-question">
-                        <option *ngFor="let question of questions" [value]="question.securityQuestion">{{ question.securityQuestion }}</option>
+                        <option *ngFor="let question of questions" 
+                                [value]="question">{{ question }}
+                        </option>
                         </select>
                         <!-- Displays warning message if security question is empty upon modification. -->
                         <small  *ngIf="securityQuestion.invalid && securityQuestion.dirty"
@@ -235,7 +237,7 @@
                 </div>
             </td>
         </tr>
-
+        <!-- question.securityQuestion -->
         <tr>
             <td>
                 <label for="security-answer">Answer:</label>
