@@ -51,6 +51,10 @@ import {
   AuthService 
 } from 'shared/services/auth.service';
 
+import { 
+  AlertService 
+} from 'shared/services/alert.service';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -72,7 +76,8 @@ import {
     ItemService,
     CookieService,
     AuthGuardService,
-    AuthService
+    AuthService,
+    AlertService
   ],
   bootstrap: [AppComponent]
 })

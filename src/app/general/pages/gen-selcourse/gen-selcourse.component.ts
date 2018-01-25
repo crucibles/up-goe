@@ -24,6 +24,7 @@ import {
 	UserService,
 	PageService
 } from 'shared/services';
+import { ActivatedRouteSnapshot, ActivatedRoute } from '@angular/router/src/router_state';
 
 @Component({
 	selector: 'app-gen-selcourse',
@@ -47,12 +48,17 @@ export class GenSelcourseComponent implements OnInit {
 		private pageService: PageService,
 		private sectionService: SectionService,
 		private userService: UserService,
-		private router: Router
+    private router: Router
 	) {
-		this.pageService.isProfilePage(false);
+    this.pageService.isProfilePage(false);
 	}
 
 	ngOnInit() {
+    let url = this.router.routerState.snapshot.url.split("/");
+    //add toaster or warning to student what happened why redirected here
+    if(url[1] == "specific"){
+      this.router.navigate(['general/select-course']);
+    }
 		this.getUser();
 	}
 

@@ -16,7 +16,7 @@ export class AuthService {
     ) { }
 
     public isAuthenticated(): boolean {
-        if (this.cookieService.get('currentUser')){
+        if (localStorage.getItem('currentUser')){
             return true;
         }
         return false;

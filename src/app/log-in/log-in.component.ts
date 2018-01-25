@@ -44,7 +44,7 @@ export class LogInComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || 'general/select-course';
     }
 
     logIn() {
@@ -55,7 +55,7 @@ export class LogInComponent implements OnInit {
         .subscribe(
             user => {
             if (user) {
-                this.router.navigate(['/general/select-course']);
+                this.router.navigateByUrl(this.returnUrl);
             } else {
                 console.log("does not exists!");
             }

@@ -32,12 +32,22 @@ import {
   SpecificTopnavbarComponent
 } from 'app/specific';
 
+import { 
+  GeneralRoutingModule 
+} from 'general/general-routing.module';
+
+import { 
+  GeneralModule 
+} from 'general/general.module';
+
 
 
 @NgModule({
   imports: [
     SharedModule,
-    SpecificRoutingModule
+    SpecificRoutingModule,
+    GeneralRoutingModule,
+    GeneralModule
   ],
   declarations: [
     SpecificCharacterComponent,

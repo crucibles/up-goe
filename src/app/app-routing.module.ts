@@ -36,6 +36,7 @@ const routes: Routes = [
   {
     path: '',
     redirectTo: '/log-in',
+    canActivate: [AuthGuardService], 
     pathMatch: 'full'
   },
   {

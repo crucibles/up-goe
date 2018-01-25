@@ -24,12 +24,35 @@ import {
   SpecificQuestMapComponent
 } from 'specific/pages';
 
+import { 
+  AuthGuardService 
+} from 'shared/services/auth-guard.service';
+
+import { GeneralComponent } from 'general/general.component';
+import { GenSelcourseComponent } from 'general/pages';
+
 const specificRoutes: Routes = [
 
   {
     path: '',
     component: SpecificComponent,
     children: [
+      {
+        path: 'specific-profile',
+        component: GenSelcourseComponent
+      },
+      {
+        path: 'specific-news',
+        component: GenSelcourseComponent
+      },
+      {
+        path: 'specific-my-course',
+        component: GenSelcourseComponent
+      },
+      {
+        path: 'specific-quest-map',
+        component: GenSelcourseComponent
+      },
       {
         path: 'specific-character/:sectionId',
         component: SpecificCharacterComponent
