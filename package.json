@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "start": "concurrently --kill-others \"npm run mongod\" \"npm run serve-api\" \"npm run serve\"",
+    "start": "npm run build & concurrently --kill-others \"npm run mongod\" \"npm run serve-api\" \"npm run serve\"",
     "serve": "ng serve --proxy-config proxy.conf.json",
     "build": "ng build --output-path=public",
     "serve-api": "nodemon server",
@@ -35,6 +35,7 @@
     "mongodb": "^3.0.0-rc0",
     "ng2-charts": "^1.6.0",
     "ng2-cookies": "^1.0.12",
+    "ng2-toastr": "^4.1.2",
     "ngx-bootstrap": "^2.0.0-rc.0",
     "ngx-cookie-service": "^1.0.9",
     "nodemon": "^1.14.7",

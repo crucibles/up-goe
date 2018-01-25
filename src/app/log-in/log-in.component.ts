@@ -20,6 +20,14 @@ import {
     AlertService 
 } from 'shared/services/alert.service';
 
+import { 
+    ToastsManager 
+} from 'ng2-toastr/src/toast-manager';
+
+import { 
+    User 
+} from 'shared/models';
+
 @Component({
     selector: 'log-in',
     templateUrl: './log-in.component.html',
@@ -35,12 +43,14 @@ export class LogInComponent implements OnInit {
         private userService: UserService,
         private router: Router,
         private route: ActivatedRoute,
-        private alertService: AlertService
+        private alertService: AlertService,
+        private toastr: ToastsManager
     ) {
         this.signupForm = formBuillder.group({
             email: null,
             password: null
         });
+        
     }
 
     ngOnInit() {
@@ -55,6 +65,8 @@ export class LogInComponent implements OnInit {
         .subscribe(
             user => {
             if (user) {
+                user = new User(user);
+                this.toastr.success("You are succesfully logged in!", "Welcome "+ user.getUserFirstName());
                 this.router.navigateByUrl(this.returnUrl);
             } else {
                 console.log("does not exists!");
