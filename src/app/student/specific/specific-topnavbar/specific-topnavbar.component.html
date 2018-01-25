@@ -1,24 +1,24 @@
 <nav class="navbar navbar-expand-md bg-primary navbar-dark fixed-top">
-  <a class="navbar-brand" href="#">UP-GOE</a>
-  <button class="navbar-toggler" (click)="isCollapsed = !isCollapsed" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+  <a class="navbar-brand" routerLink="/student/general/select-course">UP-GOE</a>
+  <button class="navbar-toggler" (click)="isCollapsed = !isCollapsed" type="button">
     <span class="navbar-toggler-icon"></span>
   </button>
-  <div class="collapse navbar-collapse" id="collapsibleNavbar" [collapse]="isCollapsed">
+  <div class="collapse navbar-collapse" id="collapsibleNavbar" [collapse]="isCollapsed" [ngClass]="{'class-collapsed': isCollapsed }">
     <ul class="nav navbar-nav">
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['/student/specific/specific-news', sectionId]">News</a>
+        <a class="nav-link" (click)="isCollapsed = !isCollapsed" [routerLink]="['/student/specific/specific-news', sectionId]">News</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['/student/specific/specific-profile', sectionId]">Profile</a>
+        <a class="nav-link" (click)="isCollapsed = !isCollapsed" [routerLink]="['/student/specific/specific-profile', sectionId]">Profile</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['/student/specific/specific-character', sectionId]">Character</a>
+        <a class="nav-link" (click)="isCollapsed = !isCollapsed" [routerLink]="['/student/specific/specific-character', sectionId]">Character</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['/student/specific/specific-quest-map', sectionId]">Quest Map</a>
+        <a class="nav-link" (click)="isCollapsed = !isCollapsed" [routerLink]="['/student/specific/specific-quest-map', sectionId]">Quest Map</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" [routerLink]="['/student/specific/specific-my-course', sectionId]">CMSC 128</a>
+        <a class="nav-link" (click)="isCollapsed = !isCollapsed" [routerLink]="['/student/specific/specific-my-course', sectionId]">CMSC 128</a>
       </li>
     </ul>
     <ul class="navbar-nav ml-auto">

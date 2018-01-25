@@ -1,8 +1,9 @@
 //Core Imports
 import {
   Component,
-  OnInit,
-  Input
+  ElementRef,
+  Input,
+  OnInit
 } from '@angular/core';
 
 //Application Imports
@@ -13,7 +14,10 @@ import {
 @Component({
   selector: 'specific-topnavbar',
   templateUrl: './specific-topnavbar.component.html',
-  styleUrls: ['./specific-topnavbar.component.css']
+  styleUrls: ['./specific-topnavbar.component.css'],
+  host: {
+		'(document:click)': 'handleClick($event)',
+	}
 })
 export class SpecificTopnavbarComponent implements OnInit {
   @Input('sectionId') sectionId: string;
@@ -21,6 +25,7 @@ export class SpecificTopnavbarComponent implements OnInit {
   isCollapsed: boolean;
 
   constructor(
+    private elementRef: ElementRef,
     private userService: UserService
   ) { }
 
@@ -35,4 +40,19 @@ export class SpecificTopnavbarComponent implements OnInit {
     console.log("logout");
     this.userService.logOut();
   }
+
+  /* Helper function */
+  handleClick(event) {
+		var clickedComponent = event.target;
+		var inside = false;
+		do {
+			if (clickedComponent === this.elementRef.nativeElement) {
+				inside = true;
+			}
+			clickedComponent = clickedComponent.parentNode;
+		} while (clickedComponent);
+		if (!inside) {
+      this.isCollapsed = true;
+		}
+	}
 }
