@@ -10,12 +10,6 @@ import {
 
 //Application Imports
 import {
-  GenNewsComponent,
-  GenProfileComponent,
-  GenSelcourseComponent
-} from 'general/pages';
-
-import {
   LogInComponent
 } from 'log-in/log-in.component';
 
@@ -40,8 +34,8 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
-    path: 'general',
-    loadChildren: './general/general.module#GeneralModule'
+    path: 'student/general',
+    loadChildren: './student/general/general.module#GeneralModule'
   },
   {
     path: 'log-in',
@@ -54,8 +48,8 @@ const routes: Routes = [
     canActivate: [AuthGuardService] 
   },
   {
-    path: 'specific',
-    loadChildren: './specific/specific.module#SpecificModule'
+    path: 'student/specific',
+    loadChildren: './student/specific/specific.module#SpecificModule'
   },
   {
     path: '**',

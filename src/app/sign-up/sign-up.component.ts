@@ -17,12 +17,8 @@ import {
 
 //Application Imports
 import {
-    SECURITY_QUESTION
-} from 'shared/models';
-
-import {
     UserService
-} from '../shared/services';
+} from 'shared/services';
 
 @Component({
     selector: 'app-sign-up',
@@ -30,22 +26,24 @@ import {
     styleUrls: ['./sign-up.component.css']
 })
 export class SignUpComponent implements OnInit {
-
     private signupForm: FormGroup;
-    questions = SECURITY_QUESTION;
+    // To determine the a duplicate email upon input.
     duplicate: string = null;
+    // Stored here is the security questions in the sign up form.
+    private questions: string[] = new Array();
 
     constructor(
-        fb: FormBuilder,
+        formBuilder: FormBuilder,
         private userService: UserService,
         private router: Router
     ) {
-        this.signupForm = fb.group({
+        this.signupForm = formBuilder.group({
             schoolId: null,
             firstName: null,
             middleName: null,
             lastName: null,
             birthdate: null,
+            // Validates the format of the email input.
             email: [null, Validators.email],
             password: null,
             confirmPassword: null,
@@ -67,7 +65,7 @@ export class SignUpComponent implements OnInit {
         let password = this.signupForm.value.password;
         let type = this.signupForm.value.type;
         let contactNumber = this.signupForm.value.contactNumber;
-        let securityQuestion = this.signupForm.value.securityQuestion;
+        let securityQuestion = this.signupForm.value.securityQuestion; 
         let securityAnswer = this.signupForm.value.securityAnswer;
 
         this.userService.register(
@@ -84,21 +82,36 @@ export class SignUpComponent implements OnInit {
             securityAnswer
         ).subscribe(newUser => {
             if (newUser) {
+                // Successful registration of user and redirects to login page.
                 console.log("A new user is registered!");
                 this.router.navigate(['/log-in']);
-            }
-            else {
+            } else {
+                // Unsuccessful registration of new user because of email already existing.
+                // Sets signal to prompt warning message of already existing email.
                 console.log("New user failed to register!");
                 this.duplicate = email;
             }
         });
     }
 
+    // Acquires the security questions from the database.
+    getSecurityQuestions() {
+        this.userService.getSecurityQuestions().subscribe(questions => {
+            for(var x=0;x<(questions[0].question.length);x++)
+                this.questions.push(questions[0].question[x]);
+        });
+    }
+
+    // Resets the form inputs and the duplicate email warning signal.
     reset() {
         this.duplicate = null;
         this.signupForm.reset();
     }
 
+    userLogin() {
+        this.router.navigate(['/log-in']);
+    }
+    
     get schoolId() {
         return this.signupForm.get('schoolId') as FormControl;
     }
@@ -148,6 +161,6 @@ export class SignUpComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.getSecurityQuestions();
     }
-
 }

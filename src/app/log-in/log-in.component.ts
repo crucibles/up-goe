@@ -1,32 +1,27 @@
-import {
-    Component,
+// Core imports
+import { 
+    Component, 
     OnInit
 } from '@angular/core';
 
-import {
+import { 
+    FormBuilder, 
+    FormControl,
     FormGroup,
-    FormBuilder
+    Validators 
 } from '@angular/forms';
 
-import {
-    UserService
-} from 'shared/services';
-
-import {
-    Router, ActivatedRoute
+import { 
+    Router, ActivatedRoute 
 } from '@angular/router';
 
+// Application imports
 import { 
-    AlertService 
-} from 'shared/services/alert.service';
-
-import { 
-    ToastsManager 
-} from 'ng2-toastr/src/toast-manager';
-
-import { 
-    User 
-} from 'shared/models';
+    UserService 
+} from 'shared/services';
+import { AlertService } from 'shared/services/alert.service';
+import { ToastsManager } from 'ng2-toastr';
+import { User } from 'shared/models';
 
 @Component({
     selector: 'log-in',
@@ -37,17 +32,19 @@ export class LogInComponent implements OnInit {
     public signupForm: FormGroup;
     
     returnUrl: string;
+    private loginForm: FormGroup;
+    private warning: boolean;
 
     constructor(
-        formBuillder: FormBuilder,
+        formBuilder: FormBuilder,
         private userService: UserService,
         private router: Router,
         private route: ActivatedRoute,
         private alertService: AlertService,
         private toastr: ToastsManager
     ) {
-        this.signupForm = formBuillder.group({
-            email: null,
+        this.loginForm = formBuilder.group({
+            email: [null, Validators.email],
             password: null
         });
         
@@ -55,11 +52,12 @@ export class LogInComponent implements OnInit {
 
     ngOnInit() {
         this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || 'general/select-course';
+        this.warning = false;
     }
 
     logIn() {
-        let email = this.signupForm.value.email;
-        let password = this.signupForm.value.password;
+        let email = this.loginForm.value.email;
+        let password = this.loginForm.value.password;
 
         this.userService.logIn(email, password)
         .subscribe(
@@ -69,7 +67,8 @@ export class LogInComponent implements OnInit {
                 this.toastr.success("You are succesfully logged in!", "Welcome "+ user.getUserFirstName());
                 this.router.navigateByUrl(this.returnUrl);
             } else {
-                console.log("does not exists!");
+                console.log("User does not exists!");
+                this.warning = true;
             }
         }, error => {
             // login failed so display error
@@ -77,7 +76,23 @@ export class LogInComponent implements OnInit {
         });
     }
 
-    signup() {
+    keyPressed() {
+        this.warning = false;
+    }
+
+    userSignUp() {
         this.router.navigate(['/sign-up']);
+    }
+
+    userChangePassword() {
+        this.router.navigate(['**']);
+    }
+
+    get email() {
+        return this.loginForm.get('email') as FormControl;
+    }
+
+    get password() {
+        return this.loginForm.get('password') as FormControl;
     }
 }

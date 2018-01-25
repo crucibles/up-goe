@@ -45,7 +45,11 @@ router.get('/courses', (req, res) => {
     });
 });
 
-// api/login
+/*
+** api/login
+** Created by Cedric Alvaro
+** 11 Jan 2018 - At latest by Donevir Hynson
+*/
 router.post('/login', (req, res) => {
     connection((db) => {
         const myDB = db.db('up-goe-db');
@@ -55,9 +59,14 @@ router.post('/login', (req, res) => {
                 user_password: req.body.user_password
             })
             .then((user) => {
-                user.user_password = '';
-                response.data = user;
-                res.json(user);
+                if(user) {
+                    user.user_password = '';
+                    response.data = user;
+                    res.json(user);
+                } else {
+                    res.json(false);
+                }
+                
             })
             .catch((err) => {
                 sendError(err, res);
@@ -270,12 +279,14 @@ router.get('/sections/quests', (req, res) => {
 
 });
 
-// api/signup
+/*
+** api/signup
+** Created by: Donevir Hynson
+*/
 router.post('/signup', (req, res) => {
-    console.log(req);
     connection((db) => {
         const myDB = db.db('up-goe-db');
-        var myObj = {
+        var newUserObj = {
             user_school_id: req.body.schoolId,
             user_fname: req.body.firstName,
             user_mname: req.body.middleName,
@@ -290,25 +301,27 @@ router.post('/signup', (req, res) => {
         };
 
         myDB.collection('users')
+            // Counts the number of returned results from query
             .count({
-                user_email: myObj.user_email
+                user_email: newUserObj.user_email
             })
             .then((count) => {
-                if (count) {
-                    console.log("Duplicate email detected: " + myObj.user_email);
-                    response.data = myObj.user_email;
+                // If count returns true (>=1), then user email already exists
+                if(count) {
+                    console.log("Duplicate email detected: " + newUserObj.user_email);
+                    response.data = newUserObj.user_email;
+                    // Returns false to signal that user already exists
                     res.json(false);
-                }
-
-                else {
+                } else {
+                    // If count returns false (=0), inserts new user to database
                     myDB.collection('users')
-                        .insertOne(myObj, function (err, result) {
+                        .insertOne(newUserObj, function (err, result) {
                             if (err) {
                                 console.log(err);
                                 response.message = err;
                                 throw err;
                             }
-                            response.data = myObj;
+                            response.data = newUserObj;
                             res.json(result);
                         });
                 }
@@ -325,12 +338,33 @@ router.get('/users', (req, res) => {
         const myDB = db.db('up-goe-db');
         myDB.collection('users')
             .find(
-            ObjectID(req.query.id)
+                ObjectID(req.query.id)
             )
             .toArray()
             .then((users) => {
                 response.data = users;
                 res.json(users);
+            })
+            .catch((err) => {
+                sendError(err, res);
+            });
+    });
+});
+
+/**
+ * api/securityQuestions
+ * Create by: Donevir Hynson
+ */
+router.get('/securityQuestions', (req, res) => {
+    connection((db) => {
+        const myDB = db.db('up-goe-db');
+        myDB.collection('questions')
+            .find()
+            .toArray()
+            .then((questions) => {
+                q = questions[0].question;
+                response.data = questions[0].question;
+                res.json(questions);
             })
             .catch((err) => {
                 sendError(err, res);

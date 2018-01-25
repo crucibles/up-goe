@@ -17,11 +17,10 @@
     ],
     "baseUrl": "src", 
     "paths": {
-      "general/*": ["app/general/*"],
       "log-in/*": ["app/log-in/*"],
       "shared/*": ["app/shared/*"],
       "sign-up/*": ["app/sign-up/*"],
-      "specific/*": ["app/specific/*"]
+      "student/*": ["app/student/*"]
     }
   }
 }
