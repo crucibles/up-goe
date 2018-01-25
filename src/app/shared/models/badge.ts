@@ -1,3 +1,4 @@
+
 /**
  * A class to represent badges
  * @class
@@ -8,6 +9,9 @@
  * @property badge_conditions conditions needed to accomplish in order to obtain this badge
  */
 export class Badge {
+
+    imageDir: string = "/assets/images/";
+
     private _id: string;
     private badge_photo: string;
     private badge_description: string;
@@ -29,11 +33,11 @@ export class Badge {
             this.badge_photo = "";
             this.badge_description = "";
             this.badge_conditions = new Conditions();
-            this.is_system =  false;
+            this.is_system = false;
             this.badge_attainers = [];
         }
     }
-    
+
     setBadge(
         badge_photo,
         badge_description,
@@ -47,13 +51,25 @@ export class Badge {
         this.is_system = is_system ? is_system : false;
         this.badge_attainers = badge_attainers ? badge_attainers : [];
     }
-    
+
     getBadgeId(): string {
         return this._id;
     }
 
+    /**
+     * Returns image with directory
+     */
     getBadgePhoto(): string {
-        return this.badge_photo;
+        let image: string = "";
+
+        // if image does not exist or if user has not set an image
+        if (!this.badge_photo || this.badge_photo.length == 0) {
+            image = this.imageDir + "not-found.jpg";
+        } else {
+            image = this.imageDir + this.badge_photo;
+        }
+
+        return image;
     }
 
     getBadgeDescription(): string {
@@ -116,19 +132,19 @@ export class Conditions {
         conditions?: any
     ) {
         if (conditions) {
-            this.hp = conditions.hp ? conditions.hp: 0;
-            this.xp = conditions.xp ? conditions.xp: 0;
-            this.ailment = conditions.ailment? conditions.ailment: "";
-            this.log_in_streak = conditions.log_in_streak? conditions.log_in_streak: "";
-            this.log_in_total = conditions.log_in_total? conditions.log_in_total: "";
-            this.items = conditions.items? conditions.items: "";
-            this.items_used = conditions.items_used? conditions.items_used: "";
-            this.items_owned = conditions.items_owned? conditions.items_owned: "";
-            this.head = conditions.head? conditions.head: "";
-            this.left_leg = conditions.left_leg? conditions.left_leg: "";
-            this.right_leg = conditions.right_leg? conditions.right_leg: "";
-            this.left_arm = conditions.left_arm? conditions.left_arm: "";
-            this.right_arm = conditions.right_arm? conditions.right_arm: "";
+            this.hp = conditions.hp ? conditions.hp : 0;
+            this.xp = conditions.xp ? conditions.xp : 0;
+            this.ailment = conditions.ailment ? conditions.ailment : "";
+            this.log_in_streak = conditions.log_in_streak ? conditions.log_in_streak : "";
+            this.log_in_total = conditions.log_in_total ? conditions.log_in_total : "";
+            this.items = conditions.items ? conditions.items : "";
+            this.items_used = conditions.items_used ? conditions.items_used : "";
+            this.items_owned = conditions.items_owned ? conditions.items_owned : "";
+            this.head = conditions.head ? conditions.head : "";
+            this.left_leg = conditions.left_leg ? conditions.left_leg : "";
+            this.right_leg = conditions.right_leg ? conditions.right_leg : "";
+            this.left_arm = conditions.left_arm ? conditions.left_arm : "";
+            this.right_arm = conditions.right_arm ? conditions.right_arm : "";
         } else {
             this.hp = 0;
             this.xp = 0;

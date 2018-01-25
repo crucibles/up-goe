@@ -1,0 +1,15 @@
+nav {
+    box-shadow: 1px 1px 13px #888888;
+}
+
+@media screen and (max-width: 765px) {
+    #collapsibleNavbar {
+        -webkit-transition: bottom 0.5s; /* Safari */
+        transition: bottom 0.5s;
+    }
+
+    #collapsibleNavbar .collapsed{
+        -webkit-transition: bottom 0.5s; /* Safari */
+        transition: bottom 0.5s;
+    }
+}
