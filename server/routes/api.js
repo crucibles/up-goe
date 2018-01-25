@@ -392,8 +392,6 @@ router.get('/securityQuestions', (req, res) => {
             .toArray()
             .then((questions) => {
                 q = questions[0].question;
-                console.log("Security questions are returned: " + q);
-                console.log("LENGTH: " + questions[0].question.length);
                 response.data = questions[0].question;
                 res.json(questions);
             })
