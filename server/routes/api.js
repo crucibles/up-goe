@@ -380,15 +380,27 @@ router.get('/users', (req, res) => {
     });
 });
 
-// api/securityQuestions
-// router.get('/securityQuestions', (req, res) => {
-//     connection((db) => {
-//         const myDB = db.db('up-goe-db');
-//         myDB.collections('questions')
-//             .find(
-//                 ObjectID(req.query.)
-//             )
-//     });
-// });
+/**
+ * api/securityQuestions
+ * Create by: Donevir Hynson
+ */
+router.get('/securityQuestions', (req, res) => {
+    connection((db) => {
+        const myDB = db.db('up-goe-db');
+        myDB.collection('questions')
+            .find()
+            .toArray()
+            .then((questions) => {
+                q = questions[0].question;
+                console.log("Security questions are returned: " + q);
+                console.log("LENGTH: " + questions[0].question.length);
+                response.data = questions[0].question;
+                res.json(questions);
+            })
+            .catch((err) => {
+                sendError(err, res);
+            });
+    });
+});
 
 module.exports = router;

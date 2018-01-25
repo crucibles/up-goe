@@ -17,10 +17,6 @@ import {
 
 //Application Imports
 import {
-    SECURITY_QUESTION
-} from 'shared/models';
-
-import {
     UserService
 } from '../shared/services';
 
@@ -30,14 +26,11 @@ import {
     styleUrls: ['./sign-up.component.css']
 })
 export class SignUpComponent implements OnInit {
-
     private signupForm: FormGroup;
-
-    // Questions to be modified when database is updated.
-    questions = SECURITY_QUESTION;
-
     // To determine the a duplicate email upon input.
     duplicate: string = null;
+    // Stored here is the security questions in the sign up form.
+    private questions: string[] = new Array();
 
     constructor(
         formBuilder: FormBuilder,
@@ -88,17 +81,24 @@ export class SignUpComponent implements OnInit {
             securityQuestion,
             securityAnswer
         ).subscribe(newUser => {
-            // Successful registration of user and redirects to login page.
             if (newUser) {
+                // Successful registration of user and redirects to login page.
                 console.log("A new user is registered!");
                 this.router.navigate(['/log-in']);
-            }
-            // Unsuccessful registration of new user because of email already existing.
-            // Sets signal to prompt warning message of already existing email.
-            else {
+            } else {
+                // Unsuccessful registration of new user because of email already existing.
+                // Sets signal to prompt warning message of already existing email.
                 console.log("New user failed to register!");
                 this.duplicate = email;
             }
+        });
+    }
+
+    // Acquires the security questions from the database.
+    getSecurityQuestions() {
+        this.userService.getSecurityQuestions().subscribe(questions => {
+            for(var x=0;x<(questions[0].question.length);x++)
+                this.questions.push(questions[0].question[x]);
         });
     }
 
@@ -161,6 +161,6 @@ export class SignUpComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.getSecurityQuestions();
     }
-
 }

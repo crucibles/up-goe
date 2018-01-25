@@ -45,6 +45,7 @@ export class UserService {
     private userUrl = 'api/users';    // URL to: server/routes/api.js for users
     private loginUrl = 'api/login';   // URL to: server/routes/api.js for login
     private signupUrl = 'api/signup'; // URL to: server/routes/api.js for sign up
+    private securityQuestionsUrl = 'api/securityQuestions'; // URL to: server/routes/api.js for security questions
     private currentUser: User;
 
     constructor(
@@ -163,6 +164,15 @@ export class UserService {
             }),
             catchError(this.handleError<User>(`signup user_email=${email}`))
             );
+    }
+
+    getSecurityQuestions() {
+        const url = this.securityQuestionsUrl;
+        return this.http.get(url,{}).pipe(
+            tap(data => {
+                return data;
+            })
+        );
     }
 
     /**
