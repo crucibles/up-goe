@@ -35,11 +35,11 @@ const routes: Routes = [
   },
   {
     path: 'student/general',
-    loadChildren: './student/general/general.module#GeneralModule'
+    loadChildren: 'student/general/general.module#GeneralModule'
   },
   {
     path: 'teacher/general',
-    loadChildren: './teacher/general/general.module#GeneralModule'
+    loadChildren: 'teacher/general/general.module#GeneralModule'
   },
   {
     path: 'log-in',
@@ -53,7 +53,7 @@ const routes: Routes = [
   },
   {
     path: 'student/specific',
-    loadChildren: './student/specific/specific.module#SpecificModule'
+    loadChildren: 'student/specific/specific.module#SpecificModule'
   },
   /*{
     path: 'teacher/specific',

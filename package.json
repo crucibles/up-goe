@@ -9,7 +9,7 @@
     "build": "ng build --output-path=public",
     "serve-api": "nodemon server",
     "test": "ng test",
-    "mongod": "\"cd ../../../Program Files/MongoDB/Server/3.6/bin\" & mongod.exe",
+    "mongod": "\"cd /Program Files/MongoDB/Server/3.6/bin\" & mongod.exe",
     "lint": "ng lint",
     "e2e": "ng e2e"
   },

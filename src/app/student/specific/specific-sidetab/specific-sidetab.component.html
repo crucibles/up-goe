@@ -1,68 +1,54 @@
 <input type="checkbox" id="slide" name="" value="" (click)="clickMenuButton()" [checked]="isShowSideTab" />
 <div class=container>
-  <label for="slide" style="margin: 30px 10px" class="toggle">☰</label>
-  <ul class="vert-tab">
-    <li>
-      <img [src]="image" alt="Cat">
-    </li>
-    <li *ngIf="currentUser">
-      {{currentUser.getUserFullName()}}
-    </li>
-    <!--displays quests if navigated page is not a profile page-->
-    <!--<ng-container *ngIf="!isProfile">
-      <li style="font-weight: bold">
-        Quest(s):
-      </li>
-      <li *ngFor="let quest of quests; let i = index">
-        <a>{{quest.getQuestTitle()}}
-          <div class="progress">
-            <div ngClass="{{this.defaultPBClass}} {{this.progressBarClass? this.progressBarClass[i]: ''}}" role="progressbar" aria-valuenow="40"
-              aria-valuemin="0" aria-valuemax="100" [style.width]="this.questTimePercentage? this.questTimePercentage[i]: '0%'">
-            </div>
-            <span>{{this.questTimeDisplay? this.questTimeDisplay[i]: '0%'}}</span>
-          </div>
-          {{quest.getQuestDescription()}}
-        </a>
-      </li>
-    </ng-container>-->
+	<label for="slide" style="margin: 30px 10px" class="toggle">☰</label>
+	<ul class="vert-tab">
+		<li>
+			<img [src]="image" alt="Cat">
+		</li>
+		<li *ngIf="currentUser">
+			{{currentUser.getUserFullName()}}
+		</li>
+		<!--displays quests if navigated page is not a profile page-->
+		
+		<!-- end of shown quest (for pages other than profile page) -->
 
-    <!--displays user information if page navigated is a profile page-->
-    <ng-container *ngIf="isProfile">
-      <form *ngIf="currentUser" class="form-horizontal" [formGroup]="editForm" (ngSubmit)="endEditing()">
-        <li> Class List: </li>
-        <li *ngFor="let section of sections; let i = index">
-          <div *ngIf="!sections || sections.length == 0">You have no course yet!</div>
-          <a *ngIf="courses[i]" (click)=openCoursePage(section.getSectionId())>{{this.courses[i].getCourseName()}} - {{section.getSectionName()}}</a>
-        </li>
-        <li style="text-align: right">
-          <button *ngIf="isEditing" type="submit" class="btn btn-primary" [disabled]="!editForm.valid">
-            Submit
-          </button>
-          <button *ngIf="!isEditing" class="btn btn-primary" (click)="startEditing()">
-            Edit
-          </button>
-        </li>
-        <ng-container *ngIf="currentUser">
-          <li> School ID: </li>
-          <li>
-            <input type="text" [disabled]="true" class="user-information remove-border" />
-          </li>
-          <li> Email: </li>
-          <li>
-            <input type="text" formControlName="email" class="user-information" [class.remove-border]="!isEditing" />
-          </li>
-          <li> Contact #: </li>
-          <li>
-            <input type="text" formControlName="contactNo" class="user-information" [class.remove-border]="!isEditing" />
-          </li>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-        </ng-container>
-      </form>
-    </ng-container>
+		<!--displays user information if page navigated is a profile page-->
+		<ng-container *ngIf="isProfile">
+			<form *ngIf="currentUser" class="form-horizontal" [formGroup]="editForm" (ngSubmit)="endEditing()">
+				<li> Class List: </li>
+				<li *ngFor="let section of sections; let i = index">
+					<div *ngIf="!sections || sections.length == 0">You have no course yet!</div>
+					<a *ngIf="courses[i]" (click)=openCoursePage(section.getSectionId())>{{this.courses[i].getCourseName()}} - {{section.getSectionName()}}</a>
+				</li>
+				<li style="text-align: right">
+					<button *ngIf="isEditing" type="submit" class="btn btn-primary" [disabled]="!editForm.valid">
+						Submit
+					</button>
+					<button *ngIf="!isEditing" class="btn btn-primary" (click)="startEditing()">
+						Edit
+					</button>
+				</li>
+				<ng-container *ngIf="currentUser">
+					<li> School ID: </li>
+					<li>
+						<input type="text" [disabled]="true" class="user-information remove-border" />
+					</li>
+					<li> Email: </li>
+					<li>
+						<input type="text" formControlName="email" class="user-information" [class.remove-border]="!isEditing" />
+					</li>
+					<li> Contact #: </li>
+					<li>
+						<input type="text" formControlName="contactNo" class="user-information" [class.remove-border]="!isEditing" />
+					</li>
+					<li></li>
+					<li></li>
+					<li></li>
+					<li></li>
+					<li></li>
+				</ng-container>
+			</form>
+		</ng-container>
 
-  </ul>
+	</ul>
 </div>
