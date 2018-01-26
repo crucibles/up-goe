@@ -25,6 +25,15 @@ import {
 	PageService
 } from 'shared/services';
 
+import { 
+  ActivatedRouteSnapshot, 
+  ActivatedRoute 
+} from '@angular/router/src/router_state';
+
+import { 
+  ToastsManager 
+} from 'ng2-toastr/src/toast-manager';
+
 @Component({
 	selector: 'app-gen-selcourse',
 	templateUrl: './gen-selcourse.component.html',
@@ -47,12 +56,21 @@ export class GenSelcourseComponent implements OnInit {
 		private pageService: PageService,
 		private sectionService: SectionService,
 		private userService: UserService,
-		private router: Router
+    private router: Router,
+    private toastr: ToastsManager
 	) {
-		this.pageService.isProfilePage(false);
+    this.pageService.isProfilePage(false);
 	}
 
 	ngOnInit() {
+    let url = this.router.routerState.snapshot.url.split("/");
+    //add toaster or warning to student what happened why redirected here
+    console.log(url[2]);
+    if(url[2] == "specific"){
+      this.pageService.isProfilePage(false);
+      this.router.navigateByUrl('student/general/select-course');
+      this.toastr.info("Invalid specific course inputted!", "Info")
+    }
 		this.getUser();
 	}
 

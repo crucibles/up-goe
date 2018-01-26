@@ -93,46 +93,20 @@ router.get('/quests', (req, res) => {
 
 });
 
+// haven't implemented fully the logic yet to search and sort.
 // api/commentposts
-router.get('/commentposts', (req, res) => {
-    console.log("im in and searching the posts");
+router.get('/posts', (req, res) => {
     var myObjArr = [];
 
     connection((db) => {
         const myDB = db.db('up-goe-db');
-        console.log(req.query.class);
 
         myDB.collection('posts')
-            .find(ObjectID(req.query.class))
+            .find()
             .toArray()
-            .then((sections) => {
-                console.log(sections);
-                var myObjArr = [];
-                var myObj = {};
-
-                async.forEach(sections, processEachSection, afterAllSection);
-
-                function processEachSection(section, callback) {
-                    myDB.collection('courses')
-                        .find(ObjectID(section.course_id))
-                        .toArray()
-                        .then((course) => {
-                            myObj["section"] = section;
-                            myObj["course_name"] = course[0].course_name;
-                            myObjArr.push(myObj);
-                            callback();
-                        }, reason => {
-                            callback(reason);
-                        })
-
-                }
-
-                function afterAllSection(err) {
-                    response.data = myObjArr;
-                    res.json(myObjArr);
-                }
-
-
+            .then((posts) => {
+                response.data = posts;
+                res.json(posts);
             })
             .catch((err) => {
                 sendError(err, res);
@@ -144,18 +118,15 @@ router.get('/commentposts', (req, res) => {
 
 // api/sections/search
 router.get('/search', (req, res) => {
-    console.log("im in and searching the section");
     var myObjArr = [];
 
     connection((db) => {
         const myDB = db.db('up-goe-db');
-        console.log(req.query.class);
 
         myDB.collection('sections')
             .find(ObjectID(req.query.class))
             .toArray()
             .then((sections) => {
-                console.log(sections);
                 var myObjArr = [];
                 var myObj = {};
 
@@ -380,15 +351,25 @@ router.get('/users', (req, res) => {
     });
 });
 
-// api/securityQuestions
-// router.get('/securityQuestions', (req, res) => {
-//     connection((db) => {
-//         const myDB = db.db('up-goe-db');
-//         myDB.collections('questions')
-//             .find(
-//                 ObjectID(req.query.)
-//             )
-//     });
-// });
+/**
+ * api/securityQuestions
+ * Create by: Donevir Hynson
+ */
+router.get('/securityQuestions', (req, res) => {
+    connection((db) => {
+        const myDB = db.db('up-goe-db');
+        myDB.collection('questions')
+            .find()
+            .toArray()
+            .then((questions) => {
+                q = questions[0].question;
+                response.data = questions[0].question;
+                res.json(questions);
+            })
+            .catch((err) => {
+                sendError(err, res);
+            });
+    });
+});
 
 module.exports = router;

@@ -25,8 +25,13 @@ import {
 
 //Application Imports
 import {
-  CommentPost
+  CommentPost, 
+  Student
 } from 'shared/models'
+
+import { 
+  SectionService 
+} from './section.service';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -36,7 +41,8 @@ const httpOptions = {
 export class CommentPostService {
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private sectionService: SectionService
   ) { }
 
   /**
@@ -158,20 +164,25 @@ export class CommentPostService {
 
   /**
    * Obtains all posts from all sections the user is enrolled in
-   * @param section_id section id of the section whose posts are to be retrieved
+   * @param sections info needed about the user sections
    * 
-   * @returns commentpost array of the chosen section
+   * @returns commentpost array of the enrolled sections of the user
    */
-  getUserPosts(section_id: string): Observable<CommentPost[]> {
-    const url = this.sectionPostUrl;
+  getUserPosts(sections: any): Observable<CommentPost[]> {
+    console.log(sections);
+
+    let enrolled = this.sectionService.getUserEnrolledSections();
+
+    console.log(enrolled);
+    const url = this.postUrl;
 
     //const url = `${this.postUrl}/?section_id=${section_id}`;
     return this.http.get<CommentPost[]>(url).pipe(
-      tap(h => {
-        const outcome = h ? 'fetched section ' + section_id : 'did not find section ' + section_id;
+      tap(posts => {
+        const outcome = posts ? 'fetched commentposts ' + sections : 'did not find commentposts ' + sections;
         console.log(outcome);
       }),
-      catchError(this.handleError<CommentPost[]>(`getSectionPosts section_id=${section_id}`))
+      catchError(this.handleError<CommentPost[]>(`getSectionPosts section_id=${sections}`))
     );
   }
 
