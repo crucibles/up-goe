@@ -38,6 +38,10 @@ const routes: Routes = [
     loadChildren: './student/general/general.module#GeneralModule'
   },
   {
+    path: 'teacher/general',
+    loadChildren: './teacher/general/general.module#GeneralModule'
+  },
+  {
     path: 'log-in',
     component: LogInComponent,
     canActivate: [AuthGuardService] 
@@ -51,6 +55,10 @@ const routes: Routes = [
     path: 'student/specific',
     loadChildren: './student/specific/specific.module#SpecificModule'
   },
+  /*{
+    path: 'teacher/specific',
+    loadChildren: './teacher/specific/specific.module#SpecificModule'
+  },*/
   {
     path: '**',
     component: PageNotFoundComponent

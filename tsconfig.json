@@ -20,7 +20,8 @@
       "log-in/*": ["app/log-in/*"],
       "shared/*": ["app/shared/*"],
       "sign-up/*": ["app/sign-up/*"],
-      "student/*": ["app/student/*"]
+      "student/*": ["app/student/*"],
+      "teacher/*": ["app/teacher/*"]
     }
   }
 }
