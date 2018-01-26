@@ -6,7 +6,7 @@ A project for gamification of education currently developing by:
 <ul>
 <li>[@asumandang](https://github.com/asumandang)</li>
 <li>[@crucibles](https://github.com/crucibles)</li>
-<li>[@Donex26](https://github.com/Dpnex26)</li>
+<li>[@Donex26](https://github.com/Donex26)</li>
 <li>[@rojpats](https://github.com/rojpats)</li>
 </ul>
 
