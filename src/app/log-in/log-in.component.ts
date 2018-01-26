@@ -51,7 +51,7 @@ export class LogInComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || 'general/select-course';
+        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || 'student/general/select-course';
         this.warning = false;
     }
 
