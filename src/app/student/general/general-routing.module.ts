@@ -23,6 +23,10 @@ import {
     PageNotFoundComponent
 } from 'shared/pages';
 
+import { 
+    AuthGuardService
+  } from 'shared/services/auth-guard.service';
+
 const generalRoutes: Routes = [
 
     {
@@ -31,15 +35,18 @@ const generalRoutes: Routes = [
         children: [
             {
                 path: 'general-news',
-                component: GenNewsComponent
+                component: GenNewsComponent,
+                canActivate: [AuthGuardService] 
             },
             {
                 path: 'general-profile',
-                component: GenProfileComponent
+                component: GenProfileComponent,
+                canActivate: [AuthGuardService] 
             },
             {
                 path: 'select-course',
-                component: GenSelcourseComponent
+                component: GenSelcourseComponent,
+                canActivate: [AuthGuardService] 
             },
             {
                 path: '**',

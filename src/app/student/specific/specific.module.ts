@@ -30,12 +30,22 @@ import {
 } from 'app/student/specific';
 
 
+import { 
+  GeneralRoutingModule 
+} from 'student/general/general-routing.module';
+
+import { 
+  GeneralModule 
+} from 'student/general/general.module';
+
 
 
 @NgModule({
   imports: [
     SharedModule,
-    SpecificRoutingModule
+    SpecificRoutingModule,
+    GeneralRoutingModule,
+    GeneralModule
   ],
   declarations: [
     SpecificCharacterComponent,

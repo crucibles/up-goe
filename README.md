@@ -3,10 +3,12 @@
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.4.7.
 
 A project for gamification of education currently developing by:
-[@asumandang](https://github.com/asumandang)
-[@crucibles](https://github.com/crucibles)
-[@Donex26](https://github.com/Dpnex26)
-[@rojpats](https://github.com/rojpats)
+<ul>
+<li>[@asumandang](https://github.com/asumandang)</li>
+<li>[@crucibles](https://github.com/crucibles)</li>
+<li>[@Donex26](https://github.com/Dpnex26)</li>
+<li>[@rojpats](https://github.com/rojpats)</li>
+</ul>
 
 ## Development server
 
