@@ -107,13 +107,13 @@ export class SpecificSidetabComponent implements OnInit {
 	}
 
 	ngOnInit() {
-		this.getUser();
+		this.setUser();
 		this.pageService.isProfile.subscribe(isProfile => {
 			this.isProfile = isProfile;
 			if (isProfile) {
 				this.initializeForm();
 			} else {
-				this.getQuests(this.currentUser.getUserId());
+				this.setQuests(this.currentUser.getUserId());
 				this.timeDisplays();
 			}
 		});
@@ -129,24 +129,33 @@ export class SpecificSidetabComponent implements OnInit {
 		this.editForm.disable();
 	}
 
-	getUser() {
+	/**
+	 * Obtains current user.
+	 * @description Obtains current user and stores it to 'currentUser' variable;
+	 */
+	setUser() {
 		//AHJ: current user is not yet obtained
 		this.currentUser = this.userService.getCurrentUser();
 		this.image = this.currentUser.getUserPhoto();
 	}
 
 	/**
-	 * Obtains quests participated by the user
+	 * Obtains quests participated by the user.
 	 * @description Obtains quests of the current user and stores it to 'courses' variable;
 	 * used when user is navigating on pages other than the general-profile page
 	 * 
 	 * @param user_id the id of the user that asks for the list of quests
 	 */
-	getQuests(user_id): void {
+	setQuests(user_id): void {
 		// AHJ: unimplemented; add quest service to obtain quests of the current section
 		this.quests = QUESTS.map(quest => new Quest(quest));
 	}
 
+	/**
+	 * Open clicked quest by displaying quest modal
+	 * @param template template to be opened
+	 * @param quest quest to be viewed
+	 */
 	openQuest(template: TemplateRef<any>, quest: any) { //'quest: any' in here means the quest has not been converted to Quest type
 		//AHJ: Unimplemented
 		//WARNING!! Remove QUESTS in specific-qm.html when this is implemented
@@ -157,16 +166,27 @@ export class SpecificSidetabComponent implements OnInit {
 		}
 	}
 
+	/**
+	 * Abandons currently clicked quest
+	 * @param questId id of the quest to be abandoned
+	 */
 	abandonQuest(questId: String) {
 		console.log(questId + " abandoned!");
 		this.bsModalRef.hide();
 	}
 
+	/**
+	 * Submits currently clicked quest
+	 * @param questId id of the quest to be submitted
+	 */
 	submitQuest(questId: String) {
 		console.log(questId + " submitted!");
 		this.bsModalRef.hide();
 	}
 
+	/**
+	 * Sets the needed properties, styling, etc. of all section quests
+	 */
 	timeDisplays() {
 		let string: string = "";
 
@@ -181,11 +201,17 @@ export class SpecificSidetabComponent implements OnInit {
 		}, 1000);
 	}
 
+	/**
+	 * Ends the editing of the user information by disabling the form
+	 */
 	endEditing() {
 		this.isEditing = !this.isEditing;
 		this.editForm.disable();
 	}
 
+	/**
+	 * Starts the editing of the user information by enabling the form
+	 */
 	startEditing() {
 		this.isEditing = !this.isEditing;
 		this.editForm.enable();
@@ -196,6 +222,10 @@ export class SpecificSidetabComponent implements OnInit {
 		return this.pageService.formatDateTime(date);
 	}
 
+	/**
+	 * Collapse sidetab when clicked outside
+	 * @param event 
+	 */
 	handleClick(event) {
 		var clickedComponent = event.target;
 		var inside = false;
@@ -210,16 +240,25 @@ export class SpecificSidetabComponent implements OnInit {
 		}
 	}
 
+	/**
+	 * Shows/Hides sidetab on click
+	 */
 	clickMenuButton() {
 		this.isShowSideTab = !this.isShowSideTab;
 	}
 
-	//if screen size changes it'll update
+	/**
+	 * Updates when screen size is changed
+	 * @param event 
+	 */
 	@HostListener('window:resize', ['$event'])
 	resize(event) {
 		this.checkSize();
 	}
 
+	/**
+	 * Shows/Hide sidetab on resize
+	 */
 	checkSize() {
 		this.windowWidth = window.innerWidth;
 		if (this.windowWidth <= 765) {
