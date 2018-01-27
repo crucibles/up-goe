@@ -26,8 +26,10 @@ import {
 } from 'ngx-bootstrap/collapse/collapse.module';
 
 import {
+  AccordionModule,
   ModalModule,
   PopoverModule,
+  ProgressbarModule,
   TooltipModule
 } from 'ngx-bootstrap';
 
@@ -35,10 +37,10 @@ import {
 import {
   PageNotFoundComponent
 } from 'shared/pages';
-import { ProgressbarModule } from 'ngx-bootstrap/progressbar/progressbar.module';
 
 @NgModule({
   imports: [
+    AccordionModule.forRoot(),
     CollapseModule.forRoot(),
     CommonModule,
     ModalModule.forRoot(),

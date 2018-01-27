@@ -98,7 +98,7 @@ export class GenSidetabComponent implements OnInit {
 		private router: Router
 	) {
 		this.image = imageDir + "not-found.jpg";
-		this.getUser();
+		this.setUser();
 		this.initializeForm();
 	}
 
@@ -135,7 +135,7 @@ export class GenSidetabComponent implements OnInit {
 	 * in the sidetab; personal information are displayed on general-profile page while 
 	 * section quests are for other pages except general-profile page
 	 */
-	getUser(): void {
+	setUser(): void {
 		this.currentUser = this.userService.getCurrentUser();
 		this.image = this.currentUser.getUserPhoto();
 	}
@@ -162,6 +162,7 @@ export class GenSidetabComponent implements OnInit {
 	 * @param user_id the id of the user that asks for the list of quests
 	 */
 	getQuests(user_id): void {
+		//AHJ: unimplemented; get quest by section; not sure... this may be okay as is 
 		this.questService.getUserJoinedQuests(user_id)
 			.subscribe(quests => {
 				this.quests = quests.map(quest => new Quest(quest));
