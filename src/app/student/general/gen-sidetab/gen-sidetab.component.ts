@@ -194,13 +194,13 @@ export class GenSidetabComponent implements OnInit {
 		}
 	}
 
-	submitQuest() {
+	submitQuest(questId: String) {
 		//AHJ: unimplemented
 		console.log("'" + this.questClicked.getQuestTitle() + "' submitted!");
 		this.bsModalRef.hide();
 	}
 
-	abandonQuest() {
+	abandonQuest(questId: String) {
 		console.log("'" + this.questClicked.getQuestTitle() + "' abandoned :(");
 		//AHJ: unimplemented
 		this.bsModalRef.hide();
@@ -246,6 +246,28 @@ export class GenSidetabComponent implements OnInit {
 	/**
 	 * Changes the time displays in the progress bar and sets the width of the progress bar
 	 */
+	// timeDisplays() {
+	// 	let string: string = "";
+
+	// 	this.questTimeDisplay = [];
+	// 	this.questTimePercentage = [];
+	// 	setInterval(() => {
+	// 		for (let i = 0; i < this.quests.length; i++) {
+	// 			let timePerc: number = 100 - this.timeDiff(this.quests[i].getQuestEndTimeDate(), new Date()) / this.timeDiff(this.quests[i].getQuestEndTimeDate(), this.quests[i].getQuestStartTimeDate()) * 100;
+	// 			let totalMinRem: number = this.timeDiff(this.quests[i].getQuestEndTimeDate(), new Date());
+	// 			let hourRem: number = Math.floor(totalMinRem / 1000 / 60 / 60);
+
+	// 			this.toggleClass(hourRem, i);
+	// 			string = this.getTimeLabel(totalMinRem, hourRem);
+	// 			if (totalMinRem <= 0) {
+	// 				timePerc = 100;
+	// 			}
+
+	// 			this.questTimeDisplay[i] = string;
+	// 			this.questTimePercentage[i] = timePerc.toString() + '%';
+	// 		}
+	// 	}, 1000);
+	// }
 	timeDisplays() {
 		let string: string = "";
 
@@ -253,18 +275,9 @@ export class GenSidetabComponent implements OnInit {
 		this.questTimePercentage = [];
 		setInterval(() => {
 			for (let i = 0; i < this.quests.length; i++) {
-				let timePerc: number = 100 - this.timeDiff(this.quests[i].getQuestEndTimeDate(), new Date()) / this.timeDiff(this.quests[i].getQuestEndTimeDate(), this.quests[i].getQuestStartTimeDate()) * 100;
-				let totalMinRem: number = this.timeDiff(this.quests[i].getQuestEndTimeDate(), new Date());
-				let hourRem: number = Math.floor(totalMinRem / 1000 / 60 / 60);
-
-				this.toggleClass(hourRem, i);
-				string = this.getTimeLabel(totalMinRem, hourRem);
-				if (totalMinRem <= 0) {
-					timePerc = 100;
-				}
-
-				this.questTimeDisplay[i] = string;
-				this.questTimePercentage[i] = timePerc.toString() + '%';
+				this.progressBarClass[i] = this.quests[i].getQuestProgressBarClass();
+				this.questTimeDisplay[i] = this.quests[i].getQuestTimeLabel();
+				this.questTimePercentage[i] = this.quests[i].getQuestTimePercentage();
 			}
 		}, 1000);
 	}

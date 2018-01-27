@@ -36,28 +36,28 @@ export class Quest {
     constructor(
         quest?: any
     ) {
-        if(quest){
+        if (quest) {
             this._id = quest._id;
-            this.quest_title = quest.quest_title? quest.quest_title: "";
-            this.quest_description = quest.quest_description? quest.quest_description: "";
-            this.quest_retakable = quest.quest_retakable? quest.quest_retakable: false;
-            this.quest_badge = quest.quest_badge? quest.quest_badge: "";
-            this.quest_item = quest.quest_item? quest.quest_item: [];
-            this.quest_xp = quest.quest_xp? quest.quest_xp: 0;
-            this.quest_hp = quest.quest_hp? quest.quest_hp: 0;
-            this.quest_start_time_date = quest.quest_start_time_date? new Date(quest.quest_start_time_date): new Date();
-            this.quest_end_time_date = quest.quest_end_time_date? new Date(quest.quest_end_time_date): new Date();
-            this.quest_party = quest.quest_party? quest.quest_party: false;
-            this.quest_prerequisite = quest.quest_prerequisite? quest.quest_prerequisite: [];
+            this.quest_title = quest.quest_title ? quest.quest_title : "";
+            this.quest_description = quest.quest_description ? quest.quest_description : "";
+            this.quest_retakable = quest.quest_retakable ? quest.quest_retakable : false;
+            this.quest_badge = quest.quest_badge ? quest.quest_badge : "";
+            this.quest_item = quest.quest_item ? quest.quest_item : [];
+            this.quest_xp = quest.quest_xp ? quest.quest_xp : 0;
+            this.quest_hp = quest.quest_hp ? quest.quest_hp : 0;
+            this.quest_start_time_date = quest.quest_start_time_date ? new Date(quest.quest_start_time_date) : new Date();
+            this.quest_end_time_date = quest.quest_end_time_date ? new Date(quest.quest_end_time_date) : new Date();
+            this.quest_party = quest.quest_party ? quest.quest_party : false;
+            this.quest_prerequisite = quest.quest_prerequisite ? quest.quest_prerequisite : [];
         } else {
-            this.quest_title =  "";
+            this.quest_title = "";
             this.quest_description = "";
             this.quest_retakable = false;
             this.quest_badge = "";
             this.quest_item = [];
             this.quest_xp = 0;
             this.quest_hp = 0;
-            this.quest_start_time_date =  new Date();
+            this.quest_start_time_date = new Date();
             this.quest_end_time_date = new Date();
             this.quest_party = false;
             this.quest_prerequisite = [];
@@ -89,7 +89,7 @@ export class Quest {
         this.quest_party = quest_party;
         this.quest_prerequisite = quest_prerequisite;
     }
-    
+
     getQuestId() {
         return this._id;
     }
@@ -136,6 +136,69 @@ export class Quest {
 
     getQuestPrerequisite() {
         return this.quest_prerequisite;
+    }
+
+    getQuestTimePercentage(): string {
+        let timePerc: number = 100 - this.timeDifference(this.quest_end_time_date, new Date()) / this.timeDifference(this.quest_end_time_date, this.quest_start_time_date) * 100;
+        let totalMinRem: number = this.timeDifference(this.quest_end_time_date, new Date());
+        let hourRem: number = Math.floor(totalMinRem / 1000 / 60 / 60);
+
+        let string = this.getTimeLabel(totalMinRem, hourRem);
+        if (totalMinRem <= 0) {
+            timePerc = 100;
+        }
+
+        return timePerc.toString() + '%';
+    }
+
+    /**
+	 * Returns the appropriate progress bar label
+	 * @description Returns the appropriate progress bar label based on either the total minutes 
+	 * remaining or the hours remaining
+	 * @param totalMinRem the total minutes remaining for the quest
+	 * @param hourRem the hours remaining for the quest
+	 * 
+	 * @returns string label for the progress bar
+	 */
+	getQuestTimeLabel(): string {
+        let totalMinRem: number = this.timeDifference(this.quest_end_time_date, new Date());
+        let hourRem: number = Math.floor(totalMinRem / 1000 / 60 / 60);
+
+		let string = "";
+		if (totalMinRem <= 0) {
+			string = "Time's up!";
+		} else if (hourRem >= 168) {
+			let weekRem: number = Math.floor(totalMinRem / 1000 / 60 / 60 / 128);
+			let dayRem = Math.floor(totalMinRem / 1000 / 60 / 60 % 128);
+			string = weekRem.toString() + " wk(s) & " + dayRem.toString() + " dy(s) left";
+		} else if (hourRem >= 24) {
+			let dayRem: number = Math.floor(totalMinRem / 1000 / 60 / 60 / 24);
+			hourRem = Math.floor(totalMinRem / 1000 / 60 / 60 % 24);
+			string = dayRem.toString() + " dy(s) & " + hourRem.toString() + " hr(s) left";
+		} else {
+			let minRem: number = Math.floor(totalMinRem / 1000 / 60 % 60);
+			string = hourRem.toString() + " hr(s) & " + minRem.toString() + " mn(s) left";
+		}
+		return string;
+    }
+    
+    /** 
+	 * @summary changes the color of the progress bar by changing its class
+	 * 
+	 * @param hourRem hours remaining for quest of index i
+	 * @param i index of the quest to be checked
+	 */
+	getQuestProgressBarClass(): string{
+        let totalMinRem: number = this.timeDifference(this.quest_end_time_date, new Date());
+        let hourRem: number = Math.floor(totalMinRem / 1000 / 60 / 60);
+
+		if (hourRem <= 0) {
+			return "bg-danger";
+		} else if (hourRem <= 24) {
+			return "progress-bar-animated bg-danger";
+		} else {
+			return "progress-bar-animated bg-success";
+		}
     }
 
     setQuestId(_id) {
@@ -185,4 +248,50 @@ export class Quest {
     setQuestPrerequisite(quest_prerequisite) {
         this.quest_prerequisite = quest_prerequisite;
     }
+    
+    /**
+	 * Returns the difference in minutes of two dates
+	 * @param date1 the date of the further date
+	 * @param date2 the date of the earlier date
+	 * 
+	 * @returns the difference (in minutes) of the two dates
+	 */
+	private timeDifference(date1: Date, date2: Date): number {
+		date1 = new Date(date1);
+		date2 = new Date(date2);
+
+		let time1 = date1.getTime();
+		let time2 = date2.getTime();
+		let diffInMs: number = time1 - time2;
+
+		return diffInMs;
+    }
+    
+    /**
+	 * Returns the appropriate progress bar label
+	 * @description Returns the appropriate progress bar label based on either the total minutes 
+	 * remaining or the hours remaining
+	 * @param totalMinRem the total minutes remaining for the quest
+	 * @param hourRem the hours remaining for the quest
+	 * 
+	 * @returns string label for the progress bar
+	 */
+	private getTimeLabel(totalMinRem: number, hourRem: number): string {
+		let string = "";
+		if (totalMinRem <= 0) {
+			string = "Time's up!";
+		} else if (hourRem >= 168) {
+			let weekRem: number = Math.floor(totalMinRem / 1000 / 60 / 60 / 128);
+			let dayRem = Math.floor(totalMinRem / 1000 / 60 / 60 % 128);
+			string = weekRem.toString() + " wk(s) & " + dayRem.toString() + " dy(s) left";
+		} else if (hourRem >= 24) {
+			let dayRem: number = Math.floor(totalMinRem / 1000 / 60 / 60 / 24);
+			hourRem = Math.floor(totalMinRem / 1000 / 60 / 60 % 24);
+			string = dayRem.toString() + " dy(s) & " + hourRem.toString() + " hr(s) left";
+		} else {
+			let minRem: number = Math.floor(totalMinRem / 1000 / 60 % 60);
+			string = hourRem.toString() + " hr(s) & " + minRem.toString() + " mn(s) left";
+		}
+		return string;
+	}
 }
