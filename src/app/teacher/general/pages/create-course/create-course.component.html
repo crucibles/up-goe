@@ -32,14 +32,16 @@
 			<li>
 				<input type="text" formControlName="courseSection" class="information-input" [class.remove-border]="!isEditing" />
 			</li>
-			<li> Type: <select formControlName="sectionType">
-				<option>
-					Lecture
-				</option>
-				<option>
-					Laboratory
-				</option>
-			</select></li>
+			<li> Type:
+				<select formControlName="sectionType">
+					<option>
+						Lecture
+					</option>
+					<option>
+						Laboratory
+					</option>
+				</select>
+			</li>
 			<!-- <li>
 				<input id="lec" type="radio" />
 				<label for="lec">Lecture</label>
@@ -47,31 +49,45 @@
 				<label for="lab">Lab</label>
 			</li> -->
 			<li>Scheduled Day:
-			<li>
-				<label style="margin-right: 5px"*ngFor="let day of week; let i = index">
-						<input type="checkbox" formControlName="scheduleDay" (change)="checkDay($event, i)"> {{day.slice(0,3)}} 
-				</label>
-			</li>
-			<li>Schedule Time:</li>
-			<ng-container *ngFor="let check of isChecked; let i = index">
-					<li *ngIf="check">
-						{{week[i]}}
-					</li>
-			</ng-container>
-			<li></li>
+				<li>
+					<label formArrayName="scheduleDays" style="margin-right: 5px" *ngFor="let day of scheduleDaysArray.controls; let i = index">
+						<ng-container [formGroupName]="i">
+							<input type="checkbox" formControlName="isChecked">
+						</ng-container>
+						{{scheduleDays[i].day.slice(0,3)}}
+					</label>
+				</li>
+				<li>Schedule Time:</li>
+				<ng-container formArrayName="scheduleDays" *ngFor="let day of scheduleDaysArray.controls; let i = index">
+					<ng-container [formGroupName]="i">
+						<li *ngIf="sectionForm.controls.scheduleDays.controls[i].controls.isChecked.value">
+							{{scheduleDays[i].day}} From:
+							<timepicker formControlName="minTime"></timepicker>
+							To:
+							<timepicker formControlName="maxTime"></timepicker>
+						</li>
+					</ng-container>
+				</ng-container>
+				<li></li>
 
-			<!-- Edit button -->
-			<li style="text-align: right">
-				<!-- submit button (if done editing)-->
-				<button class="btn btn-primary">
-					Reset
-				</button>
+				<!-- Edit button -->
+				<li style="text-align: right">
+					<!-- submit button (if done editing)-->
+					<button class="btn btn-primary" (click)=isDayChecked()>
+						Reset
+					</button>
 
-				<!-- edit button (if user wants to edit their information) -->
-				<button type="submit" class="btn btn-primary">
-					Submit
-				</button>
-			</li>
+					<!-- edit button (if user wants to edit their information) -->
+					<button type="submit" class="btn btn-primary" [disabled]="!sectionForm.valid || !isDayChecked()">
+						Submit
+					</button>
+				</li>
+
+				<li></li>
+				<li></li>
+				<li></li>
+				<li></li>
+				<li></li>
 
 		</form>
 		<!-- end of user information (for general profile) -->

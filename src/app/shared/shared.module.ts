@@ -30,7 +30,8 @@ import {
   ModalModule,
   PopoverModule,
   ProgressbarModule,
-  TooltipModule
+  TooltipModule,
+  TimepickerModule
 } from 'ngx-bootstrap';
 
 //Application Imports
@@ -46,6 +47,7 @@ import {
     ModalModule.forRoot(),
     PopoverModule.forRoot(),
     ProgressbarModule.forRoot(),
+    TimepickerModule.forRoot(),
     TooltipModule.forRoot()
   ],
   exports: [
@@ -58,6 +60,7 @@ import {
     PopoverModule,
     ProgressbarModule,
     ReactiveFormsModule,
+    TimepickerModule,
     TooltipModule
   ],
   declarations: [PageNotFoundComponent]

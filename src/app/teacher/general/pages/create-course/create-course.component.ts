@@ -1,12 +1,32 @@
-import { Component, OnInit, ElementRef } from '@angular/core';
-import { FormControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { UserService, PageService } from 'shared/services';
-import { User } from 'shared/models';
+// Core Imports
+import {
+	Component,
+	ElementRef,
+	OnInit
+} from '@angular/core';
+
+import {
+	FormArray,
+	FormBuilder,
+	FormControl,
+	FormGroup,
+	Validators
+} from '@angular/forms';
+
+// Application Imports
+import {
+	User
+} from 'shared/models';
+
+import {
+	PageService,
+	UserService
+} from 'shared/services';
 
 @Component({
-  selector: 'create-course',
-  templateUrl: './create-course.component.html',
-  styleUrls: ['./create-course.component.css'],
+	selector: 'create-course',
+	templateUrl: './create-course.component.html',
+	styleUrls: ['./create-course.component.css'],
 	host: {
 		'(document:click)': 'handleClick($event)',
 	}
@@ -16,17 +36,19 @@ export class CreateCourseComponent implements OnInit {
 	//current user
 	currentUser: User;
 	image: string = "";
-  
+
 	//for profile page only
 	sectionForm: FormGroup;
 	isEditing: boolean = false;
 	isChecked: boolean[] = [];
 
+	scheduleDays: any[] = [];
+
 	week: String[] = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
 	//for collapsible sidetab
-  isShowSideTab: boolean = false;
-  
+	isShowSideTab: boolean = false;
+
 	constructor(
 		private elementRef: ElementRef,
 		private formBuilder: FormBuilder,
@@ -34,10 +56,24 @@ export class CreateCourseComponent implements OnInit {
 		private userService: UserService
 	) {
 		this.getUser();
+		this.createScheduleArray();
 		this.initializeForm();
 	}
 
 	ngOnInit() {
+	}
+
+	createScheduleArray() {
+		this.scheduleDays = [];
+		this.scheduleDays = this.week.map(function week(day) {
+			let obj = {
+				day: day,
+				isChecked: false,
+				minTime: new Date(),
+				maxTime: new Date()
+			}
+			return obj;
+		});
 	}
 
 	initializeForm() {
@@ -46,8 +82,20 @@ export class CreateCourseComponent implements OnInit {
 			courseDescription: new FormControl("", Validators.required),
 			courseSection: new FormControl("", Validators.required),
 			sectionType: new FormControl("", Validators.required),
-			scheduleDay: new FormControl("", Validators.required)
+			scheduleDays: this.buildSchedule()
 		});
+	}
+
+	buildSchedule() {
+		const arr = this.scheduleDays.map(day => {
+			return this.formBuilder.group({
+				day: day.day,
+				isChecked: day.isChecked,
+				minTime: day.minTime,
+				maxTime: day.maxTime
+			})
+		});
+		return this.formBuilder.array(arr);
 	}
 
 	/**
@@ -85,24 +133,26 @@ export class CreateCourseComponent implements OnInit {
 		}
 	}
 
+	get scheduleDaysArray(): FormArray {
+		return this.sectionForm.get('scheduleDays') as FormArray;
+	}
+
 	clickMenuButton() {
 		console.log(this.isShowSideTab);
 		this.isShowSideTab = !this.isShowSideTab;
 	}
 
-	submitCourseSection(){
+	submitCourseSection() {
 		console.log(this.sectionForm.value);
 	}
 
-	checkDay(e, index){
-		if(e.target.checked){
-			this.isChecked[index] = true;
-			console.log(index + " is checked!");
+	isDayChecked() {
+		const arr = this.sectionForm.get('scheduleDays') as FormArray;
+		for (let day of arr.value) {
+			if (day.isChecked) {
+				return true;
+			}
 		}
-		else{
-			this.isChecked[index] = false;
-			console.log(index + " is not checked!");
-		}
+		return false;
 	}
-
 }
