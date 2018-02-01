@@ -66,9 +66,9 @@ export class GenSidetabComponent implements OnInit {
 	questClicked: Quest;
 	//for progress bar; 
 	defaultPBClass: string = 'progress-bar progress-bar-striped';
-	progressBarClass: string[];
-	questTimePercentage: string[];
-	questTimeDisplay: string[];
+	progressBarClass: string[] = [];
+	questTimePercentage: string[] = [];
+	questTimeDisplay: string[] = [];
 	//for quest modal
 	bsModalRef: BsModalRef;
 
@@ -271,9 +271,6 @@ export class GenSidetabComponent implements OnInit {
 	// }
 	timeDisplays() {
 		let string: string = "";
-
-		this.questTimeDisplay = [];
-		this.questTimePercentage = [];
 		setInterval(() => {
 			for (let i = 0; i < this.quests.length; i++) {
 				this.progressBarClass[i] = this.quests[i].getQuestProgressBarClass();
