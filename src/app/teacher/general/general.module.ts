@@ -22,6 +22,8 @@ import {
 } from 'teacher/general';
 
 import {
+	CreateCourseComponent,
+	GenProfileComponent,
 	GenSelcourseComponent
 } from 'teacher/general/pages';
 
@@ -31,10 +33,12 @@ import {
 		GeneralRoutingModule
 	],
 	declarations: [
+		CreateCourseComponent,
 		GeneralComponent,
-		GenTopnavbarComponent,
 		GenSidetabComponent,
-		GenSelcourseComponent
+		GenSelcourseComponent,
+		GenTopnavbarComponent,
+		GenProfileComponent
 	]
 })
 export class GeneralModule { }

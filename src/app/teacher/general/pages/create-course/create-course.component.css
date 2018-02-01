@@ -1,0 +1,85 @@
+/*Vertical Tab*/
+.vert-tab {
+    list-style-type: none;
+    padding: 0;
+    width: 300px;
+    background-color: #f1f1f1;
+    height: 100%; /* Full height */
+    position: fixed; /* Make it stick, even on scroll */
+    overflow: auto; /* Enable scrolling if the sidenav has too much content */
+    right: -1px;
+    top: 30px;
+    overflow-y: scroll;
+    box-shadow: 1px 1px 13px #888888;
+    margin-top: 25px;
+}
+
+.vert-tab li, .vert-tab li a{
+    display: block;
+    color: #000;
+    padding: 8px 16px;
+    text-decoration: none;
+}
+
+.vert-tab li a.active {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.vert-tab li a:hover:not(.active) {
+    background-color: #555;
+    color: white;
+    cursor: pointer;
+}
+
+/* Floating Add Button*/
+.floating-button{
+	position:fixed;
+	width:53px;
+	height:53px;
+	bottom:40px;
+	right:40px;
+	background-color: #1E90FF;
+	border-radius:10px;
+	text-align:center;
+    box-shadow: 2px 2px 3px #999;
+    -webkit-transition: right 0.5s; /* Safari */
+    transition: right 0.5s;
+}
+
+.floating-button:hover {
+    cursor: pointer;
+}
+
+.plus-sign{
+    margin-top:19px;
+    color:#FFF;
+}
+
+/*For form's input*/
+.information-input {
+    width: 100%;
+}
+
+/*for hiding (plus animation)*/
+#addButton {
+    display: none;
+}
+
+#addButton:checked + .container .floating-button {
+    right: 340px;
+    -webkit-transition: right 0.5s; /* Safari */
+    transition: right 0.5s;
+}
+
+#addButton:not(:checked) + .container .vert-tab {
+    right: -300px;
+    -webkit-transition: right 0.5s; /* Safari */
+    transition: right 0.5s;
+}
+
+#addButton:checked + .container .vert-tab {
+    right: 0px;
+    -webkit-transition: right 0.5s; /* Safari */
+    transition: right 0.5s;
+}
