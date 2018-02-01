@@ -61,7 +61,8 @@
 				<ng-container formArrayName="scheduleDays" *ngFor="let day of scheduleDaysArray.controls; let i = index">
 					<ng-container [formGroupName]="i">
 						<li *ngIf="sectionForm.controls.scheduleDays.controls[i].controls.isChecked.value">
-							{{scheduleDays[i].day}} From:
+							{{scheduleDays[i].day}}
+							From:
 							<timepicker formControlName="minTime"></timepicker>
 							To:
 							<timepicker formControlName="maxTime"></timepicker>
