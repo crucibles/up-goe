@@ -1,9 +1,8 @@
 <form>
 	<div id="title" class="row row-fluid">
 		<h3 class="col-md-10">Personal Information</h3>
-		<h5 class="col-md-2 clickable">Edit</h5>
+		<h5 class="col-md-2 clickable pull-left">Edit</h5>
 	</div>
-
 
 	<table *ngIf="currentUser">
 		<tbody>
@@ -37,4 +36,7 @@
 			</tr>
 		</tbody>
 	</table>
+	<ng-container *ngIf="!currentUser">
+		Loading...
+	</ng-container>
 </form>
