@@ -24,7 +24,8 @@ import {
 import {
 	CreateCourseComponent,
 	GenProfileComponent,
-	GenSelcourseComponent
+	GenSelcourseComponent,
+	InventoryComponent
 } from 'teacher/general/pages';
 
 @NgModule({
@@ -38,7 +39,8 @@ import {
 		GenSidetabComponent,
 		GenSelcourseComponent,
 		GenTopnavbarComponent,
-		GenProfileComponent
+		GenProfileComponent,
+		InventoryComponent
 	]
 })
 export class GeneralModule { }

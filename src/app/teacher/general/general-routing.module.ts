@@ -19,7 +19,8 @@ import {
 
 import {
   GenProfileComponent,
-  GenSelcourseComponent
+  GenSelcourseComponent,
+  InventoryComponent
 } from 'teacher/general/pages';
 
 const generalRoutes: Routes = [
@@ -35,6 +36,10 @@ const generalRoutes: Routes = [
       {
         path: 'general-profile',
         component: GenProfileComponent
+      },
+      {
+        path: 'inventory',
+        component: InventoryComponent
       },
       {
         path: '**',
