@@ -85,8 +85,8 @@
 						<!-- Quest Modal Buttons -->
 						<div class="modal-footer">
 							<!-- shows submit & abandon buttons if user is a participant -->
-							<button type="submit" class="btn btn-success mr-auto" (click)="abandonQuest()">Abandon Quest</button>
-							<button type="submit" class="btn btn-success" (click)="submitQuest()">Submit Quest</button>
+							<button type="submit" class="btn btn-success mr-auto" (click)="abandonQuest(this.questClicked.getQuestId())">Abandon Quest</button>
+							<button type="submit" class="btn btn-success" (click)="submitQuest(this.questClicked.getQuestId())">Submit Quest</button>
 						</div>
 					</ng-template>
 				</a>

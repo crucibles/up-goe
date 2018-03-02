@@ -8,8 +8,82 @@
 		<li *ngIf="currentUser">
 			{{currentUser.getUserFullName()}}
 		</li>
+
 		<!--displays quests if navigated page is not a profile page-->
-		
+		<ng-container *ngIf="!isProfile">
+
+			<!-- Quests-->
+			<li style="font-weight: bold">
+				Quest(s):
+			</li>
+
+			<!-- display all quest for all sections -->
+			<li *ngFor="let quest of quests; let i = index">
+				<!-- the quest progress bar and some basic information -->
+				<a [tooltip]="questTemplate" placement="auto" container="body" (click)="openQuest(questClickedTemplate, quest)">
+					{{quest.getQuestTitle()}}
+					<div class="progress">
+						<div ngClass="{{this.defaultPBClass}} {{this.progressBarClass? this.progressBarClass[i]: ''}}" role="progressbar" aria-valuenow="40"
+						 aria-valuemin="0" aria-valuemax="100" [style.width]="this.questTimePercentage? this.questTimePercentage[i]: '0%'">
+						</div>
+						<span>{{this.questTimeDisplay? this.questTimeDisplay[i]: '0%'}}</span>
+					</div>
+
+					<!-- template for the tooltip quest information -->
+					<ng-template #questTemplate>
+						<div class="quest-display-box">Description:</div>
+						<div>{{quest.getQuestDescription()}}</div>
+						<div class="quest-display-box">Started on:</div>
+						<div>{{this.formatDateTime(quest.getQuestStartTimeDate())}}</div>
+						<div class="quest-display-box">Deadline:</div>
+						<div>{{this.formatDateTime(quest.getQuestEndTimeDate())}}</div>
+					</ng-template>
+
+					<!-- template when quest is clicked -->
+					<ng-template #questClickedTemplate>
+
+						<!-- Quest Modal Header/Title -->
+						<div class="modal-header">
+							<h4 class="modal-title">
+								{{this.questClicked.getQuestTitle()}}
+							</h4>
+							<button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+
+						<!-- Quest Information -->
+						<div class="modal-body">
+							{{this.questClicked.getQuestDescription()}}
+							<div class="row" style="margin-top: 20px">
+								<div class="col-sm-6">
+									Rewards:
+									<br> + {{this.questClicked.getQuestXp()}} XP
+									<br> + {{this.questClicked.getQuestHp()}} HP
+								</div>
+								<div class="col-sm-6">
+									Started on:
+									<br> {{this.pageService.formatDateTime(this.questClicked.getQuestStartTimeDate())}}
+									<br>
+									<br> Deadline:
+									<br> {{this.pageService.formatDateTime(this.questClicked.getQuestEndTimeDate())}}
+									<br>
+									<br>
+								</div>
+							</div>
+						</div>
+
+						<!-- Quest Modal Buttons -->
+						<div class="modal-footer">
+							<!-- shows submit & abandon buttons if user is a participant -->
+							<button type="submit" class="btn btn-success mr-auto" (click)="abandonQuest(this.questClicked.getQuestId())">Abandon Quest</button>
+							<button type="submit" class="btn btn-success" (click)="submitQuest(this.questClicked.getQuestId())">Submit Quest</button>
+						</div>
+					</ng-template>
+				</a>
+
+			</li>
+		</ng-container>
 		<!-- end of shown quest (for pages other than profile page) -->
 
 		<!--displays user information if page navigated is a profile page-->

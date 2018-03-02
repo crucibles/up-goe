@@ -45,7 +45,7 @@ export class AuthGuardService implements CanActivate, CanLoad {
         console.log(route.routeConfig.path);
         console.warn(route);
         console.log(state);
-        if (this.auth.isAuthenticated() && (route.routeConfig.path == "log-in" || route.routeConfig.path == "sign-up") || route.routeConfig.path == "") {
+        if (this.auth.isAuthenticated() && (route.routeConfig.path == "log-in" || route.routeConfig.path == "sign-up" || route.routeConfig.path == "")) {
             console.warn("You are already logged in.");
             this.toastr.success(""+this.userService.getCurrentUser().getUserFirstName(), "Welcome back");
             this.router.navigate(['/student/general/select-course']);

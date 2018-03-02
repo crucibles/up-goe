@@ -26,24 +26,28 @@ import {
 } from 'ngx-bootstrap/collapse/collapse.module';
 
 import {
+  AccordionModule,
   ModalModule,
   PopoverModule,
-  TooltipModule
+  ProgressbarModule,
+  TooltipModule,
+  TimepickerModule
 } from 'ngx-bootstrap';
 
 //Application Imports
 import {
   PageNotFoundComponent
 } from 'shared/pages';
-import { ProgressbarModule } from 'ngx-bootstrap/progressbar/progressbar.module';
 
 @NgModule({
   imports: [
+    AccordionModule.forRoot(),
     CollapseModule.forRoot(),
     CommonModule,
     ModalModule.forRoot(),
     PopoverModule.forRoot(),
     ProgressbarModule.forRoot(),
+    TimepickerModule.forRoot(),
     TooltipModule.forRoot()
   ],
   exports: [
@@ -56,6 +60,7 @@ import { ProgressbarModule } from 'ngx-bootstrap/progressbar/progressbar.module'
     PopoverModule,
     ProgressbarModule,
     ReactiveFormsModule,
+    TimepickerModule,
     TooltipModule
   ],
   declarations: [PageNotFoundComponent]

@@ -3,7 +3,8 @@ import {
 	Component,
 	OnInit,
 	HostListener,
-	ElementRef
+	ElementRef,
+	TemplateRef
 } from '@angular/core';
 
 import {
@@ -24,37 +25,38 @@ import {
 	PageService,
 	UserService
 } from 'shared/services';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 
 const imageDir: string = "/assets/images/";
 
 const QUESTS: any[] = [
 	{
 		_id: "2",
-    	quest_title: "Let me gooo",
-   		quest_description: "Please let me goooo",
-   		quest_retakable: false,
-   		quest_badge: "",
-    	quest_item: [],
-    	quest_xp: 10,
-    	quest_hp: 10,
-    	quest_start_time_date: new Date("10/10/2016"),
-    	quest_end_time_date: new Date("10/10/2018"),
-    	quest_party: false,
-   		quest_prerequisite: []
+		quest_title: "Let me gooo",
+		quest_description: "Please let me goooo",
+		quest_retakable: false,
+		quest_badge: "",
+		quest_item: [],
+		quest_xp: 10,
+		quest_hp: 10,
+		quest_start_time_date: new Date("01/25/2018"),
+		quest_end_time_date: new Date("01/29/2018"),
+		quest_party: false,
+		quest_prerequisite: []
 	},
 	{
 		_id: "2",
-    	quest_title: "Let me gooo too",
-   		quest_description: "Please let me goooo too",
-   		quest_retakable: false,
-   		quest_badge: "",
-    	quest_item: [],
-    	quest_xp: 10,
-    	quest_hp: 10,
-    	quest_start_time_date: new Date("10/10/2016"),
-    	quest_end_time_date: new Date("10/10/2018"),
-    	quest_party: false,
-   		quest_prerequisite: []
+		quest_title: "Let me gooo too",
+		quest_description: "Please let me goooo too",
+		quest_retakable: false,
+		quest_badge: "",
+		quest_item: [],
+		quest_xp: 10,
+		quest_hp: 10,
+		quest_start_time_date: new Date("10/10/2016"),
+		quest_end_time_date: new Date("10/10/2018"),
+		quest_party: false,
+		quest_prerequisite: []
 	}
 ];
 
@@ -69,14 +71,25 @@ const QUESTS: any[] = [
 
 
 export class SpecificSidetabComponent implements OnInit {
-	quests: Quest[];
 	currentUser: User;
-	isProfile: boolean = true;
+	//image dir
+	image: string = "";
+
+	//for profile pages
 	editForm: FormGroup;
+	isProfile: boolean = true;
 	isEditing: boolean = false;
 
-	//image dir
-	image: string = "";	
+	//for quest
+	quests: Quest[];
+	questClicked: Quest;
+	//for quest modal
+	bsModalRef: BsModalRef;
+	//for progress bar; 
+	defaultPBClass: string = 'progress-bar progress-bar-striped';
+	progressBarClass: string[] = [];
+	questTimePercentage: string[];
+	questTimeDisplay: string[];
 
 	// for collapsible sidetab
 	isShowSideTab: boolean = false;
@@ -85,6 +98,7 @@ export class SpecificSidetabComponent implements OnInit {
 	constructor(
 		private elementRef: ElementRef,
 		private formBuilder: FormBuilder,
+		private modalService: BsModalService,
 		private pageService: PageService,
 		private questService: QuestService,
 		private userService: UserService
@@ -93,19 +107,20 @@ export class SpecificSidetabComponent implements OnInit {
 	}
 
 	ngOnInit() {
-		this.getUser();
+		this.setUser();
 		this.pageService.isProfile.subscribe(isProfile => {
 			this.isProfile = isProfile;
-			if(isProfile){
+			if (isProfile) {
 				this.initializeForm();
 			} else {
-				this.getQuests(this.currentUser.getUserId());
+				this.setQuests(this.currentUser.getUserId());
+				this.timeDisplays();
 			}
 		});
 		this.checkSize();
 	}
-	
-	initializeForm(){
+
+	initializeForm() {
 		this.editForm = this.formBuilder.group({
 			schoolId: new FormControl(this.currentUser.getUserSchoolId()),
 			email: new FormControl(this.currentUser.getUserEmail(), Validators.required),
@@ -114,36 +129,103 @@ export class SpecificSidetabComponent implements OnInit {
 		this.editForm.disable();
 	}
 
-	getUser() {
+	/**
+	 * Obtains current user.
+	 * @description Obtains current user and stores it to 'currentUser' variable;
+	 */
+	setUser() {
 		//AHJ: current user is not yet obtained
 		this.currentUser = this.userService.getCurrentUser();
 		this.image = this.currentUser.getUserPhoto();
 	}
 
 	/**
-	 * Obtains quests participated by the user
+	 * Obtains quests participated by the user.
 	 * @description Obtains quests of the current user and stores it to 'courses' variable;
 	 * used when user is navigating on pages other than the general-profile page
 	 * 
 	 * @param user_id the id of the user that asks for the list of quests
 	 */
-	getQuests(user_id): void {
+	setQuests(user_id): void {
 		// AHJ: unimplemented; add quest service to obtain quests of the current section
 		this.quests = QUESTS.map(quest => new Quest(quest));
 	}
 
+	/**
+	 * Open clicked quest by displaying quest modal
+	 * @param template template to be opened
+	 * @param quest quest to be viewed
+	 */
+	openQuest(template: TemplateRef<any>, quest: any) { //'quest: any' in here means the quest has not been converted to Quest type
+		//AHJ: Unimplemented
+		//WARNING!! Remove QUESTS in specific-qm.html when this is implemented
+		console.log(quest);
+		this.questClicked = new Quest(quest);
+		if (this.questClicked) {
+			this.bsModalRef = this.modalService.show(template);
+		}
+	}
+
+	/**
+	 * Abandons currently clicked quest
+	 * @param questId id of the quest to be abandoned
+	 */
+	abandonQuest(questId: String) {
+		console.log(questId + " abandoned!");
+		this.bsModalRef.hide();
+	}
+
+	/**
+	 * Submits currently clicked quest
+	 * @param questId id of the quest to be submitted
+	 */
+	submitQuest(questId: String) {
+		console.log(questId + " submitted!");
+		this.bsModalRef.hide();
+	}
+
+	/**
+	 * Sets the needed properties, styling, etc. of all section quests
+	 */
+	timeDisplays() {
+		let string: string = "";
+
+		this.questTimeDisplay = [];
+		this.questTimePercentage = [];
+		setInterval(() => {
+			for (let i = 0; i < this.quests.length; i++) {
+				this.progressBarClass[i] = this.quests[i].getQuestProgressBarClass();
+				this.questTimeDisplay[i] = this.quests[i].getQuestTimeLabel();
+				this.questTimePercentage[i] = this.quests[i].getQuestTimePercentage();
+			}
+		}, 1000);
+	}
+
+	/**
+	 * Ends the editing of the user information by disabling the form
+	 */
 	endEditing() {
 		this.isEditing = !this.isEditing;
 		this.editForm.disable();
 	}
 
+	/**
+	 * Starts the editing of the user information by enabling the form
+	 */
 	startEditing() {
 		this.isEditing = !this.isEditing;
 		this.editForm.enable();
 	}
 
 	/* Below are helper functions */
+	formatDateTime(date) {
+		return this.pageService.formatDateTime(date);
+	}
 
+	/**
+	 * Collapse sidetab when clicked outside
+	 * @param event 
+	 */
 	handleClick(event) {
 		var clickedComponent = event.target;
 		var inside = false;
@@ -158,16 +240,25 @@ export class SpecificSidetabComponent implements OnInit {
 		}
 	}
 
+	/**
+	 * Shows/Hides sidetab on click
+	 */
 	clickMenuButton() {
 		this.isShowSideTab = !this.isShowSideTab;
 	}
 
-	//if screen size changes it'll update
+	/**
+	 * Updates when screen size is changed
+	 * @param event 
+	 */
 	@HostListener('window:resize', ['$event'])
 	resize(event) {
 		this.checkSize();
 	}
 
+	/**
+	 * Shows/Hide sidetab on resize
+	 */
 	checkSize() {
 		this.windowWidth = window.innerWidth;
 		if (this.windowWidth <= 765) {
