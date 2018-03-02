@@ -6,5 +6,5 @@ export class CustomOption extends ToastOptions {
 	animate = 'flyRight'; // you can override any options available
     newestOnTop = false;
 	showCloseButton = false;
-	toastLife = 2000;
+	toastLife = 3000;
 }

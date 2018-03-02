@@ -39,8 +39,10 @@ router.get('/courses', (req, res) => {
             .find()
             .toArray()
             .then((courses) => {
-                response.data = courses;
-                res.json(courses);
+                if (courses) {
+                    response.data = courses;
+                    res.json(courses);
+                }
             })
             .catch((err) => {
                 sendError(err, res);
@@ -62,14 +64,9 @@ router.post('/login', (req, res) => {
                 user_password: req.body.user_password
             })
             .then((user) => {
-                if(user) {
-                    user.user_password = '';
-                    response.data = user;
-                    res.json(user);
-                } else {
-                    res.json(false);
-                }
-                
+                user.user_password = '';
+                response.data = user;
+                res.json(user);
             })
             .catch((err) => {
                 sendError(err, res);
@@ -114,8 +111,11 @@ router.get('/posts', (req, res) => {
             .find()
             .toArray()
             .then((posts) => {
-                response.data = posts;
-                res.json(posts);
+                if (posts) {
+                    console.log(posts);
+                    response.data = posts;
+                    res.json(posts);
+                }
             })
             .catch((err) => {
                 sendError(err, res);
@@ -325,7 +325,7 @@ router.post('/signup', (req, res) => {
             })
             .then((count) => {
                 // If count returns true (>=1), then user email already exists
-                if(count) {
+                if (count) {
                     console.log("Duplicate email detected: " + newUserObj.user_email);
                     response.data = newUserObj.user_email;
                     // Returns false to signal that user already exists
