@@ -21,29 +21,44 @@ import {
   SignUpComponent
 } from 'sign-up/sign-up.component';
 
+import { 
+  AuthGuardService 
+} from 'shared/services/auth-guard.service';
+
 
 const routes: Routes = [
   {
     path: '',
     redirectTo: '/log-in',
+    canActivate: [AuthGuardService], 
     pathMatch: 'full'
   },
   {
     path: 'student/general',
-    loadChildren: './student/general/general.module#GeneralModule'
+    loadChildren: 'student/general/general.module#GeneralModule'
+  },
+  {
+    path: 'teacher/general',
+    loadChildren: 'teacher/general/general.module#GeneralModule'
   },
   {
     path: 'log-in',
-    component: LogInComponent
+    component: LogInComponent,
+    canActivate: [AuthGuardService] 
   },
   {
     path: 'sign-up',
-    component: SignUpComponent
+    component: SignUpComponent,
+    canActivate: [AuthGuardService] 
   },
   {
     path: 'student/specific',
-    loadChildren: './student/specific/specific.module#SpecificModule'
+    loadChildren: 'student/specific/specific.module#SpecificModule'
   },
+  /*{
+    path: 'teacher/specific',
+    loadChildren: './teacher/specific/specific.module#SpecificModule'
+  },*/
   {
     path: '**',
     component: PageNotFoundComponent

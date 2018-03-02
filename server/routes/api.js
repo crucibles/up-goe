@@ -28,7 +28,10 @@ let response = {
 };
 
 // to be edited for functions regarding requests for courses
-// api/courses
+/**
+ * api/courses
+ * Create by: Cedric Alvaro
+ */
 router.get('/courses', (req, res) => {
     connection((db) => {
         const myDB = db.db('up-goe-db');
@@ -48,7 +51,7 @@ router.get('/courses', (req, res) => {
 /*
 ** api/login
 ** Created by Cedric Alvaro
-** 11 Jan 2018 - At latest by Donevir Hynson
+** Modified last: 11 Jan 2018 by Donevir Hynson
 */
 router.post('/login', (req, res) => {
     connection((db) => {
@@ -74,7 +77,10 @@ router.post('/login', (req, res) => {
     });
 });
 
-// api/quests
+/**
+ * api/quests
+ * Create by: Cedric Alvaro
+ */
 router.get('/quests', (req, res) => {
 
     connection((db) => {
@@ -93,46 +99,23 @@ router.get('/quests', (req, res) => {
 
 });
 
-// api/commentposts
-router.get('/commentposts', (req, res) => {
-    console.log("im in and searching the posts");
+// Haven't implemented fully the logic yet to search and sort.
+/**
+ * api/posts
+ * Create by: Cedric Alvaro
+ */
+router.get('/posts', (req, res) => {
     var myObjArr = [];
 
     connection((db) => {
         const myDB = db.db('up-goe-db');
-        console.log(req.query.class);
 
         myDB.collection('posts')
-            .find(ObjectID(req.query.class))
+            .find()
             .toArray()
-            .then((sections) => {
-                console.log(sections);
-                var myObjArr = [];
-                var myObj = {};
-
-                async.forEach(sections, processEachSection, afterAllSection);
-
-                function processEachSection(section, callback) {
-                    myDB.collection('courses')
-                        .find(ObjectID(section.course_id))
-                        .toArray()
-                        .then((course) => {
-                            myObj["section"] = section;
-                            myObj["course_name"] = course[0].course_name;
-                            myObjArr.push(myObj);
-                            callback();
-                        }, reason => {
-                            callback(reason);
-                        })
-
-                }
-
-                function afterAllSection(err) {
-                    response.data = myObjArr;
-                    res.json(myObjArr);
-                }
-
-
+            .then((posts) => {
+                response.data = posts;
+                res.json(posts);
             })
             .catch((err) => {
                 sendError(err, res);
@@ -142,20 +125,20 @@ router.get('/commentposts', (req, res) => {
 
 });
 
-// api/sections/search
+/**
+ * api/search
+ * Create by: Cedric Alvaro
+ */
 router.get('/search', (req, res) => {
-    console.log("im in and searching the section");
     var myObjArr = [];
 
     connection((db) => {
         const myDB = db.db('up-goe-db');
-        console.log(req.query.class);
 
         myDB.collection('sections')
             .find(ObjectID(req.query.class))
             .toArray()
             .then((sections) => {
-                console.log(sections);
                 var myObjArr = [];
                 var myObj = {};
 
@@ -191,7 +174,10 @@ router.get('/search', (req, res) => {
 
 });
 
-// api/sections
+/**
+ * api/sections
+ * Create by: Cedric Alvaro
+ */
 router.get('/sections', (req, res) => {
     var myObjArr = [];
 
@@ -243,7 +229,10 @@ router.get('/sections', (req, res) => {
 
 });
 
-//  api/sections/quests
+/**
+ * api/sections/quests
+ * Create by: Cedric Alvaro
+ */
 router.get('/sections/quests', (req, res) => {
 
     connection((db) => {
@@ -361,7 +350,10 @@ router.post('/signup', (req, res) => {
     });
 });
 
-// api/users
+/**
+ * api/users
+ * Create by: Cedric Alvaro
+ */
 router.get('/users', (req, res) => {
     connection((db) => {
         const myDB = db.db('up-goe-db');

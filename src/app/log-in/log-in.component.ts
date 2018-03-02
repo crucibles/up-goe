@@ -12,13 +12,16 @@ import {
 } from '@angular/forms';
 
 import { 
-    Router 
+    Router, ActivatedRoute 
 } from '@angular/router';
 
 // Application imports
 import { 
     UserService 
 } from 'shared/services';
+import { AlertService } from 'shared/services/alert.service';
+import { ToastsManager } from 'ng2-toastr';
+import { User } from 'shared/models';
 
 @Component({
     selector: 'log-in',
@@ -26,18 +29,29 @@ import {
     styleUrls: ['./log-in.component.css']
 })
 export class LogInComponent implements OnInit {
+    public signupForm: FormGroup;
+    
+    returnUrl: string;
     private loginForm: FormGroup;
     private warning: boolean;
 
     constructor(
         formBuilder: FormBuilder,
         private userService: UserService,
-        private router: Router
+        private router: Router,
+        private route: ActivatedRoute,
+        private alertService: AlertService,
+        private toastr: ToastsManager
     ) {
         this.loginForm = formBuilder.group({
             email: [null, Validators.email],
             password: null
         });
+        
+    }
+
+    ngOnInit() {
+        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || 'student/general/select-course';
         this.warning = false;
     }
 
@@ -45,13 +59,20 @@ export class LogInComponent implements OnInit {
         let email = this.loginForm.value.email;
         let password = this.loginForm.value.password;
 
-        this.userService.logIn(email, password).subscribe(user => {
+        this.userService.logIn(email, password)
+        .subscribe(
+            user => {
             if (user) {
-                this.router.navigate(['student/general/select-course']);
+                user = new User(user);
+                this.toastr.success("You are succesfully logged in!", "Welcome "+ user.getUserFirstName());
+                this.router.navigateByUrl(this.returnUrl);
             } else {
                 console.log("User does not exists!");
                 this.warning = true;
             }
+        }, error => {
+            // login failed so display error
+            this.alertService.error(error);
         });
     }
 
@@ -73,8 +94,5 @@ export class LogInComponent implements OnInit {
 
     get password() {
         return this.loginForm.get('password') as FormControl;
-    }
-
-    ngOnInit() {
     }
 }

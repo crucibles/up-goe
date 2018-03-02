@@ -17,7 +17,8 @@ import {
 import {
     CommentPostService,
     PageService,
-    UserService
+    UserService,
+    SectionService
 } from 'shared/services';
 
 @Component({
@@ -29,13 +30,14 @@ export class GenNewsComponent implements OnInit {
   
     m: string;
     commentPosts: CommentPost[];
-    posters: User[];
+    posters: User[] = [];
     
 
     constructor(
         private commentPostService: CommentPostService,
         private pageService: PageService,
         private userService: UserService,
+        private sectionService: SectionService,
         private router: Router
     ) {
         this.pageService.isProfilePage(false);
@@ -46,11 +48,17 @@ export class GenNewsComponent implements OnInit {
     }
 
 	/**
-	 * Gets the commentposts of the current user
-	 * @description Gets the commentposts of current user by adding the obtained commentpost into
-	 * 'commentposts' array
+	 * Getting the overall commentposts for the student
+	 * @description Gets the commentposts of the current user for the general news page
+	 * @returns array of commentposts
 	 */
     getAllCommentPost() {
+        this.commentPostService.getUserPosts(this.sectionService.getCurrentUserSections()).subscribe(commentPosts => {
+            console.log(commentPosts);
+            this.commentPosts = commentPosts;
+            this.posters[0] = new User(this.userService.getCurrentUser());
+        })
+
         //AHJ: Unimplemented
         /*this.commentPostService.getSectionPosts("5a3807410d1126321c11e5ee").subscribe(commentPosts => {
             //chooses the commentposts that are main posts (ignores comments)

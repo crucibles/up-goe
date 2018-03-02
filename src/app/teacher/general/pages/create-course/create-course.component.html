@@ -1,0 +1,97 @@
+<!-- input button for hiding/showing sidetab-->
+<input type="checkbox" id="addButton" name="" value="" (click)="clickMenuButton()" [checked]="isShowSideTab" />
+
+<div class=container>
+
+	<!-- floating add button - the displayed button for hiding/showing button-->
+	<label for="addButton" class="floating-button">
+		<i class="fa fa-plus plus-sign"></i>
+	</label>
+
+	<!-- the side tab -->
+	<ul class="vert-tab">
+
+
+		<!-- Sidetab Label-->
+		<li style="font-weight: bold">
+			Create a Course
+		</li>
+
+		<!-- User infomation -->
+		<form class="form-horizontal" [formGroup]="sectionForm" (ngSubmit)="submitCourseSection()">
+			<!-- User personal information -->
+			<li> Course Name: </li>
+			<li>
+				<input type="text" formControlName="courseName" class="information-input remove-border" />
+			</li>
+			<li> Course Description:</li>
+			<li>
+				<input type="text" formControlName="courseDescription" class="information-input" [class.remove-border]="!isEditing" />
+			</li>
+			<li> Section: </li>
+			<li>
+				<input type="text" formControlName="courseSection" class="information-input" [class.remove-border]="!isEditing" />
+			</li>
+			<li> Type:
+				<select formControlName="sectionType">
+					<option>
+						Lecture
+					</option>
+					<option>
+						Laboratory
+					</option>
+				</select>
+			</li>
+			<!-- <li>
+				<input id="lec" type="radio" />
+				<label for="lec">Lecture</label>
+				<input id="lab" type="radio" />
+				<label for="lab">Lab</label>
+			</li> -->
+			<li>Scheduled Day:
+				<li>
+					<label formArrayName="scheduleDays" style="margin-right: 5px" *ngFor="let day of scheduleDaysArray.controls; let i = index">
+						<ng-container [formGroupName]="i">
+							<input type="checkbox" formControlName="isChecked">
+						</ng-container>
+						{{scheduleDays[i].day.slice(0,3)}}
+					</label>
+				</li>
+				<li>Schedule Time:</li>
+				<ng-container formArrayName="scheduleDays" *ngFor="let day of scheduleDaysArray.controls; let i = index">
+					<ng-container [formGroupName]="i">
+						<li *ngIf="sectionForm.controls.scheduleDays.controls[i].controls.isChecked.value">
+							{{scheduleDays[i].day}}
+							From:
+							<timepicker formControlName="minTime"></timepicker>
+							To:
+							<timepicker formControlName="maxTime"></timepicker>
+						</li>
+					</ng-container>
+				</ng-container>
+				<li></li>
+
+				<!-- Edit button -->
+				<li style="text-align: right">
+					<!-- submit button (if done editing)-->
+					<button class="btn btn-primary" (click)=isDayChecked()>
+						Reset
+					</button>
+
+					<!-- edit button (if user wants to edit their information) -->
+					<button type="submit" class="btn btn-primary" [disabled]="!sectionForm.valid || !isDayChecked()">
+						Submit
+					</button>
+				</li>
+
+				<li></li>
+				<li></li>
+				<li></li>
+				<li></li>
+				<li></li>
+
+		</form>
+		<!-- end of user information (for general profile) -->
+
+	</ul>
+</div>

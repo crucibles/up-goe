@@ -66,9 +66,9 @@ export class GenSidetabComponent implements OnInit {
 	questClicked: Quest;
 	//for progress bar; 
 	defaultPBClass: string = 'progress-bar progress-bar-striped';
-	progressBarClass: string[];
-	questTimePercentage: string[];
-	questTimeDisplay: string[];
+	progressBarClass: string[] = [];
+	questTimePercentage: string[] = [];
+	questTimeDisplay: string[] = [];
 	//for quest modal
 	bsModalRef: BsModalRef;
 
@@ -98,7 +98,7 @@ export class GenSidetabComponent implements OnInit {
 		private router: Router
 	) {
 		this.image = imageDir + "not-found.jpg";
-		this.getUser();
+		this.setUser();
 		this.initializeForm();
 	}
 
@@ -135,7 +135,7 @@ export class GenSidetabComponent implements OnInit {
 	 * in the sidetab; personal information are displayed on general-profile page while 
 	 * section quests are for other pages except general-profile page
 	 */
-	getUser(): void {
+	setUser(): void {
 		this.currentUser = this.userService.getCurrentUser();
 		this.image = this.currentUser.getUserPhoto();
 	}
@@ -162,6 +162,7 @@ export class GenSidetabComponent implements OnInit {
 	 * @param user_id the id of the user that asks for the list of quests
 	 */
 	getQuests(user_id): void {
+		//AHJ: unimplemented; get quest by section; not sure... this may be okay as is 
 		this.questService.getUserJoinedQuests(user_id)
 			.subscribe(quests => {
 				this.quests = quests.map(quest => new Quest(quest));
@@ -194,13 +195,13 @@ export class GenSidetabComponent implements OnInit {
 		}
 	}
 
-	submitQuest() {
+	submitQuest(questId: String) {
 		//AHJ: unimplemented
 		console.log("'" + this.questClicked.getQuestTitle() + "' submitted!");
 		this.bsModalRef.hide();
 	}
 
-	abandonQuest() {
+	abandonQuest(questId: String) {
 		console.log("'" + this.questClicked.getQuestTitle() + "' abandoned :(");
 		//AHJ: unimplemented
 		this.bsModalRef.hide();
@@ -246,25 +247,35 @@ export class GenSidetabComponent implements OnInit {
 	/**
 	 * Changes the time displays in the progress bar and sets the width of the progress bar
 	 */
+	// timeDisplays() {
+	// 	let string: string = "";
+
+	// 	this.questTimeDisplay = [];
+	// 	this.questTimePercentage = [];
+	// 	setInterval(() => {
+	// 		for (let i = 0; i < this.quests.length; i++) {
+	// 			let timePerc: number = 100 - this.timeDiff(this.quests[i].getQuestEndTimeDate(), new Date()) / this.timeDiff(this.quests[i].getQuestEndTimeDate(), this.quests[i].getQuestStartTimeDate()) * 100;
+	// 			let totalMinRem: number = this.timeDiff(this.quests[i].getQuestEndTimeDate(), new Date());
+	// 			let hourRem: number = Math.floor(totalMinRem / 1000 / 60 / 60);
+
+	// 			this.toggleClass(hourRem, i);
+	// 			string = this.getTimeLabel(totalMinRem, hourRem);
+	// 			if (totalMinRem <= 0) {
+	// 				timePerc = 100;
+	// 			}
+
+	// 			this.questTimeDisplay[i] = string;
+	// 			this.questTimePercentage[i] = timePerc.toString() + '%';
+	// 		}
+	// 	}, 1000);
+	// }
 	timeDisplays() {
 		let string: string = "";
-
-		this.questTimeDisplay = [];
-		this.questTimePercentage = [];
 		setInterval(() => {
 			for (let i = 0; i < this.quests.length; i++) {
-				let timePerc: number = 100 - this.timeDiff(this.quests[i].getQuestEndTimeDate(), new Date()) / this.timeDiff(this.quests[i].getQuestEndTimeDate(), this.quests[i].getQuestStartTimeDate()) * 100;
-				let totalMinRem: number = this.timeDiff(this.quests[i].getQuestEndTimeDate(), new Date());
-				let hourRem: number = Math.floor(totalMinRem / 1000 / 60 / 60);
-
-				this.toggleClass(hourRem, i);
-				string = this.getTimeLabel(totalMinRem, hourRem);
-				if (totalMinRem <= 0) {
-					timePerc = 100;
-				}
-
-				this.questTimeDisplay[i] = string;
-				this.questTimePercentage[i] = timePerc.toString() + '%';
+				this.progressBarClass[i] = this.quests[i].getQuestProgressBarClass();
+				this.questTimeDisplay[i] = this.quests[i].getQuestTimeLabel();
+				this.questTimePercentage[i] = this.quests[i].getQuestTimePercentage();
 			}
 		}, 1000);
 	}
