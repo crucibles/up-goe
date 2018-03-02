@@ -1,3 +1,40 @@
-<p>
-  gen-profile works!
-</p>
+<form>
+	<div id="title" class="row row-fluid">
+		<h3 class="col-md-10">Personal Information</h3>
+		<h5 class="col-md-2 clickable">Edit</h5>
+	</div>
+
+
+	<table *ngIf="currentUser">
+		<tbody>
+			<tr>
+				<td>First Name:</td>
+				<td>{{this.currentUser.getUserFirstName()}}</td>
+			</tr>
+			<tr>
+				<td>Middle Name:</td>
+				<td>{{this.currentUser.getUserMiddleName()}}</td>
+			</tr>
+			<tr>
+				<td>Last Name:</td>
+				<td>{{this.currentUser.getUserLastName()}}</td>
+			</tr>
+			<tr>
+				<td>Birthdate:</td>
+				<td>{{this.currentUser.getUserFormattedBirthdate()}}</td>
+			</tr>
+			<tr>
+				<td>Contact No.:</td>
+				<td>{{this.currentUser.getUserContactNo()}}</td>
+			</tr>
+			<tr>
+				<td>School ID:</td>
+				<td>{{this.currentUser.getUserSchoolId()}}</td>
+			</tr>
+			<tr>
+				<td>E-mail Address:</td>
+				<td>{{this.currentUser.getUserEmail()}}</td>
+			</tr>
+		</tbody>
+	</table>
+</form>

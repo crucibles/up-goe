@@ -166,7 +166,7 @@ export class User {
   }
 
   getUserSchoolId() {
-    return this.user_school_id;
+    return this.user_school_id? this.user_school_id: "";
   }
 
   getUserSecurityQuestion() {

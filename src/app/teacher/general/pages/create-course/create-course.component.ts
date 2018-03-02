@@ -15,12 +15,13 @@ import {
 
 // Application Imports
 import {
-	User
+	User, Section, Course
 } from 'shared/models';
 
 import {
 	PageService,
-	UserService
+	UserService,
+	SectionService
 } from 'shared/services';
 
 @Component({
@@ -53,6 +54,7 @@ export class CreateCourseComponent implements OnInit {
 		private elementRef: ElementRef,
 		private formBuilder: FormBuilder,
 		private pageService: PageService,
+		private sectionService: SectionService,
 		private userService: UserService
 	) {
 		this.getUser();
@@ -143,7 +145,13 @@ export class CreateCourseComponent implements OnInit {
 	}
 
 	submitCourseSection() {
-		console.log(this.sectionForm.value);
+		let newSection: Section = new Section();
+		newSection.setSection("", this.sectionForm.value.courseSection, [], this.currentUser.getUserFullName(), [], [], []);
+		let newCourse: Course = new Course();
+		newCourse.setCourse(this.sectionForm.value.courseName, this.sectionForm.value.courseDescription);
+		console.log(newCourse);
+		//AHJ: unimplemented; use section service to add section and course to the database
+		//this.sectionService.createSection(section);
 	}
 
 	isDayChecked() {
