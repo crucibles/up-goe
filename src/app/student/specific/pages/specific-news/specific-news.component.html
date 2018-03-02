@@ -5,41 +5,41 @@
 
   <div class="side-body">
     <div class="container">
-      <div class="row">
-
+      <div *ngIf="commentPosts" class="row">
         <div class="col-sm-offset-1 col-sm-8" *ngFor="let post of commentPosts; let i = index">
-          <div class="panel panel-white post panel-shadow">
-            <div class="post-heading">
-              <div class="pull-left image">
-                <img [src]="posters[i].getUserPhoto()" class="img-circle avatar" alt="user profile image">
-              </div>
-              <div class="pull-left meta">
-                <div class="title h5">
-                  <a href="#">
-                    <b>{{this.posters[i].getFullName()}}</b>
-                  </a>
-                  made a post.
+          <ng-container *ngIf="posters[i]">
+            <div class="panel panel-white post panel-shadow">
+              <div class="post-heading">
+                <div class="pull-left image">
+                  <img [src]="posters[i].getUserPhoto()" class="img-circle avatar" alt="user profile image">
                 </div>
-                <h6 class="text-muted time">{{this.displayTimeDate(post.getPostDate())}}</h6>
-              </div>
-            </div>
-            <div class="post-description">
-              <p>{{post.getPostContent()}}</p>
-              <br class="clear" />
-              <div class="action-box" style="padding-top: 20px" *ngIf="post.post_comments && post.post_comments.length != 0">
-                <div id="app" class="comments">
-                  <article *ngFor="let comment_id of post.post_comments; let j = index">
-                    <ng-container *ngIf="comments[i][j]">
-                      <img id="profile-photo" [src]="commenters[i][j].getUserPhoto()" />
-                      <h4>
-                        <a href="#">{{this.commenters? this.commenters[i][j].getUserFullName(): ""}}</a>
-                        <h6 class="text-muted time">{{displayTimeDate(this.comments[i][j].getPostDate())}}</h6>
-                        <p>{{this.comments[i][j].getPostContent()}}</p>
-                      </h4>
-                    </ng-container>
-                  </article>
+                <div class="pull-left meta">
+                  <div class="title h5">
+                    <a href="#">
+                      <b>{{this.posters[i].getUserFullName()}}</b>
+                    </a>
+                    made a post.
+                  </div>
+                  <h6 class="text-muted time">{{this.displayTimeDate(post.getPostDate())}}</h6>
                 </div>
-                <!--<div id="app" class="comments">
+              </div>
+              <div class="post-description">
+                <p>{{post.getPostContent()}}</p>
+                <br class="clear" />
+                <div class="action-box" style="padding-top: 20px" *ngIf="post.post_comments && post.post_comments.length != 0">
+                  <div id="app" class="comments">
+                    <article *ngFor="let comment_id of post.post_comments; let j = index">
+                      <ng-container *ngIf="comments[i][j]">
+                        <img id="profile-photo" [src]="commenters[i][j].getUserPhoto()" />
+                        <h4>
+                          <a href="#">{{this.commenters? this.commenters[i][j].getUserFullName(): ""}}</a>
+                          <h6 class="text-muted time">{{displayTimeDate(this.comments[i][j].getPostDate())}}</h6>
+                          <p>{{this.comments[i][j].getPostContent()}}</p>
+                        </h4>
+                      </ng-container>
+                    </article>
+                  </div>
+                  <!--<div id="app" class="comments">
                   <article>
                     <img id="profile-photo" src="https://en.gravatar.com/userimage/18343163/3fd908393aedf6423ec12cacec9a1f50.jpg?size=200" />
                     <h4>
@@ -87,48 +87,48 @@
                       account. You should also see that I wrote in a thank you introduction with your location.</p>
                   </article>
                 </div>-->
-              </div>
-              <div class="action-box" style="padding-top: 20px">
-                <div *ngIf="!post.getCommentable()">
-                  You cannot comment to this post.
                 </div>
-                <div *ngIf="post.getCommentable()" class="widget-area no-padding blank">
-                  <div class="status-upload">
-                    <div>
-                      <textarea [(ngModel)]="commentContent[i]" placeholder="Reply to this post..."></textarea>
-                      <ul>
-                        <li>
-                          <a title="" tooltip="'Audio'" data-placement="bottom" data-original-title="Audio">
-                            <i class="fa fa-music"></i>
-                          </a>
-                        </li>
-                        <li>
-                          <a title="" tooltip="'Video'" data-placement="bottom" data-original-title="Video">
-                            <i class="fa fa-video-camera"></i>
-                          </a>
-                        </li>
-                        <li>
-                          <a title="" tooltip="'Sound Record'" data-placement="bottom" data-original-title="Sound Record">
-                            <i class="fa fa-microphone"></i>
-                          </a>
-                        </li>
-                        <li>
-                          <a title="" tooltip="'Picture'" data-placement="bottom" data-original-title="Picture">
-                            <i class="fa fa-picture-o"></i>
-                          </a>
-                        </li>
-                      </ul>
-                      <button [disabled]="!commentContent || commentContent.length == 0" type="submit" class="btn btn-success green" (click)=submitComment(i)>
-                        <i class="fa fa-share"></i> Submit</button>
-                    </div>
+                <div class="action-box" style="padding-top: 20px">
+                  <div *ngIf="!post.getCommentable()">
+                    You cannot comment to this post.
                   </div>
-                  <!-- Status Upload  -->
+                  <div *ngIf="post.getCommentable()" class="widget-area no-padding blank">
+                    <div class="status-upload">
+                      <div>
+                        <textarea [(ngModel)]="commentContent[i]" placeholder="Reply to this post..."></textarea>
+                        <ul>
+                          <li>
+                            <a title="" tooltip="'Audio'" data-placement="bottom" data-original-title="Audio">
+                              <i class="fa fa-music"></i>
+                            </a>
+                          </li>
+                          <li>
+                            <a title="" tooltip="'Video'" data-placement="bottom" data-original-title="Video">
+                              <i class="fa fa-video-camera"></i>
+                            </a>
+                          </li>
+                          <li>
+                            <a title="" tooltip="'Sound Record'" data-placement="bottom" data-original-title="Sound Record">
+                              <i class="fa fa-microphone"></i>
+                            </a>
+                          </li>
+                          <li>
+                            <a title="" tooltip="'Picture'" data-placement="bottom" data-original-title="Picture">
+                              <i class="fa fa-picture-o"></i>
+                            </a>
+                          </li>
+                        </ul>
+                        <button [disabled]="!commentContent || commentContent.length == 0" type="submit" class="btn btn-success green" (click)=submitComment(i)>
+                          <i class="fa fa-share"></i> Submit</button>
+                      </div>
+                    </div>
+                    <!-- Status Upload  -->
+                  </div>
+                  <!-- Widget Area -->
                 </div>
-                <!-- Widget Area -->
-              </div>
-              <br class="clear" />
+                <br class="clear" />
 
-              <!--<div class="stats">
+                <!--<div class="stats">
                 <a href="#" class="btn btn-default stat-item">
                   <i class="fa fa-thumbs-up icon"></i>2
                 </a>
@@ -137,8 +137,9 @@
                 </a>
               </div>-->
 
+              </div>
             </div>
-          </div>
+          </ng-container>
         </div>
 
 

@@ -43,20 +43,20 @@ const specificRoutes: Routes = [
     component: SpecificComponent,
     children: [
       {
-        path: 'specific-profile',
+        path: 'specific-profile/',
         loadChildren: 'student/general/general.module#GeneralModule',
         component: GenSelcourseComponent
       },
       {
-        path: 'specific-news',
+        path: 'specific-news/',
         component: GenSelcourseComponent
       },
       {
-        path: 'specific-my-course',
+        path: 'specific-my-course/',
         component: GenSelcourseComponent
       },
       {
-        path: 'specific-quest-map',
+        path: 'specific-quest-map/',
         component: GenSelcourseComponent
       },
       {
