@@ -52,7 +52,7 @@ export class UserService {
         private http: HttpClient,
         private router: Router,
         private cookieService: CookieService
-    ) { 
+    ) {
         this.currentUser = new User(JSON.parse(localStorage.getItem("currentUser")));
     }
 
@@ -168,7 +168,7 @@ export class UserService {
 
     getSecurityQuestions() {
         const url = this.securityQuestionsUrl;
-        return this.http.get(url,{}).pipe(
+        return this.http.get(url, {}).pipe(
             tap(data => {
                 return data;
             })

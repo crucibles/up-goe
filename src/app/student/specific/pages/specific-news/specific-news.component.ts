@@ -69,8 +69,10 @@ export class SpecificNewsComponent implements OnInit {
 	ngOnInit() {
 		this.setDefault();
 		this.route.paramMap.subscribe(params => {
+			console.warn(params);
 			this.section_id = params.get('sectionId');
 			this.getUser();
+			console.log(this.currentUser);
 			this.getAllCommentPosts();
 			let subscription = this.commentObservable.subscribe(value => {
 				this.appendComments(value);
@@ -85,7 +87,7 @@ export class SpecificNewsComponent implements OnInit {
 
 	getUser() {
 		//return this function once working okay
-		this.currentUser = this.userService.getCurrentUser();
+		this.currentUser = new User(JSON.parse(localStorage.getItem("currentUser")));
 	}
 
 	/**
@@ -100,6 +102,7 @@ export class SpecificNewsComponent implements OnInit {
 		this.commentPostService.getSectionPosts(this.section_id).subscribe(newCommentPosts => {
 			//converts received commentposts into CommentPost class
 			if (newCommentPosts) {
+				console.warn(newCommentPosts);
 				let commentPosts = newCommentPosts.map(posts => new CommentPost(posts));
 
 				//stores only main/parent commentposts to 'commentPosts' variable
@@ -112,12 +115,16 @@ export class SpecificNewsComponent implements OnInit {
 
 				//obtain users/posters of each commentposts and stores it to 'posters' variable
 				this.commentPosts.forEach((post, index) => {
+					this.commenters[index] = [];
+					this.comments[index]= [];
 					this.posters = [];
 					this.userService.getUser(post.getUserId()).subscribe(user => {
+						console.warn(user);
 						let newUser = new User(user);
 						this.posters[index] = newUser;
 					});
 				});
+				console.warn(this.posters);
 				this.getAllComments();
 			}
 		});
@@ -156,9 +163,10 @@ export class SpecificNewsComponent implements OnInit {
 		this.commentPostService.getCommentPost(comment_info.comment_id)
 			.subscribe(comment => {
 				//obtain user/commenter of the commentpost and stores it to 'commenters' variable
-				this.userService.getUser(comment.getUserId()).subscribe(user => {
+				let newComment = new CommentPost(comment);
+				
+				this.userService.getUser(newComment.getUserId()).subscribe(user => {
 					let newUser = new User(user);
-					let newComment = new CommentPost(comment);
 
 					this.commenters[comment_info.parent_index].push(newUser);
 					this.comments[comment_info.parent_index].push(newComment);
@@ -191,7 +199,7 @@ export class SpecificNewsComponent implements OnInit {
 					}
 				);
 				//update checking
-				this.commentPostService.getSectionPosts("11").subscribe();
+				this.commentPostService.getSectionPosts("5a3807410d1126321c11e5ee").subscribe();
 			});
 		});
 
