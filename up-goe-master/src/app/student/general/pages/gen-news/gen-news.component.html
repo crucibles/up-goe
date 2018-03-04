@@ -1,0 +1,52 @@
+<!--Top Navigation Bar-->
+
+<body>
+  <!--Side Tab-->
+
+  <div class="side-body">
+    <div class="container">
+      <div class="row row-edited">
+
+        <div class="col-sm-offset-1 col-sm-8" *ngFor="let post of commentPosts; let i = index">
+          <div class="panel panel-white post panel-shadow" (click)="openSectionPage(post.section_id)">
+            <div class="post-heading">
+              <div class="pull-left image">
+                <img src="{{this.posters[i].getUserPhoto()}}" class="img-circle avatar" alt="user profile image">
+              </div>
+              <div class="pull-left meta">
+                <div class="title h5">
+                  <a href="#">
+                    <b>{{this.posters? this.posters[i].getUserFullName(): ""}}</b>
+                  </a>
+                  made a post.
+                </div>
+                <h6 class="text-muted time">{{this.displayTimeDate(post.post_date)}}</h6>
+              </div>
+            </div>
+            <div class="post-description">
+              <p>{{post.post_content}}</p>
+              <br class="clear" />
+              <div class="action-box" style="padding-top: 20px">
+                <a>Click on this post to show comments or reply to this post...</a>
+              </div>
+              <br class="clear" />
+
+              <!--<div class="stats">
+                <a href="#" class="btn btn-default stat-item">
+                  <i class="fa fa-thumbs-up icon"></i>2
+                </a>
+                <a href="#" class="btn btn-default stat-item">
+                  <i class="fa fa-thumbs-down icon"></i>12
+                </a>
+              </div>-->
+
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+
+</body>

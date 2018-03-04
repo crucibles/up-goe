@@ -1,0 +1,70 @@
+<ng-container *ngIf="sections">
+	<!--Search bar-->
+	<div class="search-container">
+		<form (keydown.enter)="search()">
+			<input type="text" placeholder="Search.." [(ngModel)]="course_search" name="course_search">
+			<button type="submit">
+				<i class="fa fa-search"></i>
+			</button>
+		</form>
+	</div>
+
+	<!--Course/Search-Result List Table (also contains search result list)-->
+	<table id="hor-zebra" summary="Course List">
+		<thead>
+			<tr>
+				<th scope="col">Course Name</th>
+				<th scope="col">Section</th>
+				<th scope="col">Instructor</th>
+				<th scope="col">Status</th>
+				<th scope="col" *ngIf="isSearching && course_found && course_found.length != 0">Options</th>
+			</tr>
+		</thead>
+		<tbody>
+			<!--Shows if user is searching-->
+			<ng-container *ngIf="isSearching">
+				<!--Shows if no course of same code/name has been found-->
+				<tr *ngIf="!course_found || course_found.length == 0">
+					<td colspan="3" style="text-align: center">Course not found!</td>
+				</tr>
+				<!--Shows if course has been found-->
+				<tr *ngIf="course_found && course_found.length != 0" [class.odd]="true">
+					<td>
+						{{this.course_found[0].course_name}}
+					</td>
+					<td>{{this.course_found[0].section.section_name}}</td>
+					<td>{{this.course_found[0].section.instructor}}</td>
+					<td>{{this.getStatusOfSection(this.course_found[0].section.students)}}</td>
+					<td>
+						<a *ngIf="this.getStatusOfSection(this.course_found[0].section.students) != 'Enrolled'" class=clickable>Add</a>
+					</td>
+				</tr>
+			</ng-container>
+			<ng-container *ngIf="!isSearching">
+				<!--Shows if user has no enrolled course-->
+				<tr *ngIf="!sections || sections.length == 0">
+					<td colspan="3" style="text-align: center">You have no course enrolled yet!
+						<br>Input your class code now.
+					</td>
+				</tr>
+				<!--AHJ: Fix zebra form-->
+				<ng-container *ngIf="sections != null && sections.length != 0">
+					<tr *ngFor="let section of sections; let i = index;" [class.odd]="i%2 == 0">
+						<ng-container>
+							<td>
+								<a class="clickable" (click)=openSectionPage(section.section._id)>{{section.course_name}}</a>
+							</td>
+							<td>{{section.section.section_name}}</td>
+							<td>{{section.section.instructor}}</td>
+							<td>{{this.getStatusOfSection(section.section.students)}}</td>
+						</ng-container>
+					</tr>
+				</ng-container>
+			</ng-container>
+		</tbody>
+	</table>
+</ng-container>
+
+<ng-container *ngIf="!sections">
+	Loading...
+</ng-container>
