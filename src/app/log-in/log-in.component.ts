@@ -15,13 +15,23 @@ import {
     Router, ActivatedRoute 
 } from '@angular/router';
 
+// 3rd Party imports
+import { 
+    AlertService 
+} from 'shared/services/alert.service';
+
+import { 
+    ToastsManager 
+} from 'ng2-toastr';
+
+import { 
+    User 
+} from 'shared/models';
+
 // Application imports
 import { 
     UserService 
 } from 'shared/services';
-import { AlertService } from 'shared/services/alert.service';
-import { ToastsManager } from 'ng2-toastr';
-import { User } from 'shared/models';
 
 @Component({
     selector: 'log-in',
@@ -62,18 +72,19 @@ export class LogInComponent implements OnInit {
         this.userService.logIn(email, password)
         .subscribe(
             user => {
-            if (user) {
-                user = new User(user);
-                this.toastr.success("You are succesfully logged in!", "Welcome "+ user.getUserFirstName());
-                this.router.navigateByUrl(this.returnUrl);
-            } else {
-                console.log("User does not exists!");
-                this.warning = true;
-            }
-        }, error => {
+                if (user) {
+                    user = new User(user);
+                    this.toastr.success("You are succesfully logged in!", "Welcome "+ user.getUserFirstName());
+                    this.router.navigateByUrl(this.returnUrl);
+                } else {
+                    console.log("User does not exists!");
+                    this.warning = true;
+                }
+            }, error => {
             // login failed so display error
             this.alertService.error(error);
-        });
+            }
+        );
     }
 
     keyPressed() {
@@ -85,7 +96,7 @@ export class LogInComponent implements OnInit {
     }
 
     userChangePassword() {
-        this.router.navigate(['**']);
+        this.router.navigate(['change-password']);
     }
 
     get email() {

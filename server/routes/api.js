@@ -3,6 +3,8 @@ const router = express.Router();
 const MongoClient = require('mongodb').MongoClient;
 const ObjectID = require('mongodb').ObjectID;
 const async = require('async');
+const nodemailer = require('nodemailer');
+const xoauth2 = require('xoauth2');
 /*
 *   Note: queries are string, body can be object because of bodyParsers;
 */
@@ -449,6 +451,59 @@ router.get('/securityQuestions', (req, res) => {
                 q = questions[0].question;
                 response.data = questions[0].question;
                 res.json(questions);
+            })
+            .catch((err) => {
+                sendError(err, res);
+            });
+    });
+});
+
+// Initialization of the nodemailer transport or the 'sender'.
+var transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        type: 'OAuth2',
+        user: 'donevirdensinghynson@gmail.com',
+        clientId: '252696106568-ra91i6p5akda1sv1lvbd0u9s0576nq05.apps.googleusercontent.com',
+        clientSecret: 'fhz3ClKjFYWqqh3T4oEyTgZw',
+        refreshToken: '1/t3ZXrgNJSymigHcL2Wc3qwnTK7cgyskwfVWKy4_9eV0'
+    }
+});
+
+/**
+ * api/userReqPass
+ * Created by Donevir Hynson
+ */
+router.post('/userReqPass', (req, res) => {
+    connection((db) => {
+        const myDB = db.db('up-goe-db');
+        myDB.collection('users')
+            .findOne({
+                user_email: req.body.user_email
+            })
+            .then((user) => {
+                if(user) {
+                    // Mail content that is to be sent.
+                    var mailOptions = {
+                        from: 'Don <donevirdensinghynson@gmail.com>',
+                        to: req.body.user_email,
+                        subject: 'Nodemailer test',
+                        text: 'Hello world Part 2!'
+                    };
+                    
+                    // Sends the email.
+                    transporter.sendMail(mailOptions, function(err, res) {
+                        if(err) {
+                            console.log(err);
+                        } else {
+                            console.log('Email sent');
+                        }
+                    });
+                    res.json(user);
+                } else {
+                    console.log("User is not found");
+                    res.json(false);
+                }
             })
             .catch((err) => {
                 sendError(err, res);

@@ -25,6 +25,10 @@ import {
   AuthGuardService 
 } from 'shared/services/auth-guard.service';
 
+import {
+  ChangePasswordComponent
+} from './change-password/change-password.component';
+
 
 const routes: Routes = [
   {
@@ -50,6 +54,10 @@ const routes: Routes = [
     path: 'sign-up',
     component: SignUpComponent,
     canActivate: [AuthGuardService] 
+  },
+  {
+    path: 'change-password',
+    component: ChangePasswordComponent
   },
   {
     path: 'student/specific',
