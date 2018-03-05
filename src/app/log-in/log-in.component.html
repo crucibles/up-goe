@@ -1,76 +1,76 @@
-<br>
-<h2>Login</h2>
-<br>
-<br>
-
-<form class="form-horizontal" 
-    [formGroup]="loginForm" 
-    (ngSubmit)="logIn()"
-    (keyup)="keyPressed()">
-
-    <div *ngIf="warning">
-        <small class="form-text text-danger">Email or password is invalid.</small>
-        <br>
+<div class="container">
+    <div class="container-header">
+        <h2>Login</h2>
     </div>
-    
-    <table>
-        <tr>
-            <td>
-                <label for="email">Email:</label>
-            </td>
-            <td>
-                <div class="form-group">
-                    <div class="col-sm-10">
-                        <input type="text" 
-                            class="form-control" 
-                            formControlName="email" 
-                            id="email" 
-                            placeholder="Input your email here"
-                            required>
+
+    <form class="form-horizontal" 
+        [formGroup]="loginForm" 
+        (ngSubmit)="logIn()"
+        (keyup)="keyPressed()">
+
+        <div *ngIf="warning">
+            <small class="form-text text-danger">Email or password is invalid.</small>
+            <br>
+        </div>
+        
+        <table>
+            <tr>
+                <td>
+                    <label for="email">Email:</label>
+                </td>
+                <td>
+                    <div class="form-group">
+                        <div class="col-sm-10">
+                            <input type="text" 
+                                class="form-control" 
+                                formControlName="email" 
+                                id="email" 
+                                placeholder="Input your email here"
+                                required>
+                        </div>
                     </div>
-                </div>
-            </td>
-        </tr>
+                </td>
+            </tr>
 
-        <tr>
-            <td>
-                <label for="password">Password:</label>
-            </td>
-            <td>
-                <div class="form-group">
-                    <div class="col-sm-10">
-                        <input type="password" 
-                            class="form-control" 
-                            formControlName="password" 
-                            id="password" 
-                            placeholder="Password"
-                            required>
+            <tr>
+                <td>
+                    <label for="password">Password:</label>
+                </td>
+                <td>
+                    <div class="form-group">
+                        <div class="col-sm-10">
+                            <input type="password" 
+                                class="form-control" 
+                                formControlName="password" 
+                                id="password" 
+                                placeholder="Password"
+                                required>
+                        </div>
                     </div>
-                </div>
-            </td>
-        </tr>
+                </td>
+            </tr>
 
-        <tr>
-            <td colspan="2">
-                <br>    
-                <button type="submit" 
-                        class="btn btn-primary"
-                        [disabled]="loginForm.invalid"
-                        style="width: 100%;">Login
-                </button>
-            </td>
-        </tr>
+            <tr>
+                <td colspan="2">
+                    <br>    
+                    <button type="submit" 
+                            class="btn btn-primary"
+                            [disabled]="loginForm.invalid">Login
+                    </button>
+                </td>
+            </tr>
 
-        <tr>
-            <td colspan="2">
-                <br>
-                <div class="linkers">
-                    <p>Forgot password?</p> <p class="hyperlinks" (click)="userChangePassword()">Click here.</p>
-                </div>
-                <div class="linkers">
-                    <p>No account yet?</p> <p class="hyperlinks" (click)="userSignUp()">Sign up here.</p>
-                </div>
-            </td>
-        </tr>
-    </table>
-</form>
+            <tr>
+                <td colspan="2">
+                    <br>
+                    <div class="linkers">
+                        <p>Forgot password?</p> <p class="hyperlinks" (click)="userChangePassword()">Click here.</p>
+                    </div>
+                    <div class="linkers">
+                        <p>No account yet?</p> <p class="hyperlinks" (click)="userSignUp()">Sign up here.</p>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
