@@ -1,10 +1,151 @@
-<h3>
-  Items
-  <!-- floating add button - the displayed button for hiding/showing button-->
-  <label for="addButton" class="floating-button">
-    <i class="fa fa-plus plus-sign"></i>
-  </label>
-</h3>
-<h3>
-  Badges
-</h3>
+<section class="items">
+	<h3>
+		Items
+		<!-- floating add button - the displayed button for hiding/showing button-->
+		<label for="addButton" class="floating-button clickable" (click)="openItemModal(itemTemplate)">
+			<i class="fa fa-plus plus-sign"></i>
+		</label>
+	</h3>
+	<ng-container *ngIf="!items">
+		No Items Available
+	</ng-container>
+	<ng-container *ngIf="items && items.length > 0">
+		<div *ngFor="let item of items" class="item">
+			<div class="row">
+				<div class="img col-md-3">
+					<img class="item-img" [src]="item.getItemPhoto()" />
+				</div>
+				<div class="item-text col-md-9">
+					Item Name: {{item.getItemName()}}
+					<br/>
+				</div>
+			</div>
+			<div class="item-description row">
+				[Description] {{item.getItemDescription()}}
+				<br/>
+			</div>
+		</div>
+	</ng-container>
+</section>
+
+
+
+<section class="badges">
+	<h3>
+		Badges
+		<!-- floating add button - the displayed button for hiding/showing button-->
+		<label for="addButton" class="floating-button clickable">
+			<i class="fa fa-plus plus-sign"></i>
+		</label>
+	</h3>
+	<ng-container *ngIf="!badges || badges.length == 0">
+		No Badges Available
+	</ng-container>
+	<ng-container *ngIf="badges && badges.length > 0">
+		<div *ngFor="let badge of badges" class="badge">
+			<div class="row">
+				<div class="img col-md-3">
+					<img class="badge-img" [src]="badge.getBadgePhoto()" />
+				</div>
+				<div class="badge-text col-md-9">
+					Badge Name: {{badge.getBadgeName()}}
+					<br/>
+				</div>
+			</div>
+			<div class="badge-description row">
+				[Description] {{badge.getBadgeDescription()}}
+				<br/>
+			</div>
+		</div>
+	</ng-container>
+</section>
+
+
+<!-- Modal Template for Item-->
+<ng-template #itemTemplate>
+
+	<!--Modal Header-->
+	<div class="modal-header">
+		<h4 class="modal-title">Add Item</h4>
+		<button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+
+	<!--Modal Body-->
+	<div class="modal-body">
+		<form class="form-horizontal" [formGroup]="sectionForm" (ngSubmit)="submitCourseSection()">
+			<ul>
+				<!-- User personal information -->
+				<li> Course Name: </li>
+				<li>
+					<input type="text" formControlName="courseName" class="information-input remove-border" />
+				</li>
+				<li> Course Description:</li>
+				<li>
+					<input type="text" formControlName="courseDescription" class="information-input" [class.remove-border]="!isEditing" />
+				</li>
+				<li> Section: </li>
+				<li>
+					<input type="text" formControlName="courseSection" class="information-input" [class.remove-border]="!isEditing" />
+				</li>
+				<li> Type:
+					<select formControlName="sectionType">
+						<option>
+							Lecture
+						</option>
+						<option>
+							Laboratory
+						</option>
+					</select>
+				</li>
+				<!-- <li>
+				<input id="lec" type="radio" />
+				<label for="lec">Lecture</label>
+				<input id="lab" type="radio" />
+				<label for="lab">Lab</label>
+			</li> -->
+				<li>Scheduled Day:
+					<li>
+						<label formArrayName="scheduleDays" style="margin-right: 5px" *ngFor="let day of scheduleDaysArray.controls; let i = index">
+							<ng-container [formGroupName]="i">
+								<input type="checkbox" formControlName="isChecked">
+							</ng-container>
+							{{scheduleDays[i].day.slice(0,3)}}
+						</label>
+					</li>
+					<li>Schedule Time:</li>
+					<ng-container formArrayName="scheduleDays" *ngFor="let day of scheduleDaysArray.controls; let i = index">
+						<ng-container [formGroupName]="i">
+							<li *ngIf="sectionForm.controls.scheduleDays.controls[i].controls.isChecked.value">
+								{{scheduleDays[i].day}} From:
+								<timepicker formControlName="minTime"></timepicker>
+								To:
+								<timepicker formControlName="maxTime"></timepicker>
+							</li>
+						</ng-container>
+					</ng-container>
+					<li></li>
+
+					<!-- Edit button -->
+					<li style="text-align: right">
+						<!-- submit button (if done editing)-->
+						<button class="btn btn-primary" (click)=isDayChecked()>
+							Reset
+						</button>
+
+						<!-- edit button (if user wants to edit their information) -->
+						<button type="submit" class="btn btn-primary" [disabled]="!sectionForm.valid || !isDayChecked()">
+							Submit
+						</button>
+					</li>
+
+					<li></li>
+					<li></li>
+					<li></li>
+					<li></li>
+					<li></li>
+			</ul>
+		</form>
+	</div>
+</ng-template>
