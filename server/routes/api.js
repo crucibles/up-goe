@@ -102,12 +102,15 @@ router.get('/quests', (req, res) => {
  * Create by: Cedric Alvaro
  */
 router.get('/posts', (req, res) => {
+    console.log(req.method);
     var myObjArr = [];
 
     connection((db) => {
         const myDB = db.db('up-goe-db');
 
-        myDB.collection('posts')
+        if(req.method == "GET"){
+            console.log(req.param);
+            myDB.collection('posts')
             .find()
             .toArray()
             .then((posts) => {
@@ -120,6 +123,25 @@ router.get('/posts', (req, res) => {
             .catch((err) => {
                 sendError(err, res);
             })
+        } else if(req.method == POST){
+            console.log(req.body);
+
+            myDB.collection('posts')
+            .insertOne()
+            .then((posts) => {
+                if (posts) {
+                    console.log(posts);
+                    response.data = posts;
+                    res.json(posts);
+                }
+            })
+            .catch((err) => {
+                sendError(err, res);
+            })
+        }
+        
+
+        
 
     });
 
@@ -193,6 +215,7 @@ router.get('/sections', (req, res) => {
                 }
             })
             .toArray()
+            // editing the section body adding a course name in it.
             .then((sections) => {
 
                 async.forEach(sections, processEachSection, afterAllSection);
