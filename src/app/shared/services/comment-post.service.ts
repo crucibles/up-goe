@@ -1,7 +1,8 @@
 //Core Imports
 import {
   HttpClient,
-  HttpHeaders
+  HttpHeaders,
+  HttpParams
 } from '@angular/common/http';
 
 import {
@@ -25,12 +26,12 @@ import {
 
 //Application Imports
 import {
-  CommentPost, 
+  CommentPost,
   Student
 } from 'shared/models'
 
-import { 
-  SectionService 
+import {
+  SectionService
 } from './section.service';
 
 const httpOptions = {
@@ -131,7 +132,7 @@ export class CommentPostService {
    */
   getCommentPost(postId: number): Observable<CommentPost> {
     const url = this.postUrl;
-    
+
     //const url = `${this.postUrl}/?id=${postId}`;
     return this.http.get<CommentPost>(url).pipe(
       map(posts => posts[0]), // returns a {0|1} element array
@@ -175,9 +176,13 @@ export class CommentPostService {
 
     console.log(enrolled);
     const url = this.postUrl;
+    let params = new HttpParams()
+      .set('sections', sections);
 
-    //const url = `${this.postUrl}/?section_id=${section_id}`;
-    return this.http.get<CommentPost[]>(url).pipe(
+
+    return this.http.get<CommentPost[]>(url, {
+      params: params
+    }).pipe(
       tap(posts => {
         const outcome = posts ? 'fetched commentposts ' + sections : 'did not find commentposts ' + sections;
         console.log(outcome);

@@ -6,7 +6,7 @@ const async = require('async');
 const nodemailer = require('nodemailer');
 const xoauth2 = require('xoauth2');
 /*
-*
+*   Note: queries are string, body can be object because of bodyParsers;
 */
 const connection = (closure) => {
     return MongoClient.connect('mongodb://localhost:27017/up-goe-db', (err, db) => {
@@ -104,24 +104,86 @@ router.get('/quests', (req, res) => {
  * Create by: Cedric Alvaro
  */
 router.get('/posts', (req, res) => {
+    console.log(req.method);
     var myObjArr = [];
+    var counter = 0;
+    var index = 0;
 
     connection((db) => {
         const myDB = db.db('up-goe-db');
 
-        myDB.collection('posts')
-            .find()
-            .toArray()
-            .then((posts) => {
-                if (posts) {
-                    console.log(posts);
-                    response.data = posts;
-                    res.json(posts);
-                }
-            })
-            .catch((err) => {
-                sendError(err, res);
-            })
+        if (req.method == "GET") {
+            console.log("he");
+            if (req.query.sections) {
+                let sections = req.query.sections.split(",");
+                console.log(sections);
+                myDB.collection('posts')
+                    .find()
+                    .toArray()
+                    .then((posts) => {
+
+                        async.forEach(posts, processPosts, afterAll);
+
+                        function processPosts(post, callback) {
+
+                            myDB.collection('posts')
+                                .find({
+                                    section_id: sections[counter]
+                                })
+                                .toArray()
+                                .then((post) => {
+                                    console.log(post.length);
+                                    Promise.all(post[0].section_id).then(() => {
+                                        myObjArr.push(post[index]);
+                                        counter++;
+                                        index++;
+                                    })
+                                    callback(null);
+                                });
+
+                        }
+
+                        function afterAll(err) {
+                            console.log(myObjArr);
+                            response.data = myObjArr;
+                            res.json(myObjArr);
+                        }
+
+                    })
+                    .catch((err) => {
+                        sendError(err, res);
+                    })
+
+            } // add for specific..
+
+            myDB.collection('posts')
+                .find()
+                .toArray()
+                .then((x) => {
+                    res.json(x);
+                })
+
+
+
+        } else if (req.method == POST) {
+            console.log(req.body);
+
+            myDB.collection('posts')
+                .insertOne()
+                .then((posts) => {
+                    if (posts) {
+                        console.log(posts);
+                        response.data = posts;
+                        res.json(posts);
+                    }
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                })
+        }
+
+
+
 
     });
 
@@ -195,6 +257,7 @@ router.get('/sections', (req, res) => {
                 }
             })
             .toArray()
+            // editing the section body adding a course name in it.
             .then((sections) => {
 
                 async.forEach(sections, processEachSection, afterAllSection);

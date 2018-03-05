@@ -10,7 +10,7 @@ import {
 
 //Application Imports
 import {
-    CommentPost, 
+    CommentPost,
     User
 } from 'shared/models'
 
@@ -27,11 +27,12 @@ import {
     styleUrls: ['./gen-news.component.css']
 })
 export class GenNewsComponent implements OnInit {
-  
+
     m: string;
     commentPosts: CommentPost[];
     posters: User[] = [];
-    
+    allPostersLoaded: Promise<boolean>[] = [];
+
 
     constructor(
         private commentPostService: CommentPostService,
@@ -53,31 +54,39 @@ export class GenNewsComponent implements OnInit {
 	 * @returns array of commentposts
 	 */
     getAllCommentPost() {
-        this.commentPostService.getUserPosts(this.sectionService.getCurrentUserSections()).subscribe(commentPosts => {
+        console.log(this.sectionService.getCurrentUserSections());
+        console.log(this.sectionService.getCurrentUserSections());  
+        this.commentPostService.getUserPosts(this.sectionService.getCurrentUserEnrolledSectionIds()).subscribe(commentPosts => {
+
             console.log(commentPosts);
-            this.commentPosts = commentPosts;
-            this.posters[0] = new User(this.userService.getCurrentUser());
-        })
 
-        //AHJ: Unimplemented
-        /*this.commentPostService.getSectionPosts("5a3807410d1126321c11e5ee").subscribe(commentPosts => {
-            //chooses the commentposts that are main posts (ignores comments)
-            this.commentPosts = commentPosts ? commentPosts.filter(post => post.getIsPost() == true) : [];
+            this.commentPosts = commentPosts.filter(function (x) {
+                let y = new CommentPost(x);
+                if (y.getIsPost() == true) {
+                    return y;
+                }
+            });
 
-            //sorts the commentpost by date (from recent 'on top' to oldest)
+            // sorts the commentpost by date (from recent 'on top' to oldest)
             this.commentPosts.sort((a, b) => {
-                return this.getTime(b.getPostDate()) - this.getTime(a.getPostDate());
+                let x = new CommentPost(a);
+                let y = new CommentPost(b);
+                return this.getTime(x.getPostDate()) - this.getTime(y.getPostDate());
             });
 
             //gets the poster of each commentpost
             this.commentPosts.forEach((post, index) => {
-                this.posters = [];
-                this.userService.getUser(post.getUserId()).subscribe(user => {
-                    //let mname: string = user.getUserId() ? user.getUserMname()[0] + "." : ""
-                    this.posters[index] = new User(user);
+                let posts = new CommentPost(post);
+                this.userService.getUser(posts.getUserId()).subscribe(user => {
+                    let nextUser = new User(user);
+                    this.posters[index] = nextUser;
+                    this.allPostersLoaded[index] = Promise.resolve(true);
                 });
             });
-        });*/
+            
+            
+
+        })
     }
 
 
@@ -89,8 +98,8 @@ export class GenNewsComponent implements OnInit {
 	 * @param section_id 
 	 */
     openSectionPage(section_id: string) {
-		this.pageService.openSectionPage(section_id);
-	}
+        this.pageService.openSectionPage(section_id);
+    }
 
 	/**
 	 * Returns time of the received date; useful for undefined checking 
