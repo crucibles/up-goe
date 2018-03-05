@@ -4,7 +4,7 @@ const MongoClient = require('mongodb').MongoClient;
 const ObjectID = require('mongodb').ObjectID;
 const async = require('async');
 /*
-*
+*   Note: queries are string, body can be object because of bodyParsers;
 */
 const connection = (closure) => {
     return MongoClient.connect('mongodb://localhost:27017/up-goe-db', (err, db) => {
@@ -104,44 +104,84 @@ router.get('/quests', (req, res) => {
 router.get('/posts', (req, res) => {
     console.log(req.method);
     var myObjArr = [];
+    var counter = 0;
+    var index = 0;
 
     connection((db) => {
         const myDB = db.db('up-goe-db');
 
-        if(req.method == "GET"){
-            console.log(req.param);
+        if (req.method == "GET") {
+            console.log("he");
+            if (req.query.sections) {
+                let sections = req.query.sections.split(",");
+                console.log(sections);
+                myDB.collection('posts')
+                    .find()
+                    .toArray()
+                    .then((posts) => {
+
+                        async.forEach(posts, processPosts, afterAll);
+
+                        function processPosts(post, callback) {
+
+                            myDB.collection('posts')
+                                .find({
+                                    section_id: sections[counter]
+                                })
+                                .toArray()
+                                .then((post) => {
+                                    console.log(post.length);
+                                    Promise.all(post[0].section_id).then(() => {
+                                        myObjArr.push(post[index]);
+                                        counter++;
+                                        index++;
+                                    })
+                                    callback(null);
+                                });
+
+                        }
+
+                        function afterAll(err) {
+                            console.log(myObjArr);
+                            response.data = myObjArr;
+                            res.json(myObjArr);
+                        }
+
+                    })
+                    .catch((err) => {
+                        sendError(err, res);
+                    })
+
+            } // add for specific..
+
             myDB.collection('posts')
-            .find()
-            .toArray()
-            .then((posts) => {
-                if (posts) {
-                    console.log(posts);
-                    response.data = posts;
-                    res.json(posts);
-                }
-            })
-            .catch((err) => {
-                sendError(err, res);
-            })
-        } else if(req.method == POST){
+                .find()
+                .toArray()
+                .then((x) => {
+                    res.json(x);
+                })
+
+
+
+        } else if (req.method == POST) {
             console.log(req.body);
 
             myDB.collection('posts')
-            .insertOne()
-            .then((posts) => {
-                if (posts) {
-                    console.log(posts);
-                    response.data = posts;
-                    res.json(posts);
-                }
-            })
-            .catch((err) => {
-                sendError(err, res);
-            })
+                .insertOne()
+                .then((posts) => {
+                    if (posts) {
+                        console.log(posts);
+                        response.data = posts;
+                        res.json(posts);
+                    }
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                })
         }
-        
 
-        
+
+
 
     });
 
