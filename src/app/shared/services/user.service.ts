@@ -70,15 +70,16 @@ export class UserService {
     /**
      * @summary: Obtains a user from server by id
      */
-    getUser(id: string): Observable<User> {
+    getUser(id: string): any {
         const url = this.userUrl;
         let params = new HttpParams().set('id', id);
-        return this.http.get<User[]>(url, {
+        return this.http.get<User>(url, {
             params: params
         })
             .pipe(
             map(users => users[0]), // returns a {0|1} element array
             tap(h => {
+                console.log(h);
                 const outcome = h ? 'fetched user ' + id : 'did not find user ' + id;
             }),
             catchError(this.handleError<User>(`getUser user_id=${id}`))
