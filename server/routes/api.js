@@ -3,8 +3,10 @@ const router = express.Router();
 const MongoClient = require('mongodb').MongoClient;
 const ObjectID = require('mongodb').ObjectID;
 const async = require('async');
+const nodemailer = require('nodemailer');
+const xoauth2 = require('xoauth2');
 /*
-*
+*   Note: queries are string, body can be object because of bodyParsers;
 */
 const connection = (closure) => {
     return MongoClient.connect('mongodb://localhost:27017/up-goe-db', (err, db) => {
@@ -39,8 +41,10 @@ router.get('/courses', (req, res) => {
             .find()
             .toArray()
             .then((courses) => {
-                response.data = courses;
-                res.json(courses);
+                if (courses) {
+                    response.data = courses;
+                    res.json(courses);
+                }
             })
             .catch((err) => {
                 sendError(err, res);
@@ -62,14 +66,9 @@ router.post('/login', (req, res) => {
                 user_password: req.body.user_password
             })
             .then((user) => {
-                if(user) {
-                    user.user_password = '';
-                    response.data = user;
-                    res.json(user);
-                } else {
-                    res.json(false);
-                }
-                
+                user.user_password = '';
+                response.data = user;
+                res.json(user);
             })
             .catch((err) => {
                 sendError(err, res);
@@ -105,21 +104,86 @@ router.get('/quests', (req, res) => {
  * Create by: Cedric Alvaro
  */
 router.get('/posts', (req, res) => {
+    console.log(req.method);
     var myObjArr = [];
+    var counter = 0;
+    var index = 0;
 
     connection((db) => {
         const myDB = db.db('up-goe-db');
 
-        myDB.collection('posts')
-            .find()
-            .toArray()
-            .then((posts) => {
-                response.data = posts;
-                res.json(posts);
-            })
-            .catch((err) => {
-                sendError(err, res);
-            })
+        if (req.method == "GET") {
+            console.log("he");
+            if (req.query.sections) {
+                let sections = req.query.sections.split(",");
+                console.log(sections);
+                myDB.collection('posts')
+                    .find()
+                    .toArray()
+                    .then((posts) => {
+
+                        async.forEach(posts, processPosts, afterAll);
+
+                        function processPosts(post, callback) {
+
+                            myDB.collection('posts')
+                                .find({
+                                    section_id: sections[counter]
+                                })
+                                .toArray()
+                                .then((post) => {
+                                    console.log(post.length);
+                                    Promise.all(post[0].section_id).then(() => {
+                                        myObjArr.push(post[index]);
+                                        counter++;
+                                        index++;
+                                    })
+                                    callback(null);
+                                });
+
+                        }
+
+                        function afterAll(err) {
+                            console.log(myObjArr);
+                            response.data = myObjArr;
+                            res.json(myObjArr);
+                        }
+
+                    })
+                    .catch((err) => {
+                        sendError(err, res);
+                    })
+
+            } // add for specific..
+
+            myDB.collection('posts')
+                .find()
+                .toArray()
+                .then((x) => {
+                    res.json(x);
+                })
+
+
+
+        } else if (req.method == POST) {
+            console.log(req.body);
+
+            myDB.collection('posts')
+                .insertOne()
+                .then((posts) => {
+                    if (posts) {
+                        console.log(posts);
+                        response.data = posts;
+                        res.json(posts);
+                    }
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                })
+        }
+
+
+
 
     });
 
@@ -193,6 +257,7 @@ router.get('/sections', (req, res) => {
                 }
             })
             .toArray()
+            // editing the section body adding a course name in it.
             .then((sections) => {
 
                 async.forEach(sections, processEachSection, afterAllSection);
@@ -325,7 +390,7 @@ router.post('/signup', (req, res) => {
             })
             .then((count) => {
                 // If count returns true (>=1), then user email already exists
-                if(count) {
+                if (count) {
                     console.log("Duplicate email detected: " + newUserObj.user_email);
                     response.data = newUserObj.user_email;
                     // Returns false to signal that user already exists
@@ -386,6 +451,59 @@ router.get('/securityQuestions', (req, res) => {
                 q = questions[0].question;
                 response.data = questions[0].question;
                 res.json(questions);
+            })
+            .catch((err) => {
+                sendError(err, res);
+            });
+    });
+});
+
+// Initialization of the nodemailer transport or the 'sender'.
+var transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        type: 'OAuth2',
+        user: 'donevirdensinghynson@gmail.com',
+        clientId: '252696106568-ra91i6p5akda1sv1lvbd0u9s0576nq05.apps.googleusercontent.com',
+        clientSecret: 'fhz3ClKjFYWqqh3T4oEyTgZw',
+        refreshToken: '1/t3ZXrgNJSymigHcL2Wc3qwnTK7cgyskwfVWKy4_9eV0'
+    }
+});
+
+/**
+ * api/userReqPass
+ * Created by Donevir Hynson
+ */
+router.post('/userReqPass', (req, res) => {
+    connection((db) => {
+        const myDB = db.db('up-goe-db');
+        myDB.collection('users')
+            .findOne({
+                user_email: req.body.user_email
+            })
+            .then((user) => {
+                if(user) {
+                    // Mail content that is to be sent.
+                    var mailOptions = {
+                        from: 'Don <donevirdensinghynson@gmail.com>',
+                        to: req.body.user_email,
+                        subject: 'Nodemailer test',
+                        text: 'Hello world Part 2!'
+                    };
+                    
+                    // Sends the email.
+                    transporter.sendMail(mailOptions, function(err, res) {
+                        if(err) {
+                            console.log(err);
+                        } else {
+                            console.log('Email sent');
+                        }
+                    });
+                    res.json(user);
+                } else {
+                    console.log("User is not found");
+                    res.json(false);
+                }
             })
             .catch((err) => {
                 sendError(err, res);

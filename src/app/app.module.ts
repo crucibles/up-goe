@@ -68,11 +68,16 @@ import {
 	BrowserAnimationsModule
 } from '@angular/platform-browser/animations';
 
+import { 
+	ChangePasswordComponent 
+} from './change-password/change-password.component';
+
 @NgModule({
 	declarations: [
 		AppComponent,
 		LogInComponent,
-		SignUpComponent
+		SignUpComponent,
+		ChangePasswordComponent
 	],
 	imports: [
 		AppRoutingModule,

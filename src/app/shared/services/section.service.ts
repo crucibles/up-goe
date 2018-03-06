@@ -343,7 +343,9 @@ export class SectionService {
 	 * 
 	 * @returns array of enrolled sections of the student
 	 * array[i].course_name - the name of the section's course where the user is enrolled in
-	 * array[i].section     - enrolled sections and pending sections of the student 
+	 * array[i].section     - enrolled sections and pending sections of the student
+	 * 
+	 * @author Cedric Alvaro
 	 * 
 	 */
 	getUserEnrolledSections() {
@@ -361,6 +363,41 @@ export class SectionService {
 			if(this.multiFilter(section.section.students, filter).length){
 				console.log(section);
 				enrolledSections.push(section);
+			}
+
+		});
+
+		console.warn(enrolledSections);
+		return enrolledSections;
+
+	}
+
+	/**
+	 * Returns the array of enrolled sections of the student
+	 * 
+	 * @returns array of enrolled sections of the student only section ids
+	 * array[i].course_name - the name of the section's course where the user is enrolled in
+	 * array[i].section     - enrolled sections and pending sections of the student
+	 * 
+	 * @author Cedric Alvaro
+	 * 
+	 */
+	getCurrentUserEnrolledSectionIds() {
+		let currentUserId = this.userService.getCurrentUser().getUserId();
+
+		let filter = {
+			user_id: [currentUserId],
+			status: ["E"]
+		}
+
+		let enrolledSections = [];
+		
+		this.currentUserSections.map((section) => {
+
+			if(this.multiFilter(section.section.students, filter).length){
+				console.log(section);
+				console.log(section.section._id)
+				enrolledSections.push(section.section._id);
 			}
 
 		});

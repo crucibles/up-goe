@@ -13,3 +13,7 @@ nav {
         transition: bottom 0.5s;
     }
 }
+
+.nav-link:hover {
+    cursor: pointer;
+}

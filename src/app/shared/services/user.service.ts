@@ -46,13 +46,14 @@ export class UserService {
     private loginUrl = 'api/login';   // URL to: server/routes/api.js for login
     private signupUrl = 'api/signup'; // URL to: server/routes/api.js for sign up
     private securityQuestionsUrl = 'api/securityQuestions'; // URL to: server/routes/api.js for security questions
+    private userReqPassUrl = 'api/userReqPass'; // URL to: server/routes/api.js for user request password
     private currentUser: User;
 
     constructor(
         private http: HttpClient,
         private router: Router,
         private cookieService: CookieService
-    ) { 
+    ) {
         this.currentUser = new User(JSON.parse(localStorage.getItem("currentUser")));
     }
 
@@ -70,15 +71,16 @@ export class UserService {
     /**
      * @summary: Obtains a user from server by id
      */
-    getUser(id: string): Observable<User> {
+    getUser(id: string): any {
         const url = this.userUrl;
         let params = new HttpParams().set('id', id);
-        return this.http.get<User[]>(url, {
+        return this.http.get<User>(url, {
             params: params
         })
             .pipe(
             map(users => users[0]), // returns a {0|1} element array
             tap(h => {
+                console.log(h);
                 const outcome = h ? 'fetched user ' + id : 'did not find user ' + id;
             }),
             catchError(this.handleError<User>(`getUser user_id=${id}`))
@@ -168,7 +170,16 @@ export class UserService {
 
     getSecurityQuestions() {
         const url = this.securityQuestionsUrl;
-        return this.http.get(url,{}).pipe(
+        return this.http.get(url, {}).pipe(
+            tap(data => {
+                return data;
+            })
+        );
+    }
+
+    getUserReqPass(user_email: String) {
+        const url = this.userReqPassUrl;
+        return this.http.post(url, {user_email}).pipe(
             tap(data => {
                 return data;
             })
