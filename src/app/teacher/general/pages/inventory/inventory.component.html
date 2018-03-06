@@ -34,7 +34,7 @@
 	<h3>
 		Badges
 		<!-- floating add button - the displayed button for hiding/showing button-->
-		<label for="addButton" class="floating-button clickable">
+		<label for="addButton" class="floating-button clickable" (click)="openBadgeModal(badgeTemplate)">
 			<i class="fa fa-plus plus-sign"></i>
 		</label>
 	</h3>
@@ -73,79 +73,97 @@
 	</div>
 
 	<!--Modal Body-->
-	<div class="modal-body">
-		<form class="form-horizontal" [formGroup]="sectionForm" (ngSubmit)="submitCourseSection()">
-			<ul>
-				<!-- User personal information -->
-				<li> Course Name: </li>
-				<li>
-					<input type="text" formControlName="courseName" class="information-input remove-border" />
-				</li>
-				<li> Course Description:</li>
-				<li>
-					<input type="text" formControlName="courseDescription" class="information-input" [class.remove-border]="!isEditing" />
-				</li>
-				<li> Section: </li>
-				<li>
-					<input type="text" formControlName="courseSection" class="information-input" [class.remove-border]="!isEditing" />
-				</li>
-				<li> Type:
-					<select formControlName="sectionType">
-						<option>
-							Lecture
-						</option>
-						<option>
-							Laboratory
-						</option>
-					</select>
-				</li>
-				<!-- <li>
-				<input id="lec" type="radio" />
-				<label for="lec">Lecture</label>
-				<input id="lab" type="radio" />
-				<label for="lab">Lab</label>
-			</li> -->
-				<li>Scheduled Day:
-					<li>
-						<label formArrayName="scheduleDays" style="margin-right: 5px" *ngFor="let day of scheduleDaysArray.controls; let i = index">
-							<ng-container [formGroupName]="i">
-								<input type="checkbox" formControlName="isChecked">
-							</ng-container>
-							{{scheduleDays[i].day.slice(0,3)}}
-						</label>
-					</li>
-					<li>Schedule Time:</li>
-					<ng-container formArrayName="scheduleDays" *ngFor="let day of scheduleDaysArray.controls; let i = index">
-						<ng-container [formGroupName]="i">
-							<li *ngIf="sectionForm.controls.scheduleDays.controls[i].controls.isChecked.value">
-								{{scheduleDays[i].day}} From:
-								<timepicker formControlName="minTime"></timepicker>
-								To:
-								<timepicker formControlName="maxTime"></timepicker>
-							</li>
-						</ng-container>
-					</ng-container>
-					<li></li>
+	<form class="form-horizontal" [formGroup]="itemForm" (ngSubmit)="createItem()">
+		<div class="modal-body">
+			<div class="row">
+				<div class="col-md-3">
+					Item Image
+					<label for="custom-btn-upload" class="btn btn-warning btn-upload">Upload</label>
+					<input type="file" id="custom-btn-upload" accept="image/*" formControlName="itemImage" (change)="fileEvent($event)">
+				</div>
+				<div class="col-md-9 image-right">
+					<img class="item-img" [src]="imageUrl" />
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-3">
+					Item Name
+				</div>
+				<div class="col-md-9">
+					<input type="text" formControlName="itemName" class="information-input remove-border" />
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-3">
+					Item Effect #1
+				</div>
+				<div class="col-md-9">
+					<input type="text" formControlName="itemEffect1" class="information-input remove-border" />
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-3">
+					Item Effect #2
+				</div>
+				<div class="col-md-9">
+					<input type="text" formControlName="itemEffect2" class="information-input remove-border" />
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-3">
+					Item Effect #3
+				</div>
+				<div class="col-md-9">
+					<input type="text" formControlName="itemEffect3" class="information-input remove-border" />
+				</div>
+			</div>
+		</div>
+		<!-- Quest Modal Buttons -->
+		<div class="modal-footer">
+			<!-- shows submit & abandon buttons if user is a participant -->
+			<button type="submit" class="btn btn-success mr-auto">Create</button>
+			<button class="btn btn-danger" (click)="bsModalRef.hide()">Cancel</button>
+		</div>
+	</form>
+</ng-template>
 
-					<!-- Edit button -->
-					<li style="text-align: right">
-						<!-- submit button (if done editing)-->
-						<button class="btn btn-primary" (click)=isDayChecked()>
-							Reset
-						</button>
+<!-- Modal Template for Badge-->
+<ng-template #badgeTemplate>
 
-						<!-- edit button (if user wants to edit their information) -->
-						<button type="submit" class="btn btn-primary" [disabled]="!sectionForm.valid || !isDayChecked()">
-							Submit
-						</button>
-					</li>
-
-					<li></li>
-					<li></li>
-					<li></li>
-					<li></li>
-					<li></li>
-			</ul>
-		</form>
+	<!--Modal Header-->
+	<div class="modal-header">
+		<h4 class="modal-title">Add Badge</h4>
+		<button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
+			<span aria-hidden="true">&times;</span>
+		</button>
 	</div>
+
+	<form class="form-horizontal" [formGroup]="badgeForm" (ngSubmit)="createBadge()">
+		<!--Modal Body-->
+		<div class="modal-body">
+			<div class="row">
+				<div class="col-md-3">
+					Badge Image
+					<button class="btn btn-warning btn-upload">Upload</button>	
+				</div>
+				<div class="col-md-9 image-right">
+					<img class="item-img" [src]="'/assets/images/dark-sword.jpg'" />
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-3">
+					Badge Name
+				</div>
+				<div class="col-md-9">
+					<input type="text" formControlName="badgeName" class="information-input remove-border" />
+				</div>
+			</div>
+		</div>
+		<!-- Quest Modal Buttons -->
+		<div class="modal-footer">
+			<!-- shows submit & abandon buttons if user is a participant -->
+			<button type="submit" class="btn btn-success mr-auto">Create</button>
+			<button class="btn btn-danger" (click)="bsModalRef.hide()">Cancel</button>
+		</div>
+	</form>
 </ng-template>

@@ -5,6 +5,19 @@ import {
 	TemplateRef
 } from '@angular/core';
 
+import {
+	FormBuilder,
+	FormControl,
+	FormGroup,
+	Validators
+} from '@angular/forms';
+
+//Third-Party Imports
+import {
+	BsModalRef,
+	BsModalService
+} from 'ngx-bootstrap';
+
 //Application Imports
 import {
 	Badge,
@@ -18,7 +31,6 @@ import {
 	ItemService,
 	UserService
 } from 'shared/services';
-import { BsModalService, BsModalRef } from 'ngx-bootstrap';
 
 const ITEMS: any[] = [
 	{
@@ -111,12 +123,17 @@ const BADGES = [
 export class InventoryComponent implements OnInit {
 	//modal
 	private bsModalRef: BsModalRef;
+	private itemForm: FormGroup;
+	private badgeForm: FormGroup;
+	//url of uploaded image
+	private imageUrl: string = "";
 
 	currentUser: User;
 	items: Item[];
 	badges: Badge[];
 
 	constructor(
+		private formBuilder: FormBuilder,
 		private itemService: ItemService,
 		private modalService: BsModalService,
 		private userService: UserService
@@ -124,6 +141,48 @@ export class InventoryComponent implements OnInit {
 
 	ngOnInit() {
 		this.getUser();
+		this.initializeForm();
+	}
+
+	createBadge() {
+		console.log("description:" + this.badgeForm.value.badgeName);
+
+	}
+
+	createItem() {
+		console.log("description:" + this.itemForm.value.itemName);
+
+	}
+
+	initializeForm() {
+		this.itemForm = this.formBuilder.group({
+			itemName: new FormControl("", Validators.required),
+			itemImage: new FormControl(),
+			itemEffect1: new FormControl("", Validators.required),
+			itemEffect2: new FormControl("", Validators.required),
+			itemEffect3: new FormControl("", Validators.required),
+			itemDescription: new FormControl("", Validators.required)
+		});
+		this.badgeForm = this.formBuilder.group({
+			badgeName: new FormControl("", Validators.required),
+			badgeImage: new FormControl("", Validators.required),
+			badgeDescription: new FormControl("", Validators.required)
+		});
+	}
+
+	public fileEvent($event: any) {
+		if ($event.target.files && $event.target.files[0]) {
+			const fileSelected: File = $event.target.files[0];
+			var reader = new FileReader();
+
+			reader.readAsDataURL($event.target.files[0]); // read file as data url
+
+			reader.onload = ($event) => { // called once readAsDataURL is completed
+				let target: any = $event.target;
+				let content: string = target.result;
+				this.imageUrl = content;
+			}
+		}
 	}
 
 	/**
@@ -167,6 +226,16 @@ export class InventoryComponent implements OnInit {
 	openItemModal(itemTemplate: TemplateRef<any>) {
 		console.log("here!");
 		this.bsModalRef = this.modalService.show(itemTemplate);
+	}
+
+	/**
+	 * Open item modal
+	 * @description Open 'Add Item' modal.
+	 * @param itemTemplate template
+	 */
+	openBadgeModal(badgeTemplate: TemplateRef<any>) {
+		console.log("here!");
+		this.bsModalRef = this.modalService.show(badgeTemplate);
 	}
 
 }
