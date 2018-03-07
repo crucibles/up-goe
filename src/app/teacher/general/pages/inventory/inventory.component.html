@@ -79,10 +79,10 @@
 				<div class="col-md-3">
 					Item Image
 					<label for="custom-btn-upload" class="btn btn-warning btn-upload">Upload</label>
-					<input type="file" id="custom-btn-upload" accept="image/*" formControlName="itemImage" (change)="fileEvent($event)">
+					<input type="file" id="custom-btn-upload" accept="image/*" formControlName="itemImage" (change)="itemImageEvent($event)">
 				</div>
 				<div class="col-md-9 image-right">
-					<img class="item-img" [src]="imageUrl" />
+					<img class="item-img" [src]="itemImgUrl" />
 				</div>
 			</div>
 			<div class="row">
@@ -144,10 +144,11 @@
 			<div class="row">
 				<div class="col-md-3">
 					Badge Image
-					<button class="btn btn-warning btn-upload">Upload</button>	
+					<label for="custom-btn-upload" class="btn btn-warning btn-upload">Upload</label>
+					<input type="file" id="custom-btn-upload" accept="image/*" formControlName="badgeImage" (change)="badgeImageEvent($event)">
 				</div>
 				<div class="col-md-9 image-right">
-					<img class="item-img" [src]="'/assets/images/dark-sword.jpg'" />
+					<img class="item-img" [src]="badgeImgUrl" />
 				</div>
 			</div>
 			<div class="row">

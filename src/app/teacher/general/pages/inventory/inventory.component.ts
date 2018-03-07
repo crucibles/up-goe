@@ -126,7 +126,8 @@ export class InventoryComponent implements OnInit {
 	private itemForm: FormGroup;
 	private badgeForm: FormGroup;
 	//url of uploaded image
-	private imageUrl: string = "";
+	private itemImgUrl: string = "";
+	private badgeImgUrl: string = "";
 
 	currentUser: User;
 	items: Item[];
@@ -170,7 +171,7 @@ export class InventoryComponent implements OnInit {
 		});
 	}
 
-	public fileEvent($event: any) {
+	public itemImageEvent($event: any) {
 		if ($event.target.files && $event.target.files[0]) {
 			const fileSelected: File = $event.target.files[0];
 			var reader = new FileReader();
@@ -180,7 +181,22 @@ export class InventoryComponent implements OnInit {
 			reader.onload = ($event) => { // called once readAsDataURL is completed
 				let target: any = $event.target;
 				let content: string = target.result;
-				this.imageUrl = content;
+				this.itemImgUrl = content;
+			}
+		}
+	}
+
+	public badgeImageEvent($event: any) {
+		if ($event.target.files && $event.target.files[0]) {
+			const fileSelected: File = $event.target.files[0];
+			var reader = new FileReader();
+
+			reader.readAsDataURL($event.target.files[0]); // read file as data url
+
+			reader.onload = ($event) => { // called once readAsDataURL is completed
+				let target: any = $event.target;
+				let content: string = target.result;
+				this.badgeImgUrl = content;
 			}
 		}
 	}
