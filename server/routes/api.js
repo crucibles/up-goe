@@ -485,10 +485,10 @@ router.post('/userReqPass', (req, res) => {
                 if(user) {
                     // Mail content that is to be sent.
                     var mailOptions = {
-                        from: 'Don <donevirdensinghynson@gmail.com>',
-                        to: req.body.user_email,
-                        subject: 'Nodemailer test',
-                        text: 'Hello world Part 2!'
+                        from: 'UPGOE Admin <donevirdensinghynson@gmail.com>',
+                        to: user.user_email,
+                        subject: 'Password Retrieval',
+                        text: 'Hi ' + user.user_fname + '. Your password is \'' + user.user_password + '\'.'
                     };
                     
                     // Sends the email.
@@ -499,7 +499,7 @@ router.post('/userReqPass', (req, res) => {
                             console.log('Email sent');
                         }
                     });
-                    res.json(user);
+                    res.json(user.user_email);
                 } else {
                     console.log("User is not found");
                     res.json(false);
