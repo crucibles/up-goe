@@ -1,0 +1,126 @@
+/*Header3 Design*/
+h3:after {
+    content:' ';
+    margin-top: 5px;
+    display:block;
+    width: 90%;
+    border:2px solid #d0d0d0;
+    border-radius:4px;
+    -webkit-border-radius:4px;
+    -moz-border-radius:4px;
+
+    box-shadow:inset 0 1px 1px rgba(0, 0, 0, .05);
+    -webkit-box-shadow:inset 0 1px 1px rgba(0, 0, 0, .05);
+    -moz-box-shadow:inset 0 1px 1px rgba(0, 0, 0, .05);
+}
+
+/* Floating Add Button*/
+.floating-button{
+    width: 35px;
+    height: 30px;
+    padding-bottom: 35px;
+	background-color: #1E90FF;
+	border-radius:10px;
+	text-align: center;
+    box-shadow: 2px 2px 3px #999;
+}
+
+.plus-sign{
+    font-size: 20px;
+    margin-bottom: 200px;
+    color:#FFF;
+}
+
+/*Badge and Item Section*/
+.badge .img .badge-img, .item .img .item-img{
+    height: 90px;
+    width: 90px;
+}
+
+.badge, .item{
+    float: left;
+    height: 200px;
+    width: 350px;
+    margin: 5px;
+    padding: 15px;
+    border: solid;
+    border-radius: 10px;
+    background: #000;
+    overflow-y: auto;
+    overflow-x: hidden;
+        
+}
+
+.badge-text, .item-text, .badge-description, .item-description{
+    float: left;
+    white-space: normal;
+    text-align: left;
+    padding-left: 30px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-style : normal;
+    font-size: 14px;
+    font-weight: normal;
+    font-variant: unset;
+    color: white;
+}
+
+.img {
+    text-align: left;
+    float: left;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.badge-description, .item-description{
+    text-align: left; 
+    padding: 20px; 
+    width: 340px; 
+    white-space: normal;
+}
+
+.items, .badges {
+    margin-bottom: 30px;
+    display: inline-block;
+}
+
+/*Badge and Item Modal*/
+.modal-header h4 {
+    margin: 0 auto;
+}
+
+.modal-body img {
+    max-width: 100%;
+    max-height: 100%;
+    height: auto;
+}
+
+.modal-body .student-badge{
+    text-align: center;
+}
+
+.modal-body .information-input {
+    width: 90%;
+}
+
+.modal-body .item-img{
+    margin: 10px 2px;
+    height: 100px;
+    width: 100px;
+}
+
+.modal-body .image-right, .modal-body .btn-upload {
+    display: block;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.modal-body .col-md-9, .modal-body .col-md-3 {
+    padding-right: 0;
+}
+
+.modal-body .row {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}

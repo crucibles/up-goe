@@ -13,6 +13,9 @@
  * @property item_ailment the item's ailment effects
  */
 export class Item {
+
+    imageDir: string = "/assets/images/";
+
     private _id: string;
     private item_type: string;
     private item_name: string;
@@ -76,7 +79,16 @@ export class Item {
     }
 
     getItemPhoto() {
-        return this.item_photo;
+        let image: string = "";
+
+        // if image does not exist or if user has not set an image
+        if (!this.item_photo || this.item_photo.length == 0) {
+            image = this.imageDir + "not-found.jpg";
+        } else {
+            image = this.imageDir + this.item_photo;
+        }
+
+        return image;
     }
 
     getItemDescription() {

@@ -13,6 +13,7 @@ export class Badge {
     imageDir: string = "/assets/images/";
 
     private _id: string;
+    private badge_name: string;
     private badge_photo: string;
     private badge_description: string;
     private badge_conditions: Conditions;
@@ -24,12 +25,14 @@ export class Badge {
     ) {
         if (badge) {
             this._id = badge._id;
+            this.badge_name = badge.badge_name? badge.badge_name: "";
             this.badge_photo = badge.badge_photo ? badge.badge_photo : "";
             this.badge_description = badge.badge_description ? badge.badge_description : "";
             this.badge_conditions = badge.badge_conditions ? new Conditions(badge.badge_conditions) : new Conditions();
             this.is_system = badge.is_system ? badge.is_system : false;
             this.badge_attainers = badge.badge_attainers ? badge.badge_attainers : [];
         } else {
+            this.badge_name = "";
             this.badge_photo = "";
             this.badge_description = "";
             this.badge_conditions = new Conditions();
@@ -39,12 +42,14 @@ export class Badge {
     }
 
     setBadge(
+        badge_name,
         badge_photo,
         badge_description,
         badge_conditions,
         is_system,
         badge_attainers
     ) {
+        this.badge_name = badge_name? badge_name : "";
         this.badge_photo = badge_photo ? badge_photo : "";
         this.badge_description = badge_description ? badge_description : "";
         this.badge_conditions = badge_conditions ? badge_conditions : new Conditions();
@@ -54,6 +59,10 @@ export class Badge {
 
     getBadgeId(): string {
         return this._id;
+    }
+
+    getBadgeName(): string {
+        return this.badge_name;
     }
 
     /**
@@ -90,6 +99,10 @@ export class Badge {
 
     setBadgeId(_id: string) {
         this._id = _id;
+    }
+
+    setBadgeName(badge_name: string){
+        this.badge_name = badge_name;
     }
 
     setBadgePhoto(badge_photo: string) {
