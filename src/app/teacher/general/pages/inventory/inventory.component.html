@@ -81,8 +81,11 @@
 					<label for="custom-btn-upload" class="btn btn-warning btn-upload">Upload</label>
 					<input type="file" id="custom-btn-upload" accept="image/*" formControlName="itemImage" (change)="itemImageEvent($event)">
 				</div>
-				<div class="col-md-9 image-right">
+				<div class="col-md-3 image-right">
 					<img class="item-img" [src]="itemImgUrl" />
+				</div>
+				<div class="col-md-6">
+					<span class="note">Note: Image displays best when of equal height and width.</span>
 				</div>
 			</div>
 			<div class="row">
@@ -147,8 +150,11 @@
 					<label for="custom-btn-upload" class="btn btn-warning btn-upload">Upload</label>
 					<input type="file" id="custom-btn-upload" accept="image/*" formControlName="badgeImage" (change)="badgeImageEvent($event)">
 				</div>
-				<div class="col-md-9 image-right">
+				<div class="col-md-3 image-right">
 					<img class="item-img" [src]="badgeImgUrl" />
+				</div>
+				<div class="col-md-6">
+					<span class="note">Note: Image displays best when of equal height and width.</span>
 				</div>
 			</div>
 			<div class="row">

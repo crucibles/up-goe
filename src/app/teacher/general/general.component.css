@@ -9,7 +9,7 @@ body {
     margin-left: 280px;
 }
 
-@media screen and (max-width: 765px) {
+@media screen and (max-width: 768px) {
     .side-body{
         margin-left: 40px;
         margin-top: 25px;
