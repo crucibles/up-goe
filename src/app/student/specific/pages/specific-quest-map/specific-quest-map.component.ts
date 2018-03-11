@@ -3,7 +3,8 @@ import {
 	Component,
 	OnInit,
 	ViewChild,
-	TemplateRef
+	TemplateRef,
+	Input
 } from '@angular/core';
 
 import {
@@ -19,9 +20,9 @@ import {
 
 //Application Imports
 import {
-	Quest, 
-	Section, 
-	SectionQuest, 
+	Quest,
+	Section,
+	SectionQuest,
 	User
 } from 'shared/models';
 
@@ -151,7 +152,7 @@ export class SpecificQuestMapComponent implements OnInit {
 
 	isParticipating(quest_id: string): boolean {
 		let isParticipant = this.currentSection.isQuestParticipant(this.currentUser.getUserId(), quest_id);
-		
+
 		return isParticipant;
 	}
 }

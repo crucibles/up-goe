@@ -66,6 +66,7 @@ router.post('/login', (req, res) => {
                 user_password: req.body.user_password
             })
             .then((user) => {
+                console.log("i found it");
                 user.user_password = '';
                 response.data = user;
                 res.json(user);
@@ -154,14 +155,16 @@ router.get('/posts', (req, res) => {
                         sendError(err, res);
                     })
 
-            } // add for specific..
+            } else {
+                myDB.collection('posts')
+                    .find()
+                    .toArray()
+                    .then((x) => {
+                        res.json(x);
+                    })
+            }
 
-            myDB.collection('posts')
-                .find()
-                .toArray()
-                .then((x) => {
-                    res.json(x);
-                })
+
 
 
 
@@ -475,14 +478,14 @@ var transporter = nodemailer.createTransport({
  * Created by Donevir Hynson
  */
 router.post('/userReqPass', (req, res) => {
-    connection((db) => {
+    /*connection((db) => {
         const myDB = db.db('up-goe-db');
         myDB.collection('users')
             .findOne({
                 user_email: req.body.user_email
             })
             .then((user) => {
-                if(user) {
+                if (user) {
                     // Mail content that is to be sent.
                     var mailOptions = {
                         from: 'Don <donevirdensinghynson@gmail.com>',
@@ -490,10 +493,10 @@ router.post('/userReqPass', (req, res) => {
                         subject: 'Nodemailer test',
                         text: 'Hello world Part 2!'
                     };
-                    
+
                     // Sends the email.
-                    transporter.sendMail(mailOptions, function(err, res) {
-                        if(err) {
+                    transporter.sendMail(mailOptions, function (err, res) {
+                        if (err) {
                             console.log(err);
                         } else {
                             console.log('Email sent');
@@ -508,7 +511,7 @@ router.post('/userReqPass', (req, res) => {
             .catch((err) => {
                 sendError(err, res);
             });
-    });
+    });*/
 });
 
 module.exports = router;
