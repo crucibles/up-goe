@@ -86,6 +86,16 @@ export class ItemService {
   }
 
   /**
+   * Gets the teacher's inventory
+   * @param teacher_id id of the teacher whose inventory items are to be retrieved
+   * 
+   * @returns {Item[]} array of items inside a teacher's inventor 
+   */
+  getTeacherInventoryItems(teacher_id){
+
+  }
+
+  /**
    * Gets the user's section inventory
    * @param user_id id of the user whose section inventory is to be retrieved
    * @param section_id id of the section where the user inventory is to be retrieved from

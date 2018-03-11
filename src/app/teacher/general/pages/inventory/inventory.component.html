@@ -1,0 +1,170 @@
+<section class="items">
+	<h3>
+		Items
+		<!-- floating add button - the displayed button for hiding/showing button-->
+		<label for="addButton" class="floating-button clickable" (click)="openItemModal(itemTemplate)">
+			<i class="fa fa-plus plus-sign"></i>
+		</label>
+	</h3>
+	<ng-container *ngIf="!items">
+		No Items Available
+	</ng-container>
+	<ng-container *ngIf="items && items.length > 0">
+		<div *ngFor="let item of items" class="item">
+			<div class="row">
+				<div class="img col-md-3">
+					<img class="item-img" [src]="item.getItemPhoto()" />
+				</div>
+				<div class="item-text col-md-9">
+					Item Name: {{item.getItemName()}}
+					<br/>
+				</div>
+			</div>
+			<div class="item-description row">
+				[Description] {{item.getItemDescription()}}
+				<br/>
+			</div>
+		</div>
+	</ng-container>
+</section>
+
+
+
+<section class="badges">
+	<h3>
+		Badges
+		<!-- floating add button - the displayed button for hiding/showing button-->
+		<label for="addButton" class="floating-button clickable" (click)="openBadgeModal(badgeTemplate)">
+			<i class="fa fa-plus plus-sign"></i>
+		</label>
+	</h3>
+	<ng-container *ngIf="!badges || badges.length == 0">
+		No Badges Available
+	</ng-container>
+	<ng-container *ngIf="badges && badges.length > 0">
+		<div *ngFor="let badge of badges" class="badge">
+			<div class="row">
+				<div class="img col-md-3">
+					<img class="badge-img" [src]="badge.getBadgePhoto()" />
+				</div>
+				<div class="badge-text col-md-9">
+					Badge Name: {{badge.getBadgeName()}}
+					<br/>
+				</div>
+			</div>
+			<div class="badge-description row">
+				[Description] {{badge.getBadgeDescription()}}
+				<br/>
+			</div>
+		</div>
+	</ng-container>
+</section>
+
+
+<!-- Modal Template for Item-->
+<ng-template #itemTemplate>
+
+	<!--Modal Header-->
+	<div class="modal-header">
+		<h4 class="modal-title">Add Item</h4>
+		<button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+
+	<!--Modal Body-->
+	<form class="form-horizontal" [formGroup]="itemForm" (ngSubmit)="createItem()">
+		<div class="modal-body">
+			<div class="row">
+				<div class="col-md-3">
+					Item Image
+					<label for="custom-btn-upload" class="btn btn-warning btn-upload">Upload</label>
+					<input type="file" id="custom-btn-upload" accept="image/*" formControlName="itemImage" (change)="itemImageEvent($event)">
+				</div>
+				<div class="col-md-9 image-right">
+					<img class="item-img" [src]="itemImgUrl" />
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-3">
+					Item Name
+				</div>
+				<div class="col-md-9">
+					<input type="text" formControlName="itemName" class="information-input remove-border" />
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-3">
+					Item Effect #1
+				</div>
+				<div class="col-md-9">
+					<input type="text" formControlName="itemEffect1" class="information-input remove-border" />
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-3">
+					Item Effect #2
+				</div>
+				<div class="col-md-9">
+					<input type="text" formControlName="itemEffect2" class="information-input remove-border" />
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-3">
+					Item Effect #3
+				</div>
+				<div class="col-md-9">
+					<input type="text" formControlName="itemEffect3" class="information-input remove-border" />
+				</div>
+			</div>
+		</div>
+		<!-- Quest Modal Buttons -->
+		<div class="modal-footer">
+			<!-- shows submit & abandon buttons if user is a participant -->
+			<button type="submit" class="btn btn-success mr-auto">Create</button>
+			<button class="btn btn-danger" (click)="bsModalRef.hide()">Cancel</button>
+		</div>
+	</form>
+</ng-template>
+
+<!-- Modal Template for Badge-->
+<ng-template #badgeTemplate>
+
+	<!--Modal Header-->
+	<div class="modal-header">
+		<h4 class="modal-title">Add Badge</h4>
+		<button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+
+	<form class="form-horizontal" [formGroup]="badgeForm" (ngSubmit)="createBadge()">
+		<!--Modal Body-->
+		<div class="modal-body">
+			<div class="row">
+				<div class="col-md-3">
+					Badge Image
+					<label for="custom-btn-upload" class="btn btn-warning btn-upload">Upload</label>
+					<input type="file" id="custom-btn-upload" accept="image/*" formControlName="badgeImage" (change)="badgeImageEvent($event)">
+				</div>
+				<div class="col-md-9 image-right">
+					<img class="item-img" [src]="badgeImgUrl" />
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-3">
+					Badge Name
+				</div>
+				<div class="col-md-9">
+					<input type="text" formControlName="badgeName" class="information-input remove-border" />
+				</div>
+			</div>
+		</div>
+		<!-- Quest Modal Buttons -->
+		<div class="modal-footer">
+			<!-- shows submit & abandon buttons if user is a participant -->
+			<button type="submit" class="btn btn-success mr-auto">Create</button>
+			<button class="btn btn-danger" (click)="bsModalRef.hide()">Cancel</button>
+		</div>
+	</form>
+</ng-template>
