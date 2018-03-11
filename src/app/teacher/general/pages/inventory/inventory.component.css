@@ -104,8 +104,13 @@ h3:after {
 
 .modal-body .item-img{
     margin: 10px 2px;
-    height: 100px;
-    width: 100px;
+    height: 120px;
+    width: 120px;
+}
+
+.modal-body .note{
+    font-style: italic;
+    font-size: 0.8em;
 }
 
 .modal-body .image-right, .modal-body .btn-upload {
@@ -123,4 +128,10 @@ input[type="file"] {
 .modal-body .row {
     padding-top: 5px;
     padding-bottom: 5px;
+}
+
+@media screen and (max-width: 768px) {
+    .modal-body .image-right{
+        text-align: center;
+    }
 }
