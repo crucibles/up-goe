@@ -126,8 +126,8 @@ export class InventoryComponent implements OnInit {
 	private itemForm: FormGroup;
 	private badgeForm: FormGroup;
 	//url of uploaded image
-	private itemImgUrl: string = "";
-	private badgeImgUrl: string = "";
+	private itemImgUrl: string = "/assets/images/not-found.jpg";
+	private badgeImgUrl: string = "/assets/images/not-found.jpg";
 
 	currentUser: User;
 	items: Item[];
@@ -158,7 +158,7 @@ export class InventoryComponent implements OnInit {
 	initializeForm() {
 		this.itemForm = this.formBuilder.group({
 			itemName: new FormControl("", Validators.required),
-			itemImage: new FormControl(),
+			itemImage: new FormControl(""),
 			itemEffect1: new FormControl("", Validators.required),
 			itemEffect2: new FormControl("", Validators.required),
 			itemEffect3: new FormControl("", Validators.required),
@@ -166,7 +166,7 @@ export class InventoryComponent implements OnInit {
 		});
 		this.badgeForm = this.formBuilder.group({
 			badgeName: new FormControl("", Validators.required),
-			badgeImage: new FormControl("", Validators.required),
+			badgeImage: new FormControl(""),
 			badgeDescription: new FormControl("", Validators.required)
 		});
 	}
