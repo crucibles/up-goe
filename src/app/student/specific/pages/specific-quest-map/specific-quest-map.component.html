@@ -1,8 +1,18 @@
-<p>
-	specific-quest-map works!
-</p>
-<button type="button" class="btn btn-primary" (click)="openQuest(questTemplate, this.QUEST)">Quest here!</button>
-
+<ng-container *ngIf="quests">
+	<div class="square" style="border:1px solid black;" *ngFor="let quest of quests; let i = index;">
+		<ng-container>
+			<ul>
+				<li>{{i}}</li>
+				<li>
+					<div>{{quest.getQuestDescription()}}</div>
+				</li>
+				<li>asdasdas</li>
+				<li>asdasdas</li>
+			</ul>
+			<button type="button" class="btn btn-primary" (click)="openQuest(questTemplate, this.QUEST)">Click for more info!</button>
+		</ng-container>
+	</div>
+</ng-container>
 
 <!-- Modal Template for Quests-->
 <ng-template #questTemplate>

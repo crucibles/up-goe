@@ -29,7 +29,8 @@ import {
 import {
 	PageService,
 	SectionService,
-	UserService
+	UserService,
+	QuestService
 } from 'shared/services';
 
 const SECTION: any = {
@@ -61,6 +62,10 @@ const SECTION: any = {
 	styleUrls: ['./specific-quest-map.component.css']
 })
 export class SpecificQuestMapComponent implements OnInit {
+
+	// Stored here is the security questions in the sign up form.
+	private quests: Quest[] = new Array();
+
 	currentUser: User;
 	//AHJ: unimplemented; remove this when quest is retrieved properly
 	private QUEST: any = {
@@ -88,14 +93,26 @@ export class SpecificQuestMapComponent implements OnInit {
 		private pageService: PageService,
 		private route: ActivatedRoute,
 		private sectionService: SectionService,
-		private userService: UserService
+		private userService: UserService,
+		private questService: QuestService
 
-	) { }
+	) {
+		this.currentUser = this.userService.getCurrentUser();
+	}
 
 	ngOnInit() {
 		this.setDefault();
 		this.getCurrentUser();
 		this.getCurrentSection();
+		this.loadQuestMap();
+	}
+
+	loadQuestMap() {
+		this.questService.getUserJoinedQuests(this.currentUser.getUserId())
+			.subscribe(quests => {
+				console.log(quests);
+				this.quests = quests.map(quest => new Quest(quest));
+			});
 	}
 
 	openQuest(template: TemplateRef<any>, quest: any) { //'quest: any' in here means the quest has not been converted to Quest type
