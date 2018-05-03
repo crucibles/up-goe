@@ -95,23 +95,28 @@ router.post('/login', (req, res) => {
  */
 router.get('/quests', (req, res) => {
 
-    connection((db) => {
-        const myDB = db.db('up-goe-db');
-        myDB.collection('quests')
-            .find()
-            .toArray()
-            .then((quests) => {
-                response.data = quests;
-                res.json(quests);
-            })
-            .catch((err) => {
-                sendError(err, res);
-            });
-    });
+    if (req.query.id) {
+
+    } else {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('quests')
+                .find()
+                .toArray()
+                .then((quests) => {
+                    response.data = quests;
+                    res.json(quests);
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                });
+        });
+    }
+
 
 });
 
-// Haven't implemented fully the logic yet to search and sort.
+// Haven't implemented fully the logic yet to search and sort, and add.
 /**
  * api/posts
  * Create by: Cedric Alvaro
@@ -205,107 +210,98 @@ router.get('/posts', (req, res) => {
 });
 
 /**
- * api/search
- * Create by: Cedric Alvaro
- */
-router.get('/search', (req, res) => {
-    var myObjArr = [];
-
-    connection((db) => {
-        const myDB = db.db('up-goe-db');
-
-        myDB.collection('sections')
-            .find(ObjectID(req.query.class))
-            .toArray()
-            .then((sections) => {
-                var myObjArr = [];
-                var myObj = {};
-
-                async.forEach(sections, processEachSection, afterAllSection);
-
-                function processEachSection(section, callback) {
-                    myDB.collection('courses')
-                        .find(ObjectID(section.course_id))
-                        .toArray()
-                        .then((course) => {
-                            myObj["section"] = section;
-                            myObj["course_name"] = course[0].course_name;
-                            myObjArr.push(myObj);
-                            callback();
-                        }, reason => {
-                            callback(reason);
-                        })
-
-                }
-
-                function afterAllSection(err) {
-                    response.data = myObjArr;
-                    res.json(myObjArr);
-                }
-
-
-            })
-            .catch((err) => {
-                sendError(err, res);
-            })
-
-    });
-
-});
-
-/**
  * api/sections
  * Create by: Cedric Alvaro
  */
 router.get('/sections', (req, res) => {
     var myObjArr = [];
 
-    connection((db) => {
-        const myDB = db.db('up-goe-db');
+    if (req.query.id) {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
 
-        myDB.collection('sections')
-            .find({
-                students: {
-                    $elemMatch: {
-                        user_id: req.query.id
+            myDB.collection('sections')
+                .find({
+                    students: {
+                        $elemMatch: {
+                            user_id: req.query.id
+                        }
                     }
-                }
-            })
-            .toArray()
-            // editing the section body adding a course name in it.
-            .then((sections) => {
+                })
+                .toArray()
+                // editing the section body adding a course name in it.
+                .then((sections) => {
 
-                async.forEach(sections, processEachSection, afterAllSection);
+                    async.forEach(sections, processEachSection, afterAllSection);
 
-                function processEachSection(section, callback) {
+                    function processEachSection(section, callback) {
 
-                    myDB.collection('courses')
-                        .find(ObjectID(section.course_id))
-                        .toArray()
-                        .then((course) => {
-                            Promise.all(course[0].course_name).then(() => {
-                                myObjArr.push({
-                                    section: section,
-                                    course_name: course[0].course_name
+                        myDB.collection('courses')
+                            .find(ObjectID(section.course_id))
+                            .toArray()
+                            .then((course) => {
+                                Promise.all(course[0].course_name).then(() => {
+                                    myObjArr.push({
+                                        section: section,
+                                        course_name: course[0].course_name
+                                    });
+                                    callback(null);
                                 });
-                                callback(null);
                             });
-                        });
 
-                }
+                    }
 
-                function afterAllSection(err) {
-                    response.data = myObjArr;
-                    res.send(myObjArr);
-                }
+                    function afterAllSection(err) {
+                        response.data = myObjArr;
+                        res.send(myObjArr);
+                    }
 
 
-            })
-            .catch((err) => {
-                sendError(err, res);
-            })
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                })
 
-    });
+        });
+    } else if (req.query.class) {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+
+            myDB.collection('sections')
+                .find(ObjectID(req.query.class))
+                .toArray()
+                .then((sections) => {
+                    async.forEach(sections, processEachSection, afterAllSection);
+
+                    function processEachSection(section, callback) {
+
+                        myDB.collection('courses')
+                            .find(ObjectID(section.course_id))
+                            .toArray()
+                            .then((course) => {
+                                Promise.all(course[0].course_name).then(() => {
+                                    myObjArr.push({
+                                        section: section,
+                                        course_name: course[0].course_name
+                                    });
+                                    callback(null);
+                                });
+                            });
+
+                    }
+
+                    function afterAllSection(err) {
+                        response.data = myObjArr;
+                        res.send(myObjArr);
+                    }
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                })
+
+        });
+    }
+
 
 });
 

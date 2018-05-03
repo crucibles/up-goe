@@ -7,6 +7,7 @@ import {
 import {
   ActivatedRoute, ParamMap
 } from '@angular/router';
+import { SectionService } from 'shared/services';
 
 @Component({
   selector: 'app-specific',
@@ -18,8 +19,11 @@ export class SpecificComponent implements OnInit {
   private sectionId: string;
 
   constructor(
-    private route: ActivatedRoute
-  ) { }
+    private route: ActivatedRoute,
+    private sectionService: SectionService
+  ) { 
+    this.sectionService.setCurrentSection(this.sectionId);
+  }
 
   ngOnInit() {
     this.route.firstChild.paramMap.subscribe((params: ParamMap) => {

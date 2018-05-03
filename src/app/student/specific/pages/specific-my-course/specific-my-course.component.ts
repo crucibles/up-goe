@@ -240,8 +240,8 @@ export class SpecificMyCourseComponent implements OnInit {
 			let sectionId = params.get('sectionId');
 			//AHJ: unimplemented; replace dummyCourseSection with this.sectionService.getCourseSection(section_id) if working OR
 			//with getCourse(section_id). Discussion is found in function getCourseSection(section_id) in section.service.ts
-			this.currentSection = new Section(dummyCourseSection.section);
-			this.currentCourse = new Course(dummyCourseSection.course);
+			this.currentSection = new Section(this.sectionService.getCurrentSection());
+			this.currentCourse = new Course(this.sectionService.getCurrentCourse());
 			this.classmates = [];
 			console.log(STUDENTS);
 			STUDENTS.forEach(student => {

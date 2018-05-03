@@ -3,7 +3,7 @@
 	<div class="search-container">
 		<form (keydown.enter)="search()">
 			<input type="text" placeholder="Search.." [(ngModel)]="course_search" name="course_search">
-			<button type="submit">
+			<button type="submit" (click)="search()">
 				<i class="fa fa-search"></i>
 			</button>
 		</form>
@@ -34,7 +34,7 @@
 					</td>
 					<td>{{this.course_found[0].section.section_name}}</td>
 					<td>{{this.course_found[0].section.instructor}}</td>
-					<td>{{this.getStatusOfSection(this.course_found[0].section.students)}}</td>
+					<td>{{this.getStatusOfSection(this.course_found[0].students)}}</td>
 					<td>
 						<a *ngIf="this.getStatusOfSection(this.course_found[0].section.students) != 'Enrolled'" class=clickable>Add</a>
 					</td>

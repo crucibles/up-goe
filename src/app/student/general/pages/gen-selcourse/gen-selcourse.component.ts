@@ -33,6 +33,7 @@ import {
 import { 
   ToastsManager 
 } from 'ng2-toastr/src/toast-manager';
+import { AsyncAction } from 'rxjs/scheduler/AsyncAction';
 
 @Component({
 	selector: 'app-gen-selcourse',
@@ -91,7 +92,7 @@ export class GenSelcourseComponent implements OnInit {
    */
   getStatusOfSection(students) {
     let currentUser = JSON.parse(localStorage.getItem("currentUser"));
-    let status = students.filter(user => user.user_id == currentUser._id)[0].status;
+    let status = students? students.filter(user => user.user_id == currentUser._id)[0].status: AsyncAction;
     if (status == "E") {
       return "Enrolled";
     } else if (status == "R") {
@@ -119,9 +120,12 @@ export class GenSelcourseComponent implements OnInit {
    * @summary searches the string entered by the user and stores result in 'course_found' variable
    */
   search() {
+    console.log("hee");
     if (this.course_search == null || this.course_search.length == 0) {
       this.isSearching = false;
+      console.log("hi");
     } else {
+      console.warn("hehe");
       this.isSearching = true;
       console.log(this.course_search);
       this.sectionService.searchSection(this.course_search).subscribe((sections) => {
