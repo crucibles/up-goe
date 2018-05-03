@@ -40,15 +40,14 @@ export class ChangePasswordComponent implements OnInit {
         });
     }
 
-    get inputEmail() {
-        return this.changePassForm.get('inputEmail') as FormControl;
-    }
-
     find() {
+        this.sent = false;
+        this.failSent = false;
         let user_email = this.changePassForm.value.inputEmail;
         this.userService.getUserReqPass(user_email).subscribe(user => {
+            this.email = user_email;
             if(user) {
-                this.email = user;
+                // this.email = user;
                 this.sent = true;
             } else {
                 this.failSent = true;
@@ -60,8 +59,13 @@ export class ChangePasswordComponent implements OnInit {
         this.changePassForm.reset();
     }
 
+    // Redirects to the login page.
     goToLogin() {
         this.router.navigate(['/log-in']);
+    }
+
+    get inputEmail() {
+        return this.changePassForm.get('inputEmail') as FormControl;
     }
 
     ngOnInit() {

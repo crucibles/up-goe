@@ -15,6 +15,18 @@ const connection = (closure) => {
     });
 };
 
+// Initialization of the nodemailer transport (the 'sender' of the email).
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        type: 'OAuth2',
+        user: 'donevirdensinghynson@gmail.com',
+        clientId: '252696106568-ra91i6p5akda1sv1lvbd0u9s0576nq05.apps.googleusercontent.com',
+        clientSecret: 'fhz3ClKjFYWqqh3T4oEyTgZw',
+        refreshToken: '1/t3ZXrgNJSymigHcL2Wc3qwnTK7cgyskwfVWKy4_9eV0'
+    }
+});
+
 // Error handling
 const sendError = (err, res) => {
     response.status = 501;
@@ -382,6 +394,7 @@ router.post('/signup', (req, res) => {
             user_password: req.body.password,
             user_type: req.body.type,
             user_contact_no: req.body.contactNumber,
+            user_photo: null,
             user_security_question: req.body.securityQuestion,
             user_security_answer: req.body.securityAnswer
         };
@@ -459,18 +472,6 @@ router.get('/securityQuestions', (req, res) => {
                 sendError(err, res);
             });
     });
-});
-
-// Initialization of the nodemailer transport or the 'sender'.
-var transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        type: 'OAuth2',
-        user: 'donevirdensinghynson@gmail.com',
-        clientId: '252696106568-ra91i6p5akda1sv1lvbd0u9s0576nq05.apps.googleusercontent.com',
-        clientSecret: 'fhz3ClKjFYWqqh3T4oEyTgZw',
-        refreshToken: '1/t3ZXrgNJSymigHcL2Wc3qwnTK7cgyskwfVWKy4_9eV0'
-    }
 });
 
 /**

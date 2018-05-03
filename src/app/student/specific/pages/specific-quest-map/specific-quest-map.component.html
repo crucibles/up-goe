@@ -53,7 +53,7 @@
 	<div class="modal-footer">
 		<!-- shows submit & abandon buttons if user is a participant -->
 		<ng-container *ngIf="isParticipating(this.questClicked.getQuestId())">
-			<button type="submit" class="btn btn-success mr-auto" (click)="abandonQuest()">Abandon Quest</button>
+			<button type="submit" class="btn btn-danger mr-auto" (click)="abandonQuest()">Abandon Quest</button>
 			<button type="submit" class="btn btn-success" (click)="submitQuest()">Submit Quest</button>
 		</ng-container>
 		<!-- shows accept button if user is not yet a participant -->

@@ -122,7 +122,7 @@ export class SpecificSidetabComponent implements OnInit {
 
 	initializeForm() {
 		this.editForm = this.formBuilder.group({
-			schoolId: new FormControl(this.currentUser.getUserSchoolId()),
+			schoolId: new FormControl({value: this.currentUser.getUserSchoolId(), disabled: true}),
 			email: new FormControl(this.currentUser.getUserEmail(), Validators.required),
 			contactNo: new FormControl(this.currentUser.getUserContactNo(), Validators.required),
 		});
@@ -215,6 +215,7 @@ export class SpecificSidetabComponent implements OnInit {
 	startEditing() {
 		this.isEditing = !this.isEditing;
 		this.editForm.enable();
+		this.editForm.get("schoolId").disable();
 	}
 
 	/* Below are helper functions */
