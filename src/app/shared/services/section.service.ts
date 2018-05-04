@@ -244,20 +244,29 @@ export class SectionService {
 
 	/**
 	 * Returns current section to its subscribers
-	 * 
+	 * @author Cedric Y. Alvaro
 	 * @returns {Section} section information of the current section being navigated
 	 */
 	getCurrentSection() {
+		return this.currentSection;
+	}
 
+	/**
+	 * @author Cedric Y. Alvaro
+	 * Sets the current section the user is navigating
+	 */
+	setCurrentSection(section: Section) {
+		console.warn(section);
+		this.currentSection = section;
+		console.warn(this.currentSection);
 	}
 
 	/**
 	 * @author Cedric Y. Alvaro
 	 * Sets the current sectionId for reference of the current section the user is navigating.
 	 */
-	setCurrentSection(section_id: any) {
+	setCurrentSectionId(section_id: any) {
 		this.currentSectionId = section_id;
-
 	}
 
 	/**
@@ -266,7 +275,10 @@ export class SectionService {
 	 * @returns {Course} section information of the current section being navigated
 	 */
 	getCurrentCourse() {
-
+		let curCourse = this.currentUserSections.map((section) => {
+			return section.section._id = this.currentSectionId;
+		});
+		return curCourse.course;
 	}
 
 
@@ -497,7 +509,7 @@ export class SectionService {
 	 * Search section by either its class name or code
 	 * @param string string that contains the typed class name or code
 	 */
-	searchSection(string): Observable<any> {
+	searchSection(string: any): Observable<any> {
 		console.log("hi");
 		console.warn("hello");
 		const searchUrl = "api/sections";

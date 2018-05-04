@@ -1,44 +1,44 @@
 //Core Imports
 import {
-	Component,
-	OnInit
+  Component,
+  OnInit
 } from '@angular/core';
 
 import {
-	NgModel
+  NgModel
 } from '@angular/forms';
 
 import {
-	Router
+  Router
 } from '@angular/router';
 //Application Imports
 import {
-	Course,
-	Quest,
-	Section,
-	User
+  Course,
+  Quest,
+  Section,
+  User
 } from 'shared/models';
 
 import {
-	SectionService,
-	UserService,
-	PageService
+  SectionService,
+  UserService,
+  PageService
 } from 'shared/services';
 
-import { 
-  ActivatedRouteSnapshot, 
-  ActivatedRoute 
+import {
+  ActivatedRouteSnapshot,
+  ActivatedRoute
 } from '@angular/router/src/router_state';
 
-import { 
-  ToastsManager 
+import {
+  ToastsManager
 } from 'ng2-toastr/src/toast-manager';
 import { AsyncAction } from 'rxjs/scheduler/AsyncAction';
 
 @Component({
-	selector: 'app-gen-selcourse',
-	templateUrl: './gen-selcourse.component.html',
-	styleUrls: ['./gen-selcourse.component.css']
+  selector: 'app-gen-selcourse',
+  templateUrl: './gen-selcourse.component.html',
+  styleUrls: ['./gen-selcourse.component.css']
 })
 export class GenSelcourseComponent implements OnInit {
 
@@ -48,32 +48,32 @@ export class GenSelcourseComponent implements OnInit {
   user: User;
   allcourses: Course[];
 
-	//for search bar
-	course_search: string;
-	isSearching: boolean = false;
-	course_found: Course[];
+  //for search bar
+  course_search: string;
+  isSearching: boolean = false;
+  course_found: Course[];
 
-	constructor(
-		private pageService: PageService,
-		private sectionService: SectionService,
-		private userService: UserService,
+  constructor(
+    private pageService: PageService,
+    private sectionService: SectionService,
+    private userService: UserService,
     private router: Router,
     private toastr: ToastsManager
-	) {
+  ) {
     this.pageService.isProfilePage(false);
-	}
+  }
 
-	ngOnInit() {
+  ngOnInit() {
     let url = this.router.routerState.snapshot.url.split("/");
     //add toaster or warning to student what happened why redirected here
     console.log(url[2]);
-    if(url[2] == "specific"){
+    if (url[2] == "specific") {
       this.pageService.isProfilePage(false);
       this.router.navigateByUrl('student/general/select-course');
       this.toastr.info("Invalid accessing the specific page of the inputted id!", "Info")
     }
-		this.getUser();
-	}
+    this.getUser();
+  }
 
   /**
    * Obtains information of the current user
@@ -92,7 +92,7 @@ export class GenSelcourseComponent implements OnInit {
    */
   getStatusOfSection(students) {
     let currentUser = JSON.parse(localStorage.getItem("currentUser"));
-    let status = students? students.filter(user => user.user_id == currentUser._id)[0].status: AsyncAction;
+    let status = students ? students.filter(user => user.user_id == currentUser._id)[0].status : AsyncAction;
     if (status == "E") {
       return "Enrolled";
     } else if (status == "R") {
@@ -124,7 +124,7 @@ export class GenSelcourseComponent implements OnInit {
     if (this.course_search == null || this.course_search.length == 0) {
       this.isSearching = false;
       console.log("hi");
-    } else {
+    } else if (this.course_search.length == 24) {
       console.warn("hehe");
       this.isSearching = true;
       console.log(this.course_search);
@@ -132,12 +132,15 @@ export class GenSelcourseComponent implements OnInit {
         console.warn(sections);
         this.course_found = sections;
       })
+    } else {
+      console.log("Invalid code");
+      this.toastr.info("Input a correct one.", "Invalid code.");
     }
   }
 
-	openSectionPage(section_id: string) {
-		this.pageService.openSectionPage(section_id);
-	}
+  openSectionPage(section_id: string) {
+    this.pageService.openSectionPage(section_id);
+  }
 
 
 }

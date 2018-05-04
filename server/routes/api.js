@@ -272,6 +272,7 @@ router.get('/sections', (req, res) => {
                 .find(ObjectID(req.query.class))
                 .toArray()
                 .then((sections) => {
+                    console.log(sections);
                     async.forEach(sections, processEachSection, afterAllSection);
 
                     function processEachSection(section, callback) {

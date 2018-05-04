@@ -8,6 +8,7 @@ import {
   ActivatedRoute, ParamMap
 } from '@angular/router';
 import { SectionService } from 'shared/services';
+import { Section } from 'shared/models';
 
 @Component({
   selector: 'app-specific',
@@ -22,7 +23,10 @@ export class SpecificComponent implements OnInit {
     private route: ActivatedRoute,
     private sectionService: SectionService
   ) { 
-    this.sectionService.setCurrentSection(this.sectionId);
+    this.sectionService.setCurrentSectionId(this.sectionId);
+    this.sectionService.setCurrentSection(new Section(this.sectionService.searchSection(this.sectionId)));
+    console.warn("setting up");
+    console.log(this.sectionService.getCurrentSection());
   }
 
   ngOnInit() {
