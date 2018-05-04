@@ -9,7 +9,8 @@ const xoauth2 = require('xoauth2');
 *   Note: queries are string, body can be object because of bodyParsers;
 */
 const connection = (closure) => {
-    return MongoClient.connect('mongodb://localhost:27017/up-goe-db', (err, db) => {
+    // changed localhost to 127.0.0.1, change if needed
+    return MongoClient.connect('mongodb://127.0.0.1:27017/up-goe-db', (err, db) => {
         if (err) return console.log(err);
         closure(db);
     });

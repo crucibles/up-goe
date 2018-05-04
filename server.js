@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true}));
 
 // Angular DIST output folder (renamed to public for development stage)
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'dist')));
 
 // API location
 app.use('/api', api);
@@ -29,4 +29,5 @@ app.set('port', port);
 
 const server = http.createServer(app);
 
-server.listen(port, () => console.log(`Running on localhost:${port}`));
+// changed localhost to 127.0.0.1, interchangable, only for console log
+server.listen(port, () => console.log(`Running on 127.0.0.1:${port}`));
