@@ -68,7 +68,7 @@ export class GenNewsComponent implements OnInit {
             });
 
             // sorts the commentpost by date (from recent 'on top' to oldest)
-            this.commentPosts.sort((a, b) => {
+            this.commentPosts.sort((b, a) => {
                 let x = new CommentPost(a);
                 let y = new CommentPost(b);
                 return this.getTime(x.getPostDate()) - this.getTime(y.getPostDate());

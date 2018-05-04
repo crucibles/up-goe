@@ -28,6 +28,7 @@ import {
 	Quest,
 	User
 } from 'shared/models';
+import { SectionService } from 'shared/services/section.service';
 
 @Injectable()
 export class QuestService {
@@ -47,7 +48,8 @@ export class QuestService {
 	private sectionQuestUrl = "api/sections/quests";
 
 	constructor(
-		private http: HttpClient
+		private http: HttpClient,
+		private sectionService: SectionService
 	) { }
 
 	/**
@@ -151,7 +153,10 @@ export class QuestService {
 	 */
 	getUserJoinedQuests(user_id: string, section_id?: string): Observable<any> {
 		// note: This function is used on the general sidetab except for the profile page
-
+		let userEnrolledSections = this.sectionService.getUserEnrolledSections();
+		console.warn(userEnrolledSections);
+		let joinedQuestIds = this.sectionService.getSectionJoinedQuests();
+		console.warn(joinedQuestIds);
 		// used for side tabs; aaaand di ko sure pero basin pwede makuha ang section quest by using getSectionQuests() function
 		let params = new HttpParams()
 			.set('id', user_id)
