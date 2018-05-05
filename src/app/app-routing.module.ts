@@ -9,6 +9,14 @@ import {
 } from '@angular/router';
 
 //Application Imports
+import { 
+  AuthGuardService 
+} from 'shared/services/auth-guard.service';
+
+import {
+  ChangePasswordComponent
+} from './change-password/change-password.component';
+
 import {
   LogInComponent
 } from 'log-in/log-in.component';
@@ -18,17 +26,12 @@ import {
 } from 'shared/pages';
 
 import {
-  SignUpComponent
-} from 'sign-up/sign-up.component';
-
-import { 
-  AuthGuardService 
-} from 'shared/services/auth-guard.service';
+  QuestLeaderboardComponent
+} from './quest-leaderboard/quest-leaderboard.component';
 
 import {
-  ChangePasswordComponent
-} from './change-password/change-password.component';
-
+  SignUpComponent
+} from 'sign-up/sign-up.component';
 
 const routes: Routes = [
   {
@@ -62,6 +65,10 @@ const routes: Routes = [
   {
     path: 'student/specific',
     loadChildren: 'student/specific/specific.module#SpecificModule'
+  },
+  {
+    path: 'quest-leaderboard',
+    component: QuestLeaderboardComponent
   },
   /*{
     path: 'teacher/specific',

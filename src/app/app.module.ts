@@ -1,11 +1,11 @@
 //Core Imports
 import {
-	NgModule
-} from '@angular/core';
-
-import {
 	BrowserModule
 } from '@angular/platform-browser';
+
+import {
+	NgModule
+} from '@angular/core';
 
 //Third-Party Imports
 import {
@@ -13,6 +13,10 @@ import {
 } from 'ngx-cookie-service';
 
 //Application Imports
+import {
+	AlertService
+} from 'shared/services/alert.service';
+
 import {
 	AppComponent
 } from './app.component';
@@ -22,8 +26,12 @@ import {
 } from './app-routing.module';
 
 import {
-	LogInComponent
-} from 'log-in/log-in.component';
+	AuthGuardService
+} from 'shared/services/auth-guard.service';
+
+import {
+	AuthService
+} from 'shared/services/auth.service';
 
 import {
 	BadgeService,
@@ -36,6 +44,26 @@ import {
 } from 'shared/services';
 
 import {
+	BrowserAnimationsModule
+} from '@angular/platform-browser/animations';
+
+import { 
+	ChangePasswordComponent 
+} from './change-password/change-password.component';
+
+import {
+	CustomOption
+} from './toast-option'
+
+import {
+	LogInComponent
+} from 'log-in/log-in.component';
+
+import { 
+	QuestLeaderboardComponent 
+} from './quest-leaderboard/quest-leaderboard.component';
+
+import {
 	SharedModule
 } from './shared/shared.module';
 
@@ -44,40 +72,17 @@ import {
 } from 'sign-up/sign-up.component';
 
 import {
-	AuthGuardService
-} from 'shared/services/auth-guard.service';
-
-import {
-	AuthService
-} from 'shared/services/auth.service';
-
-import {
-	AlertService
-} from 'shared/services/alert.service';
-
-import {
 	ToastModule, 
 	ToastOptions
 } from 'ng2-toastr/ng2-toastr';
-
-import {
-	CustomOption
-} from './toast-option'
-
-import {
-	BrowserAnimationsModule
-} from '@angular/platform-browser/animations';
-
-import { 
-	ChangePasswordComponent 
-} from './change-password/change-password.component';
 
 @NgModule({
 	declarations: [
 		AppComponent,
 		LogInComponent,
 		SignUpComponent,
-		ChangePasswordComponent
+		ChangePasswordComponent,
+		QuestLeaderboardComponent,
 	],
 	imports: [
 		AppRoutingModule,

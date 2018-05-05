@@ -168,6 +168,9 @@ export class UserService {
             );
     }
 
+    /**
+     * Retrieves the security questions in the database.
+     */
     getSecurityQuestions() {
         const url = this.securityQuestionsUrl;
         return this.http.get(url, {}).pipe(
@@ -177,6 +180,9 @@ export class UserService {
         );
     }
 
+    /**
+     * Retrieves the password of the requesting user from the database.
+     */
     getUserReqPass(user_email: String) {
         const url = this.userReqPassUrl;
         return this.http.post(url, {user_email}).pipe(

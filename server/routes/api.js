@@ -5,9 +5,10 @@ const ObjectID = require('mongodb').ObjectID;
 const async = require('async');
 const nodemailer = require('nodemailer');
 const xoauth2 = require('xoauth2');
-/*
-*   Note: queries are string, body can be object because of bodyParsers;
-*/
+
+/**
+ * Note: queries are string, body can be object because of bodyParsers;
+ */
 const connection = (closure) => {
     return MongoClient.connect('mongodb://localhost:27017/up-goe-db', (err, db) => {
         if (err) return console.log(err);
@@ -44,7 +45,6 @@ let response = {
 // to be edited for functions regarding requests for courses
 /**
  * api/courses
- * Create by: Cedric Alvaro
  */
 router.get('/courses', (req, res) => {
     connection((db) => {
@@ -64,11 +64,9 @@ router.get('/courses', (req, res) => {
     });
 });
 
-/*
-** api/login
-** Created by Cedric Alvaro
-** Modified last: 11 Jan 2018 by Donevir Hynson
-*/
+/**
+ * api/login
+ */
 router.post('/login', (req, res) => {
     connection((db) => {
         const myDB = db.db('up-goe-db');
@@ -90,7 +88,6 @@ router.post('/login', (req, res) => {
 
 /**
  * api/quests
- * Create by: Cedric Alvaro
  */
 router.get('/quests', (req, res) => {
 
@@ -113,7 +110,6 @@ router.get('/quests', (req, res) => {
 // Haven't implemented fully the logic yet to search and sort.
 /**
  * api/posts
- * Create by: Cedric Alvaro
  */
 router.get('/posts', (req, res) => {
     console.log(req.method);
@@ -203,7 +199,6 @@ router.get('/posts', (req, res) => {
 
 /**
  * api/search
- * Create by: Cedric Alvaro
  */
 router.get('/search', (req, res) => {
     var myObjArr = [];
@@ -252,7 +247,6 @@ router.get('/search', (req, res) => {
 
 /**
  * api/sections
- * Create by: Cedric Alvaro
  */
 router.get('/sections', (req, res) => {
     var myObjArr = [];
@@ -308,7 +302,6 @@ router.get('/sections', (req, res) => {
 
 /**
  * api/sections/quests
- * Create by: Cedric Alvaro
  */
 router.get('/sections/quests', (req, res) => {
 
@@ -376,7 +369,6 @@ router.get('/sections/quests', (req, res) => {
 
 /*
 ** api/signup
-** Created by: Donevir Hynson
 */
 router.post('/signup', (req, res) => {
     connection((db) => {
@@ -430,7 +422,6 @@ router.post('/signup', (req, res) => {
 
 /**
  * api/users
- * Create by: Cedric Alvaro
  */
 router.get('/users', (req, res) => {
     connection((db) => {
@@ -452,7 +443,6 @@ router.get('/users', (req, res) => {
 
 /**
  * api/securityQuestions
- * Create by: Donevir Hynson
  */
 router.get('/securityQuestions', (req, res) => {
     connection((db) => {
@@ -473,7 +463,6 @@ router.get('/securityQuestions', (req, res) => {
 
 /**
  * api/userReqPass
- * Created by Donevir Hynson
  */
 router.post('/userReqPass', (req, res) => {
     connection((db) => {

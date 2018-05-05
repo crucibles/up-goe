@@ -74,7 +74,7 @@ export class LogInComponent implements OnInit {
             user => {
                 if (user) {
                     user = new User(user);
-                    this.toastr.success("You are succesfully logged in!", "Welcome "+ user.getUserFirstName());
+                    this.toastr.success("You are succesfully logged in!", "Welcome " + user.getUserFirstName());
                     this.router.navigateByUrl(this.returnUrl);
                 } else {
                     console.log("User does not exists!");
