@@ -1,7 +1,8 @@
 {
-    "/api/*": {
-      "target": "http://localhost:3000",
-      "secure": false,
-      "logLevel": "debug"
-    }
+  "/api/*": {
+    "target": "http://127.0.0.1:3000",
+    "secure": false,
+    "logLevel": "debug",
+    "note": "127.0.0.1 can be change into localhost, or the ip of the server."
+  }
 }

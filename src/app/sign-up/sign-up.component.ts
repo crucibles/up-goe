@@ -19,6 +19,7 @@ import {
 import {
     UserService
 } from 'shared/services';
+import { ToastsManager } from 'ng2-toastr';
 
 @Component({
     selector: 'app-sign-up',
@@ -35,7 +36,8 @@ export class SignUpComponent implements OnInit {
     constructor(
         formBuilder: FormBuilder,
         private userService: UserService,
-        private router: Router
+        private router: Router,
+        private toastr: ToastsManager
     ) {
         this.signupForm = formBuilder.group({
             schoolId: null,
@@ -89,6 +91,7 @@ export class SignUpComponent implements OnInit {
                 // Unsuccessful registration of new user because of email already existing.
                 // Sets signal to prompt warning message of already existing email.
                 console.log("New user failed to register!");
+                this.toastr.error("Email already existed", "Failed to register");
                 this.duplicate = email;
             }
         });

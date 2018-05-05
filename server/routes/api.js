@@ -10,7 +10,8 @@ const xoauth2 = require('xoauth2');
  * Note: queries are string, body can be object because of bodyParsers;
  */
 const connection = (closure) => {
-    return MongoClient.connect('mongodb://localhost:27017/up-goe-db', (err, db) => {
+    // changed localhost to 127.0.0.1, change if needed
+    return MongoClient.connect('mongodb://127.0.0.1:27017/up-goe-db', (err, db) => {
         if (err) return console.log(err);
         closure(db);
     });
@@ -76,6 +77,7 @@ router.post('/login', (req, res) => {
                 user_password: req.body.user_password
             })
             .then((user) => {
+                console.log("i found it");
                 user.user_password = '';
                 response.data = user;
                 res.json(user);
@@ -91,23 +93,28 @@ router.post('/login', (req, res) => {
  */
 router.get('/quests', (req, res) => {
 
-    connection((db) => {
-        const myDB = db.db('up-goe-db');
-        myDB.collection('quests')
-            .find()
-            .toArray()
-            .then((quests) => {
-                response.data = quests;
-                res.json(quests);
-            })
-            .catch((err) => {
-                sendError(err, res);
-            });
-    });
+    if (req.query.id) {
+
+    } else {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('quests')
+                .find()
+                .toArray()
+                .then((quests) => {
+                    response.data = quests;
+                    res.json(quests);
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                });
+        });
+    }
+
 
 });
 
-// Haven't implemented fully the logic yet to search and sort.
+// Haven't implemented fully the logic yet to search and sort, and add.
 /**
  * api/posts
  */
@@ -162,14 +169,16 @@ router.get('/posts', (req, res) => {
                         sendError(err, res);
                     })
 
-            } // add for specific..
+            } else {
+                myDB.collection('posts')
+                    .find()
+                    .toArray()
+                    .then((x) => {
+                        res.json(x);
+                    })
+            }
 
-            myDB.collection('posts')
-                .find()
-                .toArray()
-                .then((x) => {
-                    res.json(x);
-                })
+
 
 
 
@@ -251,52 +260,93 @@ router.get('/search', (req, res) => {
 router.get('/sections', (req, res) => {
     var myObjArr = [];
 
-    connection((db) => {
-        const myDB = db.db('up-goe-db');
+    if (req.query.id) {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
 
-        myDB.collection('sections')
-            .find({
-                students: {
-                    $elemMatch: {
-                        user_id: req.query.id
+            myDB.collection('sections')
+                .find({
+                    students: {
+                        $elemMatch: {
+                            user_id: req.query.id
+                        }
                     }
-                }
-            })
-            .toArray()
-            // editing the section body adding a course name in it.
-            .then((sections) => {
+                })
+                .toArray()
+                // editing the section body adding a course name in it.
+                .then((sections) => {
 
-                async.forEach(sections, processEachSection, afterAllSection);
+                    async.forEach(sections, processEachSection, afterAllSection);
 
-                function processEachSection(section, callback) {
+                    function processEachSection(section, callback) {
 
-                    myDB.collection('courses')
-                        .find(ObjectID(section.course_id))
-                        .toArray()
-                        .then((course) => {
-                            Promise.all(course[0].course_name).then(() => {
-                                myObjArr.push({
-                                    section: section,
-                                    course_name: course[0].course_name
+                        myDB.collection('courses')
+                            .find(ObjectID(section.course_id))
+                            .toArray()
+                            .then((course) => {
+                                Promise.all(course[0].course_name).then(() => {
+                                    myObjArr.push({
+                                        section: section,
+                                        course_name: course[0].course_name
+                                    });
+                                    callback(null);
                                 });
-                                callback(null);
                             });
-                        });
 
-                }
+                    }
 
-                function afterAllSection(err) {
-                    response.data = myObjArr;
-                    res.send(myObjArr);
-                }
+                    function afterAllSection(err) {
+                        response.data = myObjArr;
+                        res.send(myObjArr);
+                    }
 
 
-            })
-            .catch((err) => {
-                sendError(err, res);
-            })
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                })
 
-    });
+        });
+    } else if (req.query.class) {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+
+            myDB.collection('sections')
+                .find(ObjectID(req.query.class))
+                .toArray()
+                .then((sections) => {
+                    console.log(sections);
+                    async.forEach(sections, processEachSection, afterAllSection);
+
+                    function processEachSection(section, callback) {
+
+                        myDB.collection('courses')
+                            .find(ObjectID(section.course_id))
+                            .toArray()
+                            .then((course) => {
+                                Promise.all(course[0].course_name).then(() => {
+                                    myObjArr.push({
+                                        section: section,
+                                        course_name: course[0].course_name
+                                    });
+                                    callback(null);
+                                });
+                            });
+
+                    }
+
+                    function afterAllSection(err) {
+                        response.data = myObjArr;
+                        res.send(myObjArr);
+                    }
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                })
+
+        });
+    }
+
 
 });
 
@@ -472,7 +522,7 @@ router.post('/userReqPass', (req, res) => {
                 user_email: req.body.user_email
             })
             .then((user) => {
-                if(user) {
+                if (user) {
                     // Mail content that is to be sent.
                     var mailOptions = {
                         from: 'UPGOE Admin <donevirdensinghynson@gmail.com>',
@@ -480,10 +530,10 @@ router.post('/userReqPass', (req, res) => {
                         subject: 'Password Retrieval',
                         text: 'Hi ' + user.user_fname + '. Your password is \'' + user.user_password + '\'.'
                     };
-                    
+
                     // Sends the email.
-                    transporter.sendMail(mailOptions, function(err, res) {
-                        if(err) {
+                    transporter.sendMail(mailOptions, function (err, res) {
+                        if (err) {
                             console.log(err);
                         } else {
                             console.log('Email sent');

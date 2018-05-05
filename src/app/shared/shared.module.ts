@@ -48,7 +48,7 @@ import {
     PopoverModule.forRoot(),
     ProgressbarModule.forRoot(),
     TimepickerModule.forRoot(),
-    TooltipModule.forRoot()
+    TooltipModule.forRoot(),
   ],
   exports: [
     CollapseModule,
