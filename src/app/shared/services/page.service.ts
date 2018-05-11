@@ -145,7 +145,6 @@ export class PageService {
 	}
 
 	public openSectionPage(sectionId: string) {
-		console.log(sectionId);
 		this.router.navigate(['/student/specific/specific-news', sectionId]);
 	}
 

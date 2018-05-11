@@ -24,21 +24,24 @@
 			<!--Shows if user is searching-->
 			<ng-container *ngIf="isSearching">
 				<!--Shows if no course of same code/name has been found-->
+				
 				<tr *ngIf="!course_found || course_found.length == 0">
 					<td colspan="3" style="text-align: center">Course not found!</td>
 				</tr>
 				<!--Shows if course has been found-->
-				<tr *ngIf="course_found && course_found.length != 0" [class.odd]="true">
-					<td>
-						{{this.course_found[0].course_name}}
-					</td>
-					<td>{{this.course_found[0].section.section_name}}</td>
-					<td>{{this.course_found[0].section.instructor}}</td>
-					<td>{{this.getStatusOfSection(this.course_found[0].students)}}</td>
-					<td>
-						<a *ngIf="this.getStatusOfSection(this.course_found[0].section.students) != 'Enrolled'" class=clickable>Add</a>
-					</td>
-				</tr>
+				<ng-container *ngIf="course_found && course_found.length != 0" [class.odd]="true">
+					<tr *ngFor="let section of course_found; let i = index;" [class.odd]="i%2 == 0">
+						<td>
+							{{this.section.course_name}}
+						</td>
+						<td>{{this.section.section.section_name}}</td>
+						<td>{{this.section.section.instructor}}</td>
+						<td>{{this.getStatusOfSection(this.section.section.students)}}</td>
+						<td>
+							<a *ngIf="this.getStatusOfSection(this.section.section.students) == 'Open'" class=clickable>Add</a>
+						</td>
+					</tr>
+				</ng-container>
 			</ng-container>
 			<ng-container *ngIf="!isSearching">
 				<!--Shows if user has no enrolled course-->

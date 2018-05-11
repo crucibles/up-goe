@@ -30,7 +30,8 @@ import {
 
 import {
 	PageService,
-	SectionService
+	SectionService,
+	UserService
 } from 'shared/services';
 
 const BADGES = [
@@ -216,8 +217,10 @@ export class SpecificMyCourseComponent implements OnInit {
 		private modalService: BsModalService,
 		private pageService: PageService,
 		private sectionService: SectionService,
-		private route: ActivatedRoute
-	) { }
+		private route: ActivatedRoute,
+		private userService: UserService
+	) {
+	}
 
 	ngOnInit() {
 		this.setDefault();
@@ -233,6 +236,7 @@ export class SpecificMyCourseComponent implements OnInit {
 
 	/**
 	 * Obtains the user's navigated section
+	 * @author Cedric Yao Alvaro
 	 * @description Obtains the current section and stores it into 'currentSection' variable
 	 */
 	getCurrentCourseSection() {
@@ -240,15 +244,26 @@ export class SpecificMyCourseComponent implements OnInit {
 			let sectionId = params.get('sectionId');
 			//AHJ: unimplemented; replace dummyCourseSection with this.sectionService.getCourseSection(section_id) if working OR
 			//with getCourse(section_id). Discussion is found in function getCourseSection(section_id) in section.service.ts
-			this.currentSection = new Section(dummyCourseSection);
-			this.currentCourse = new Course(dummyCourseSection.course);
+			this.currentSection = new Section(this.sectionService.getCurrentSection());
+			this.currentCourse = new Course(this.sectionService.getCurrentCourse());
 			console.log(this.currentCourse);
 			console.warn(this.currentSection);
 			this.classmates = [];
-			console.log(STUDENTS);
+			/*console.log(STUDENTS);
 			STUDENTS.forEach(student => {
 				this.classmates.push(new User(student));
-			});
+			});*/
+			this.sectionService.getSectionStudents(sectionId).subscribe((students) => {
+				console.warn(students);
+				students.forEach(student => {
+					if (student.length > 1) {
+						this.userService.getUser(student).subscribe((user) => {
+							console.warn(user);
+							this.classmates.push(new User(user));
+						})
+					}
+				})
+			})
 			this.getSectionBadges();
 		});
 	}
@@ -267,7 +282,6 @@ export class SpecificMyCourseComponent implements OnInit {
 	 * @returns user's status
 	 */
 	getStudentStatus(user_id: string): string {
-		console.warn(user_id);
 		let status: string = this.currentSection.getStudentStatus(user_id, true);
 
 		return status;

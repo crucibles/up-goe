@@ -93,7 +93,6 @@ export class Section {
      * 
      */
     getStudentStatus(userId: string, showFullWord?: boolean){
-        console.log(userId);
         let studentStatus = this.searchStudent(userId).getStatus();
         if(showFullWord){
             studentStatus = studentStatus == "E"? "Enrolled": "Requesting";
