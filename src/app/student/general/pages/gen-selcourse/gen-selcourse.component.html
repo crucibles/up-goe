@@ -1,9 +1,9 @@
 <ng-container *ngIf="sections">
 	<!--Search bar-->
 	<div class="search-container">
-		<form (keydown.enter)="search()">
+		<form >
 			<input type="text" placeholder="Search.." [(ngModel)]="course_search" name="course_search">
-			<button type="submit" (click)="search()">
+			<button type="submit" (click)="search()" (keydown.enter)="search()">
 				<i class="fa fa-search"></i>
 			</button>
 		</form>
@@ -31,12 +31,13 @@
 				<!--Shows if course has been found-->
 				<ng-container *ngIf="course_found && course_found.length != 0" [class.odd]="true">
 					<tr *ngFor="let section of course_found; let i = index;" [class.odd]="i%2 == 0">
-						<td>
-							{{this.section.course_name}}
+						<td *ngIf="this.getStatusOfSection(this.section.section.students) == 'Enrolled'">
+							<a class="clickable" (click)=openSectionPage(section.section._id)>{{section.course_name}}</a>
 						</td>
-						<td>{{this.section.section.section_name}}</td>
-						<td>{{this.section.section.instructor}}</td>
-						<td>{{this.getStatusOfSection(this.section.section.students)}}</td>
+						<td *ngIf="this.getStatusOfSection(this.section.section.students) != 'Enrolled'">{{section.course_name}}</td>
+						<td>{{section.section.section_name}}</td>
+						<td>{{section.section.instructor}}</td>
+						<td>{{getStatusOfSection(this.section.section.students)}}</td>
 						<td>
 							<a *ngIf="this.getStatusOfSection(this.section.section.students) == 'Open'" class=clickable>Add</a>
 						</td>
@@ -54,9 +55,10 @@
 				<ng-container *ngIf="sections != null && sections.length != 0">
 					<tr *ngFor="let section of sections; let i = index;" [class.odd]="i%2 == 0">
 						<ng-container>
-							<td>
+							<td *ngIf="this.getStatusOfSection(this.section.section.students) == 'Enrolled'">
 								<a class="clickable" (click)=openSectionPage(section.section._id)>{{section.course_name}}</a>
 							</td>
+							<td *ngIf="this.getStatusOfSection(this.section.section.students) != 'Enrolled'">{{section.course_name}}</td>
 							<td>{{section.section.section_name}}</td>
 							<td>{{section.section.instructor}}</td>
 							<td>{{this.getStatusOfSection(section.section.students)}}</td>

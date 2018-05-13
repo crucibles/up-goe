@@ -45,8 +45,8 @@ export class Quest {
             this.quest_item = quest.quest_item ? quest.quest_item : [];
             this.quest_xp = quest.quest_xp ? quest.quest_xp : 0;
             this.quest_hp = quest.quest_hp ? quest.quest_hp : 0;
-            this.quest_start_time_date = quest.quest_start_time_date ? new Date(quest.quest_start_time_date) : new Date();
-            this.quest_end_time_date = quest.quest_end_time_date ? new Date(quest.quest_end_time_date) : new Date();
+            this.quest_start_time_date = quest.quest_start_date ? new Date(quest.quest_start_date) : new Date();
+            this.quest_end_time_date = quest.quest_end_date ? new Date(quest.quest_end_date) : new Date();
             this.quest_party = quest.quest_party ? quest.quest_party : false;
             this.quest_prerequisite = quest.quest_prerequisite ? quest.quest_prerequisite : [];
         } else {

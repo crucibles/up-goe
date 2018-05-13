@@ -536,8 +536,9 @@ router.post('/signup', (req, res) => {
 });
 
 /**
- * api/users
- * Create by: Cedric Alvaro
+ * @description portal for requests regarding signup. api/users
+ * @author Cedric Yao Alvaro
+ * @author Donevir D. Hynson
  */
 router.get('/users', (req, res) => {
     connection((db) => {
@@ -583,7 +584,7 @@ router.get('/securityQuestions', (req, res) => {
  * Created by Donevir Hynson
  */
 router.post('/userReqPass', (req, res) => {
-    /*connection((db) => {
+    connection((db) => {
         const myDB = db.db('up-goe-db');
         myDB.collection('users')
             .findOne({
@@ -616,7 +617,7 @@ router.post('/userReqPass', (req, res) => {
             .catch((err) => {
                 sendError(err, res);
             });
-    });*/
+    });
 });
 
 module.exports = router;

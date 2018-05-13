@@ -134,16 +134,13 @@ export class GenSelcourseComponent implements OnInit {
         this.course_found = sections;
       })
 
-    } else if (this.sectionService.searchSection(this.course_search).subscribe((sections) => {
-      console.warn(sections);
-      this.isSearching = true;
-      this.course_found = sections;
-      return sections;
-    })) {
-      
-    } else {
+    } else if (this.course_search.length > 0) {
 
-      this.toastr.info("Input a correct one.", "Invalid code.");
+      this.sectionService.searchSection(this.course_search).subscribe((sections) => {
+        console.warn(sections);
+        this.isSearching = true;
+        this.course_found = sections;
+      })
 
     }
 
