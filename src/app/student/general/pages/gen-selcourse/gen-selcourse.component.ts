@@ -97,6 +97,8 @@ export class GenSelcourseComponent implements OnInit {
       return "Enrolled";
     } else if (status == "R") {
       return "Requesting";
+    } else {
+      return "Open";
     }
 
   }
@@ -120,22 +122,28 @@ export class GenSelcourseComponent implements OnInit {
    * @summary searches the string entered by the user and stores result in 'course_found' variable
    */
   search() {
-    console.log("hee");
+
     if (this.course_search == null || this.course_search.length == 0) {
+
       this.isSearching = false;
-      console.log("hi");
+
     } else if (this.course_search.length == 24) {
-      console.warn("hehe");
+
       this.isSearching = true;
-      console.log(this.course_search);
       this.sectionService.searchSection(this.course_search).subscribe((sections) => {
-        console.warn(sections);
         this.course_found = sections;
       })
-    } else {
-      console.log("Invalid code");
-      this.toastr.info("Input a correct one.", "Invalid code.");
+
+    } else if (this.course_search.length > 0) {
+
+      this.sectionService.searchSection(this.course_search).subscribe((sections) => {
+        console.warn(sections);
+        this.isSearching = true;
+        this.course_found = sections;
+      })
+
     }
+
   }
 
   openSectionPage(section_id: string) {
