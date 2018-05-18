@@ -1,12 +1,16 @@
-<!--Top Navigation Bar-->
-<specific-topnavbar [sectionId]="sectionId"></specific-topnavbar>
+<ng-container *ngIf="isDataLoaded">
 
-<body>
-  <!--Side Tab-->
-  <specific-sidetab></specific-sidetab>
+  <!--Top Navigation Bar-->
+  <specific-topnavbar [sectionId]="sectionId"></specific-topnavbar>
 
-  <!--Page Content-->
-  <div class="side-body">
-    <router-outlet></router-outlet>
-  </div>
-</body>
+  <body>
+    <!--Side Tab-->
+    <specific-sidetab></specific-sidetab>
+
+    <!--Page Content-->
+    <div class="side-body">
+      <router-outlet></router-outlet>
+    </div>
+  </body>
+
+</ng-container>

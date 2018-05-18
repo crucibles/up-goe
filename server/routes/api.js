@@ -116,8 +116,20 @@ router.post('/login', (req, res) => {
  */
 router.get('/quests', (req, res) => {
 
-    if (req.query.id) {
-
+    if (req.query.quest_id) {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('quests')
+                .find(ObjectID(req.query.quest_id))
+                .toArray()
+                .then((quests) => {
+                    response.data = quests;
+                    res.json(quests);
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                });
+        });
     } else {
         connection((db) => {
             const myDB = db.db('up-goe-db');
@@ -376,17 +388,18 @@ router.get('/sections', (req, res) => {
                     function processEachSection(section, callback) {
 
                         myDB.collection('courses')
-                            .find(ObjectID(section.course_id))
+                            .find({
+                                course_name: { $regex: '(?i)' + req.query.class + '(?-i)' }
+                            })
                             .toArray()
                             .then((course) => {
+                                console.log(course[0]);
                                 Promise.all(course[0].course_name).then(() => {
 
-                                    if (course[0].course_name == req.query.class) {
-                                        myObjArr.push({
-                                            section: section,
-                                            course_name: course[0].course_name
-                                        });
-                                    }
+                                    myObjArr.push({
+                                        section: section,
+                                        course_name: course[0].course_name
+                                    });
 
                                     callback(null);
                                 });
@@ -414,7 +427,7 @@ router.get('/sections', (req, res) => {
 
 
 /**
- * @description portal for requests regarding posts. api/posts
+ * @description portal for requests regarding quests. api/sectionQuests
  * @author Cedric Yao Alvaro
  */
 router.get('/sections/quests', (req, res) => {
@@ -559,8 +572,9 @@ router.get('/users', (req, res) => {
 });
 
 /**
- * api/securityQuestions
- * Create by: Donevir Hynson
+ * @description portal for requests regarding security questions. api/securityQuestions
+ * @author Donevir D. Hynson
+ * @author Cedric Yao Alvaro - modified May 14, 2018
  */
 router.get('/securityQuestions', (req, res) => {
     connection((db) => {
@@ -569,8 +583,6 @@ router.get('/securityQuestions', (req, res) => {
             .find()
             .toArray()
             .then((questions) => {
-                q = questions[0].question;
-                response.data = questions[0].question;
                 res.json(questions);
             })
             .catch((err) => {
@@ -580,8 +592,8 @@ router.get('/securityQuestions', (req, res) => {
 });
 
 /**
- * api/userReqPass
- * Created by Donevir Hynson
+ * @description portal for requests regarding user requesting for their forgotten password. api/userReqPass
+ * @author Donevir D. Hynson
  */
 router.post('/userReqPass', (req, res) => {
     connection((db) => {
@@ -599,7 +611,7 @@ router.post('/userReqPass', (req, res) => {
                         subject: 'Password Retrieval',
                         text: 'Hi ' + user.user_fname + '. Your password is \'' + user.user_password + '\'.'
                     };
- 
+
                     // Sends the email.
                     transporter.sendMail(mailOptions, function (err, res) {
                         if (err) {
