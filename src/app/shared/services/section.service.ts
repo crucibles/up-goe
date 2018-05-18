@@ -506,7 +506,7 @@ export class SectionService {
 	 * @author Cedric Alvaro
 	 * 
 	 */
-	getSectionJoinedQuests() {
+	getAllSectionJoinedQuests() {
 		console.warn(this.userService.getCurrentUser().getUserId());
 		let sjq = [];
 		let counter = 0;

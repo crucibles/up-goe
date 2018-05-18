@@ -20,7 +20,7 @@ import {
 } from './section.service';
 
 import {
-	Section
+	Section, Course
 } from 'shared/models';
 
 @Injectable()

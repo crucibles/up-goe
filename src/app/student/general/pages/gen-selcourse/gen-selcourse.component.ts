@@ -146,7 +146,7 @@ export class GenSelcourseComponent implements OnInit {
 
   }
 
-  openSectionPage(section_id: string) {
+  openSectionPage(section_id: string) {    
     this.pageService.openSectionPage(section_id);
   }
 
