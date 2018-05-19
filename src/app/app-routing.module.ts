@@ -63,10 +63,10 @@ const routes: Routes = [
     path: 'student/specific',
     loadChildren: 'student/specific/specific.module#SpecificModule'
   },
-  /*{
+  {
     path: 'teacher/specific',
     loadChildren: './teacher/specific/specific.module#SpecificModule'
-  },*/
+  },
   {
     path: '**',
     component: PageNotFoundComponent
