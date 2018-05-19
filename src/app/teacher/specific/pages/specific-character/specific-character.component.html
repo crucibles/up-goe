@@ -1,0 +1,65 @@
+<div class="character-section row">
+	<div class="row character" [class.col-md-9]="isShowEqCon">
+		<div class="equipment-left">
+			<div>some box</div>
+			<div>some box</div>
+			<div>some box</div>
+		</div>
+		<div class="img-character" >
+			<img src="/assets/images/male.png">
+		</div>
+		<div class="equipment-right">
+			<div>some box</div>
+			<div>some box</div>
+			<div>some box</div>
+		</div>
+	</div>
+
+	<div class="btn-equipment-consummable" *ngIf="!isShowEqCon else equipmentConsummableTemplate">
+		<button class="btn btn-success equipment">Equipments</button>
+		<button class="btn btn-warning consummable">Consummable</button>
+	</div>
+</div>
+
+<ng-template #equipmentConsummableTemplate>
+	<div class="col-md-3 equipment-consummable">
+		<div class="equipment">
+			<ng-container *ngTemplateOutlet="equipmentTemplate"></ng-container>
+		</div>
+		<div class="consummable">
+			<ng-container *ngTemplateOutlet="consummableTemplate; context: ctx"></ng-container>
+		</div>
+	</div>
+</ng-template>
+
+<ng-template #equipmentTemplate>
+	Equipments
+	<br>
+	<input type="radio" value="Image View">Image
+	<input type="radio" value="List View"> List
+	<br>
+	<ng-container *ngIf="equipment">
+		Some equipment here.
+	</ng-container>
+	<ng-container *ngIf="!equipment">
+		<span style="font-style: italic">
+			You have no equipment yet. Join a quest to obtain one.
+		</span>
+	</ng-container>
+</ng-template>
+
+<ng-template #consummableTemplate let-isImage="isImage">
+	Consummable
+	<br>
+	<input type="radio" value="Image View" [checked]="isImage">Image
+	<input type="radio" value="List View" [checked]="!isImage"> List
+	<br>
+	<ng-container *ngIf="consummables">
+		Some consummables here.
+	</ng-container>
+	<ng-container *ngIf="!consummables">
+		<span style="font-style: italic">
+			You have no consummables yet. Join a quest to obtain one.
+		</span>
+	</ng-container>
+</ng-template>
