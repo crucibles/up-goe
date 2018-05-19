@@ -12,7 +12,9 @@ import {
 import {
     GenSelcourseComponent,
     GenNewsComponent,
-    GenProfileComponent
+    GenProfileComponent,
+    GenAchievementsComponent,
+    AboutUsComponent
 } from 'student/general/pages';
 
 import {
@@ -46,6 +48,16 @@ const generalRoutes: Routes = [
             {
                 path: 'select-course',
                 component: GenSelcourseComponent,
+                canActivate: [AuthGuardService] 
+            },
+            {
+                path: 'achievements',
+                component: GenAchievementsComponent,
+                canActivate: [AuthGuardService] 
+            },
+            {
+                path: 'about-us',
+                component: AboutUsComponent,
                 canActivate: [AuthGuardService] 
             },
             {
