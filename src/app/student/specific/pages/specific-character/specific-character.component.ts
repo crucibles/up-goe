@@ -1,7 +1,8 @@
 //Core Imports
 import {
 	Component,
-	OnInit
+	OnInit,
+	HostListener
 } from '@angular/core';
 
 import {
@@ -26,6 +27,20 @@ import {
 export class SpecificCharacterComponent implements OnInit {
 
 	private currentSection: Section;
+
+	private ctx: any = {
+		isImage: true
+	};
+
+	//for collapsible equipments/consummables
+	windowWidth: number = window.innerWidth;
+	isShowEqCon: boolean = this.windowWidth <= 800? false: true;
+
+	//if screen size changes it'll update
+	@HostListener('window:resize', ['$event'])
+	resize(event) {
+		this.checkSize();
+	}
 
 	constructor(
 		private pageService: PageService,
@@ -53,6 +68,17 @@ export class SpecificCharacterComponent implements OnInit {
 		this.route.paramMap.subscribe(params => {
 			let sectionId = params.get('sectionId');
 		});
+	}
+
+	checkSize() {
+		this.windowWidth = window.innerWidth;
+		if (this.windowWidth <= 800) {
+			this.isShowEqCon = false;
+			console.log("less than or equal: " + this.windowWidth);
+		} else {
+			this.isShowEqCon = true;
+			console.log("greater: " + this.windowWidth);
+		}
 	}
 
 }
