@@ -137,7 +137,7 @@ export class GenSidetabComponent implements OnInit {
 
 	checkSize() {
 		this.windowWidth = window.innerWidth;
-		if (this.windowWidth <= 765) {
+		if (this.windowWidth <= 768) {
 			this.isShowSideTab = false;
 		} else {
 			this.isShowSideTab = true;
@@ -161,7 +161,7 @@ export class GenSidetabComponent implements OnInit {
 			}
 			clickedComponent = clickedComponent.parentNode;
 		} while (clickedComponent);
-		if (!inside && this.windowWidth <= 765) {
+		if (!inside && this.windowWidth <= 768) {
 			this.isShowSideTab = false;
 		}
 	}

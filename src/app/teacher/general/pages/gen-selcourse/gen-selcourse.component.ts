@@ -114,7 +114,8 @@ export class GenSelcourseComponent implements OnInit {
   }
 
 	openSectionPage(section_id: string) {
-		this.pageService.openSectionPage(section_id);
+    //AHJ: unimplemented; dapat dili na kaayo hardcode? Pwede gud ni pero murag hugaw
+		this.pageService.openTeacherSectionPage(section_id);
 	}
 
 

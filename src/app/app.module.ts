@@ -32,7 +32,8 @@ import {
 	PageService,
 	QuestService,
 	SectionService,
-	UserService
+	UserService,
+	FileService
 } from 'shared/services';
 
 import {
@@ -89,6 +90,7 @@ import {
 	providers: [
 		BadgeService,
 		CommentPostService,
+		FileService,
 		QuestService,
 		PageService,
 		SectionService,

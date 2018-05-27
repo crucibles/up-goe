@@ -7,6 +7,10 @@ import {
 	Injectable
 } from '@angular/core';
 
+import {
+	AUTO_STYLE
+} from '@angular/core/src/animation/dsl';
+
 //Third-Party Imports
 import {
 	Observable
@@ -28,6 +32,7 @@ import {
 	Quest,
 	User
 } from 'shared/models';
+
 import { SectionService } from 'shared/services/section.service';
 import { UserService } from 'shared/services/user.service';
 

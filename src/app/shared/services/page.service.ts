@@ -148,6 +148,11 @@ export class PageService {
 		this.router.navigate(['/student/specific/specific-news', sectionId]);
 	}
 
+	public openTeacherSectionPage(sectionId: string) {
+		console.log(sectionId);
+		this.router.navigate(['/teacher/specific/specific-quest-map', sectionId]);
+	}
+
 	/**
 	* Returns the appropriate datestring given a date object
 	* @param date_obj date to be formatted

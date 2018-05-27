@@ -17,7 +17,9 @@ import {
 import {
   GenSelcourseComponent,
   GenNewsComponent,
-  GenProfileComponent
+  GenProfileComponent,
+  GenAchievementsComponent,
+  AboutUsComponent
 } from 'student/general/pages';
 
 import {
@@ -43,8 +45,10 @@ import {
     GeneralRoutingModule
   ],
   declarations: [
+    AboutUsComponent,
     GeneralComponent,
     GenSidetabComponent,
+    GenAchievementsComponent,
     GenNewsComponent,
     GenProfileComponent,
     GenTopnavbarComponent,

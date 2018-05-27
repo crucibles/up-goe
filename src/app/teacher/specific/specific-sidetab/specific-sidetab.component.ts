@@ -4,8 +4,7 @@ import {
 	OnInit,
 	HostListener,
 	ElementRef,
-	TemplateRef,
-	Input
+	TemplateRef
 } from '@angular/core';
 
 import {
@@ -18,18 +17,15 @@ import {
 
 //Application Imports
 import {
-	User, Quest, SectionQuest, Course, Section
+	User, Quest
 } from 'shared/models';
 
 import {
 	QuestService,
 	PageService,
-	UserService,
-	SectionService
+	UserService
 } from 'shared/services';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
-import { ActivatedRoute, ParamMap } from '@angular/router';
-import { SpecificComponent } from 'student/specific/specific.component';
 
 const imageDir: string = "/assets/images/";
 
@@ -75,12 +71,9 @@ const QUESTS: any[] = [
 
 
 export class SpecificSidetabComponent implements OnInit {
-	@Input('sectionId') section_id: string;
-	
 	currentUser: User;
 	//image dir
 	image: string = "";
-	sectionId: string = this.section_id;
 
 	//for profile pages
 	editForm: FormGroup;
@@ -89,7 +82,6 @@ export class SpecificSidetabComponent implements OnInit {
 
 	//for quest
 	quests: Quest[];
-	isDataLoaded: boolean = false;
 	questClicked: Quest;
 	//for quest modal
 	bsModalRef: BsModalRef;
@@ -109,9 +101,7 @@ export class SpecificSidetabComponent implements OnInit {
 		private modalService: BsModalService,
 		private pageService: PageService,
 		private questService: QuestService,
-		private userService: UserService,
-		private route: ActivatedRoute,
-		private sectionService: SectionService
+		private userService: UserService
 	) {
 		this.image = imageDir + "not-found.jpg";
 	}
@@ -132,7 +122,7 @@ export class SpecificSidetabComponent implements OnInit {
 
 	initializeForm() {
 		this.editForm = this.formBuilder.group({
-			schoolId: new FormControl({ value: this.currentUser.getUserSchoolId(), disabled: true }),
+			schoolId: new FormControl({value: this.currentUser.getUserSchoolId(), disabled: true}),
 			email: new FormControl(this.currentUser.getUserEmail(), Validators.required),
 			contactNo: new FormControl(this.currentUser.getUserContactNo(), Validators.required),
 		});
@@ -158,18 +148,7 @@ export class SpecificSidetabComponent implements OnInit {
 	 */
 	setQuests(user_id): void {
 		// AHJ: unimplemented; add quest service to obtain quests of the current section
-		console.warn(this.sectionService.getCurrentSection());
-		this.quests = [];
-		let counter = 0;
-		this.sectionService.getCurrentSection().getQuests().map((sq) => {
-			this.questService.getQuest(sq.getSectionQuestId()).subscribe((quest) => {
-				this.quests.push(new Quest(quest));
-				counter++;
-				if(this.sectionService.getCurrentSection().getQuests().length == counter){
-					this.isDataLoaded = true;
-				}
-			});
-		});
+		this.quests = QUESTS.map(quest => new Quest(quest));
 	}
 
 	/**
@@ -181,7 +160,7 @@ export class SpecificSidetabComponent implements OnInit {
 		//AHJ: Unimplemented
 		//WARNING!! Remove QUESTS in specific-qm.html when this is implemented
 		console.log(quest);
-		this.questClicked = quest;
+		this.questClicked = new Quest(quest);
 		if (this.questClicked) {
 			this.bsModalRef = this.modalService.show(template);
 		}
