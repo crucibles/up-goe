@@ -20,7 +20,7 @@ import {
 } from './section.service';
 
 import {
-	Section
+	Section, Course
 } from 'shared/models';
 
 @Injectable()
@@ -145,7 +145,6 @@ export class PageService {
 	}
 
 	public openSectionPage(sectionId: string) {
-		console.log(sectionId);
 		this.router.navigate(['/student/specific/specific-news', sectionId]);
 	}
 

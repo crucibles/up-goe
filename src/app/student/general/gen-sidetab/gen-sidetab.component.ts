@@ -165,7 +165,9 @@ export class GenSidetabComponent implements OnInit {
 		//AHJ: unimplemented; get quest by section; not sure... this may be okay as is 
 		this.questService.getUserJoinedQuests(user_id)
 			.subscribe(quests => {
+				console.warn(quests);
 				this.quests = quests.map(quest => new Quest(quest));
+				console.warn(this.quests);
 				this.timeDisplays();
 			});
 	}
@@ -190,7 +192,8 @@ export class GenSidetabComponent implements OnInit {
 		//AHJ: Unimplemented
 		//WARNING!! Remove QUESTS in specific-qm.html when this is implemented
 		console.log(quest);
-		this.questClicked = new Quest(quest);
+		this.questClicked = quest;
+		console.warn(this.questClicked);
 		if (this.questClicked) {
 			this.bsModalRef = this.modalService.show(template);
 		}

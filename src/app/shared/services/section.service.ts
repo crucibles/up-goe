@@ -41,14 +41,18 @@ import {
 	User,
 } from 'shared/models';
 
-import { 
-	UserService 
+import {
+	UserService
 } from './user.service';
 
 @Injectable()
 export class SectionService {
 
 	private currentUserSections: any;
+	private currentCourseSection: any;
+	private currentCourse: Course;
+	private currentSectionId: any;
+	private currentSection: Section;
 
 	private secUrl = "api/sections";
 
@@ -194,15 +198,29 @@ export class SectionService {
 	* @returns course information of the course
 	*/
 	getCourse(course_id): Observable<Course> {
-		const url = `${this.courseUrl}/?course_id=${course_id}`;
-		return this.http.get<Course>(url).pipe(
-			map(sections => sections[0]),
+		const url = this.courseUrl;
+
+		let params = new HttpParams().set('id', course_id);
+
+		return this.http.get<Course>(url, {
+			params: params
+		}).pipe(
 			tap(h => {
+				console.warn(h);
 				const outcome = h ?
 					'fetched course ' + course_id : 'did not find course ' + course_id;
 			}),
 			catchError(this.handleError<Course>(`getCourse course_id=${course_id}`))
 		);
+	}
+
+	/**
+	 * @author Cedric Y. Alvaro
+	 * Sets the current course the user is navigating
+	 */
+	setCurrentCourse(cs: Course) {
+		this.currentCourse = cs;
+		console.warn(this.currentCourseSection);
 	}
 
 	/**
@@ -228,15 +246,71 @@ export class SectionService {
 
 		// Another note: Since the section is stored in the local storage, then maybe this function is deprecated and we can refer to 
 		// getCourse(section_id) function in this same service instead?
-		const url = this.courseSectionUrl;
+		const url = this.secUrl;
+
+		return this.http.get<Course>(url).pipe(
+			map(sections => sections[0]),
+			tap(h => {
+				const outcome = h ?
+					'fetched course ' + section_id : 'did not find course ' + section_id;
+			}),
+			catchError(this.handleError<Course>(`getCourse course_id=${section_id}`))
+		);
+	}
+
+	/**
+	 * Returns current section to its subscribers
+	 * @author Cedric Y. Alvaro
+	 * @returns {Section} section information of the current section being navigated
+	 */
+	getCurrentSection() {
+		return this.currentSection;
+	}
+
+	/**
+	 * @author Cedric Y. Alvaro
+	 * Sets the current coursesection the user is navigating
+	 */
+	setCurrentCourseSection(cs: any) {
+		this.currentCourseSection = cs;
+		console.warn(this.currentCourseSection);
+	}
+
+	/**
+	 * Returns current section to its subscribers
+	 * @author Cedric Y. Alvaro
+	 * @returns {course section any} information of the current course section being navigated
+	 */
+	getCurrentCourseSection() {
+		return this.currentCourseSection;
+	}
+
+
+
+	/**
+	 * @author Cedric Y. Alvaro
+	 * Sets the current section the user is navigating
+	 */
+	setCurrentSection(section: Section) {
+		this.currentSection = section;
+		console.warn(this.currentSection);
+	}
+
+	/**
+	 * @author Cedric Y. Alvaro
+	 * Sets the current sectionId for reference of the current section the user is navigating.
+	 */
+	setCurrentSectionId(section_id: any) {
+		this.currentSectionId = section_id;
 	}
 
 	/**
 	 * Returns current section to its subscribers
 	 * 
-	 * @returns {Section} section information of the current section being navigated
+	 * @returns {Course} section information of the current section being navigated
 	 */
-	getCurrentSection() {
+	getCurrentCourse() {
+		return this.currentCourse;
 	}
 
 
@@ -247,11 +321,27 @@ export class SectionService {
    * 
    * @returns {User[]} array of students enrolled in the section of User class
    * 
-   * @example 
+   * @example
    * arrayReturned = [new User(user1), new User(user2)]
    */
 	getSectionStudents(section_id) {
-		const url = this.userSectionUrl;
+
+		const url = this.secUrl;
+
+		let params = new HttpParams().set('students', section_id);
+
+		return this.http.get<any>(
+			url, {
+				params: params
+			})
+			.pipe(
+				tap(students => {
+					console.warn(students);
+					const outcome = students ?
+						'fetched students of section ' + section_id : 'did not find students of section ' + section_id;
+				}),
+				catchError(this.handleError<any>(`getUserSections section_id=${section_id}`))
+			);
 	}
 
 	/**
@@ -324,17 +414,17 @@ export class SectionService {
 				params: params
 			})
 			.pipe(
-			tap(sections => {
-				console.warn(sections);
-				this.currentUserSections = sections;
-				this.getUserEnrolledSections();
-				localStorage.setItem("currentUserSections", JSON.stringify(sections));
+				tap(sections => {
+					console.warn(sections);
+					this.currentUserSections = sections;
+					this.getUserEnrolledSections();
+					localStorage.setItem("currentUserSections", JSON.stringify(sections));
 
-				console.warn(this.currentUserSections);
-				const outcome = sections ?
-					'fetched sections of user ' + user_id : 'did not find sections of user ' + user_id;
-			}),
-			catchError(this.handleError<any>(`getUserSections user_id=${user_id}`))
+					console.warn(this.currentUserSections);
+					const outcome = sections ?
+						'fetched sections of user ' + user_id : 'did not find sections of user ' + user_id;
+				}),
+				catchError(this.handleError<any>(`getUserSections user_id=${user_id}`))
 			);
 	}
 
@@ -357,10 +447,10 @@ export class SectionService {
 		}
 
 		let enrolledSections = [];
-		
+
 		this.currentUserSections.map((section) => {
 
-			if(this.multiFilter(section.section.students, filter).length){
+			if (this.multiFilter(section.section.students, filter).length) {
 				console.log(section);
 				enrolledSections.push(section);
 			}
@@ -391,10 +481,10 @@ export class SectionService {
 		}
 
 		let enrolledSections = [];
-		
+
 		this.currentUserSections.map((section) => {
 
-			if(this.multiFilter(section.section.students, filter).length){
+			if (this.multiFilter(section.section.students, filter).length) {
 				console.log(section);
 				console.log(section.section._id)
 				enrolledSections.push(section.section._id);
@@ -405,6 +495,39 @@ export class SectionService {
 		console.warn(enrolledSections);
 		return enrolledSections;
 
+	}
+
+	/**
+	 * Returns the array of joined quests of the user
+	 * 
+	 * @returns array of joined quests of the user in the said section
+	 * array[i].ids = quest_id1...quest_id2...
+	 * 
+	 * @author Cedric Alvaro
+	 * 
+	 */
+	getAllSectionJoinedQuests() {
+		console.warn(this.userService.getCurrentUser().getUserId());
+		let sjq = [];
+		let counter = 0;
+		this.currentUserSections.map((x) => {
+			console.log(x);
+			x.section.quests.map((y) => {
+				console.log(y);
+				if (y.quest_participants) {
+					y.quest_participants.map((z) => {
+						console.log(z);
+						if (z = this.userService.getCurrentUser().getUserId()) {
+							console.warn("matched");
+							sjq[counter] = y.quest_id;
+							counter++;
+						}
+					})
+				}
+			})
+		})
+		console.warn(sjq);
+		return sjq;
 	}
 
 	/**
@@ -434,10 +557,10 @@ export class SectionService {
 	 * Search section by either its class name or code
 	 * @param string string that contains the typed class name or code
 	 */
-	searchSection(string): Observable<any> {
+	searchSection(string: any): Observable<any> {
 		console.log("hi");
 		console.warn("hello");
-		const searchUrl = "api/search";
+		const searchUrl = "api/sections";
 
 		let params = new HttpParams().set('class', string);
 
@@ -446,12 +569,12 @@ export class SectionService {
 				params: params
 			})
 			.pipe(
-			tap(data => {
-				console.log(data);
-				const outcome = data ?
-					'searched sections ' + string : 'did not find section ' + string;
-			}),
-			catchError(this.handleError<Observable<any>>(`getUserSections user_id=${string}`))
+				tap(data => {
+					console.log(data);
+					const outcome = data ?
+						'searched sections ' + string : 'did not find section ' + string;
+				}),
+				catchError(this.handleError<Observable<any>>(`getUserSections user_id=${string}`))
 			);
 	}
 

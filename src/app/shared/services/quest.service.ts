@@ -7,6 +7,10 @@ import {
 	Injectable
 } from '@angular/core';
 
+import {
+	AUTO_STYLE
+} from '@angular/core/src/animation/dsl';
+
 //Third-Party Imports
 import {
 	Observable
@@ -28,7 +32,9 @@ import {
 	Quest,
 	User
 } from 'shared/models';
-import { AUTO_STYLE } from '@angular/core/src/animation/dsl';
+
+import { SectionService } from 'shared/services/section.service';
+import { UserService } from 'shared/services/user.service';
 
 @Injectable()
 export class QuestService {
@@ -48,7 +54,9 @@ export class QuestService {
 	private sectionQuestUrl = "api/sections/quests";
 
 	constructor(
-		private http: HttpClient
+		private http: HttpClient,
+		private sectionService: SectionService,
+		private userService: UserService
 	) { }
 
 	/**
@@ -109,8 +117,8 @@ export class QuestService {
 		return this.http.get<Quest>(url).pipe(
 			map(quests => quests[0]), // returns a {0|1} element array
 			tap(h => {
+				console.log(h);
 				const outcome = h ? 'fetched quest ' + quest_id : 'did not find quest ' + quest_id;
-				console.log(outcome);
 			}),
 			catchError(this.handleError<User>(`getQuest quest_id=${quest_id}`))
 		);
@@ -121,8 +129,7 @@ export class QuestService {
 	 * @param section_id id of the section whose array of quests needed to be retrieved
 	 */
 	getSectionQuest(section_id) {
-		// used for quest maps
-		const url = this.sectionQuestUrl;
+		return this.sectionService.getCurrentSection().getQuests();
 	}
 
 	/**
@@ -152,10 +159,14 @@ export class QuestService {
 	 */
 	getUserJoinedQuests(user_id: string, section_id?: string): Observable<any> {
 		// note: This function is used on the general sidetab except for the profile page
-
+		let userEnrolledSections = this.sectionService.getUserEnrolledSections();
+		console.warn(userEnrolledSections);
+		let joinedQuestIds = this.sectionService.getAllSectionJoinedQuests();
+		console.warn(joinedQuestIds);
 		// used for side tabs; aaaand di ko sure pero basin pwede makuha ang section quest by using getSectionQuests() function
 		let params = new HttpParams()
 			.set('id', user_id)
+			.set('section_id', section_id)
 			.set('method', 'getUserQuests');
 
 		return this.http.get<Quest[]>(this.sectionQuestUrl, {
