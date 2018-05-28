@@ -82,13 +82,14 @@ const MOCKQUESTMAP: String[] = [
 })
 export class SpecificQuestMapComponent implements OnInit {
 	@ViewChild('questTemplate') questTemplate: TemplateRef<any>;
+
+	
+	private quests: Quest[] = new Array();
+	
+	// quest map chart
 	xTick: number;
 	yTick: number;
 	chart: Chart;
-	// Stored here is the security questions in the sign up form.
-	private quests: Quest[] = new Array();
-
-	// quest map chart
 	chartColors: Array<any>;
 	chartLabels: Array<any> = [];
 	chartWidth: number;
@@ -150,7 +151,7 @@ export class SpecificQuestMapComponent implements OnInit {
 				this.quests.push(new Quest(this.QUEST));
 				//AHJ: unimplemented; getter for quest map data (remove comment marker belowif available)
 				//this.questService.getQuestMap(this.currentSection.getCourseId()).subscribe(data => {
-				this.questMap = new QuestMap(MOCKQUESTMAP, this.quests);
+				this.questMap = new QuestMap(MOCKQUESTMAP, this.quests, true);
 				this.setQuestMap();
 				//});
 			});

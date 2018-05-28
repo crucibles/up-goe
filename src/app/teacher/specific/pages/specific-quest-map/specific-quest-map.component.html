@@ -1,9 +1,9 @@
-<!--Line Graph for performance-->
+<!--Graph for quest map-->
 <div class="row">
-    <div style="display: block">
-      <canvas id="quest-map" baseChart width="650" height="300" ></canvas>
-    </div>
-  </div>
+	<div style="display: block">
+		<canvas id="quest-map" baseChart width="650" height="300"></canvas>
+	</div>
+</div>
 
 <ng-container *ngIf="quests">
 	<div class="square" style="border:1px solid black;" *ngFor="let quest of quests; let i = index;">
