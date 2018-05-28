@@ -81,8 +81,8 @@ export class LogInComponent implements OnInit {
                     this.warning = true;
                 }
             }, error => {
-            // login failed so display error
-            this.alertService.error(error);
+                // login failed so display error
+                this.alertService.error(error);
             }
         );
     }

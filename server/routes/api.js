@@ -5,6 +5,8 @@ const ObjectID = require('mongodb').ObjectID;
 const async = require('async');
 const nodemailer = require('nodemailer');
 const xoauth2 = require('xoauth2');
+const bodyPasrser = require('body-parser');
+
 
 /**
  * Note: queries are string, body can be object because of bodyParsers;
@@ -96,6 +98,7 @@ router.get('/quests', (req, res) => {
     if (req.query.id) {
 
     } else {
+        get
         connection((db) => {
             const myDB = db.db('up-goe-db');
             myDB.collection('quests')
@@ -110,8 +113,6 @@ router.get('/quests', (req, res) => {
                 });
         });
     }
-
-
 });
 
 // Haven't implemented fully the logic yet to search and sort, and add.
@@ -501,7 +502,6 @@ router.get('/securityQuestions', (req, res) => {
             .find()
             .toArray()
             .then((questions) => {
-                q = questions[0].question;
                 response.data = questions[0].question;
                 res.json(questions);
             })
@@ -549,6 +549,64 @@ router.post('/userReqPass', (req, res) => {
                 sendError(err, res);
             });
     });
+});
+
+router.post('/questLeaderboard', (req, res) => {
+    connection((db) => {
+    const myDB = db.db('up-goe-db');
+    myDB.collection('experiences')
+        .find({section_id: req.body.currSection})
+        .toArray()
+        .then((experiences) => {
+            if(experiences) {
+                var studentExp = [];
+
+                experiences.forEach((exp) => {
+                    exp.quests_taken.forEach((quest) => {
+                        if(quest.quest_id == req.body.currQuest) {
+                            studentExp.push({
+                                studentId: exp.user_id,
+                                score: quest.quest_grade
+                            });
+                        }
+                    });
+                });
+
+                studentExp.sort(function(a, b) {
+                    return (a.score - b.score);
+                });
+
+                myDB.collection('users')
+                    .find()
+                    .toArray()
+                    .then((users) => {
+                        if(users) {
+                            users.forEach(user => {
+                                studentExp.forEach(exp => {
+                                    if(user._id == exp.studentId) {
+                                        exp.studentId = user.user_school_id;
+                                    }
+                                });
+                            });
+
+                            res.json(studentExp);
+                        } else {
+                            console.log('return 1');
+                            res.json(false);
+                        }
+                    })
+                    .catch((err) => {
+                        sendError(err, res);
+                    });
+            } else {
+                console.log('return 2');
+                res.json(false);
+            }
+        })
+        .catch((err) => {
+            sendError(err, res);
+        });
+});
 });
 
 module.exports = router;

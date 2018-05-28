@@ -5,3 +5,4 @@ export * from './page.service';
 export * from './quest.service';  
 export * from './section.service';  
 export * from './user.service';  
+export * from './leaderboard.service';

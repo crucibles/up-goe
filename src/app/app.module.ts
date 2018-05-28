@@ -40,7 +40,8 @@ import {
 	PageService,
 	QuestService,
 	SectionService,
-	UserService
+	UserService,
+	LeaderboardService
 } from 'shared/services';
 
 import {
@@ -103,6 +104,7 @@ import {
 		AuthGuardService,
 		AuthService,
 		AlertService,
+		LeaderboardService,
 		{ provide: ToastOptions, useClass: CustomOption }
 	],
 	bootstrap: [AppComponent]
