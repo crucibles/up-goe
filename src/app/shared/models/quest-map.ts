@@ -8,15 +8,15 @@ export class QuestMap {
     private datasets;
     private questCoordinates: any[];
 
-    constructor(data, quests: Quest[]){
-        this.setQuestMapDataSet(data, quests);
+    constructor(data, quests: Quest[], hasPlusPoints?: boolean){
+        this.setQuestMapDataSet(data, quests, hasPlusPoints);
     }
 
     getQuestMapDataSet(){
         return this.datasets;
     }
 
-    setQuestMapDataSet(data: String[], quests: Quest[]){
+    setQuestMapDataSet(data: String[], quests: Quest[], hasPlusPoints){
 		let questMapDetails = this.getQuestMapDetails(data);
 
 		let exclude: any[] = questMapDetails.exclude;
@@ -42,21 +42,26 @@ export class QuestMap {
 					}],
 					showLine: false
 				};
-				var scatterPoints: any[] = this.addQuestPlus(questPosition.x, questPosition.y, minX, maxX, basisY, exclude);
-                
-                var coordinates: any = {
-                    questId: questPosition.questId,
-                    x: questPosition.x,
-                    y: questPosition.y
-                };
+				
+				var coordinates: any = {
+					questId: questPosition.questId,
+					x: questPosition.x,
+					y: questPosition.y
+				};
+				
+				this.questCoordinates.push(coordinates);
 
-                this.questCoordinates.push(coordinates);
+				var scatterPoints: any[] = [];
 
-				if(scatterPoints.length != 0){
-					for(let scatterPoint of scatterPoints){
-						datasets.push(scatterPoint);
+				if(hasPlusPoints){
+					scatterPoints = this.addQuestPlus(questPosition.x, questPosition.y, minX, maxX, basisY, exclude);
+					if(scatterPoints.length != 0){
+						for(let scatterPoint of scatterPoints){
+							datasets.push(scatterPoint);
+						}
 					}
 				}
+                
 			} else if (questPosition.type === "line") {
 				dataset = {
 					type: 'line',

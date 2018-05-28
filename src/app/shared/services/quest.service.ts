@@ -188,6 +188,17 @@ export class QuestService {
 	}
 
 	/**
+	 * Determines whether a user has submitted a quest in a particular section
+	 * @param user_id the user to verify whether he/she has taken a quest
+	 * @param quest_id the section quest to verify whether the student has taken it
+	 * @param section_id the section to check whether a user has submitted a quest in this section
+	 */
+	getQuestExp(user_id, quest_id, section_id): Observable<any> {
+		//AHJ: unimplemented
+		return null;
+	}
+
+	/**
 	 * Adds a quest to the user's list of section quest
 	 * @param user_id the id of the student who will be adding a new quest to the section quest list
 	 * @param quest_id the id of the quest to be added in the student's section quest list
