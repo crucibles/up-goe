@@ -41,7 +41,8 @@ import {
 	QuestService,
 	SectionService,
 	UserService,
-	LeaderboardService
+	LeaderboardService,
+	FileService
 } from 'shared/services';
 
 import {
@@ -95,6 +96,7 @@ import {
 	providers: [
 		BadgeService,
 		CommentPostService,
+		FileService,
 		QuestService,
 		PageService,
 		SectionService,

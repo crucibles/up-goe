@@ -47,28 +47,52 @@ let response = {
 
 // to be edited for functions regarding requests for courses
 /**
- * api/courses
+ * @description portal for requests regarding courses. api/courses
+ * @author Cedric Yao Alvaro
  */
 router.get('/courses', (req, res) => {
-    connection((db) => {
-        const myDB = db.db('up-goe-db');
-        myDB.collection('courses')
-            .find()
-            .toArray()
-            .then((courses) => {
-                if (courses) {
-                    response.data = courses;
-                    res.json(courses);
-                }
-            })
-            .catch((err) => {
-                sendError(err, res);
-            });
-    });
+
+    if (req.query.id) {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('courses')
+                .find(ObjectID(req.query.id))
+                .toArray()
+                .then((courses) => {
+                    if (courses) {
+                        console.log(courses);
+                        response.data = courses[0];
+                        res.json(courses[0]);
+                    }
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                });
+        });
+    } else {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('courses')
+                .find()
+                .toArray()
+                .then((courses) => {
+                    if (courses) {
+                        response.data = courses;
+                        res.json(courses);
+                    }
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                });
+        });
+    }
+
 });
 
 /**
- * api/login
+ * @description portal for requests regarding users. api/users
+ * @author Cedric Yao Alvaro
+ * @author Donevir Hynson - modified Jan 11 2018
  */
 router.post('/login', (req, res) => {
     connection((db) => {
@@ -79,7 +103,6 @@ router.post('/login', (req, res) => {
                 user_password: req.body.user_password
             })
             .then((user) => {
-                console.log("i found it");
                 user.user_password = '';
                 response.data = user;
                 res.json(user);
@@ -91,12 +114,25 @@ router.post('/login', (req, res) => {
 });
 
 /**
- * api/quests
+ * @description portal for requests regarding quests. api/quests
+ * @author Cedric Yao Alvaro
  */
 router.get('/quests', (req, res) => {
 
-    if (req.query.id) {
-
+    if (req.query.quest_id) {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('quests')
+                .find(ObjectID(req.query.quest_id))
+                .toArray()
+                .then((quests) => {
+                    response.data = quests;
+                    res.json(quests);
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                });
+        });
     } else {
         get
         connection((db) => {
@@ -115,9 +151,9 @@ router.get('/quests', (req, res) => {
     }
 });
 
-// Haven't implemented fully the logic yet to search and sort, and add.
 /**
- * api/posts
+ * @description portal for requests regarding posts. api/posts
+ * @author Cedric Yao Alvaro
  */
 router.get('/posts', (req, res) => {
     console.log(req.method);
@@ -129,7 +165,6 @@ router.get('/posts', (req, res) => {
         const myDB = db.db('up-goe-db');
 
         if (req.method == "GET") {
-            console.log("he");
             if (req.query.sections) {
                 let sections = req.query.sections.split(",");
                 console.log(sections);
@@ -208,60 +243,51 @@ router.get('/posts', (req, res) => {
 });
 
 /**
- * api/search
- */
-router.get('/search', (req, res) => {
-    var myObjArr = [];
-
-    connection((db) => {
-        const myDB = db.db('up-goe-db');
-
-        myDB.collection('sections')
-            .find(ObjectID(req.query.class))
-            .toArray()
-            .then((sections) => {
-                var myObjArr = [];
-                var myObj = {};
-
-                async.forEach(sections, processEachSection, afterAllSection);
-
-                function processEachSection(section, callback) {
-                    myDB.collection('courses')
-                        .find(ObjectID(section.course_id))
-                        .toArray()
-                        .then((course) => {
-                            myObj["section"] = section;
-                            myObj["course_name"] = course[0].course_name;
-                            myObjArr.push(myObj);
-                            callback();
-                        }, reason => {
-                            callback(reason);
-                        })
-
-                }
-
-                function afterAllSection(err) {
-                    response.data = myObjArr;
-                    res.json(myObjArr);
-                }
-
-
-            })
-            .catch((err) => {
-                sendError(err, res);
-            })
-
-    });
-
-});
-
-/**
- * api/sections
+ * @description portal for all requests that regards to sections "api/sections"
+ * @author Cedric Yao Alvaro
  */
 router.get('/sections', (req, res) => {
     var myObjArr = [];
 
     if (req.query.id) {
+        getSectionsOfStudent(req, res);
+    } else if (req.query.class) {
+
+        if (req.query.class.length == 24) {
+            searchSection(req, res);
+        } else {
+            searchSectionByName(req, res);
+        }
+
+    } else if (req.query.students) {
+        getEnrolledStudents(req, res);
+    }
+
+    function getEnrolledStudents(req, res) {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+
+            myDB.collection('sections')
+                .findOne(ObjectID(req.query.students))
+                .then((sections) => {
+                    let enrolled = sections.students.map((x) => {
+                        if (x.status == 'E') {
+                            return x.user_id;
+                        } else {
+                            return "";
+                        }
+                    })
+                    console.log(enrolled);
+                    response.data = enrolled;
+                    res.send(enrolled);
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                })
+        });
+    }
+
+    function getSectionsOfStudent(req, res) {
         connection((db) => {
             const myDB = db.db('up-goe-db');
 
@@ -308,7 +334,9 @@ router.get('/sections', (req, res) => {
                 })
 
         });
-    } else if (req.query.class) {
+    }
+
+    function searchSection(req, res) {
         connection((db) => {
             const myDB = db.db('up-goe-db');
 
@@ -348,11 +376,61 @@ router.get('/sections', (req, res) => {
         });
     }
 
+    function searchSectionByName(req, res) {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+
+            myDB.collection('sections')
+                .find()
+                .toArray()
+                .then((sections) => {
+                    console.log(req.query.class);
+                    async.forEach(sections, processEachSection, afterAllSection);
+
+                    function processEachSection(section, callback) {
+
+                        myDB.collection('courses')
+                            .find({
+                                course_name: { $regex: '(?i)' + req.query.class + '(?-i)' }
+                            })
+                            .toArray()
+                            .then((course) => {
+                                console.log(course[0]);
+                                Promise.all(course[0].course_name).then(() => {
+
+                                    myObjArr.push({
+                                        section: section,
+                                        course_name: course[0].course_name
+                                    });
+
+                                    callback(null);
+                                });
+                            });
+
+                    }
+
+                    function afterAllSection(err) {
+                        response.data = myObjArr;
+                        res.send(myObjArr);
+                    }
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                })
+
+
+
+        });
+    }
+
 
 });
 
+
+
 /**
- * api/sections/quests
+ * @description portal for requests regarding quests. api/sectionQuests
+ * @author Cedric Yao Alvaro
  */
 router.get('/sections/quests', (req, res) => {
 
@@ -418,9 +496,10 @@ router.get('/sections/quests', (req, res) => {
 
 });
 
-/*
-** api/signup
-*/
+/**
+ * @description portal for requests regarding signup. api/signup
+ * @author Donevir Hynson
+ */
 router.post('/signup', (req, res) => {
     connection((db) => {
         const myDB = db.db('up-goe-db');
@@ -472,7 +551,9 @@ router.post('/signup', (req, res) => {
 });
 
 /**
- * api/users
+ * @description portal for requests regarding signup. api/users
+ * @author Cedric Yao Alvaro
+ * @author Donevir D. Hynson
  */
 router.get('/users', (req, res) => {
     connection((db) => {
@@ -493,7 +574,9 @@ router.get('/users', (req, res) => {
 });
 
 /**
- * api/securityQuestions
+ * @description portal for requests regarding security questions. api/securityQuestions
+ * @author Donevir D. Hynson
+ * @author Cedric Yao Alvaro - modified May 14, 2018
  */
 router.get('/securityQuestions', (req, res) => {
     connection((db) => {
@@ -502,7 +585,6 @@ router.get('/securityQuestions', (req, res) => {
             .find()
             .toArray()
             .then((questions) => {
-                response.data = questions[0].question;
                 res.json(questions);
             })
             .catch((err) => {
@@ -512,7 +594,8 @@ router.get('/securityQuestions', (req, res) => {
 });
 
 /**
- * api/userReqPass
+ * @description portal for requests regarding user requesting for their forgotten password. api/userReqPass
+ * @author Donevir D. Hynson
  */
 router.post('/userReqPass', (req, res) => {
     connection((db) => {

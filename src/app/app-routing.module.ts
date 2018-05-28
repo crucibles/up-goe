@@ -70,10 +70,10 @@ const routes: Routes = [
     path: 'quest-leaderboard',
     component: QuestLeaderboardComponent
   },
-  /*{
+  {
     path: 'teacher/specific',
     loadChildren: './teacher/specific/specific.module#SpecificModule'
-  },*/
+  },
   {
     path: '**',
     component: PageNotFoundComponent

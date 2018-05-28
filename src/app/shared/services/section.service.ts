@@ -49,6 +49,8 @@ import {
 export class SectionService {
 
 	private currentUserSections: any;
+	private currentCourseSection: any;
+	private currentCourse: Course;
 	private currentSectionId: any;
 	private currentSection: Section;
 
@@ -196,15 +198,29 @@ export class SectionService {
 	* @returns course information of the course
 	*/
 	getCourse(course_id): Observable<Course> {
-		const url = `${this.courseUrl}/?course_id=${course_id}`;
-		return this.http.get<Course>(url).pipe(
-			map(sections => sections[0]),
+		const url = this.courseUrl;
+
+		let params = new HttpParams().set('id', course_id);
+
+		return this.http.get<Course>(url, {
+			params: params
+		}).pipe(
 			tap(h => {
+				console.warn(h);
 				const outcome = h ?
 					'fetched course ' + course_id : 'did not find course ' + course_id;
 			}),
 			catchError(this.handleError<Course>(`getCourse course_id=${course_id}`))
 		);
+	}
+
+	/**
+	 * @author Cedric Y. Alvaro
+	 * Sets the current course the user is navigating
+	 */
+	setCurrentCourse(cs: Course) {
+		this.currentCourse = cs;
+		console.warn(this.currentCourseSection);
 	}
 
 	/**
@@ -253,10 +269,29 @@ export class SectionService {
 
 	/**
 	 * @author Cedric Y. Alvaro
+	 * Sets the current coursesection the user is navigating
+	 */
+	setCurrentCourseSection(cs: any) {
+		this.currentCourseSection = cs;
+		console.warn(this.currentCourseSection);
+	}
+
+	/**
+	 * Returns current section to its subscribers
+	 * @author Cedric Y. Alvaro
+	 * @returns {course section any} information of the current course section being navigated
+	 */
+	getCurrentCourseSection() {
+		return this.currentCourseSection;
+	}
+
+
+
+	/**
+	 * @author Cedric Y. Alvaro
 	 * Sets the current section the user is navigating
 	 */
 	setCurrentSection(section: Section) {
-		console.warn(section);
 		this.currentSection = section;
 		console.warn(this.currentSection);
 	}
@@ -275,10 +310,7 @@ export class SectionService {
 	 * @returns {Course} section information of the current section being navigated
 	 */
 	getCurrentCourse() {
-		let curCourse = this.currentUserSections.map((section) => {
-			return section.section._id = this.currentSectionId;
-		});
-		return curCourse.course;
+		return this.currentCourse;
 	}
 
 
@@ -293,7 +325,23 @@ export class SectionService {
    * arrayReturned = [new User(user1), new User(user2)]
    */
 	getSectionStudents(section_id) {
-		const url = this.userSectionUrl;
+
+		const url = this.secUrl;
+
+		let params = new HttpParams().set('students', section_id);
+
+		return this.http.get<any>(
+			url, {
+				params: params
+			})
+			.pipe(
+				tap(students => {
+					console.warn(students);
+					const outcome = students ?
+						'fetched students of section ' + section_id : 'did not find students of section ' + section_id;
+				}),
+				catchError(this.handleError<any>(`getUserSections section_id=${section_id}`))
+			);
 	}
 
 	/**
@@ -458,7 +506,7 @@ export class SectionService {
 	 * @author Cedric Alvaro
 	 * 
 	 */
-	getSectionJoinedQuests() {
+	getAllSectionJoinedQuests() {
 		console.warn(this.userService.getCurrentUser().getUserId());
 		let sjq = [];
 		let counter = 0;
@@ -469,7 +517,7 @@ export class SectionService {
 				if (y.quest_participants) {
 					y.quest_participants.map((z) => {
 						console.log(z);
-						if(z = this.userService.getCurrentUser().getUserId()){
+						if (z = this.userService.getCurrentUser().getUserId()) {
 							console.warn("matched");
 							sjq[counter] = y.quest_id;
 							counter++;
