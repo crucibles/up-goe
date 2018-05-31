@@ -36,6 +36,7 @@ import {
 
 //Application Imports
 import {
+  BadgeModal,
   PageNotFoundComponent
 } from 'shared/pages';
 
@@ -61,8 +62,12 @@ import {
     ProgressbarModule,
     ReactiveFormsModule,
     TimepickerModule,
-    TooltipModule
+    TooltipModule,
+    BadgeModal
   ],
-  declarations: [PageNotFoundComponent]
+  declarations: [
+    PageNotFoundComponent,
+    BadgeModal
+  ]
 })
 export class SharedModule { }

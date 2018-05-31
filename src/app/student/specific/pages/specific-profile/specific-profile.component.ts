@@ -15,7 +15,7 @@ import {
 } from 'shared/services';
 import { ActivatedRoute } from '@angular/router';
 
-const TOTXP: number[] = [10, 20, 30, 40];
+const TOTXP: number[] = [10, 20, 30, 40, 100];
 const MAXXP: number = 200;
 
 @Component({
@@ -97,32 +97,7 @@ export class SpecificProfileComponent implements OnInit {
             data: dataGrade,
             label: 'CMSC 128'
         };
-        let dataLine2: any = {
-            data: [1, 3, 5, 50],
-            label: 'CMSC 128'
-        };
-        let dataLine3: any = {
-            data: [11, 31, 52, 50],
-            label: 'CMSC 128'
-        };
-        let dataLine4: any = {
-            data: [13, 34, 55, 58],
-            label: 'CMSC 128'
-        };
-        let dataLine5: any = {
-            data: [12, 31, 53, 80],
-            label: 'CMSC 128'
-        };
-        let dataLine6: any = {
-            data: [12, 45, 78, 90],
-            label: 'CMSC 128'
-        };
         this.lineChartData.push(dataLine);
-        this.lineChartData.push(dataLine2);
-        this.lineChartData.push(dataLine3);
-        this.lineChartData.push(dataLine4);
-        this.lineChartData.push(dataLine5);
-        this.lineChartData.push(dataLine6);
     }
 
     /* Below are the helper functions */

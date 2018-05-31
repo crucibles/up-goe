@@ -12,8 +12,8 @@
  * @property quest_items[] items to be obtained if quest is accomplished
  * @property quest_hp the item's addition to the the user's health points if quest successfully accomplished
  * @property quest_xp the item's addition to the the user's exp points if quest successfully accomplished
- * @property quest_start_time_date time and date the quest had started/created
- * @property quest_end_time_date time and date of the quest's deadline
+ * @property quest_start_date time and date the quest had started/created
+ * @property quest_end_date time and date of the quest's deadline
  * @property quest_party identifies if a quest requires party or not;
  * true if it requires party and false if otherwise
  * @property quest_prerequisite the list of quest names that must be accomplished before this quest can be added
@@ -28,8 +28,8 @@ export class Quest {
     private quest_item: string[];
     private quest_xp: number;
     private quest_hp: number;
-    private quest_start_time_date: Date;
-    private quest_end_time_date: Date;
+    private quest_start_date: Date;
+    private quest_end_date: Date;
     private quest_party: boolean;
     private quest_prerequisite: string[];
 
@@ -45,8 +45,8 @@ export class Quest {
             this.quest_item = quest.quest_item ? quest.quest_item : [];
             this.quest_xp = quest.quest_xp ? quest.quest_xp : 0;
             this.quest_hp = quest.quest_hp ? quest.quest_hp : 0;
-            this.quest_start_time_date = quest.quest_start_date ? new Date(quest.quest_start_date) : new Date();
-            this.quest_end_time_date = quest.quest_end_date ? new Date(quest.quest_end_date) : new Date();
+            this.quest_start_date = quest.quest_start_date ? new Date(quest.quest_start_date) : new Date();
+            this.quest_end_date = quest.quest_end_date ? new Date(quest.quest_end_date) : new Date();
             this.quest_party = quest.quest_party ? quest.quest_party : false;
             this.quest_prerequisite = quest.quest_prerequisite ? quest.quest_prerequisite : [];
         } else {
@@ -57,8 +57,8 @@ export class Quest {
             this.quest_item = [];
             this.quest_xp = 0;
             this.quest_hp = 0;
-            this.quest_start_time_date = new Date();
-            this.quest_end_time_date = new Date();
+            this.quest_start_date = new Date();
+            this.quest_end_date = new Date();
             this.quest_party = false;
             this.quest_prerequisite = [];
         }
@@ -72,8 +72,8 @@ export class Quest {
         quest_item,
         quest_xp,
         quest_hp,
-        quest_start_time_date,
-        quest_end_time_date,
+        quest_start_date,
+        quest_end_date,
         quest_party,
         quest_prerequisite
     ) {
@@ -84,8 +84,8 @@ export class Quest {
         this.quest_item = quest_item;
         this.quest_xp = quest_xp;
         this.quest_hp = quest_hp;
-        this.quest_start_time_date = new Date(quest_start_time_date);
-        this.quest_end_time_date = new Date(quest_end_time_date);
+        this.quest_start_date = new Date(quest_start_date);
+        this.quest_end_date = new Date(quest_end_date);
         this.quest_party = quest_party;
         this.quest_prerequisite = quest_prerequisite;
     }
@@ -123,11 +123,27 @@ export class Quest {
     }
 
     getQuestStartTimeDate() {
-        return this.quest_start_time_date;
+        return this.quest_start_date;
     }
 
+    getQuestFormatTime(date_obj) {
+		// formats a javascript Date object into a 12h AM/PM time string
+		var hour = date_obj.getHours();
+		var minute = date_obj.getMinutes();
+		var amPM = (hour > 11) ? "pm" : "am";
+		if (hour > 12) {
+			hour -= 12;
+		} else if (hour == 0) {
+			hour = "12";
+		}
+		if (minute < 10) {
+			minute = "0" + minute;
+		}
+		return hour + ":" + minute + amPM;
+	}
+
     getQuestEndTimeDate() {
-        return this.quest_end_time_date;
+        return this.quest_end_date;
     }
 
     getQuestParty() {
@@ -139,8 +155,8 @@ export class Quest {
     }
 
     getQuestTimePercentage(): string {
-        let timePerc: number = 100 - this.timeDifference(this.quest_end_time_date, new Date()) / this.timeDifference(this.quest_end_time_date, this.quest_start_time_date) * 100;
-        let totalMinRem: number = this.timeDifference(this.quest_end_time_date, new Date());
+        let timePerc: number = 100 - this.timeDifference(this.quest_end_date, new Date()) / this.timeDifference(this.quest_end_date, this.quest_start_date) * 100;
+        let totalMinRem: number = this.timeDifference(this.quest_end_date, new Date());
         let hourRem: number = Math.floor(totalMinRem / 1000 / 60 / 60);
 
         let string = this.getTimeLabel(totalMinRem, hourRem);
@@ -161,7 +177,7 @@ export class Quest {
 	 * @returns string label for the progress bar
 	 */
 	getQuestTimeLabel(): string {
-        let totalMinRem: number = this.timeDifference(this.quest_end_time_date, new Date());
+        let totalMinRem: number = this.timeDifference(this.quest_end_date, new Date());
         let hourRem: number = Math.floor(totalMinRem / 1000 / 60 / 60);
 
 		let string = "";
@@ -189,7 +205,7 @@ export class Quest {
 	 * @param i index of the quest to be checked
 	 */
 	getQuestProgressBarClass(): string{
-        let totalMinRem: number = this.timeDifference(this.quest_end_time_date, new Date());
+        let totalMinRem: number = this.timeDifference(this.quest_end_date, new Date());
         let hourRem: number = Math.floor(totalMinRem / 1000 / 60 / 60);
 
 		if (hourRem <= 0) {
@@ -233,12 +249,12 @@ export class Quest {
         this.quest_hp = quest_hp;
     }
 
-    setQuestStarttimedate(quest_start_time_date) {
-        this.quest_start_time_date = quest_start_time_date;
+    setQuestStarttimedate(quest_start_date) {
+        this.quest_start_date = quest_start_date;
     }
 
-    setQuestEndtimedate(quest_end_time_date) {
-        this.quest_end_time_date = quest_end_time_date;
+    setQuestEndtimedate(quest_end_date) {
+        this.quest_end_date = quest_end_date;
     }
 
     setQuestParty(quest_party) {
