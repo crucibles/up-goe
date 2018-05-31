@@ -1,11 +1,15 @@
 <!--Graph for quest map-->
-<div class="row">
+<div class="row" *ngIf="quests">
 	<div style="display: block">
 		<canvas id="quest-map" baseChart width="650" height="300"></canvas>
 	</div>
 </div>
 
-<ng-container *ngIf="quests">
+<div *ngIf="!quests">
+	Loading... <img class="loading-icon" src="/assets/images/loading.gif"/>
+</div>
+
+<!-- <ng-container *ngIf="quests">
 	<div class="square" style="border:1px solid black;" *ngFor="let quest of quests; let i = index;">
 		<ng-container>
 			<ul>
@@ -19,7 +23,7 @@
 			<button type="button" class="btn btn-primary" (click)="openQuest(questTemplate, this.QUEST)">Click for more info!</button>
 		</ng-container>
 	</div>
-</ng-container>
+</ng-container> -->
 
 <!-- Modal Template for Quests-->
 <ng-template #questTemplate>
@@ -70,3 +74,40 @@
 	</div>
 </ng-template>
 <!-- quest modal template end -->
+
+
+<ng-template #leaderboardTemplate>
+	<div class="modal-body">
+		<h4>Going Bananas</h4>
+		<table class="table table-hover">
+			<thead style="font-weight: bold">
+				<tr>
+					<td>Rank</td>
+					<td>Student Number</td>
+					<td>Experience</td>
+					<td>Time Submitted</td>
+					<td>Date Submitted</td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>1</td>
+					<td>2014-67553</td>
+					<td>400</td>
+					<td>ss:mm:hh</td>
+					<td>dd/mm/yyyy</td>
+				</tr>
+				<tr>
+					<td>2</td>
+					<td>2014-37728</td>
+					<td>500</td>
+					<td>ss:mm:hh</td>
+					<td>dd/mm/yyyy</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-danger pull-right" (click)="modalRef.hide()">Close</button>
+	</div>
+</ng-template>

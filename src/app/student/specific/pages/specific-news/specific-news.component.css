@@ -52,7 +52,7 @@ border-radius: 4px 4px 0 0;
 color: #777777;
 float: left;
 font-family: Lato;
-font-size: 14px;
+font-size: .75em;
 height: 142px;
 letter-spacing: 0.3px;
 padding: 20px;
@@ -120,7 +120,7 @@ border-left-color: #2dcb73;
 .status-upload form button > i {
 margin-right: 7px;
 }
-/*------------------*/
+/*--Reply Comment Box End--*/
 
 .panel-shadow {
     box-shadow: rgba(0, 0, 0, 0.3) 7px 7px 7px;
@@ -151,9 +151,7 @@ margin-right: 7px;
 .post .post-heading .meta .title {
   margin-bottom: 0;
 }
-.post .post-heading .meta .title a {
-  color: black;
-}
+
 .post .post-heading .meta .title a:hover {
   color: #aaaaaa;
 }
@@ -169,7 +167,7 @@ margin-right: 7px;
   padding: 15px;
 }
 .post .post-description p {
-  font-size: 14px;
+  font-size: 1em;
 }
 .post .post-description .stats {
   margin-top: 20px;
@@ -207,16 +205,22 @@ margin-right: 7px;
   width: 100%;
 }
 .post .post-footer .comments-list .comment .comment-heading .user {
-  font-size: 14px;
+  font-size: .75em;
   font-weight: bold;
   display: inline;
   margin-top: 0;
   margin-right: 10px;
 }
 .post .post-footer .comments-list .comment .comment-heading .time {
-  font-size: 12px;
+  font-size: .5em;
   color: #aaa;
   margin-top: 0;
+  display: inline;
+}
+
+.post .post-footer .comments-list .comment .comment-heading p {
+  font-size: .5em;
+  color: #aaa;
   display: inline;
 }
 .post .post-footer .comments-list .comment .comment-body {
@@ -225,8 +229,6 @@ margin-right: 7px;
 .post .post-footer .comments-list .comment > .comments-list {
   margin-left: 50px;
 }
-
-
 
 /*Comments Section (not reply)*/
 .comments {
@@ -275,7 +277,7 @@ margin-right: 7px;
 }
 
 .comments article time {
-    font-size: .75rem;
+    font-size: .5rem;
     opacity: 0;
 }
 
