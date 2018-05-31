@@ -1,0 +1,9 @@
+.modal-body {
+    text-align: center;
+}
+
+.modal-body img {
+    margin: 10px;
+}
+
+.ui-widget-content {border:none}

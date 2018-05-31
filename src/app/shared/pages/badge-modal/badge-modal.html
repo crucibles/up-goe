@@ -1,0 +1,16 @@
+<!-- Modal Template for Modal-->
+<ng-template #badgeModal>
+    <!-- Badge Modal -->
+    <div class="modal-body">
+        <h3>You earned your daily badge!</h3>
+        <img src="/assets/images/daily-badge-2.png" />
+        <div>Log in everyday to earn your daily badge. Five daily badges in a week earn you a weekly badge.</div>
+    </div>
+
+    <!-- Quest Modal Buttons -->
+    <div class="modal-footer">
+        <!-- shows submit & abandon buttons if user is a participant -->
+        <button type="submit" class="btn btn-success" (click)="bsModalRef.hide()">Exit</button>
+    </div>
+</ng-template>
+<!-- quest modal template end -->
