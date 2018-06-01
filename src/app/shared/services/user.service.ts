@@ -70,6 +70,8 @@ export class UserService {
 
     /**
      * @summary: Obtains a user from server by id
+     * @author Cedric Yao Alvaro
+     * @returns {User}
      */
     getUser(id: string): any {
         const url = this.userUrl;
@@ -80,8 +82,8 @@ export class UserService {
             .pipe(
             map(users => users[0]), // returns a {0|1} element array
             tap(h => {
-                console.log(h);
                 const outcome = h ? 'fetched user ' + id : 'did not find user ' + id;
+                return new User(h);
             }),
             catchError(this.handleError<User>(`getUser user_id=${id}`))
             );
@@ -108,10 +110,26 @@ export class UserService {
                     this.currentUser = new User(data);
                     localStorage.setItem('currentUser', JSON.stringify(data));
                     this.cookieService.set('currentUser', this.currentUser.getUserEmail());
+                    this.updateUserConditions(this.currentUser);
                 }
                 return data;
             }),
             catchError(this.handleError<any>(`logIn user_email=${email}`))
+        );
+    }
+
+    updateUserConditions(user: User){
+        console.log("Im inside now");
+        const url = this.userUrl;
+
+        let body = user;
+
+        return this.http.post(url, body).pipe(
+            tap(data => {
+                console.log(data);
+                return data;
+            }),
+            catchError(this.handleError<any>(`updateUserConditions user_id=${user.getUserId()}`))
         );
     }
 

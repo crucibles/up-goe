@@ -92,7 +92,9 @@ export class GenSelcourseComponent implements OnInit {
    */
   getStatusOfSection(students) {
     let currentUser = JSON.parse(localStorage.getItem("currentUser"));
-    let status = students ? students.filter(user => user.user_id == currentUser._id)[0].status : AsyncAction;
+    let student = students ? students.filter(user => user.user_id == currentUser._id) : AsyncAction;
+    let status = student[0] ? student[0].status: "";
+    
     if (status == "E") {
       return "Enrolled";
     } else if (status == "R") {
@@ -113,6 +115,7 @@ export class GenSelcourseComponent implements OnInit {
   getUserSections(user_id): void {
     this.sectionService.getUserSections(user_id)
       .subscribe(sections => {
+        console.warn(sections);
         this.sections = sections;
         //this.sections = sections.map(section => new Section(section));
       });
@@ -128,14 +131,14 @@ export class GenSelcourseComponent implements OnInit {
       this.isSearching = false;
 
     } else if (this.course_search.length == 24) {
-
+      console.log("id");
       this.isSearching = true;
       this.sectionService.searchSection(this.course_search).subscribe((sections) => {
         this.course_found = sections;
       })
 
     } else if (this.course_search.length > 0) {
-
+      console.log(">0");
       this.sectionService.searchSection(this.course_search).subscribe((sections) => {
         console.warn(sections);
         this.isSearching = true;
