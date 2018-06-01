@@ -713,7 +713,8 @@ router.post('/questLeaderboard', (req, res) => {
                         if(quest.quest_id == req.body.currQuest) {
                             studentExp.push({
                                 studentId: exp.user_id,
-                                score: quest.quest_grade
+                                score: quest.quest_grade,
+                                dateCompleted: quest.quest_date_completed
                             });
                         }
                     });

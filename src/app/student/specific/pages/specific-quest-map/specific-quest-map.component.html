@@ -91,10 +91,10 @@
 			<thead style="font-weight: bold">
 				<tr>
 					<td>Rank</td>
-					<td>Student Number</td>
-					<td>Experience</td>
-					<td>Time Submitted</td>
-					<td>Date Submitted</td>
+					<td>Student No.</td>
+					<td>XP</td>
+					<td>Quest Started</td>
+					<td>Quest Completed</td>
 				</tr>
 			</thead>
 			<tbody>
@@ -102,8 +102,8 @@
 					<td>{{ rank+1 }}</td>
 					<td>{{ xp.studentId }}</td>
 					<td>{{ xp.score }}</td>
-					<td>ss:mm:hh</td>
-					<td>dd/mm/yyyy</td>
+					<td>{{ questClicked.getQuestStartTimeDate() }}</td>
+					<td>{{ xp.dateCompleted }}</td>
 				</tr>
 			</tbody>
 		</table>
