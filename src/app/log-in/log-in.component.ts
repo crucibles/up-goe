@@ -68,7 +68,7 @@ export class LogInComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || 'student/general/select-course';
+        this.returnUrl = this.route.snapshot.queryParams['returnUrl'];
         this.warning = false;
     }
 
@@ -82,7 +82,7 @@ export class LogInComponent implements OnInit {
                     if (user) {
                         user = new User(user);
                         this.toastr.success("You are succesfully logged in!", "Welcome " + user.getUserFirstName());
-                        this.router.navigateByUrl(this.returnUrl);
+                        this.router.navigateByUrl(this.returnUrl? this.returnUrl: user.getUserType()+'/general/select-course');
                         this.badgeModal.open();
                     } else {
                         console.log("User does not exists!");

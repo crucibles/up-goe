@@ -37,8 +37,8 @@ import {
 const BADGES = [
 	{
 		_id: "1",
-		badge_photo: "badge1.png",
-		badge_description: "Earn this lol",
+		badge_photo: "daily_badge.png",
+		badge_description: "Example of a daily badge. Just log in.",
 		badge_conditions: new Conditions(),
 		is_system: false,
 		badge_attainers: []

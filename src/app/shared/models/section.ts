@@ -23,7 +23,7 @@ export class Section {
         section?: any
     ) {
         if (section) {
-            this._id = section.course_id ? section.course_id : "";
+            this._id = section._id ? section._id : "";
             this.course_id = section.course_id ? section.course_id : "";
             this.section_name = section.section_name ? section.section_name : "";
             this.students = [];

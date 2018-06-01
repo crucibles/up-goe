@@ -43,6 +43,7 @@ import {
 export class UserService {
 
     private userUrl = 'api/users';    // URL to: server/routes/api.js for users
+    private userUpdateUrl = 'api/updateUser'; // URL to: server/routes/api.js for updating user details
     private loginUrl = 'api/login';   // URL to: server/routes/api.js for login
     private signupUrl = 'api/signup'; // URL to: server/routes/api.js for sign up
     private securityQuestionsUrl = 'api/securityQuestions'; // URL to: server/routes/api.js for security questions
@@ -70,6 +71,8 @@ export class UserService {
 
     /**
      * @summary: Obtains a user from server by id
+     * @author Cedric Yao Alvaro
+     * @returns {User}
      */
     getUser(id: string): any {
         const url = this.userUrl;
@@ -78,12 +81,12 @@ export class UserService {
             params: params
         })
             .pipe(
-            map(users => users[0]), // returns a {0|1} element array
-            tap(h => {
-                console.log(h);
-                const outcome = h ? 'fetched user ' + id : 'did not find user ' + id;
-            }),
-            catchError(this.handleError<User>(`getUser user_id=${id}`))
+                map(users => users[0]), // returns a {0|1} element array
+                tap(h => {
+                    const outcome = h ? 'fetched user ' + id : 'did not find user ' + id;
+                    return new User(h);
+                }),
+                catchError(this.handleError<User>(`getUser user_id=${id}`))
             );
     }
 
@@ -112,6 +115,15 @@ export class UserService {
                 return data;
             }),
             catchError(this.handleError<any>(`logIn user_email=${email}`))
+        );
+    }
+
+    updateUserConditions(user_id: string) {
+        const url = this.userUpdateUrl;
+        return this.http.post(url, { user_id: user_id }).pipe(
+            tap(data => {
+                return data;
+            })
         );
     }
 
@@ -165,7 +177,7 @@ export class UserService {
                 return data;
             }),
             catchError(this.handleError<User>(`signup user_email=${email}`))
-            );
+        );
     }
 
     getSecurityQuestions() {
@@ -179,7 +191,7 @@ export class UserService {
 
     getUserReqPass(user_email: String) {
         const url = this.userReqPassUrl;
-        return this.http.post(url, {user_email}).pipe(
+        return this.http.post(url, { user_email }).pipe(
             tap(data => {
                 return data;
             })
