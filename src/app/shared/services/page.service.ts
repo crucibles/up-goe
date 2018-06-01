@@ -159,7 +159,7 @@ export class PageService {
 	* 
 	* @returns string of the formatted date
 	*/
-	private formatDate(date_obj) {
+	public formatDate(date_obj) {
 		let months: string[] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 		
 		let month = months[date_obj.getMonth()];
@@ -175,7 +175,7 @@ export class PageService {
 	* 
 	* @returns formatted time string
 	*/
-	private formatTime(date_obj) {
+	public formatTime(date_obj) {
 		// formats a javascript Date object into a 12h AM/PM time string
 		var hour = date_obj.getHours();
 		var minute = date_obj.getMinutes();
@@ -191,5 +191,7 @@ export class PageService {
 		return hour + ":" + minute + amPM;
 	}
 
-
+	public getCurrentDate(){
+		return new Date();
+	}
 }

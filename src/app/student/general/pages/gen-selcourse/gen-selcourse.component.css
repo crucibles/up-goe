@@ -1,36 +1,6 @@
-/*Course/Search-Result List Table*/
+/*Table styles*/
 #hor-zebra {
-    font-family: Helvetica, Times ,"Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
-    font-size: 14px;
     width: 70%;
-    text-align: left;
-    border-collapse: collapse;
-    margin: auto;
-    margin-top: 20px;
-    display: block;
-}
-
-#hor-zebra thead {
-    display: table-header-group;
-    border-color: inherit;
-}
-
-#hor-zebra .tr, #hor-zebra tr, #hor-zebra .tr, #hor-zebra tr {
-    border-bottom: 1px solid #ddd;
-}
-
-#hor-zebra td, #hor-zebra th{
-    padding: 6px;
-}
-
-#hor-zebra td a{
-    text-decoration: none;
-    cursor: pointer;
-    color: rgb(118, 143, 243)
-}
-
-#hor-zebra .odd {
-    background: #e8edff;
 }
 
 /*Search Bar*/

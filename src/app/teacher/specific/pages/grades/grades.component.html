@@ -1,0 +1,34 @@
+<ng-container *ngIf="quests">
+    <select>
+        <option *ngFor="let quest of quests">
+            {{quest.getQuestTitle()}}
+        </option>
+    </select>
+    <table id="hor-zebra" summary="Course List">
+        <thead>
+            <tr>
+                <th scope="col">Student #</th>
+                <th scope="col">Grades</th>
+                <th scope="col">Date Submitted</th>
+                <th scope="col">Submission</th>
+            </tr>
+        </thead>
+        <tbody>
+            <ng-container *ngIf="!submissions">
+                <tr>
+                    <td colspan="4" style="text-align: center">
+                        No submissions on this quest yet.
+                    </td>
+                </tr>
+            </ng-container>
+            <ng-container *ngIf="submissions">
+
+            </ng-container>
+        </tbody>
+    </table>
+</ng-container>
+
+<ng-container *ngIf="!quests">
+    Loading...
+    <img class="loading-icon" src="/assets/images/loading.gif" />
+</ng-container>
