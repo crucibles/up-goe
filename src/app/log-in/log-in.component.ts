@@ -1,36 +1,41 @@
 // Core imports
-import { 
-    Component, 
-    OnInit
+import {
+    Component,
+    OnInit,
+    ViewChild
 } from '@angular/core';
 
-import { 
-    FormBuilder, 
+import {
+    FormBuilder,
     FormControl,
     FormGroup,
-    Validators 
+    Validators
 } from '@angular/forms';
 
-import { 
-    Router, ActivatedRoute 
+import {
+    Router, ActivatedRoute
 } from '@angular/router';
 
 // 3rd Party imports
-import { 
-    AlertService 
+import {
+    AlertService
 } from 'shared/services/alert.service';
 
-import { 
-    ToastsManager 
+import {
+    ToastsManager
 } from 'ng2-toastr';
 
-import { 
-    User 
+import {
+    User
 } from 'shared/models';
 
 // Application imports
-import { 
-    UserService 
+import {
+    BadgeModal
+} from 'shared/pages/badge-modal/badge-modal';
+
+import {
+    UserService
 } from 'shared/services';
 
 @Component({
@@ -39,8 +44,10 @@ import {
     styleUrls: ['./log-in.component.css']
 })
 export class LogInComponent implements OnInit {
+    @ViewChild('badgeModal') badgeModal: BadgeModal;
+
     public signupForm: FormGroup;
-    
+
     returnUrl: string;
     private loginForm: FormGroup;
     private warning: boolean;
@@ -57,7 +64,7 @@ export class LogInComponent implements OnInit {
             email: [null, Validators.email],
             password: null
         });
-        
+
     }
 
     ngOnInit() {
@@ -70,6 +77,7 @@ export class LogInComponent implements OnInit {
         let password = this.loginForm.value.password;
 
         this.userService.logIn(email, password)
+<<<<<<< HEAD
         .subscribe(
             user => {
                 if (user) {
@@ -85,6 +93,24 @@ export class LogInComponent implements OnInit {
                 this.alertService.error(error);
             }
         );
+=======
+            .subscribe(
+                user => {
+                    if (user) {
+                        user = new User(user);
+                        this.toastr.success("You are succesfully logged in!", "Welcome " + user.getUserFirstName());
+                        this.router.navigateByUrl(this.returnUrl);
+                        this.badgeModal.open();
+                    } else {
+                        console.log("User does not exists!");
+                        this.warning = true;
+                    }
+                }, error => {
+                    // login failed so display error
+                    this.alertService.error(error);
+                }
+            );
+>>>>>>> 620a87a52102dea9b953b2b8890f7cc605ca1067
     }
 
     keyPressed() {

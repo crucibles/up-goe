@@ -17,3 +17,7 @@
 .clickable: hover{
     cursor: pointer;
 }
+
+.loading-icon {
+    height: 20px;
+}

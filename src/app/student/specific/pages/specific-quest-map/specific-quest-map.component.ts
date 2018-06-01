@@ -76,6 +76,7 @@ const MOCKQUESTMAP: String[] = [
 })
 export class SpecificQuestMapComponent implements OnInit {
 	@ViewChild('questTemplate') questTemplate: TemplateRef<any>;
+	@ViewChild('leaderboardTemplate') leaderboardTemplate: TemplateRef<any>;
 
 	options: any = {};
 	chartData: Array<any> = [];
@@ -114,8 +115,8 @@ export class SpecificQuestMapComponent implements OnInit {
 		quest_prerequisite: []
 	}
 
-
-	private bsModalRef: BsModalRef;
+	private questModalRef: BsModalRef;
+	private lbModalRef: BsModalRef;
 	private currentSection: Section;
 	private questClicked: Quest;
 
@@ -156,9 +157,15 @@ export class SpecificQuestMapComponent implements OnInit {
 		//WARNING!! Remove QUESTS in specific-qm.html when this is implemented
 		console.log(quest);
 		this.questClicked = new Quest(quest);
+		console.log(this.questClicked);
 		if (this.questClicked) {
-			this.bsModalRef = this.modalService.show(this.questTemplate);
+			this.questModalRef = this.modalService.show(this.questTemplate);
 		}
+	}
+
+	openLeaderBoardModal() {
+		console.log("opened");
+		this.lbModalRef = this.modalService.show(this.leaderboardTemplate);
 	}
 
 	/**
@@ -196,6 +203,19 @@ export class SpecificQuestMapComponent implements OnInit {
 						min: 0
 					}
 				}],
+			},
+			tooltips: {
+				enabled: true,
+				mode: 'single',
+				callbacks: {
+					title: function (tooltipItems, data) {
+						var tooltipItem = tooltipItems[0];
+						return data.datasets[tooltipItem.datasetIndex].label;
+					},
+					label: function(tooltipItem, data) {
+						return "";
+					}
+				}
 			}
 		}
 

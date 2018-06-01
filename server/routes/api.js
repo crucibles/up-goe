@@ -689,7 +689,7 @@ router.post('/questLeaderboard', (req, res) => {
         .catch((err) => {
             sendError(err, res);
         });
-});
+    });
 });
 
 module.exports = router;

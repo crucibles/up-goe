@@ -35,6 +35,7 @@ export class QuestLeaderboardComponent implements OnInit {
     private modalRef: BsModalRef;
     private student = [];
     private scores: object[] = new Array();
+    private user = false;
 
     constructor(
         private modalService: BsModalService,
@@ -54,10 +55,7 @@ export class QuestLeaderboardComponent implements OnInit {
         .subscribe((user) => {
             if (user) {
                 console.log('Yays');
-                console.log(user);
-                // JSON.parse(user);
-                // JSON.stringify(user);
-                console.log(user);
+                console.log(user[0].studentId);
             } else {
                 console.log('boo');
             }
