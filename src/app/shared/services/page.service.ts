@@ -140,8 +140,9 @@ export class PageService {
 	 * 
 	 * @returns {boolean} returns true if user is navigating on profile page; false if otherwise
 	 */
-	public isProfilePage(isProfile: boolean) {
+	public isProfilePage(isProfile: boolean): boolean {
 		this.isProfile.emit(isProfile);
+		return isProfile;
 	}
 
 	public openSectionPage(sectionId: string) {
