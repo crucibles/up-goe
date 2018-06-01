@@ -1,4 +1,18 @@
-<ng-container *ngIf="quests">
+<!--Graph for quest map-->
+<h3>Quest Map</h3>
+
+<div class="row" *ngIf="quests">
+	<div style="display: block">
+		<canvas id="quest-map" baseChart width="650" height="300"></canvas>
+	</div>
+</div>
+
+<!-- if quests still loading-->
+<div *ngIf="!quests">
+	Loading...
+	<img class="loading-icon" src="/assets/images/loading.gif" />
+</div>
+<!-- <ng-container *ngIf="quests">
 	<div class="square" style="border:1px solid black;" *ngFor="let quest of quests; let i = index;">
 		<ng-container>
 			<ul>
@@ -12,7 +26,7 @@
 			<button type="button" class="btn btn-primary" (click)="openQuest(questTemplate, this.QUEST)">Click for more info!</button>
 		</ng-container>
 	</div>
-</ng-container>
+</ng-container> -->
 
 <!-- Modal Template for Quests-->
 <ng-template #questTemplate>
@@ -23,7 +37,7 @@
 			{{this.questClicked.getQuestTitle()}}
 			<h6 *ngIf="isParticipating(this.questClicked.getQuestId())" style="text-align: center">(In Progress)</h6>
 		</h4>
-		<button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
+		<button type="button" class="close pull-right" aria-label="Close" (click)="questModalRef.hide()">
 			<span aria-hidden="true">&times;</span>
 		</button>
 	</div>
@@ -52,7 +66,7 @@
 	<!-- Quest Modal Buttons -->
 	<div class="modal-footer">
 		<!-- shows submit & abandon buttons if user is a participant -->
-		<ng-container *ngIf="isParticipating(this.questClicked.getQuestId())">
+		<ng-container *ngIf="isParticipating(this.questClicked.getQuestId()) && !isQuestTaken(this.questClicked.getQuestId())">
 			<button type="submit" class="btn btn-danger mr-auto" (click)="abandonQuest()">Abandon Quest</button>
 			<button type="submit" class="btn btn-success" (click)="submitQuest()">Submit Quest</button>
 		</ng-container>
@@ -60,6 +74,48 @@
 		<ng-container *ngIf="!isParticipating(this.questClicked.getQuestId())">
 			<button type="submit" class="btn btn-success" (click)="acceptQuest()">Accept the Quest</button>
 		</ng-container>
+		<!-- shows resubmit and show scores button if user already submitted quest-->
+		<ng-container *ngIf="isParticipating(this.questClicked.getQuestId()) && isQuestTaken(this.questClicked.getQuestId())">
+			<button type="submit" class="btn btn-danger mr-auto" (click)="abandonQuest()">Resubmit</button>
+			<button type="submit" class="btn btn-success" (click)="openLeaderBoardModal()">Show Scores</button>
+		</ng-container>
 	</div>
 </ng-template>
 <!-- quest modal template end -->
+
+<!-- Modal for leaderboard -->
+<ng-template #leaderboardTemplate>
+	<div class="modal-body">
+		<h4>Going Bananas</h4>
+		<table class="table table-hover">
+			<thead style="font-weight: bold">
+				<tr>
+					<td>Rank</td>
+					<td>Student Number</td>
+					<td>Experience</td>
+					<td>Time Submitted</td>
+					<td>Date Submitted</td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>1</td>
+					<td>2014-67553</td>
+					<td>400</td>
+					<td>{{this.pageService.formatTime(this.pageService.getCurrentDate())}}</td>
+					<td>{{this.pageService.formatDate(this.pageService.getCurrentDate())}}</td>
+				</tr>
+				<tr>
+					<td>2</td>
+					<td>2014-37728</td>
+					<td>500</td>
+					<td>{{this.pageService.formatTime(this.pageService.getCurrentDate())}}</td>
+					<td>{{this.pageService.formatDate(this.pageService.getCurrentDate())}}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-danger pull-right" (click)="lbModalRef.hide()">Close</button>
+	</div>
+</ng-template>

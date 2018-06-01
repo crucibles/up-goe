@@ -7,6 +7,10 @@ import {
 	Injectable
 } from '@angular/core';
 
+import {
+	AUTO_STYLE
+} from '@angular/core/src/animation/dsl';
+
 //Third-Party Imports
 import {
 	Observable
@@ -28,6 +32,7 @@ import {
 	Quest,
 	User
 } from 'shared/models';
+
 import { SectionService } from 'shared/services/section.service';
 import { UserService } from 'shared/services/user.service';
 
@@ -180,6 +185,17 @@ export class QuestService {
 	 */
 	gradeQuest(user_id, quest_id, exp) {
 
+	}
+
+	/**
+	 * Determines whether a user has submitted a quest in a particular section
+	 * @param user_id the user to verify whether he/she has taken a quest
+	 * @param quest_id the section quest to verify whether the student has taken it
+	 * @param section_id the section to check whether a user has submitted a quest in this section
+	 */
+	getQuestExp(user_id, quest_id, section_id): Observable<any> {
+		//AHJ: unimplemented
+		return null;
 	}
 
 	/**

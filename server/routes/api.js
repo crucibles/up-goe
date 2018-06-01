@@ -16,10 +16,10 @@ const xoauth2 = require('xoauth2');
  */
 
 
- /**
-  * @default 127.0.0.1:27017 the local address of the server
-  * @description the main connection to the server of the client
-  */
+/**
+ * @default 127.0.0.1:27017 the local address of the server
+ * @description the main connection to the server of the client
+ */
 const connection = (closure) => {
 
     return MongoClient.connect('mongodb://127.0.0.1:27017/up-goe-db', (err, db) => {
@@ -58,6 +58,12 @@ let response = {
     data: [],
     message: null
 };
+
+
+router.use(function timeLog(req, res, next) {
+    console.log('Time: ', Date.now());
+    next();
+});
 
 /**
  * @description portal for requests regarding courses. api/courses
@@ -411,17 +417,17 @@ router.get('/sections', (req, res) => {
                             .then((course) => {
 
                                 // course found.
-                                if (course.length > 0 ) {
-                                    
-                                    if(section.course_id == course[0]._id){
+                                if (course.length > 0) {
+
+                                    if (section.course_id == course[0]._id) {
 
                                         Promise.all(course[0].course_name).then(() => {
-    
+
                                             myObjArr.push({
                                                 section: section,
                                                 course_name: course[0].course_name
                                             });
-    
+
                                         });
 
                                     }
@@ -575,11 +581,11 @@ router.post('/signup', (req, res) => {
 });
 
 /**
- * @description portal for requests regarding signup. api/users
+ * @description portal for requests regarding users. api/users
  * @author Cedric Yao Alvaro
- * @author Donevir D. Hynson
  */
 router.get('/users', (req, res) => {
+
     connection((db) => {
         const myDB = db.db('up-goe-db');
         myDB.collection('users')
@@ -595,7 +601,32 @@ router.get('/users', (req, res) => {
                 sendError(err, res);
             });
     });
+
 });
+
+router.post('/users', (req, res) => {
+    let obj = {};
+    console.log("im in" + req.body.user_id);
+
+    connection((db) => {
+        const myDB = db.db('up-goe-db');
+
+        myDB.collection('users')
+            .update(
+                {_id: ObjectID(req.body.user._id)}
+ 
+            
+
+
+            )
+            .catch((err) => {
+                sendError(err, res);
+            })
+
+    });
+
+});
+
 
 /**
  * @description portal for requests regarding security questions. api/securityQuestions

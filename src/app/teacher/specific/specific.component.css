@@ -1,0 +1,17 @@
+/*Padding added so body will not be overlapped by topnavbar*/
+body {
+    padding: 30px 0 50px 0;
+}
+
+/*Side body - Complement of Vertical Tab & Top Navbar*/
+.side-body {
+    padding-top: 25px;
+    margin-left: 280px;
+}
+
+@media screen and (max-width: 768px) {
+    .side-body{
+        margin-left: 40px;
+        margin-top: 25px;
+    }
+}

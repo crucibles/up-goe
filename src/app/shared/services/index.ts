@@ -1,5 +1,7 @@
 export * from './badge.service';  
 export * from './comment-post.service';  
+export * from './file.service';  
+export * from './item.service';  
 export * from './item.service';  
 export * from './page.service';  
 export * from './quest.service';  

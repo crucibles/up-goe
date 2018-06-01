@@ -4,6 +4,7 @@ export * from './course';
 export * from './inventory';
 export * from './item';
 export * from './quest';
+export * from './quest-map';
 export * from './section';
 export * from './security-questions';
 export * from './user';

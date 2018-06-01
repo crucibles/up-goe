@@ -110,10 +110,26 @@ export class UserService {
                     this.currentUser = new User(data);
                     localStorage.setItem('currentUser', JSON.stringify(data));
                     this.cookieService.set('currentUser', this.currentUser.getUserEmail());
+                    this.updateUserConditions(this.currentUser);
                 }
                 return data;
             }),
             catchError(this.handleError<any>(`logIn user_email=${email}`))
+        );
+    }
+
+    updateUserConditions(user: User){
+        console.log("Im inside now");
+        const url = this.userUrl;
+
+        let body = user;
+
+        return this.http.post(url, body).pipe(
+            tap(data => {
+                console.log(data);
+                return data;
+            }),
+            catchError(this.handleError<any>(`updateUserConditions user_id=${user.getUserId()}`))
         );
     }
 

@@ -1,0 +1,43 @@
+<!--Performance Section-->
+<section class="performance">
+
+  <h3>My Performance</h3>
+
+  <!--Line Graph for performance-->
+  <div class="row">
+    <div style="display: block">
+      <canvas baseChart width="650" height="300" [datasets]="lineChartData" [labels]="lineChartLabels" [options]="lineChartOptions"
+        [colors]="lineChartColors" [legend]="true" [chartType]="'line'" (chartHover)="chartHovered($event)" (chartClick)="chartClicked($event)"></canvas>
+    </div>
+  </div>
+
+  <!--Table for the performance-->
+  <!--<div class="row">
+    <div style="margin-bottom: 10px">
+      <table class="table table-responsive table-condensed">
+        <tr>
+          <th *ngFor="let label of lineChartLabels">{{label}}</th>
+        </tr>
+        <tr *ngFor="let d of lineChartData">
+          <td *ngFor="let label of lineChartLabels; let j=index">{{d && d.data[j]}}</td>
+        </tr>
+      </table>
+    </div>
+  </div>-->
+
+</section>
+
+<!--Badges Section-->
+<section class="badges">
+  <h3>My Badges</h3>
+  <!--Shows badges if badges exist-->
+  <ng-container *ngIf="badges && badges.length > 0">
+    <div *ngFor="let badge of badges">
+
+    </div>
+  </ng-container>
+  <!--Informs user if he or she has no badges yet-->
+  <ng-container *ngIf="!badges || badges.length == 0">
+    You have no badges yet.
+  </ng-container>
+</section>
