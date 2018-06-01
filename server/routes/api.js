@@ -604,25 +604,23 @@ router.get('/users', (req, res) => {
 
 });
 
-router.post('/users', (req, res) => {
-    let obj = {};
-    console.log("im in" + req.body.user_id);
+router.post('/updateUser', (req, res) => {
 
     connection((db) => {
         const myDB = db.db('up-goe-db');
-
         myDB.collection('users')
             .update(
-                {_id: ObjectID(req.body.user._id)}
- 
-            
-
-
+                {_id: ObjectID(req.body.user_id)},
+                {
+                    $set: {
+                        
+                    }
+                }
+                
             )
             .catch((err) => {
                 sendError(err, res);
-            })
-
+            });
     });
 
 });
