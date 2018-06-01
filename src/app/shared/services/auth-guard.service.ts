@@ -70,28 +70,7 @@ export class AuthGuardService implements CanActivate, CanLoad {
 
             return true;
 
-        } else if (this.isRoleAuthenticated(route)) {
-
-            return true;
-
-        } else if (!this.isRoleAuthenticated(route)) {
-
-            return false;
-
-        } else {
-            console.log("just continue");
-            return true;
-        }
-    }
-
-    getUserType() {
-        return this.userService.getCurrentUser().getUserType();
-    }
-
-
-    isRoleAuthenticated(route: ActivatedRouteSnapshot): boolean {
-
-        if (this.auth.isLoggedIn() && route.routeConfig.path.split("/")[0] == "teacher" && this.getUserType() == "student") {
+        } else if (this.auth.isLoggedIn() && route.routeConfig.path.split("/")[0] == "teacher" && this.getUserType() == "student") {
 
             this.toastr.info("Redirecting to home page", "Unauthorized user type");
             this.router.navigate(['/student/general/select-course']);
@@ -104,9 +83,13 @@ export class AuthGuardService implements CanActivate, CanLoad {
             return false;
 
         } else {
-            console.log("Not implemented condition");
+            console.log("just continue");
             return true;
         }
+    }
+
+    getUserType() {
+        return this.userService.getCurrentUser().getUserType();
     }
 
 }

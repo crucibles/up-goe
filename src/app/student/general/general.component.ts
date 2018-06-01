@@ -3,6 +3,7 @@ import {
   Component,
   OnInit
 } from '@angular/core';
+import { UserService } from 'shared/services/user.service';
 
 @Component({
   selector: 'general',
@@ -11,7 +12,9 @@ import {
 })
 export class GeneralComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    private userService: UserService
+  ) { }
 
   ngOnInit() {
   }
