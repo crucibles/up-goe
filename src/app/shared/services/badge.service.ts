@@ -5,8 +5,27 @@ import {
 
 //Application Imports
 import {
-  Badge
+  Badge, Conditions
 } from 'shared/models';
+
+const BADGES: any[] = [
+  {
+    _id: "1",
+    badge_name: "Badge Taker",
+    badge_photo: "",
+    badge_description: "You take a badge!",
+    is_system: false,
+    badge_attainers: []
+  },
+  {
+    _id: "2",
+    badge_name: "Badge Giver",
+    badge_photo: "",
+    badge_description: "You gave a badge!",
+    is_system: false,
+    badge_attainers: []
+  }
+];
 
 @Injectable()
 export class BadgeService {
@@ -86,6 +105,8 @@ export class BadgeService {
    */
   getSectionBadges(section_id) {
     const url = this.badgeUrl;
+    //AHJ: unimplemented; remove mock badges if badge available
+    return BADGES;
   }
   
   /**

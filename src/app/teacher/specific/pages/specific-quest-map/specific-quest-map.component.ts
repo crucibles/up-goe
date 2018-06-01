@@ -1,11 +1,19 @@
 //Core Imports
 import {
+	HttpClient
+} from '@angular/common/http';
+
+import {
 	Component,
 	OnInit,
 	ViewChild,
 	TemplateRef,
 	Input
 } from '@angular/core';
+
+import {
+	FormGroup, FormBuilder, FormControl, Validators, FormArray
+} from '@angular/forms';
 
 import {
 	ActivatedRoute
@@ -23,7 +31,9 @@ import {
 	Quest,
 	Section,
 	SectionQuest,
-	User
+	User,
+	QuestMap,
+	Badge
 } from 'shared/models';
 
 import {
@@ -31,14 +41,13 @@ import {
 } from 'chart.js';
 
 import {
+	FileService,
 	PageService,
+	QuestService,
 	SectionService,
 	UserService,
-	QuestService,
-	FileService
+	BadgeService
 } from 'shared/services';
-import { HttpClient } from '@angular/common/http';
-import { QuestMap } from 'shared/models/quest-map';
 
 const SECTION: any = {
 	_id: "2",
@@ -81,11 +90,22 @@ const MOCKQUESTMAP: String[] = [
 	styleUrls: ['./specific-quest-map.component.css']
 })
 export class SpecificQuestMapComponent implements OnInit {
-	@ViewChild('questTemplate') questTemplate: TemplateRef<any>;
+	y: any;
+	x: any;
+	// basic info
+	private currentSection: Section;
+	currentUser: User;
 
-	
+	//modal
+	@ViewChild('questTemplate') questTemplate: TemplateRef<any>;
+	@ViewChild('createQuestTemplate') createQuestTemplate: TemplateRef<any>;
+	private bsModalRef: BsModalRef;
+	private createQuestForm: FormGroup;
+
+	// quests
+	private questClicked: Quest;
 	private quests: Quest[] = new Array();
-	
+
 	// quest map chart
 	xTick: number;
 	yTick: number;
@@ -98,37 +118,20 @@ export class SpecificQuestMapComponent implements OnInit {
 	// quest map details
 	questMap: QuestMap;
 
-	currentUser: User;
-	//AHJ: unimplemented; remove this when quest is retrieved properly
-	private QUEST: any = {
-		_id: "1",
-		quest_title: "Missing Ring!",
-		quest_description: "Retrieve the missing ring.",
-		quest_retakable: false,
-		quest_badge: "324",
-		quest_item: ["1324", "2323", "324234"],
-		quest_xp: 134,
-		quest_hp: 3432,
-		quest_start_time_date: new Date('01/01/2017'),
-		quest_end_time_date: new Date('10/10/2019'),
-		quest_party: false,
-		quest_prerequisite: []
-	}
-
-
-	private bsModalRef: BsModalRef;
-	private currentSection: Section;
-	private questClicked: Quest;
+	// create quest details
+	questBadges: any[] = [];
 
 	constructor(
+		private badgeService: BadgeService,
+		private fileService: FileService,
+		private formBuilder: FormBuilder,
 		private http: HttpClient,
 		private modalService: BsModalService,
+		private questService: QuestService,
 		private pageService: PageService,
 		private route: ActivatedRoute,
 		private sectionService: SectionService,
-		private userService: UserService,
-		private questService: QuestService,
-		private fileService: FileService
+		private userService: UserService
 
 	) {
 		this.currentUser = this.userService.getCurrentUser();
@@ -139,16 +142,52 @@ export class SpecificQuestMapComponent implements OnInit {
 		this.getCurrentUser();
 		this.getCurrentSection();
 		this.loadQuestMap();
+		this.createBadgeArray();
+		this.initializeForm();
+	}
+
+	createBadgeArray() {
+		let badges: Badge[] = this.badgeService.getSectionBadges("").map(badge => new Badge(badge));
+		//AHJ: unimplemented; retrieve badges
+		this.questBadges = badges.map(function week(badge) {
+			let obj = {
+				badgeName: badge.getBadgeName(),
+				badgeDescription: badge.getBadgeDescription(),
+				isChecked: false
+			}
+			return obj;
+		});
+	}
+
+	initializeForm() {
+		this.createQuestForm = this.formBuilder.group({
+			questTitle: new FormControl("", Validators.required),
+			questDescription: new FormControl(""),
+			questRetakable: new FormControl("Y", Validators.required),
+			questEXP: new FormControl("", [Validators.required, Validators.pattern("[0-9]+")]),
+			questHP: new FormControl("", Validators.pattern("[0-9]+")),
+			questBadges: this.buildBadges(),
+			questEndDate: new FormControl("", Validators.required)
+		});
+	}
+
+	buildBadges() {
+		const arr = this.questBadges.map(badge => {
+			return this.formBuilder.group({
+				badgeName: badge.badgeName,
+				badgeDescription: badge.badgeDescription,
+				isChecked: false
+			})
+		});
+		console.log(this.formBuilder.array(arr))
+		return this.formBuilder.array(arr);
 	}
 
 	loadQuestMap() {
 		this.questService.getUserJoinedQuests(this.currentUser.getUserId())
 			.subscribe(quests => {
 				console.log(quests);
-				//AHJ: unimplented; removed comment form below if quests can be retrieved;
-				//this.quests = quests.map(quest => new Quest(quest));
-				this.quests = [];
-				this.quests.push(new Quest(this.QUEST));
+				this.quests = quests.map(quest => new Quest(quest));
 				//AHJ: unimplemented; getter for quest map data (remove comment marker belowif available)
 				//this.questService.getQuestMap(this.currentSection.getCourseId()).subscribe(data => {
 				this.questMap = new QuestMap(MOCKQUESTMAP, this.quests, true);
@@ -221,6 +260,10 @@ export class SpecificQuestMapComponent implements OnInit {
 		selectedPoint.custom = selectedPoint.custom || {};
 		selectedPoint.custom.backgroundColor = 'rgba(128,128,128,1)';
 		selectedPoint.custom.radius = 7;
+	}
+
+	resetQuest() {
+		this.createQuestForm.reset();
 	}
 
 	/**
@@ -296,11 +339,11 @@ export class SpecificQuestMapComponent implements OnInit {
 			let x = points[0]._model.x / (this.chartWidth / this.xTick);
 			let y = (this.chartHeight - points[0]._model.y) / (this.chartHeight / this.yTick);
 			if (x % 5 != 0 || y % 5 !== 0) {
-				this.addNewQuestLine(x, y);
+				this.openCreateQuestModal();
 			} else {
 				var questId = this.questMap.getQuestIdOf(x, y);
 				var quests: Quest[] = this.quests.filter(quest => quest.getQuestId() == questId);
-				if(quests.length > 0){
+				if (quests.length > 0) {
 					this.openQuest(quests[0]);
 				}
 			}
@@ -311,18 +354,29 @@ export class SpecificQuestMapComponent implements OnInit {
 		console.log(this.chart.getElementAtEvent($event));
 	}
 
-	addNewQuestLine(x, y) {
-		let basisX = Math.round(x / 10) * 10;
-		let basisY = Math.round(y / 10) * 10;
-		if (x % 5 != 0) {
-			if (basisX - x > 0) {
-				this.questMap.addNewQuestLine(x, y, "E");
-			}
-		}
+	openCreateQuestModal() {
+		this.bsModalRef = this.modalService.show(this.createQuestTemplate);
 	}
 
-	openQuestPoint() {
+	createQuest(x, y) {
+		console.log(this.questTitle);
+		console.log(this.createQuestForm);
+		console.log("VALID");
+		let newQuest: Quest = new Quest();
+		//newQuest.setQuest()
+		this.addNewQuestLine();
+		console.log("Invalid");
+	}
 
+	addNewQuestLine() {
+		//AHJ: unimplemented; add to database so questmap is refreshed
+		let basisX = Math.round(this.x / 10) * 10;
+		let basisY = Math.round(this.y / 10) * 10;
+		if (this.x % 5 != 0) {
+			if (basisX - this.x > 0) {
+				this.questMap.addNewQuestLine(this.x, this.y, "E");
+			}
+		}
 	}
 
 	addData(chart, label, data) {
@@ -331,5 +385,29 @@ export class SpecificQuestMapComponent implements OnInit {
 			dataset.data.push(data);
 		});
 		chart.update();
+	}
+
+	get questBadgesArray(): FormArray {
+		return this.createQuestForm.get('questBadges') as FormArray;
+	}
+
+	get questRetakable() {
+		return this.createQuestForm.get('questRetakable');
+	}
+
+	get questTitle() {
+		return this.createQuestForm.get('questTitle');
+	}
+
+	get questEndDate() {
+		return this.createQuestForm.get('questEndDate');
+	}
+
+	get questEXP() {
+		return this.createQuestForm.get('questEXP');
+	}
+
+	get questHP() {
+		return this.createQuestForm.get('questHP');
 	}
 }
