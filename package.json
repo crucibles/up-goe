@@ -47,6 +47,7 @@
     "@angular/cli": "^1.5.3",
     "@angular/compiler-cli": "^4.2.4",
     "@angular/language-service": "^4.2.4",
+    "@types/express": "^4.11.1",
     "@types/node": "~6.0.60",
     "codelyzer": "~3.2.0",
     "ts-node": "~3.2.0",

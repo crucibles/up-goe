@@ -247,8 +247,11 @@ export class SectionService {
 		// Another note: Since the section is stored in the local storage, then maybe this function is deprecated and we can refer to 
 		// getCourse(section_id) function in this same service instead?
 		const url = this.secUrl;
+		let params = new HttpParams().set('id', section_id);
 
-		return this.http.get<Course>(url).pipe(
+		return this.http.get<Course>(url, {
+			params: params
+		}).pipe(
 			map(sections => sections[0]),
 			tap(h => {
 				const outcome = h ?
@@ -263,7 +266,7 @@ export class SectionService {
 	 * @author Cedric Y. Alvaro
 	 * @returns {Section} section information of the current section being navigated
 	 */
-	getCurrentSection() {
+	getCurrentSection(): Section {
 		return this.currentSection;
 	}
 
@@ -279,9 +282,9 @@ export class SectionService {
 	/**
 	 * Returns current section to its subscribers
 	 * @author Cedric Y. Alvaro
-	 * @returns {course section any} information of the current course section being navigated
+	 * @returns {any} information of the current course section being navigated
 	 */
-	getCurrentCourseSection() {
+	getCurrentCourseSection(): any {
 		return this.currentCourseSection;
 	}
 
@@ -289,7 +292,7 @@ export class SectionService {
 
 	/**
 	 * @author Cedric Y. Alvaro
-	 * Sets the current section the user is navigating
+	 * @description Sets the current section the user is navigating
 	 */
 	setCurrentSection(section: Section) {
 		this.currentSection = section;
@@ -298,7 +301,7 @@ export class SectionService {
 
 	/**
 	 * @author Cedric Y. Alvaro
-	 * Sets the current sectionId for reference of the current section the user is navigating.
+	 * @description Sets the current sectionId for reference of the current section the user is navigating.
 	 */
 	setCurrentSectionId(section_id: any) {
 		this.currentSectionId = section_id;
@@ -306,10 +309,10 @@ export class SectionService {
 
 	/**
 	 * Returns current section to its subscribers
-	 * 
+	 * @author Cedric Y. Alvaro
 	 * @returns {Course} section information of the current section being navigated
 	 */
-	getCurrentCourse() {
+	getCurrentCourse(): Course {
 		return this.currentCourse;
 	}
 
@@ -318,11 +321,9 @@ export class SectionService {
    * Returns students of the section based on section id
    * @description Returns the information of section's enrolled student as provided in the User class.
    * @param section_id id of the section whose array of students are to be retrieved
+   * @author Cedric Yao Alvaro
+   * @returns {User.ids[]} array of students ids enrolled in the section of User class
    * 
-   * @returns {User[]} array of students enrolled in the section of User class
-   * 
-   * @example
-   * arrayReturned = [new User(user1), new User(user2)]
    */
 	getSectionStudents(section_id) {
 
@@ -391,7 +392,7 @@ export class SectionService {
 	/**
 	 * Returns the array of sections based on user id
 	 * @param user_id id of the user whose array of sections are to be retrieved
-	 * 
+	 * @author Cedric Yao Alvaro
 	 * @returns array of sections
 	 * array[i].course_name - the name of the section's course where the user is enrolled in
 	 * array[i].section     - enrolled sections and pending sections of the student 
@@ -477,7 +478,8 @@ export class SectionService {
 
 		let filter = {
 			user_id: [currentUserId],
-			status: ["E"]
+			status: ["E"],
+			user_type: "student"
 		}
 
 		let enrolledSections = [];
@@ -530,37 +532,16 @@ export class SectionService {
 		return sjq;
 	}
 
-	/**
-   * Filters an array of objects with multiple criteria.
-   *
-   * @param  {Array}  array: the array to filter
-   * @param  {Object} filters: an object with the filter criteria as the property names
-   * 
-   * the value of each key is an array with the values to filter:
-   * let filters = {
-   * 	color: ["Blue", "Black"],
-   * 	size: [70, 50]
-   * };
-   * 
-   * @return {Array}
-   */
-	multiFilter(array, filters) {
-		const filterKeys = Object.keys(filters);
-		// filters all elements passing the criteria
-		return array.filter((item) => {
-			// dynamically validate all filter criteria
-			return filterKeys.every(key => !!~filters[key].indexOf(item[key]));
-		});
-	}
+
 
 	/**
 	 * Search section by either its class name or code
-	 * @param string string that contains the typed class name or code
+	 * @param string it contains the typed class name or code
 	 */
 	searchSection(string: any): Observable<any> {
 		console.log("hi");
 		console.warn("hello");
-		const searchUrl = "api/sections";
+		const searchUrl = this.secUrl;
 
 		let params = new HttpParams().set('class', string);
 
@@ -599,4 +580,28 @@ export class SectionService {
 			return of(result as T);
 		};
 	}
+
+
+	/**
+	* Filters an array of objects with multiple criteria.
+	*
+	* @param  array: the array to filter
+	* @param  filters: an object with the filter criteria as the property names
+	* @author Cedric Yao Alvaro
+	* the value of each key is an array with the values to filter:
+	* let filters = {
+	* 	color: ["Blue", "Black"],
+	* 	size: [70, 50]
+	* };
+	* 
+	*/
+	multiFilter(array, filters) {
+		const filterKeys = Object.keys(filters);
+		// filters all elements passing the criteria
+		return array.filter((item) => {
+			// dynamically validate all filter criteria
+			return filterKeys.every(key => !!~filters[key].indexOf(item[key]));
+		});
+	}
+
 }
