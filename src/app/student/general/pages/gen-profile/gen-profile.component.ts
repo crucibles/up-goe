@@ -86,6 +86,9 @@ export class GenProfileComponent implements OnInit {
         this.getUser();
         this.getGrades();
         this.setPerformanceGraph();
+        this.userService.updateUserConditions(this.userService.getCurrentUser().getUserId()).subscribe((x) => {
+            console.log(x);
+        });
     }
 
     /**
@@ -106,7 +109,7 @@ export class GenProfileComponent implements OnInit {
     getGrades(): void {
         let grades = TOTXP ? TOTXP : [];
         let max: number = MAXXP ? MAXXP : 10;
-        
+
         //AHJ: unimplemented
         //replace SECTIONS with this.getUserSectionExp(user_id) [section.service] function if the function is working
         SECTIONS.forEach(section => {
@@ -116,7 +119,7 @@ export class GenProfileComponent implements OnInit {
             section.week_total_exp.forEach(grade => {
                 // get the decimal percentage
                 let percentage: number = (grade / section.max_exp) * 100;
-    
+
                 // round the decimal up to two decimal points
                 dataGrade.push(Math.round((percentage + 0.00001) * 100) / 100);
             });
@@ -126,7 +129,7 @@ export class GenProfileComponent implements OnInit {
                 data: dataGrade,
                 label: className
             };
-            
+
             this.lineChartData.push(dataLine);
         })
 

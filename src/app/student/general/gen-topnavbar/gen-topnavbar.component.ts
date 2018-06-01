@@ -56,5 +56,6 @@ export class GenTopnavbarComponent implements OnInit {
 		if (!inside) {
       this.isCollapsed = true;
 		}
-	}
+  }
+
 }
