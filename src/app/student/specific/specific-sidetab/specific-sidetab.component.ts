@@ -157,19 +157,18 @@ export class SpecificSidetabComponent implements OnInit {
 	 * @param user_id the id of the user that asks for the list of quests
 	 */
 	setQuests(user_id): void {
-		// AHJ: unimplemented; add quest service to obtain quests of the current section
-		console.warn(this.sectionService.getCurrentSection());
-		this.quests = [];
-		let counter = 0;
-		this.sectionService.getCurrentSection().getQuests().map((sq) => {
-			this.questService.getQuest(sq.getSectionQuestId()).subscribe((quest) => {
-				this.quests.push(new Quest(quest));
-				counter++;
-				if(this.sectionService.getCurrentSection().getQuests().length == counter){
-					this.isDataLoaded = true;
-				}
+			console.warn(this.sectionService.getCurrentSection());
+			this.quests = [];
+			let counter = 0;
+			this.sectionService.getCurrentSection().getQuests().map((sq) => {
+				this.questService.getQuest(sq.getSectionQuestId()).subscribe((quest) => {
+					this.quests.push(new Quest(quest));
+					counter++;
+					if(this.sectionService.getCurrentSection().getQuests().length == counter){
+						this.isDataLoaded = true;
+					}
+				});
 			});
-		});
 	}
 
 	/**
@@ -178,13 +177,12 @@ export class SpecificSidetabComponent implements OnInit {
 	 * @param quest quest to be viewed
 	 */
 	openQuest(template: TemplateRef<any>, quest: any) { //'quest: any' in here means the quest has not been converted to Quest type
-		//AHJ: Unimplemented
-		//WARNING!! Remove QUESTS in specific-qm.html when this is implemented
-		console.log(quest);
-		this.questClicked = quest;
-		if (this.questClicked) {
-			this.bsModalRef = this.modalService.show(template);
-		}
+			
+			console.log(quest);
+			this.questClicked = quest;
+			if (this.questClicked) {
+				this.bsModalRef = this.modalService.show(template);
+			}
 	}
 
 	/**
