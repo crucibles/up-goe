@@ -264,6 +264,7 @@ export class SectionService {
 	 * @returns {Section} section information of the current section being navigated
 	 */
 	getCurrentSection() {
+		console.log(this.currentSection);
 		return this.currentSection;
 	}
 

@@ -634,6 +634,10 @@ router.post('/userReqPass', (req, res) => {
     });
 });
 
+/**
+ * @description portal for requests to collect score data from a certain quest. api/questLeaderboard
+ * @author Donevir D. Hynson
+ */
 router.post('/questLeaderboard', (req, res) => {
     connection((db) => {
     const myDB = db.db('up-goe-db');
@@ -644,6 +648,7 @@ router.post('/questLeaderboard', (req, res) => {
             if(experiences) {
                 var studentExp = [];
 
+                // Acquires the students with scores in the database.
                 experiences.forEach((exp) => {
                     exp.quests_taken.forEach((quest) => {
                         if(quest.quest_id == req.body.currQuest) {
@@ -655,10 +660,12 @@ router.post('/questLeaderboard', (req, res) => {
                     });
                 });
 
+                // Sorts the result in increasing order.
                 studentExp.sort(function(a, b) {
-                    return (a.score - b.score);
+                    return (b.score - a.score);
                 });
 
+                // Replaces the _id to userId.
                 myDB.collection('users')
                     .find()
                     .toArray()
@@ -674,7 +681,7 @@ router.post('/questLeaderboard', (req, res) => {
 
                             res.json(studentExp);
                         } else {
-                            console.log('return 1');
+                            console.log('There are no users in the database');
                             res.json(false);
                         }
                     })
@@ -682,7 +689,7 @@ router.post('/questLeaderboard', (req, res) => {
                         sendError(err, res);
                     });
             } else {
-                console.log('return 2');
+                console.log('There are no XP records in the database');
                 res.json(false);
             }
         })

@@ -24,6 +24,7 @@ import {
 @Injectable()
 export class LeaderboardService {
 	private questLeaderboardUrl = "api/questLeaderboard";
+	private questTitleUrl = "api/questTitle";
 
 	constructor(private http: HttpClient) {}
 
@@ -32,7 +33,6 @@ export class LeaderboardService {
 		return this.http.post<null>(url, {currSection, currQuest}).pipe(
 			tap(data => {
 				if(data) {
-					console.log(data);
 					return data;
 				} else {
 					return false;

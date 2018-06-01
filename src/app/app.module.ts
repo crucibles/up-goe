@@ -61,10 +61,6 @@ import {
 	LogInComponent
 } from 'log-in/log-in.component';
 
-import { 
-	QuestLeaderboardComponent 
-} from './quest-leaderboard/quest-leaderboard.component';
-
 import {
 	SharedModule
 } from './shared/shared.module';
@@ -83,8 +79,7 @@ import {
 		AppComponent,
 		LogInComponent,
 		SignUpComponent,
-		ChangePasswordComponent,
-		QuestLeaderboardComponent,
+		ChangePasswordComponent
 	],
 	imports: [
 		AppRoutingModule,

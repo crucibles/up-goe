@@ -26,10 +26,6 @@ import {
 } from 'shared/pages';
 
 import {
-  QuestLeaderboardComponent
-} from './quest-leaderboard/quest-leaderboard.component';
-
-import {
   SignUpComponent
 } from 'sign-up/sign-up.component';
 
@@ -65,10 +61,6 @@ const routes: Routes = [
   {
     path: 'student/specific',
     loadChildren: 'student/specific/specific.module#SpecificModule'
-  },
-  {
-    path: 'quest-leaderboard',
-    component: QuestLeaderboardComponent
   },
   {
     path: 'teacher/specific',

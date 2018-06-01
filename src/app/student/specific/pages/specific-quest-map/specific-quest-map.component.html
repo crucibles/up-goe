@@ -86,7 +86,7 @@
 <!-- Modal for leaderboard -->
 <ng-template #leaderboardTemplate>
 	<div class="modal-body">
-		<h4>Going Bananas</h4>
+		<h4>{{ questClicked.getQuestTitle() }}</h4>
 		<table class="table table-hover">
 			<thead style="font-weight: bold">
 				<tr>
@@ -98,19 +98,12 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr>
-					<td>1</td>
-					<td>2014-67553</td>
-					<td>400</td>
-					<td>{{this.pageService.formatTime(this.pageService.getCurrentDate())}}</td>
-					<td>{{this.pageService.formatDate(this.pageService.getCurrentDate())}}</td>
-				</tr>
-				<tr>
-					<td>2</td>
-					<td>2014-37728</td>
-					<td>500</td>
-					<td>{{this.pageService.formatTime(this.pageService.getCurrentDate())}}</td>
-					<td>{{this.pageService.formatDate(this.pageService.getCurrentDate())}}</td>
+				<tr *ngFor="let xp of leaderboardRecords; let rank = index">
+					<td>{{ rank+1 }}</td>
+					<td>{{ xp.studentId }}</td>
+					<td>{{ xp.score }}</td>
+					<td>ss:mm:hh</td>
+					<td>dd/mm/yyyy</td>
 				</tr>
 			</tbody>
 		</table>

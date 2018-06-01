@@ -77,23 +77,6 @@ export class LogInComponent implements OnInit {
         let password = this.loginForm.value.password;
 
         this.userService.logIn(email, password)
-<<<<<<< HEAD
-        .subscribe(
-            user => {
-                if (user) {
-                    user = new User(user);
-                    this.toastr.success("You are succesfully logged in!", "Welcome " + user.getUserFirstName());
-                    this.router.navigateByUrl(this.returnUrl);
-                } else {
-                    console.log("User does not exists!");
-                    this.warning = true;
-                }
-            }, error => {
-                // login failed so display error
-                this.alertService.error(error);
-            }
-        );
-=======
             .subscribe(
                 user => {
                     if (user) {
@@ -110,7 +93,6 @@ export class LogInComponent implements OnInit {
                     this.alertService.error(error);
                 }
             );
->>>>>>> 620a87a52102dea9b953b2b8890f7cc605ca1067
     }
 
     keyPressed() {

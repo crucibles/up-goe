@@ -33,6 +33,15 @@ import {
 	UserService,
 	QuestService
 } from 'shared/services';
+
+import { 
+    LeaderboardService 
+} from "../../../../shared/services/leaderboard.service";
+
+import { 
+    AlertService 
+} from 'shared/services/alert.service';
+
 import Chart = require('chart.js');
 
 const SECTION: any = {
@@ -119,6 +128,8 @@ export class SpecificQuestMapComponent implements OnInit {
 	private lbModalRef: BsModalRef;
 	private currentSection: Section;
 	private questClicked: Quest;
+	private leaderboardRecords;
+	private questTitle;
 
 	constructor(
 		private modalService: BsModalService,
@@ -126,8 +137,9 @@ export class SpecificQuestMapComponent implements OnInit {
 		private route: ActivatedRoute,
 		private sectionService: SectionService,
 		private userService: UserService,
-		private questService: QuestService
-
+		private alertService: AlertService,
+		private questService: QuestService,
+		private leaderboardService: LeaderboardService
 	) {
 		this.currentUser = this.userService.getCurrentUser();
 	}
@@ -137,6 +149,21 @@ export class SpecificQuestMapComponent implements OnInit {
 		this.getCurrentUser();
 		this.getCurrentSection();
 		this.loadQuestMap();
+	}
+
+	getQuestScores() {
+		var currentSection = this.sectionService.getCurrentSection().getSectionId();
+		var currentQuest = this.questClicked.getQuestId();
+        this.leaderboardService.getQuestScores(currentSection, currentQuest)
+        .subscribe((user) => {
+            if (user) {
+                this.leaderboardRecords = user;
+            } else {
+                console.log('Failed to acquire quest scores.');
+            }
+        }, error => {
+            this.alertService.error(error);
+        });
 	}
 
 	loadQuestMap() {
@@ -160,6 +187,7 @@ export class SpecificQuestMapComponent implements OnInit {
 		console.log(this.questClicked);
 		if (this.questClicked) {
 			this.questModalRef = this.modalService.show(this.questTemplate);
+			this.getQuestScores();
 		}
 	}
 
