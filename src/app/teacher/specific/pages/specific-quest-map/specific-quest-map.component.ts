@@ -94,8 +94,16 @@ const MOCKQUESTMAP: String[] = [
 	styleUrls: ['./specific-quest-map.component.css']
 })
 export class SpecificQuestMapComponent implements OnInit {
-	y: any;
+	/**
+	 * Stores the x-coordinate of the recently clicked point in the questmap chart
+	 */
 	x: any;
+
+	/**
+	 * Stores the x-coordinate of the recently clicked point in the questmap chart
+	 */
+	y: any;
+	
 	// basic info
 	private currentSection: Section;
 	currentUser: User;
