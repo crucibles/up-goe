@@ -114,6 +114,105 @@ router.get('/courses', (req, res) => {
 });
 
 /**
+ * @description portal for requests on creating course plus section. api/createCourseSection
+ * @author Sumandang, AJ Ruth
+ */
+router.post('/createCourseSection', (req, res) => {
+    console.log("__________start new 2_____________________");
+    console.log("success enter");
+    connection((db) => {
+        const myDB = db.db('up-goe-db');
+        console.log("success2 enter");
+        var newCourseObj = {
+            course_name: req.body.courseName,
+            course_description: req.body.courseDescription
+        };
+        var newSectionObj = {
+            course_id: "",
+            section_name: req.body.sectionName,
+            instructor: req.body.instructor,
+            quests: req.body.quests,
+            items: req.body.items,
+            badges: req.body.badges,
+            schedule: req.body.schedule
+        };
+        console.log("before db coll");
+
+        var isSuccess = false;
+        var course;
+
+        async.waterfall([
+            insertCourse,
+            insertSection
+        ], function (err, results) {
+            console.log(">>>enter last callback,<<<<");
+            if (err) {
+                console.log(err);
+                response.message = err;
+                throw err;
+            }
+            console.log(results);
+            response.data = newSectionObj;
+            res.json(results);
+            console.log("END OF COURSES");
+            console.log("_______________end________________");
+        });
+
+        function insertCourse(callback) {
+            myDB.collection('courses')
+            .count({
+                course_name: newCourseObj.course_name
+            }).then(count => {
+                if (count) {
+                    console.log("Duplicate course name: " + newCourseObj.course_name);
+                    response.data = newUserObj.user_email;
+                    // Returns false to signal that user already exists
+                    res.json(false);
+                } else {
+                    console.log("<<insert course");
+                        myDB.collection('courses')
+                            .insertOne(newCourseObj, function (err, result) {
+                                if (err) {
+                                    console.log(err);
+                                    response.message = err;
+                                    throw err;
+                                }
+                                response.data = newCourseObj;
+                                console.log("------------------------");
+                                console.log(result.insertedId);
+                                console.log("------------------------");
+                                newSectionObj.course_id = result.insertedId;
+                                console.log(newSectionObj);
+                                console.log("------------------------");
+                                callback(null, newSectionObj);
+                            })
+                    }
+                });
+        };
+
+        function insertSection(sectionObj, callback) {
+            console.log("<<insert section");
+            console.log(sectionObj);
+            console.log(">>/////");
+            myDB.collection('sections')
+                .insertOne((sectionObj), function (err, result) {
+                    console.log("inserted!");
+                    if (err) {
+                        console.log("error inserted!");
+                        console.log(err);
+                        response.message = err;
+                        throw err;
+                    }
+                    console.log("end insert sec");
+                    response.data = result;
+                    callback(null, result);
+                    console.log("end insert sec");
+                });
+        };
+    });
+});
+
+/**
  * @description portal for requests regarding users. api/users
  * @author Cedric Yao Alvaro
  * @author Donevir Hynson - modified Jan 11 2018
@@ -142,7 +241,7 @@ router.post('/login', (req, res) => {
  * @author Cedric Yao Alvaro
  */
 router.get('/quests', (req, res) => {
-
+    console.log("quuesssst");
     if (req.query.quest_id) {
         connection((db) => {
             const myDB = db.db('up-goe-db');
@@ -273,6 +372,10 @@ router.get('/posts', (req, res) => {
 router.get('/sections', (req, res) => {
     var myObjArr = [];
 
+    if(req.query.instructor){
+        console.log("enter search for section1");
+        getSectionsofInstructor(req, res);
+    }
     if (req.query.id) {
         getSectionsOfStudent(req, res);
     } else if (req.query.class) {
@@ -311,7 +414,57 @@ router.get('/sections', (req, res) => {
         });
     }
 
+    function getSectionsofInstructor(req, res) {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            console.log("---------------------");
+            console.log(req.query.instructor);
+            console.log("---------------------");
+            myDB.collection('sections')
+                .find({
+                    instructor: req.query.instructor
+                })
+                .toArray()
+                // editing the section body adding a course name in it.
+                .then((sections) => {
+                    console.log(sections);
+                    console.log("HAHAHAHAHA");
+                    console.log("HAHAHAHAHA");
+                    async.forEach(sections, processEachSection, afterAllSection);
+
+                    function processEachSection(section, callback) {
+
+                        myDB.collection('courses')
+                            .find(ObjectID(section.course_id))
+                            .toArray()
+                            .then((course) => {
+                                Promise.all(course[0].course_name).then(() => {
+                                    myObjArr.push({
+                                        section: section,
+                                        course_name: course[0].course_name
+                                    });
+                                    callback(null);
+                                });
+                            });
+
+                    }
+
+                    function afterAllSection(err) {
+                        response.data = myObjArr;
+                        res.send(myObjArr);
+                    }
+
+
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                })
+
+        });
+    }
+
     function getSectionsOfStudent(req, res) {
+        console.log("enter search for section");
         connection((db) => {
             const myDB = db.db('up-goe-db');
 
@@ -648,25 +801,6 @@ router.post('/updateUser', (req, res) => {
         });
     }
 });
-
-// router.post('/editStudentProfile', (req, res) => {
-//     connection((db) => {
-//         const myDB = db.db('up-goe-db');
-//         myDB.collection('users')
-//             .updateOne(
-//                 {_id: ObjectID(req.body.currentUserId)},
-//                 {
-//                     $set: {
-//                         user_contact_no: req.body.userContactNo
-//                     }
-//                 },
-//                 function(err, res) {
-//                     if(err) throw err;
-//                 }
-//             );
-//     });
-// });
-
 
 /**
  * @description portal for requests regarding security questions. api/securityQuestions

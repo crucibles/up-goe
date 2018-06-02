@@ -64,7 +64,7 @@ export class SectionService {
 	/**
 	 * Used for obtaining course information of sections at api.js
 	 */
-	private courseSectionUrl = "api/courses/sections";
+	private createCourseSectionUrl = "api/createCourseSection";
 
 	/**
 	 * Used for obtaining student information from sections at api.js
@@ -98,10 +98,39 @@ export class SectionService {
 
 	/**
 	 * Adds received newly created course to the database
-	 * @param course - new course to be added to the database
+	 * @param course new course to be added to the database
 	 */
-	createCourse(course: Course) {
-		const url = this.courseUrl;
+	createCourseSection(
+		courseName,
+		courseDescription,
+		sectionName,
+		students,
+		instructor,
+		quests,
+		items,
+		badges,
+		schedule
+	) {
+		const url = this.createCourseSectionUrl;
+		console.log("HERE1");
+		return this.http.post<User>(url, {
+			courseName,
+			courseDescription,
+			sectionName,
+			students,
+			instructor,
+			quests,
+			items,
+			badges,
+			schedule
+        }).pipe(
+            tap(data => {
+				console.log(data);
+                // Returns data from api.js to sign-up.component.ts.
+                return data;
+            }),
+            catchError(this.handleError<User>(`creat course error course_name=${courseName}`))
+        );
 	}
 
 	/**
@@ -167,7 +196,7 @@ export class SectionService {
 	 * @param section_id id of section to be deleted
 	 */
 	deleteCourse(section_id) {
-		const url = this.courseSectionUrl;
+		//const url = this.courseSectionUrl;
 	}
 
 	/**
@@ -387,6 +416,47 @@ export class SectionService {
 		if (section_id) {
 			url = this.expUrl;
 		}
+	}
+
+	/**
+	 * Returns the array of sections of an instructor based on user id
+	 * @param user_id id of the instructor whose array of sections are to be retrieved
+	 * @author Cedric Yao Alvaro
+	 * @returns array of sections
+	 * array[i].course_name - the name of the section's course where the user is enrolled in
+	 * array[i].section     - enrolled sections and pending sections of the student 
+	 * 
+	 * @example
+	 * array[i] = {
+	 * course_name: "CMSC 128",
+	 * section: section
+	 * };
+	 * The expected values of array is the section's information and the attached course_name
+	 */
+	getInstructorSections(user_id){
+		const url = this.secUrl;
+
+		let params = new HttpParams().set('instructor', user_id);
+
+		return this.http.get<any>(
+			url, {
+				params: params
+			})
+			.pipe(
+				tap(sections => {
+					let courseSections: any = sections;
+
+					console.log("EDITING");
+					console.log(sections);
+					this.currentUserSections = courseSections.map(courseSection => courseSection.section);
+					localStorage.setItem("currentUserSections", JSON.stringify(sections));
+
+					console.warn(this.currentUserSections);
+					const outcome = sections ?
+						'fetched sections of user ' + user_id : 'did not find sections of user ' + user_id;
+				}),
+				catchError(this.handleError<any>(`getUserSections user_id=${user_id}`))
+			);
 	}
 
 	/**
