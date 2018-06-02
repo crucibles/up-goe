@@ -13,10 +13,10 @@ import {
 
 import {
 	FormArray,
-	FormBuilder, 
-	FormControl, 
-	FormGroup, 
-	Validators 
+	FormBuilder,
+	FormControl,
+	FormGroup,
+	Validators
 } from '@angular/forms';
 
 import {
@@ -100,7 +100,7 @@ export class SpecificQuestMapComponent implements OnInit {
 	x: any;
 
 	/**
-	 * Stores the x-coordinate of the recently clicked point in the questmap chart
+	 * Stores the y-coordinate of the recently clicked point in the questmap chart
 	 */
 	y: any;
 	
@@ -116,7 +116,7 @@ export class SpecificQuestMapComponent implements OnInit {
 
 	// quests
 	private questClicked: Quest;
-	private quests: Quest[] = new Array();
+	private quests: Quest[];
 
 	// quest map chart
 	xTick: number;
@@ -196,16 +196,22 @@ export class SpecificQuestMapComponent implements OnInit {
 	}
 
 	loadQuestMap() {
-		this.questService.getUserJoinedQuests(this.currentUser.getUserId())
-			.subscribe(quests => {
-				console.log(quests);
-				this.quests = quests.map(quest => new Quest(quest));
-				//AHJ: unimplemented; getter for quest map data (remove comment marker belowif available)
-				//this.questService.getQuestMap(this.currentSection.getCourseId()).subscribe(data => {
-				this.questMap = new QuestMap(MOCKQUESTMAP, this.quests, true);
-				this.setQuestMap();
-				//});
-			});
+		this.questService.getSectionQuests(this.currentSection.getSectionId()).subscribe(quests => {
+			console.log(quests);
+			this.quests = quests.map(quest => new Quest(quest));
+			this.questMap = new QuestMap(MOCKQUESTMAP, this.quests, true);
+			this.setQuestMap();
+		});
+		// this.questService.getUserJoinedQuests(this.currentUser.getUserId())
+		// 	.subscribe(quests => {
+		// 		console.log(quests);
+		// 		this.quests = quests.map(quest => new Quest(quest));
+		// 		//AHJ: unimplemented; getter for quest map data (remove comment marker belowif available)
+		// 		//this.questService.getQuestMap(this.currentSection.getCourseId()).subscribe(data => {
+		// 		this.questMap = new QuestMap(MOCKQUESTMAP, this.quests, true);
+		// 		this.setQuestMap();
+		// 		//});
+		// 	});
 	}
 
 	openQuest(quest: any) { //'quest: any' in here means the quest has not been converted to Quest type
@@ -230,12 +236,7 @@ export class SpecificQuestMapComponent implements OnInit {
 	 * @description Obtains the current section and stores it into 'currentSection' variable
 	 */
 	getCurrentSection() {
-		this.route.paramMap.subscribe(params => {
-			let sectionId = params.get('sectionId');
-			//AHJ: unimplemented; dummy section remove when working
-			this.currentSection = new Section(SECTION);
-			console.log(this.currentSection);
-		});
+		this.currentSection = this.sectionService.getCurrentSection();
 	}
 
 	getCurrentUser() {
