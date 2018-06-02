@@ -9,8 +9,6 @@ const ObjectID = require('mongodb').ObjectID;
 const async = require('async');
 const nodemailer = require('nodemailer');
 const xoauth2 = require('xoauth2');
-const bodyPasrser = require('body-parser');
-
 
 /**
  * Note: queries are string, body can be object because of bodyParsers;
@@ -257,7 +255,6 @@ router.get('/quests', (req, res) => {
                 });
         });
     } else {
-        get
         connection((db) => {
             const myDB = db.db('up-goe-db');
             myDB.collection('quests')

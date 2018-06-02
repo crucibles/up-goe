@@ -31,12 +31,9 @@ import {
 	PageService,
 	SectionService,
 	UserService,
-	QuestService
+	QuestService,
+	LeaderboardService
 } from 'shared/services';
-
-import { 
-    LeaderboardService 
-} from "../../../../shared/services/leaderboard.service";
 
 import { 
     AlertService 
