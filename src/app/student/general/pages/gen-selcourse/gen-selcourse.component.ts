@@ -113,7 +113,7 @@ export class GenSelcourseComponent implements OnInit {
    * @returns an Array of objects with a structure of [{section: {Section}, course_name: Section's course_name}, {...}]
    */
   getUserSections(user_id): void {
-    this.sectionService.getInstructorSections(user_id)
+    this.sectionService.getUserSections(user_id)
       .subscribe(sections => {
         console.warn(sections);
         this.sections = sections;
