@@ -103,7 +103,7 @@ export class SpecificQuestMapComponent implements OnInit {
 	 * Stores the y-coordinate of the recently clicked point in the questmap chart
 	 */
 	y: any;
-
+	
 	// basic info
 	private currentSection: Section;
 	currentUser: User;
