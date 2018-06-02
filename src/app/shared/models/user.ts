@@ -251,16 +251,16 @@ export class User {
 	* @returns string of the formatted date
 	*/
 	private formatDate(date_obj) {
-    let months: string[] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+		let months: string[] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 		let month = months[date_obj.getMonth()];
 		let day = date_obj.getDate();
-    let year = date_obj.getFullYear();
-    
+		let year = date_obj.getFullYear();
+
 		let datestring: string = month + " " + day + ", " + year;
 		return datestring;
-  }
-  
+	}
+
 };
 
 export const TOTXP: number[] = [1000, 2123, 3439, 4655, 6053, 6104];

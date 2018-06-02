@@ -48,6 +48,7 @@ export class UserService {
     private signupUrl = 'api/signup'; // URL to: server/routes/api.js for sign up
     private securityQuestionsUrl = 'api/securityQuestions'; // URL to: server/routes/api.js for security questions
     private userReqPassUrl = 'api/userReqPass'; // URL to: server/routes/api.js for user request password
+    private editStudentProfileUrl = 'api/editStudentProfile'; // URL to: server/routes/api.js for edit student profile
     private currentUser: User;
 
     constructor(
@@ -180,6 +181,9 @@ export class UserService {
         );
     }
 
+    /**
+     * Retrieves the security questions in the database.
+     */
     getSecurityQuestions() {
         const url = this.securityQuestionsUrl;
         return this.http.get(url, {}).pipe(
@@ -189,9 +193,21 @@ export class UserService {
         );
     }
 
+    /**
+     * Retrieves the password of the requesting user from the database.
+     */
     getUserReqPass(user_email: String) {
         const url = this.userReqPassUrl;
         return this.http.post(url, { user_email }).pipe(
+            tap(data => {
+                return data;
+            })
+        );
+    }
+
+    changeProfileData(currentUserId: String, userContactNo: String) {
+        const url = this.userUpdateUrl;
+        return this.http.post(url, {currentUserId, userContactNo}).pipe(
             tap(data => {
                 return data;
             })

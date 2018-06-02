@@ -11,6 +11,9 @@ const nodemailer = require('nodemailer');
 const xoauth2 = require('xoauth2');
 
 /**
+ * Note: queries are string, body can be object because of bodyParsers;
+
+/**
  * Note: queries are string, body can be object because of bodyParsers;  
  * @deprecated: Unhandled Promise rejection
  */
@@ -266,8 +269,6 @@ router.get('/quests', (req, res) => {
                 });
         });
     }
-
-
 });
 
 /**
@@ -790,26 +791,45 @@ router.get('/users', (req, res) => {
 });
 
 router.post('/updateUser', (req, res) => {
-
-    connection((db) => {
-        const myDB = db.db('up-goe-db');
-        myDB.collection('users')
-            .update(
-                { _id: ObjectID(req.body.user_id) },
-                {
-                    $set: {
-
+    if(req.body.currentUserId && req.body.userContactNo) {
+        updateStudentProfile(req, res);
+    } else {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('users')
+                .update(
+                    {_id: ObjectID(req.body.user_id)},
+                    {
+                        $set: {
+                            
+                        }
                     }
-                }
+                    
+                )
+                .catch((err) => {
+                    sendError(err, res);
+                });
+        });
+    }
 
-            )
-            .catch((err) => {
-                sendError(err, res);
-            });
-    });
-
+    function updateStudentProfile(req, res) {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('users')
+                .updateOne(
+                    {_id: ObjectID(req.body.currentUserId)},
+                    {
+                        $set: {
+                            user_contact_no: req.body.userContactNo
+                        }
+                    },
+                    function(err, res) {
+                        if(err) throw err;
+                    }
+                );
+        });
+    }
 });
-
 
 /**
  * @description portal for requests regarding security questions. api/securityQuestions
@@ -869,6 +889,72 @@ router.post('/userReqPass', (req, res) => {
             .catch((err) => {
                 sendError(err, res);
             });
+    });
+});
+
+/**
+ * @description portal for requests to collect score data from a certain quest. api/questLeaderboard
+ * @author Donevir D. Hynson
+ */
+router.post('/questLeaderboard', (req, res) => {
+    connection((db) => {
+    const myDB = db.db('up-goe-db');
+    myDB.collection('experiences')
+        .find({section_id: req.body.currSection})
+        .toArray()
+        .then((experiences) => {
+            if(experiences) {
+                var studentExp = [];
+
+                // Acquires the students with scores in the database.
+                experiences.forEach((exp) => {
+                    exp.quests_taken.forEach((quest) => {
+                        if(quest.quest_id == req.body.currQuest) {
+                            studentExp.push({
+                                studentId: exp.user_id,
+                                score: quest.quest_grade,
+                                dateCompleted: quest.quest_date_completed
+                            });
+                        }
+                    });
+                });
+
+                // Sorts the result in increasing order.
+                studentExp.sort(function(a, b) {
+                    return (b.score - a.score);
+                });
+
+                // Replaces the _id to userId.
+                myDB.collection('users')
+                    .find()
+                    .toArray()
+                    .then((users) => {
+                        if(users) {
+                            users.forEach(user => {
+                                studentExp.forEach(exp => {
+                                    if(user._id == exp.studentId) {
+                                        exp.studentId = user.user_school_id;
+                                    }
+                                });
+                            });
+
+                            res.json(studentExp);
+                        } else {
+                            console.log('There are no users in the database');
+                            res.json(false);
+                        }
+                    })
+                    .catch((err) => {
+                        sendError(err, res);
+                    });
+            } else {
+                console.log('There are no XP records in the database');
+                res.json(false);
+            }
+        })
+        .catch((err) => {
+            sendError(err, res);
+        });
     });
 });
 
