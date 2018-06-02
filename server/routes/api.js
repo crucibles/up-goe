@@ -609,25 +609,63 @@ router.get('/users', (req, res) => {
 });
 
 router.post('/updateUser', (req, res) => {
-
-    connection((db) => {
-        const myDB = db.db('up-goe-db');
-        myDB.collection('users')
-            .update(
-                {_id: ObjectID(req.body.user_id)},
-                {
-                    $set: {
-                        
+    if(req.body.currentUserId && req.body.userContactNo) {
+        updateStudentProfile(req, res);
+    } else {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('users')
+                .update(
+                    {_id: ObjectID(req.body.user_id)},
+                    {
+                        $set: {
+                            
+                        }
                     }
-                }
-                
-            )
-            .catch((err) => {
-                sendError(err, res);
-            });
-    });
+                    
+                )
+                .catch((err) => {
+                    sendError(err, res);
+                });
+        });
+    }
 
+    function updateStudentProfile(req, res) {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('users')
+                .updateOne(
+                    {_id: ObjectID(req.body.currentUserId)},
+                    {
+                        $set: {
+                            user_contact_no: req.body.userContactNo
+                        }
+                    },
+                    function(err, res) {
+                        if(err) throw err;
+                    }
+                );
+        });
+    }
 });
+
+// router.post('/editStudentProfile', (req, res) => {
+//     connection((db) => {
+//         const myDB = db.db('up-goe-db');
+//         myDB.collection('users')
+//             .updateOne(
+//                 {_id: ObjectID(req.body.currentUserId)},
+//                 {
+//                     $set: {
+//                         user_contact_no: req.body.userContactNo
+//                     }
+//                 },
+//                 function(err, res) {
+//                     if(err) throw err;
+//                 }
+//             );
+//     });
+// });
 
 
 /**
