@@ -22,7 +22,7 @@
     height: 20px;
 }
 /*Header3 Design*/
-.title:after {
+.page-header:after {
     content:' ';
     margin-top: 5px;
     display:block;
