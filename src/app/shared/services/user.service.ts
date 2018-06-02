@@ -69,6 +69,15 @@ export class UserService {
         return this.currentUser;
     }
 
+    setCurrentUser(user: User) {
+        console.log(user);
+        this.cookieService.delete('currentUser');
+        localStorage.removeItem('currentUser');
+        this.currentUser = new User(user);
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        this.cookieService.set('currentUser', this.currentUser.getUserEmail());
+    }
+
     /**
      * @summary: Obtains a user from server by id
      * @author Cedric Yao Alvaro
@@ -110,7 +119,7 @@ export class UserService {
                 if (data) {
                     this.currentUser = new User(data);
                     localStorage.setItem('currentUser', JSON.stringify(data));
-                    this.cookieService.set('currentUser', this.currentUser.getUserEmail());
+                    this.cookieService.set('currentUser', this.currentUser.getUserEmail());                    
                 }
                 return data;
             }),
@@ -122,6 +131,7 @@ export class UserService {
         const url = this.userUpdateUrl;
         return this.http.post(url, { user_id: user_id }).pipe(
             tap(data => {
+                console.log(data);
                 return data;
             })
         );

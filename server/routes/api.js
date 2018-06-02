@@ -9,6 +9,7 @@ const ObjectID = require('mongodb').ObjectID;
 const async = require('async');
 const nodemailer = require('nodemailer');
 const xoauth2 = require('xoauth2');
+const cookie = require('ng2-cookies');
 
 /**
  * Note: queries are string, body can be object because of bodyParsers;  
@@ -605,19 +606,210 @@ router.get('/users', (req, res) => {
 });
 
 router.post('/updateUser', (req, res) => {
+    var x = new Date(Date.now());
+    var h = [];
+
+    hasLoggedInThisDay(req, res);
+
+
+    function loginUpdate(req, res) {
+
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('users')
+                .updateOne(
+                    { _id: ObjectID(req.body.user_id) },
+                    {
+                        $inc: {
+                            "user_conditions.log_in_streak": 1
+                        },
+                        $push: {
+                            "user_conditions.log_in_total": new Date(x).toLocaleDateString()
+                        }
+                    }
+
+                )
+                .then(z => {
+                    console.log("hello");
+                    res.json(true);
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                });
+        });
+
+    }
+
+
+    function hasLoggedInThisDay(req, res) {
+
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('users')
+                .findOne(ObjectID(req.body.user_id))
+                .then((user) => {
+                    console.log("Im ready..");
+
+                    if (user.user_conditions.log_in_total.length > 0) {
+
+                        Promise.all(user.user_conditions.log_in_total).then((date) => {
+
+                            h = date.map((d) => {
+                                console.log(new Date(d).toLocaleDateString());
+                                console.log(x.toLocaleDateString());
+                                if (new Date(d).toLocaleDateString().trim() == x.toLocaleDateString().trim()) {
+                                    return new Date(d).toLocaleDateString();
+                                } else {
+                                    return false;
+                                }
+                            });
+                            console.log(h);
+                            if (h.length > 0) {
+                                console.log("Already logged in this day");
+                                res.json(true);
+                            } else {
+                                console.log("not yet logged in");
+                                loginUpdate(req, res);
+                            }
+
+                        });
+
+                    } else {
+
+                        loginUpdate(req, res);
+
+                    }
+
+
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                });
+        });
+    }
+
+
+
+});
+
+
+/**
+ * @description portal for requests regarding Badges. api/badges
+ * @author Cedric Yao Alvaro
+ */
+router.post('/badges', (req, res) => {
+    console.log("METHOD!!!!!!!!!!!!!!!!!");
+    console.log(req.method);
+
+    if (req.method == "POST") {
+
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('badges')
+                .find()
+                .toArray()
+                .then((badges) => {
+
+                    Promise.all(badges).then((badge) => {
+                        console.log(req.body);
+                        console.log("===================");
+                        console.log(badge);
+
+                        let earnedbadge = badge.filter((b) => {
+                            console.log("STreaks");
+                            console.log(b.badge_conditions.log_in_streak);
+                            console.log(req.body.conditions.log_in_streak);
+                            if (b.badge_conditions.log_in_streak <= req.body.conditions.log_in_streak) {
+                                return b;
+                            }
+
+                        });
+
+                        if (earnedbadge.length > 0) {
+
+                            Promise.all(earnedbadge).then((eb) => {
+                                console.log(eb[0]._id);
+                                connection((db) => {
+                                    const myDB = db.db('up-goe-db');
+                                    myDB.collection('badges')
+                                        .updateOne(
+                                            { _id: ObjectID(eb[0]._id) },
+                                            {
+                                                $addToSet: {
+                                                    "badge_attainers": req.body.user_id
+                                                }
+                                            }
+
+                                        )
+                                        .then(badge => {
+                                            console.log("badge updated");
+                                            res.json(badge);
+                                        })
+                                        .catch((err) => {
+                                            sendError(err, res);
+                                        });
+                                });
+
+                            });
+
+                        } else {
+
+                            res.json(false);
+
+                        }
+
+
+
+                    });
+
+
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                });
+        });
+
+    }
+
+
+
+
+
+});
+
+router.get('/badges', (req, res) => {
+    console.log("IM IN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 
     connection((db) => {
         const myDB = db.db('up-goe-db');
-        myDB.collection('users')
-            .update(
-                {_id: ObjectID(req.body.user_id)},
-                {
-                    $set: {
-                        
-                    }
-                }
-                
-            )
+        myDB.collection('badges')
+            .find()
+            .toArray()
+            .then((badges) => {
+
+                Promise.all(badges).then(badges => {
+                    // earned system badges
+                    let esb = badges.filter(b => {
+                        console.log(b);
+                        if (b.is_system_badge == true) {
+                            let a = b.badge_attainers.filter(user => {
+                                console.log(user);
+                                if(user == req.query.id){
+                                    return user;
+                                }
+                            });
+                            console.log(a);
+                            if (a.length > 0) {
+                                return b;
+                            };
+                        }
+                    });
+                    console.log(esb);
+                    response.data = esb;
+                    res.json(esb);
+                });
+
+            })
             .catch((err) => {
                 sendError(err, res);
             });
@@ -638,6 +830,7 @@ router.get('/securityQuestions', (req, res) => {
             .find()
             .toArray()
             .then((questions) => {
+                response.data = questions;
                 res.json(questions);
             })
             .catch((err) => {

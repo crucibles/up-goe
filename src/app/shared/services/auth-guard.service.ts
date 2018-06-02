@@ -23,7 +23,10 @@ import {
 import {
     ToastsManager
 } from 'ng2-toastr/src/toast-manager';
-import { UserService } from 'shared/services';
+
+import {
+    UserService
+} from 'shared/services';
 
 
 @Injectable()
@@ -45,7 +48,7 @@ export class AuthGuardService implements CanActivate, CanLoad {
         console.log(route.routeConfig.path);
         console.warn(route);
         console.log(state);
-        
+
         if (this.auth.isLoggedIn() && (route.routeConfig.path == "log-in" || route.routeConfig.path == "sign-up" || route.routeConfig.path == "")) {
             console.warn("You are already logged in.");
             this.toastr.success("" + this.userService.getCurrentUser().getUserFirstName(), "Welcome back");
@@ -63,6 +66,7 @@ export class AuthGuardService implements CanActivate, CanLoad {
         } else if (!this.auth.isLoggedIn() && route.routeConfig.path != "log-in" && route.routeConfig.path != "sign-up") {
 
             // not logged in so redirect to login page with the return url and return false
+            this.toastr.error("You are not Logged in.", "Log in first");
             this.router.navigate(['/log-in'], { queryParams: { returnUrl: state.url } });
             return false;
 
