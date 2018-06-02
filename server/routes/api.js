@@ -155,16 +155,16 @@ router.post('/createCourseSection', (req, res) => {
 
         function insertCourse(callback) {
             myDB.collection('courses')
-            .count({
-                course_name: newCourseObj.course_name
-            }).then(count => {
-                if (count) {
-                    console.log("Duplicate course name: " + newCourseObj.course_name);
-                    response.data = newUserObj.user_email;
-                    // Returns false to signal that user already exists
-                    res.json(false);
-                } else {
-                    console.log("<<insert course");
+                .count({
+                    course_name: newCourseObj.course_name
+                }).then(count => {
+                    if (count) {
+                        console.log("Duplicate course name: " + newCourseObj.course_name);
+                        response.data = newUserObj.user_email;
+                        // Returns false to signal that user already exists
+                        res.json(false);
+                    } else {
+                        console.log("<<insert course");
                         myDB.collection('courses')
                             .insertOne(newCourseObj, function (err, result) {
                                 if (err) {
@@ -368,7 +368,7 @@ router.get('/posts', (req, res) => {
 router.get('/sections', (req, res) => {
     var myObjArr = [];
 
-    if(req.query.instructor){
+    if (req.query.instructor) {
         console.log("enter search for section1");
         getSectionsofInstructor(req, res);
     }
@@ -607,6 +607,38 @@ router.get('/sections', (req, res) => {
     }
 
 
+});
+
+router.get('/getSectionQuests', (req, res) => {
+    connection((db) => {
+        const myDB = db.db('up-goe-db');
+
+        console.log(req.query.section_id);
+        myDB.collection('sections')
+            .findOne(ObjectID(req.query.section_id))
+            .then(section => {
+                let questIds = section.map(section => section.quests.quest_id);
+                console.log(questIds);
+                myDB.collection('quests')
+                .find({
+                    _id: {
+                        $in: questIds
+                    }
+                })
+                .toArray()
+                .then((quests) => {
+
+                    console.log("_______quest_________");
+                    console.log(quests);
+                    console.log("_______quest_________");
+                    response.data = quests;
+                    res = res.json(quests);
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                });
+            });
+    })
 });
 
 
