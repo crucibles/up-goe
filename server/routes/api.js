@@ -857,37 +857,9 @@ router.get('/sections/quests', (req, res) => {
                         .catch((err) => {
                             sendError(err, res);
                         });
-
-                        myDB.collection('quests')
-                            .find()
-                            .toArray()
-                            .then((quests) => {
-
-                                if (quests) {
-
-                                    let AllUserQuests = [];
-                                    quests.forEach(quest => {
-                                        userQuests.forEach(userQuest => {
-                                            if (quest._id == userQuest) {
-                                                AllUserQuests.push(quest);
-                                            }
-                                        })
-                                    })
-
-                                    response.data = AllUserQuests;
-                                    res.json(AllUserQuests);
-                                } else {
-                                    res.json([]);
-                                }
-
-                            })
-                            .catch((err) => {
-                                sendError(err, res);
-                            });
-
                     } else {
                         response.data = sections;
-                        res = res.json(sections);
+                        res.json(sections);
                     }
                 })
             .catch((err) => {

@@ -191,6 +191,7 @@ export class GenSidetabComponent implements OnInit {
 			.subscribe(quests => {
 				console.warn(quests);
 				quests.forEach(quest => {
+					console.log(quest.questData);
 					this.quests.push(new Quest(quest.questData));
 					this.questCourses.push(quest.course + '-' + quest.section);
 				});
