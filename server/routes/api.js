@@ -9,6 +9,7 @@ const ObjectID = require('mongodb').ObjectID;
 const async = require('async');
 const nodemailer = require('nodemailer');
 const xoauth2 = require('xoauth2');
+const cookie = require('ng2-cookies');
 
 /**
  * Note: queries are string, body can be object because of bodyParsers;
@@ -372,8 +373,7 @@ router.get('/sections', (req, res) => {
     if (req.query.instructor) {
         console.log("enter search for section1");
         getSectionsofInstructor(req, res);
-    }
-    if (req.query.id) {
+    } else if (req.query.id) {
         getSectionsOfStudent(req, res);
     } else if (req.query.class) {
 
@@ -558,45 +558,41 @@ router.get('/sections', (req, res) => {
                 .find()
                 .toArray()
                 .then((sections) => {
-                    console.log(req.query.class);
-                    async.forEach(sections, processEachSection, afterAllSection);
 
-                    function processEachSection(section, callback) {
+                    myDB.collection('courses')
+                        .find({
+                            course_name: { $regex: '(?i)' + req.query.class + '(?-i)' }
+                        })
+                        .toArray()
+                        .then((course) => {
+                            console.log(course);
+                            // course found.
+                            if (course.length > 0) {
 
-                        myDB.collection('courses')
-                            .find({
-                                course_name: { $regex: '(?i)' + req.query.class + '(?-i)' }
-                            })
-                            .toArray()
-                            .then((course) => {
-
-                                // course found.
-                                if (course.length > 0) {
+                                sections.forEach(section => {
 
                                     if (section.course_id == course[0]._id) {
 
-                                        Promise.all(course[0].course_name).then(() => {
-
-                                            myObjArr.push({
-                                                section: section,
-                                                course_name: course[0].course_name
-                                            });
-
+                                        myObjArr.push({
+                                            section: section,
+                                            course_name: course[0].course_name
                                         });
 
                                     }
 
-                                }
-                                callback(null);
+                                })
 
-                            });
 
-                    }
+                            }
 
-                    function afterAllSection(err) {
-                        response.data = myObjArr;
-                        res.send(myObjArr);
-                    }
+                            Promise.all(myObjArr).then(x => {
+                                res.json(myObjArr);
+                            })
+
+
+
+                        })
+
                 })
                 .catch((err) => {
                     sendError(err, res);
@@ -621,23 +617,23 @@ router.get('/getSectionQuests', (req, res) => {
                 let questIds = section.map(section => section.quests.quest_id);
                 console.log(questIds);
                 myDB.collection('quests')
-                .find({
-                    _id: {
-                        $in: questIds
-                    }
-                })
-                .toArray()
-                .then((quests) => {
+                    .find({
+                        _id: {
+                            $in: questIds
+                        }
+                    })
+                    .toArray()
+                    .then((quests) => {
 
-                    console.log("_______quest_________");
-                    console.log(quests);
-                    console.log("_______quest_________");
-                    response.data = quests;
-                    res = res.json(quests);
-                })
-                .catch((err) => {
-                    sendError(err, res);
-                });
+                        console.log("_______quest_________");
+                        console.log(quests);
+                        console.log("_______quest_________");
+                        response.data = quests;
+                        res = res.json(quests);
+                    })
+                    .catch((err) => {
+                        sendError(err, res);
+                    });
             });
     })
 });
@@ -791,25 +787,42 @@ router.get('/users', (req, res) => {
 });
 
 router.post('/updateUser', (req, res) => {
-    if(req.body.currentUserId && req.body.userContactNo) {
+    var x = new Date(Date.now());
+    var h = [];
+
+    if (req.body.currentUserId && req.body.userContactNo) {
         updateStudentProfile(req, res);
     } else {
+        hasLoggedInThisDay(req, res);
+    }
+
+
+    function loginUpdate(req, res) {
+
         connection((db) => {
             const myDB = db.db('up-goe-db');
             myDB.collection('users')
-                .update(
-                    {_id: ObjectID(req.body.user_id)},
+                .updateOne(
+                    { _id: ObjectID(req.body.user_id) },
                     {
-                        $set: {
-                            
+                        $inc: {
+                            "user_conditions.log_in_streak": 1
+                        },
+                        $push: {
+                            "user_conditions.log_in_total": new Date(x).toLocaleDateString()
                         }
                     }
-                    
+
                 )
+                .then(z => {
+                    console.log("hello");
+                    res.json(true);
+                })
                 .catch((err) => {
                     sendError(err, res);
                 });
         });
+
     }
 
     function updateStudentProfile(req, res) {
@@ -817,18 +830,195 @@ router.post('/updateUser', (req, res) => {
             const myDB = db.db('up-goe-db');
             myDB.collection('users')
                 .updateOne(
-                    {_id: ObjectID(req.body.currentUserId)},
+                    { _id: ObjectID(req.body.currentUserId) },
                     {
                         $set: {
                             user_contact_no: req.body.userContactNo
                         }
                     },
-                    function(err, res) {
-                        if(err) throw err;
+                    function (err, res) {
+                        if (err) throw err;
                     }
                 );
         });
     }
+
+
+    function hasLoggedInThisDay(req, res) {
+
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('users')
+                .findOne(ObjectID(req.body.user_id))
+                .then((user) => {
+                    console.log("Im ready..");
+
+                    if (user.user_conditions.log_in_total.length > 0) {
+
+                        Promise.all(user.user_conditions.log_in_total).then((date) => {
+
+                            h = date.map((d) => {
+                                console.log(new Date(d).toLocaleDateString());
+                                console.log(x.toLocaleDateString());
+                                if (new Date(d).toLocaleDateString().trim() == x.toLocaleDateString().trim()) {
+                                    return new Date(d).toLocaleDateString();
+                                } else {
+                                    return false;
+                                }
+                            });
+                            console.log(h);
+                            if (h.length > 0) {
+                                console.log("Already logged in this day");
+                                res.json(true);
+                            } else {
+                                console.log("not yet logged in");
+                                loginUpdate(req, res);
+                            }
+
+                        });
+
+                    } else {
+
+                        loginUpdate(req, res);
+
+                    }
+
+
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                });
+        });
+    }
+
+
+
+});
+
+
+/**
+ * @description portal for requests regarding Badges. api/badges
+ * @author Cedric Yao Alvaro
+ */
+router.post('/badges', (req, res) => {
+    console.log("METHOD!!!!!!!!!!!!!!!!!");
+    console.log(req.method);
+
+    if (req.method == "POST") {
+
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('badges')
+                .find()
+                .toArray()
+                .then((badges) => {
+
+                    Promise.all(badges).then((badge) => {
+                        console.log(req.body);
+                        console.log("===================");
+                        console.log(badge);
+
+                        let earnedbadge = badge.filter((b) => {
+                            console.log("STreaks");
+                            console.log(b.badge_conditions.log_in_streak);
+                            console.log(req.body.conditions.log_in_streak);
+                            if (b.badge_conditions.log_in_streak <= req.body.conditions.log_in_streak) {
+                                return b;
+                            }
+
+                        });
+
+                        if (earnedbadge.length > 0) {
+
+                            Promise.all(earnedbadge).then((eb) => {
+                                console.log(eb[0]._id);
+                                connection((db) => {
+                                    const myDB = db.db('up-goe-db');
+                                    myDB.collection('badges')
+                                        .updateOne(
+                                            { _id: ObjectID(eb[0]._id) },
+                                            {
+                                                $addToSet: {
+                                                    "badge_attainers": req.body.user_id
+                                                }
+                                            }
+
+                                        )
+                                        .then(badge => {
+                                            console.log("badge updated");
+                                            res.json(badge);
+                                        })
+                                        .catch((err) => {
+                                            sendError(err, res);
+                                        });
+                                });
+
+                            });
+
+                        } else {
+
+                            res.json(false);
+
+                        }
+
+
+
+                    });
+
+
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                });
+        });
+
+    }
+
+
+
+
+
+});
+
+router.get('/badges', (req, res) => {
+    console.log("IM IN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+
+    connection((db) => {
+        const myDB = db.db('up-goe-db');
+        myDB.collection('badges')
+            .find()
+            .toArray()
+            .then((badges) => {
+
+                Promise.all(badges).then(badges => {
+                    // earned system badges
+                    let esb = badges.filter(b => {
+                        console.log(b);
+                        if (b.is_system_badge == true) {
+                            let a = b.badge_attainers.filter(user => {
+                                console.log(user);
+                                if (user == req.query.id) {
+                                    return user;
+                                }
+                            });
+                            console.log(a);
+                            if (a.length > 0) {
+                                return b;
+                            };
+                        }
+                    });
+                    console.log(esb);
+                    response.data = esb;
+                    res.json(esb);
+                });
+
+            })
+            .catch((err) => {
+                sendError(err, res);
+            });
+    });
+
+
 });
 
 /**
@@ -843,6 +1033,7 @@ router.get('/securityQuestions', (req, res) => {
             .find()
             .toArray()
             .then((questions) => {
+                response.data = questions;
                 res.json(questions);
             })
             .catch((err) => {
@@ -898,63 +1089,63 @@ router.post('/userReqPass', (req, res) => {
  */
 router.post('/questLeaderboard', (req, res) => {
     connection((db) => {
-    const myDB = db.db('up-goe-db');
-    myDB.collection('experiences')
-        .find({section_id: req.body.currSection})
-        .toArray()
-        .then((experiences) => {
-            if(experiences) {
-                var studentExp = [];
+        const myDB = db.db('up-goe-db');
+        myDB.collection('experiences')
+            .find({ section_id: req.body.currSection })
+            .toArray()
+            .then((experiences) => {
+                if (experiences) {
+                    var studentExp = [];
 
-                // Acquires the students with scores in the database.
-                experiences.forEach((exp) => {
-                    exp.quests_taken.forEach((quest) => {
-                        if(quest.quest_id == req.body.currQuest) {
-                            studentExp.push({
-                                studentId: exp.user_id,
-                                score: quest.quest_grade,
-                                dateCompleted: quest.quest_date_completed
-                            });
-                        }
-                    });
-                });
-
-                // Sorts the result in increasing order.
-                studentExp.sort(function(a, b) {
-                    return (b.score - a.score);
-                });
-
-                // Replaces the _id to userId.
-                myDB.collection('users')
-                    .find()
-                    .toArray()
-                    .then((users) => {
-                        if(users) {
-                            users.forEach(user => {
-                                studentExp.forEach(exp => {
-                                    if(user._id == exp.studentId) {
-                                        exp.studentId = user.user_school_id;
-                                    }
+                    // Acquires the students with scores in the database.
+                    experiences.forEach((exp) => {
+                        exp.quests_taken.forEach((quest) => {
+                            if (quest.quest_id == req.body.currQuest) {
+                                studentExp.push({
+                                    studentId: exp.user_id,
+                                    score: quest.quest_grade,
+                                    dateCompleted: quest.quest_date_completed
                                 });
-                            });
-
-                            res.json(studentExp);
-                        } else {
-                            console.log('There are no users in the database');
-                            res.json(false);
-                        }
-                    })
-                    .catch((err) => {
-                        sendError(err, res);
+                            }
+                        });
                     });
-            } else {
-                console.log('There are no XP records in the database');
-                res.json(false);
-            }
-        })
-        .catch((err) => {
-            sendError(err, res);
-        });
+
+                    // Sorts the result in increasing order.
+                    studentExp.sort(function (a, b) {
+                        return (b.score - a.score);
+                    });
+
+                    // Replaces the _id to userId.
+                    myDB.collection('users')
+                        .find()
+                        .toArray()
+                        .then((users) => {
+                            if (users) {
+                                users.forEach(user => {
+                                    studentExp.forEach(exp => {
+                                        if (user._id == exp.studentId) {
+                                            exp.studentId = user.user_school_id;
+                                        }
+                                    });
+                                });
+
+                                res.json(studentExp);
+                            } else {
+                                console.log('There are no users in the database');
+                                res.json(false);
+                            }
+                        })
+                        .catch((err) => {
+                            sendError(err, res);
+                        });
+                } else {
+                    console.log('There are no XP records in the database');
+                    res.json(false);
+                }
+            })
+            .catch((err) => {
+                sendError(err, res);
+            });
     });
 });
 
