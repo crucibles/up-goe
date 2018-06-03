@@ -93,8 +93,8 @@ export class GenSelcourseComponent implements OnInit {
   getStatusOfSection(students) {
     let currentUser = JSON.parse(localStorage.getItem("currentUser"));
     let student = students ? students.filter(user => user.user_id == currentUser._id) : AsyncAction;
-    let status = student[0] ? student[0].status: "";
-    
+    let status = student[0] ? student[0].status : "";
+
     if (status == "E") {
       return "Enrolled";
     } else if (status == "R") {
@@ -149,8 +149,23 @@ export class GenSelcourseComponent implements OnInit {
 
   }
 
-  openSectionPage(section_id: string) {    
+  openSectionPage(section_id: string) {
     this.pageService.openSectionPage(section_id);
+  }
+
+  /**
+ * @description portal for post requests that regards to sections "api/sections"
+ * @author Cedric Yao Alvaro
+ * 
+ * 1. Student requestin to enroll in a section
+ */
+  requestToEnroll(section_id: string) {
+    console.warn("requesting");
+    this.sectionService.sendRequestToSection(this.user.getUserId(), section_id).subscribe((section) => {
+      this.getUserSections(this.user.getUserId());
+      this.course_search = null;
+      this.search();
+    });
   }
 
 

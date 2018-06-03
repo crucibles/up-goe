@@ -364,7 +364,41 @@ router.get('/posts', (req, res) => {
 });
 
 /**
- * @description portal for all requests that regards to sections "api/sections"
+ * @description portal for post requests that regards to sections "api/sections"
+ * @author Cedric Yao Alvaro
+ * 
+ * 1. Student requestin to enroll in a section
+ */
+router.post('/sections', (req, res) => {
+
+    connection((db) => {
+        const myDB = db.db('up-goe-db');
+
+        myDB.collection('sections')
+            .updateOne(
+                { _id: ObjectID(req.body.section_id) },
+                {
+                    $push: {
+                        students: {
+                            user_id: req.body.user_id,
+                            status: "R"
+                        }
+                    }
+                }
+            ).then(result => {
+                res.json(result);
+            })
+            .catch((err) => {
+                sendError(err, res);
+            })
+
+    });
+
+})
+
+
+/**
+ * @description portal for get requests that regards to sections "api/sections"
  * @author Cedric Yao Alvaro
  */
 router.get('/sections', (req, res) => {
