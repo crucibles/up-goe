@@ -114,6 +114,7 @@ export class QuestService {
 	 */
 	getQuest(quest_id: string): Observable<Quest> {
 		const url = `${this.questUrl}/?quest_id=${quest_id}`;
+		console.log("entered quest!!!");
 		return this.http.get<Quest>(url).pipe(
 			map(quests => quests[0]), // returns a {0|1} element array
 			tap(h => {
@@ -121,6 +122,23 @@ export class QuestService {
 				const outcome = h ? 'fetched quest ' + quest_id : 'did not find quest ' + quest_id;
 			}),
 			catchError(this.handleError<User>(`getQuest quest_id=${quest_id}`))
+		);
+	}
+
+	/**
+	 * Returns the section's array quests
+	 * @param section_id id of the section whose array of quests needed to be retrieved
+	 */
+	getSectionQuests(section_id): Observable<any[]>{
+		let params = new HttpParams()
+			.set('section_id', section_id)
+			.set('method', 'getSectionQuests');
+
+		return this.http.get<Quest[]>('api/getSectionQuests', {
+			params: params
+		}).pipe(
+			tap(quests => quests ? console.log(quests) : console.log('did not fetched quests')),
+			catchError(this.handleError(`getUserJoinedSectionQuests`, []))
 		);
 	}
 

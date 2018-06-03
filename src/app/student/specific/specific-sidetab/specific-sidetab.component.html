@@ -95,7 +95,7 @@
 					<a *ngIf="courses[i]" (click)=openCoursePage(section.getSectionId())>{{this.courses[i].getCourseName()}} - {{section.getSectionName()}}</a>
 				</li>
 				<li style="text-align: right">
-					<button *ngIf="isEditing" type="submit" class="btn btn-primary" [disabled]="!editForm.valid">
+					<button *ngIf="isEditing" type="submit" class="btn btn-primary" [disabled]="!editForm.valid" (click)="submit()">
 						Submit
 					</button>
 					<button *ngIf="!isEditing" class="btn btn-primary" (click)="startEditing()">
@@ -109,7 +109,7 @@
 					</li>
 					<li> Email: </li>
 					<li>
-						<input type="text" formControlName="email" class="user-information" [class.remove-border]="!isEditing" />
+						<input type="text" formControlName="email" class="user-information remove-border" />
 					</li>
 					<li> Contact #: </li>
 					<li>

@@ -249,16 +249,16 @@ export class User {
 	* 
 	* @returns string of the formatted date
 	*/
-  private formatDate(date_obj) {
-    let months: string[] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+	private formatDate(date_obj) {
+		let months: string[] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-    let month = months[date_obj.getMonth()];
-    let day = date_obj.getDate();
-    let year = date_obj.getFullYear();
+		let month = months[date_obj.getMonth()];
+		let day = date_obj.getDate();
+		let year = date_obj.getFullYear();
 
-    let datestring: string = month + " " + day + ", " + year;
-    return datestring;
-  }
+		let datestring: string = month + " " + day + ", " + year;
+		return datestring;
+	}
 
 };
 

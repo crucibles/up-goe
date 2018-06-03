@@ -125,7 +125,7 @@ export class GenSelcourseComponent implements OnInit {
    * @summary searches the string entered by the user and stores result in 'course_found' variable
    */
   search() {
-
+    console.warn(this.sections);
     if (this.course_search == null || this.course_search.length == 0) {
 
       this.isSearching = false;
