@@ -5,19 +5,25 @@ import { Quest } from "shared/models";
  */
 export class QuestMap {
 
+	private _id: String;
     private datasets;
     private questCoordinates: any[];
 
     constructor(data, quests: Quest[], hasPlusPoints?: boolean){
+		this._id = data._id;
         this.setQuestMapDataSet(data, quests, hasPlusPoints);
     }
 
     getQuestMapDataSet(){
         return this.datasets;
-    }
+	}
+	
+	getQuestMapId(){
+		return this._id;
+	}
 
-    setQuestMapDataSet(data: String[], quests: Quest[], hasPlusPoints){
-		let questMapDetails = this.getQuestMapDetails(data);
+    setQuestMapDataSet(data: any, quests: Quest[], hasPlusPoints){
+		let questMapDetails = this.getQuestMapDetails(data.quest_coordinates);
 
 		let exclude: any[] = questMapDetails.exclude;
 		let questPositions = questMapDetails.questPositions;
@@ -111,10 +117,13 @@ export class QuestMap {
 		let directions = ["N", "S", "E", "W"];
 		for (let direction of directions) {
 			if (y == basisY && (direction === "W" || (x < maxX && direction == "E"))) {
+				console.log("excluded1");
 				continue;
 			} else if ((y > basisY && direction === "S") || (y < basisY && direction === "N")) {
+				console.log("excluded2");
 				continue;
 			} else if (excludedPoints.filter(data => data.x == x && data.y == y && data.direction == direction).length != 0) {
+				console.log("excluded3");
 				continue;
 			}
 			let x1: number = x;
@@ -155,7 +164,7 @@ export class QuestMap {
 		}
     }
     
-    private getQuestMapDetails(data: String[]): any {
+    private getQuestMapDetails(data: any[]): any {
 		var lines: any[] = data;
 		var i = 0;
 		var dataArr: any[] = [];
@@ -166,7 +175,7 @@ export class QuestMap {
 
 		/*
 		lineData[0] -> quest_id
-		lineData[1] -> chart_type
+		lineData[1] -> type
 		lineData[2] -> x1
 		lineData[3] -> y1
 		lineData[4] -> line? x2 : exclude? direction (N, S, E, W)
@@ -175,33 +184,33 @@ export class QuestMap {
 
 		let questPoint: any;
 		for (i = 0; i < lines.length; i++) {
-			var lineData = lines[i].split(",");
-			let x: number = parseInt(lineData[2]);
-			let y: number = parseInt(lineData[3]);
+			var lineData = lines[i];
+			let x: number = parseInt(lineData.x1);
+			let y: number = parseInt(lineData.y1);
 			minX = minX < x && basisY == y ? minX : x;
 			maxX = maxX > x && basisY == y ? maxX : x;
 
-			if (lineData[1] === "scatter") {
+			if (lineData.type === "scatter") {
 				questPoint = {
-					questId: lineData[0],
-					type: lineData[1],
+					questId: lineData.quest_id,
+					type: lineData.type,
 					x: x,
 					y: y,
 				}
-			} else if (lineData[1] === "line") {
+			} else if (lineData.type === "line") {
 				questPoint = {
-					type: lineData[1],
+					type: lineData.type,
 					x: x,
 					y: y,
-					x1: parseInt(lineData[4]),
-					y1: parseInt(lineData[5]),
+					x1: parseInt(lineData.x2),
+					y1: parseInt(lineData.y2),
 				}
-			} else if (lineData[1] === "exclude") {
+			} else if (lineData.type === "exclude") {
 				let exclude: any = {
-					type: lineData[1],
+					type: lineData.type,
 					x: x,
 					y: y,
-					direction: lineData[4]
+					direction: lineData.direction
 				}
 				exArr.push(exclude);
 				continue;
