@@ -1,4 +1,4 @@
-import { Conditions } from "shared/models/badge";
+import { Conditions, Badge } from "shared/models/badge";
 
 export const imageDir: string = "/assets/images/";
 /**
@@ -51,7 +51,7 @@ export class User {
       this.user_school_id = user.user_school_id ? user.user_school_id : "";
       this.user_security_question = user.user_security_question ? user.user_security_question : "";
       this.user_security_answer = user.user_security_answer ? user.user_security_answer : "";
-      this.user_conditions = user.user_conditions;
+      this.user_conditions = new Conditions(user.user_conditions);
     } else {
       this.user_fname = "";
       this.user_mname = "";
@@ -66,7 +66,6 @@ export class User {
       this.user_security_question = "";
       this.user_security_answer = "";
       this.user_conditions = new Conditions();
-
     }
   }
 
@@ -173,7 +172,7 @@ export class User {
   }
 
   getUserSchoolId() {
-    return this.user_school_id? this.user_school_id: "";
+    return this.user_school_id ? this.user_school_id : "";
   }
 
   getUserSecurityQuestion() {

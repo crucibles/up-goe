@@ -20,7 +20,7 @@ import {
 } from '@angular/forms';
 
 import {
-	ActivatedRoute
+	ActivatedRoute, ParamMap
 } from '@angular/router';
 
 //Third-Party Imports
@@ -159,7 +159,8 @@ export class SpecificQuestMapComponent implements OnInit {
 	}
 
 	createBadgeArray() {
-		let badges: Badge[] = this.badgeService.getSectionBadges("").map(badge => new Badge(badge));
+		let badges: Badge[] = [];
+		//this.badgeService.getSectionBadges("").map(badge => new Badge(badge));
 		//AHJ: unimplemented; retrieve badges
 		this.questBadges = badges.map(function week(badge) {
 			let obj = {

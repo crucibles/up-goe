@@ -70,6 +70,15 @@ export class UserService {
         return this.currentUser;
     }
 
+    setCurrentUser(user: User) {
+        console.log(user);
+        this.cookieService.delete('currentUser');
+        localStorage.removeItem('currentUser');
+        this.currentUser = new User(user);
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        this.cookieService.set('currentUser', this.currentUser.getUserEmail());
+    }
+
     /**
      * @summary: Obtains a user from server by id
      * @author Cedric Yao Alvaro
@@ -123,6 +132,7 @@ export class UserService {
         const url = this.userUpdateUrl;
         return this.http.post(url, { user_id: user_id }).pipe(
             tap(data => {
+                console.log(data);
                 return data;
             })
         );
@@ -136,6 +146,7 @@ export class UserService {
     logOut() {
         // remove user from local storage to log user out
         localStorage.removeItem('currentUser');
+        localStorage.removeItem('currentUserSections');
         this.cookieService.delete('currentUser');
         this.router.navigate(['/log-in']);
     }
