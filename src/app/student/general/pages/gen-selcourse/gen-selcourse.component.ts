@@ -117,7 +117,7 @@ export class GenSelcourseComponent implements OnInit {
       .subscribe(sections => {
         console.warn(sections);
         this.sections = sections;
-        //this.sections = sections.map(section => new Section(section));
+        this.sectionService.setCurrentUserSections(sections);
       });
   }
 

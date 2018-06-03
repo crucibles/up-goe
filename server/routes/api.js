@@ -86,6 +86,8 @@ router.get('/courses', (req, res) => {
                         console.log(courses);
                         response.data = courses[0];
                         res.json(courses[0]);
+                    } else {
+                        res.json([]);
                     }
                 })
                 .catch((err) => {
@@ -102,6 +104,8 @@ router.get('/courses', (req, res) => {
                     if (courses) {
                         response.data = courses;
                         res.json(courses);
+                    } else {
+                        res.json([]);
                     }
                 })
                 .catch((err) => {
@@ -225,9 +229,16 @@ router.post('/login', (req, res) => {
                 user_password: req.body.user_password
             })
             .then((user) => {
-                user.user_password = '';
-                response.data = user;
-                res.json(user);
+                if (user) {
+
+                    user.user_password = '';
+                    response.data = user;
+                    res.json(user);
+
+                } else {
+
+                    res.json([]);
+                }
             })
             .catch((err) => {
                 sendError(err, res);
@@ -248,8 +259,12 @@ router.get('/quests', (req, res) => {
                 .find(ObjectID(req.query.quest_id))
                 .toArray()
                 .then((quests) => {
-                    response.data = quests;
-                    res.json(quests);
+                    if (quests) {
+                        response.data = quests;
+                        res.json(quests);
+                    } else {
+                        res.json([]);
+                    }
                 })
                 .catch((err) => {
                     sendError(err, res);
@@ -262,8 +277,13 @@ router.get('/quests', (req, res) => {
                 .find()
                 .toArray()
                 .then((quests) => {
-                    response.data = quests;
-                    res.json(quests);
+                    if (quests) {
+
+                        response.data = quests;
+                        res.json(quests);
+                    } else {
+                        res.json([]);
+                    }
                 })
                 .catch((err) => {
                     sendError(err, res);
@@ -285,14 +305,15 @@ router.get('/posts', (req, res) => {
     connection((db) => {
         const myDB = db.db('up-goe-db');
 
-        if (req.method == "GET") {
-            if (req.query.sections) {
-                let sections = req.query.sections.split(",");
-                console.log(sections);
-                myDB.collection('posts')
-                    .find()
-                    .toArray()
-                    .then((posts) => {
+        if (req.query.sections) {
+            let sections = req.query.sections.split(",");
+            console.log(sections);
+            myDB.collection('posts')
+                .find()
+                .toArray()
+                .then((posts) => {
+
+                    if (posts) {
 
                         forEach(posts, processPosts, afterAll);
 
@@ -321,38 +342,28 @@ router.get('/posts', (req, res) => {
                             res.json(myObjArr);
                         }
 
-                    })
-                    .catch((err) => {
-                        sendError(err, res);
-                    })
-
-            } else {
-                myDB.collection('posts')
-                    .find()
-                    .toArray()
-                    .then((x) => {
-                        res.json(x);
-                    })
-            }
-
-
-
-
-
-        } else if (req.method == POST) {
-            console.log(req.body);
-
-            myDB.collection('posts')
-                .insertOne()
-                .then((posts) => {
-                    if (posts) {
-                        console.log(posts);
-                        response.data = posts;
-                        res.json(posts);
+                    } else {
+                        res.json([]);
                     }
+
+
                 })
                 .catch((err) => {
                     sendError(err, res);
+                })
+
+        } else {
+            myDB.collection('posts')
+                .find()
+                .toArray()
+                .then((x) => {
+
+                    if (x) {
+                        res.json(x);
+                    } else {
+                        res.json([]);
+                    }
+
                 })
         }
 
@@ -371,28 +382,70 @@ router.get('/posts', (req, res) => {
  */
 router.post('/sections', (req, res) => {
 
-    connection((db) => {
-        const myDB = db.db('up-goe-db');
+    if (!req.body.approve) {
 
-        myDB.collection('sections')
-            .updateOne(
-                { _id: ObjectID(req.body.section_id) },
-                {
-                    $push: {
-                        students: {
-                            user_id: req.body.user_id,
-                            status: "R"
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+
+            myDB.collection('sections')
+                .updateOne(
+                    { _id: ObjectID(req.body.section_id) },
+                    {
+                        $push: {
+                            students: {
+                                user_id: req.body.user_id,
+                                status: "R"
+                            }
                         }
                     }
-                }
-            ).then(result => {
-                res.json(result);
-            })
-            .catch((err) => {
-                sendError(err, res);
-            })
+                ).then(result => {
 
-    });
+                    if (result) {
+                        res.json(result);
+                    } else {
+                        res.json(false);
+                    }
+
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                })
+
+        });
+
+    } else if (req.body.approve) {
+
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+
+            myDB.collection('sections')
+                .updateOne(
+                    {
+                        _id: ObjectID(req.body.section_id),
+                        "students.user_id": req.body.user_id
+                    },
+                    {
+                        $set: {
+                            "students.$[elem].status": "E"
+                        }
+                    },
+                    {
+                        arrayFilters: [{ "elem.user_id": req.body.user_id }]
+                    }
+                ).then(result => {
+                    if (result) {
+                        res.json(result);
+                    } else {
+                        res.json(false);
+                    }
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                })
+
+        });
+
+    }
 
 })
 
@@ -428,16 +481,23 @@ router.get('/sections', (req, res) => {
             myDB.collection('sections')
                 .findOne(ObjectID(req.query.students))
                 .then((sections) => {
-                    let enrolled = sections.students.map((x) => {
-                        if (x.status == 'E') {
-                            return x.user_id;
-                        } else {
-                            return "";
-                        }
-                    })
-                    console.log(enrolled);
-                    response.data = enrolled;
-                    res.send(enrolled);
+
+                    if (sections) {
+
+                        let enrolled = sections.students.map((x) => {
+                            if (x.status == 'E') {
+                                return x.user_id;
+                            } else {
+                                return "";
+                            }
+                        })
+                        response.data = enrolled;
+                        res.send(enrolled);
+
+                    } else {
+                        res.json([]);
+                    }
+
                 })
                 .catch((err) => {
                     sendError(err, res);
@@ -458,31 +518,35 @@ router.get('/sections', (req, res) => {
                 .toArray()
                 // editing the section body adding a course name in it.
                 .then((sections) => {
-                    console.log(sections);
-                    console.log("HAHAHAHAHA");
-                    console.log("HAHAHAHAHA");
-                    async.forEach(sections, processEachSection, afterAllSection);
 
-                    function processEachSection(section, callback) {
+                    if (sections) {
 
-                        myDB.collection('courses')
-                            .find(ObjectID(section.course_id))
-                            .toArray()
-                            .then((course) => {
-                                Promise.all(course[0].course_name).then(() => {
-                                    myObjArr.push({
-                                        section: section,
-                                        course_name: course[0].course_name
+                        async.forEach(sections, processEachSection, afterAllSection);
+
+                        function processEachSection(section, callback) {
+
+                            myDB.collection('courses')
+                                .find(ObjectID(section.course_id))
+                                .toArray()
+                                .then((course) => {
+                                    Promise.all(course[0].course_name).then(() => {
+                                        myObjArr.push({
+                                            section: section,
+                                            course_name: course[0].course_name
+                                        });
+                                        callback(null);
                                     });
-                                    callback(null);
                                 });
-                            });
 
-                    }
+                        }
 
-                    function afterAllSection(err) {
-                        response.data = myObjArr;
-                        res.send(myObjArr);
+                        function afterAllSection(err) {
+                            response.data = myObjArr;
+                            res.send(myObjArr);
+                        }
+
+                    } else {
+                        res.json([]);
                     }
 
 
@@ -511,29 +575,36 @@ router.get('/sections', (req, res) => {
                 // editing the section body adding a course name in it.
                 .then((sections) => {
 
-                    async.forEach(sections, processEachSection, afterAllSection);
+                    if (sections) {
 
-                    function processEachSection(section, callback) {
+                        async.forEach(sections, processEachSection, afterAllSection);
 
-                        myDB.collection('courses')
-                            .find(ObjectID(section.course_id))
-                            .toArray()
-                            .then((course) => {
-                                Promise.all(course[0].course_name).then(() => {
-                                    myObjArr.push({
-                                        section: section,
-                                        course_name: course[0].course_name
+                        function processEachSection(section, callback) {
+                            console.log(section);
+                            myDB.collection('courses')
+                                .find(ObjectID(section.course_id))
+                                .toArray()
+                                .then((course) => {
+                                    Promise.all(course[0].course_name).then(() => {
+                                        myObjArr.push({
+                                            section: section,
+                                            course_name: course[0].course_name
+                                        });
+                                        callback(null);
                                     });
-                                    callback(null);
                                 });
-                            });
 
+                        }
+
+                        function afterAllSection(err) {
+                            response.data = myObjArr;
+                            res.send(myObjArr);
+                        }
+
+                    } else {
+                        res.json([]);
                     }
 
-                    function afterAllSection(err) {
-                        response.data = myObjArr;
-                        res.send(myObjArr);
-                    }
 
 
                 })
@@ -552,30 +623,38 @@ router.get('/sections', (req, res) => {
                 .find(ObjectID(req.query.class))
                 .toArray()
                 .then((sections) => {
-                    console.log(sections);
-                    async.forEach(sections, processEachSection, afterAllSection);
 
-                    function processEachSection(section, callback) {
+                    if (sections) {
 
-                        myDB.collection('courses')
-                            .find(ObjectID(section.course_id))
-                            .toArray()
-                            .then((course) => {
-                                Promise.all(course[0].course_name).then(() => {
-                                    myObjArr.push({
-                                        section: section,
-                                        course_name: course[0].course_name
+                        async.forEach(sections, processEachSection, afterAllSection);
+
+                        function processEachSection(section, callback) {
+
+                            myDB.collection('courses')
+                                .find(ObjectID(section.course_id))
+                                .toArray()
+                                .then((course) => {
+                                    Promise.all(course[0].course_name).then(() => {
+                                        myObjArr.push({
+                                            section: section,
+                                            course_name: course[0].course_name
+                                        });
+                                        callback(null);
                                     });
-                                    callback(null);
                                 });
-                            });
 
+                        }
+
+                        function afterAllSection(err) {
+                            response.data = myObjArr;
+                            res.send(myObjArr);
+                        }
+
+                    } else {
+
+                        res.json(false);
                     }
 
-                    function afterAllSection(err) {
-                        response.data = myObjArr;
-                        res.send(myObjArr);
-                    }
                 })
                 .catch((err) => {
                     sendError(err, res);
@@ -593,39 +672,47 @@ router.get('/sections', (req, res) => {
                 .toArray()
                 .then((sections) => {
 
-                    myDB.collection('courses')
-                        .find({
-                            course_name: { $regex: '(?i)' + req.query.class + '(?-i)' }
-                        })
-                        .toArray()
-                        .then((course) => {
-                            console.log(course);
-                            // course found.
-                            if (course.length > 0) {
+                    if (sections) {
 
-                                sections.forEach(section => {
+                        myDB.collection('courses')
+                            .find({
+                                course_name: { $regex: '(?i)' + req.query.class + '(?-i)' }
+                            })
+                            .toArray()
+                            .then((course) => {
+                                console.log(course);
+                                // course found.
+                                if (course.length > 0) {
 
-                                    if (section.course_id == course[0]._id) {
+                                    sections.forEach(section => {
 
-                                        myObjArr.push({
-                                            section: section,
-                                            course_name: course[0].course_name
-                                        });
+                                        if (section.course_id == course[0]._id) {
 
-                                    }
+                                            myObjArr.push({
+                                                section: section,
+                                                course_name: course[0].course_name
+                                            });
 
+                                        }
+
+                                    })
+
+
+                                }
+
+                                Promise.all(myObjArr).then(x => {
+                                    res.json(myObjArr);
                                 })
 
 
-                            }
 
-                            Promise.all(myObjArr).then(x => {
-                                res.json(myObjArr);
-                            })
+                            });
+
+                    } else {
+                        res.json([]);
+                    }
 
 
-
-                        })
 
                 })
                 .catch((err) => {
@@ -648,26 +735,35 @@ router.get('/getSectionQuests', (req, res) => {
         myDB.collection('sections')
             .findOne(ObjectID(req.query.section_id))
             .then(section => {
-                let questIds = section.map(section => section.quests.quest_id);
-                console.log(questIds);
-                myDB.collection('quests')
-                    .find({
-                        _id: {
-                            $in: questIds
-                        }
-                    })
-                    .toArray()
-                    .then((quests) => {
 
-                        console.log("_______quest_________");
-                        console.log(quests);
-                        console.log("_______quest_________");
-                        response.data = quests;
-                        res = res.json(quests);
-                    })
-                    .catch((err) => {
-                        sendError(err, res);
-                    });
+                if (section) {
+
+                    let questIds = section.map(section => section.quests.quest_id);
+                    console.log(questIds);
+                    myDB.collection('quests')
+                        .find({
+                            _id: {
+                                $in: questIds
+                            }
+                        })
+                        .toArray()
+                        .then((quests) => {
+
+                            if (quests) {
+                                response.data = quests;
+                                res.json(quests);
+                            } else {
+                                res.json(false);
+                            }
+
+                        })
+                        .catch((err) => {
+                            sendError(err, res);
+                        });
+
+                } else {
+                    res.json([]);
+                }
             });
     })
 });
@@ -697,43 +793,55 @@ router.get('/sections/quests', (req, res) => {
             .toArray()
             .then((sections) => {
 
-                if (req.query.method) {
-                    let questsOnly = sections.map(section => section.quests);
-                    let userQuests = [];
+                if (sections) {
+                    if (req.query.method) {
+                        let questsOnly = sections.map(section => section.quests);
+                        let userQuests = [];
 
-                    questsOnly.forEach(quests => {
-                        quests.forEach(quest => {
-                            if (quest.quest_participants == req.query.id) {
-                                userQuests.push(quest.quest_id);
-                            }
-                        })
-                    });
-
-                    myDB.collection('quests')
-                        .find()
-                        .toArray()
-                        .then((quests) => {
-
-                            let AllUserQuests = [];
+                        questsOnly.forEach(quests => {
                             quests.forEach(quest => {
-                                userQuests.forEach(userQuest => {
-                                    if (quest._id == userQuest) {
-                                        AllUserQuests.push(quest);
-                                    }
-                                })
+                                if (quest.quest_participants == req.query.id) {
+                                    userQuests.push(quest.quest_id);
+                                }
                             })
-
-                            response.data = AllUserQuests;
-                            res = res.json(AllUserQuests);
-                        })
-                        .catch((err) => {
-                            sendError(err, res);
                         });
 
+                        myDB.collection('quests')
+                            .find()
+                            .toArray()
+                            .then((quests) => {
+
+                                if (quests) {
+
+                                    let AllUserQuests = [];
+                                    quests.forEach(quest => {
+                                        userQuests.forEach(userQuest => {
+                                            if (quest._id == userQuest) {
+                                                AllUserQuests.push(quest);
+                                            }
+                                        })
+                                    })
+
+                                    response.data = AllUserQuests;
+                                    res.json(AllUserQuests);
+                                } else {
+                                    res.json([]);
+                                }
+
+                            })
+                            .catch((err) => {
+                                sendError(err, res);
+                            });
+
+                    } else {
+                        response.data = sections;
+                        res = res.json(sections);
+                    }
                 } else {
-                    response.data = sections;
-                    res = res.json(sections);
+                    res.json([]);
                 }
+
+
             })
             .catch((err) => {
                 sendError(err, res);
@@ -805,13 +913,16 @@ router.get('/users', (req, res) => {
     connection((db) => {
         const myDB = db.db('up-goe-db');
         myDB.collection('users')
-            .find(
+            .findOne(
                 ObjectID(req.query.id)
             )
-            .toArray()
             .then((users) => {
-                response.data = users;
-                res.json(users);
+                if (users) {
+                    response.data = users;
+                    res.json(users);
+                } else {
+                    res.json(false);
+                }
             })
             .catch((err) => {
                 sendError(err, res);
@@ -849,8 +960,11 @@ router.post('/updateUser', (req, res) => {
 
                 )
                 .then(z => {
-                    console.log("hello");
-                    res.json(true);
+                    if (z) {
+                        res.json(true);
+                    } else {
+                        res.json(false);
+                    }
                 })
                 .catch((err) => {
                     sendError(err, res);
@@ -885,37 +999,43 @@ router.post('/updateUser', (req, res) => {
             myDB.collection('users')
                 .findOne(ObjectID(req.body.user_id))
                 .then((user) => {
-                    console.log("Im ready..");
 
-                    if (user.user_conditions.log_in_total.length > 0) {
+                    if (user) {
 
-                        Promise.all(user.user_conditions.log_in_total).then((date) => {
+                        if (user.user_conditions.log_in_total.length > 0) {
 
-                            h = date.map((d) => {
-                                console.log(new Date(d).toLocaleDateString());
-                                console.log(x.toLocaleDateString());
-                                if (new Date(d).toLocaleDateString().trim() == x.toLocaleDateString().trim()) {
-                                    return new Date(d).toLocaleDateString();
+                            Promise.all(user.user_conditions.log_in_total).then((date) => {
+
+                                h = date.map((d) => {
+                                    console.log(new Date(d).toLocaleDateString());
+                                    console.log(x.toLocaleDateString());
+                                    if (new Date(d).toLocaleDateString().trim() == x.toLocaleDateString().trim()) {
+                                        return new Date(d).toLocaleDateString();
+                                    } else {
+                                        return false;
+                                    }
+                                });
+                                console.log(h);
+                                if (h.length > 0) {
+                                    console.log("Already logged in this day");
+                                    res.json(true);
                                 } else {
-                                    return false;
+                                    console.log("not yet logged in");
+                                    loginUpdate(req, res);
                                 }
-                            });
-                            console.log(h);
-                            if (h.length > 0) {
-                                console.log("Already logged in this day");
-                                res.json(true);
-                            } else {
-                                console.log("not yet logged in");
-                                loginUpdate(req, res);
-                            }
 
-                        });
+                            });
+
+                        } else {
+
+                            loginUpdate(req, res);
+
+                        }
 
                     } else {
-
-                        loginUpdate(req, res);
-
+                        res.json(false);
                     }
+
 
 
                 })
@@ -947,57 +1067,64 @@ router.post('/badges', (req, res) => {
                 .toArray()
                 .then((badges) => {
 
-                    Promise.all(badges).then((badge) => {
-                        console.log(req.body);
-                        console.log("===================");
-                        console.log(badge);
+                    if (badges) {
 
-                        let earnedbadge = badge.filter((b) => {
-                            console.log("STreaks");
-                            console.log(b.badge_conditions.log_in_streak);
-                            console.log(req.body.conditions.log_in_streak);
-                            if (b.badge_conditions.log_in_streak <= req.body.conditions.log_in_streak) {
-                                return b;
-                            }
+                        Promise.all(badges).then((badge) => {
+                            console.log(req.body);
+                            console.log("===================");
+                            console.log(badge);
 
-                        });
-
-                        if (earnedbadge.length > 0) {
-
-                            Promise.all(earnedbadge).then((eb) => {
-                                console.log(eb[0]._id);
-                                connection((db) => {
-                                    const myDB = db.db('up-goe-db');
-                                    myDB.collection('badges')
-                                        .updateOne(
-                                            { _id: ObjectID(eb[0]._id) },
-                                            {
-                                                $addToSet: {
-                                                    "badge_attainers": req.body.user_id
-                                                }
-                                            }
-
-                                        )
-                                        .then(badge => {
-                                            console.log("badge updated");
-                                            res.json(badge);
-                                        })
-                                        .catch((err) => {
-                                            sendError(err, res);
-                                        });
-                                });
+                            let earnedbadge = badge.filter((b) => {
+                                console.log("STreaks");
+                                console.log(b.badge_conditions.log_in_streak);
+                                console.log(req.body.conditions.log_in_streak);
+                                if (b.badge_conditions.log_in_streak <= req.body.conditions.log_in_streak) {
+                                    return b;
+                                }
 
                             });
 
-                        } else {
+                            if (earnedbadge.length > 0) {
 
-                            res.json(false);
+                                Promise.all(earnedbadge).then((eb) => {
+                                    console.log(eb[0]._id);
+                                    connection((db) => {
+                                        const myDB = db.db('up-goe-db');
+                                        myDB.collection('badges')
+                                            .updateOne(
+                                                { _id: ObjectID(eb[0]._id) },
+                                                {
+                                                    $addToSet: {
+                                                        "badge_attainers": req.body.user_id
+                                                    }
+                                                }
 
-                        }
+                                            )
+                                            .then(badge => {
+                                                console.log("badge updated");
+                                                res.json(badge);
+                                            })
+                                            .catch((err) => {
+                                                sendError(err, res);
+                                            });
+                                    });
+
+                                });
+
+                            } else {
+
+                                res.json([]);
+
+                            }
 
 
 
-                    });
+                        });
+
+                    } else {
+                        res.json([]);
+                    }
+
 
 
                 })
@@ -1024,27 +1151,33 @@ router.get('/badges', (req, res) => {
             .toArray()
             .then((badges) => {
 
-                Promise.all(badges).then(badges => {
-                    // earned system badges
-                    let esb = badges.filter(b => {
-                        console.log(b);
-                        if (b.is_system_badge == true) {
-                            let a = b.badge_attainers.filter(user => {
-                                console.log(user);
-                                if (user == req.query.id) {
-                                    return user;
-                                }
-                            });
-                            console.log(a);
-                            if (a.length > 0) {
-                                return b;
-                            };
-                        }
+                if (badges) {
+
+                    Promise.all(badges).then(badges => {
+                        // earned system badges
+                        let esb = badges.filter(b => {
+                            console.log(b);
+                            if (b.is_system_badge == true) {
+                                let a = b.badge_attainers.filter(user => {
+                                    console.log(user);
+                                    if (user == req.query.id) {
+                                        return user;
+                                    }
+                                });
+                                console.log(a);
+                                if (a.length > 0) {
+                                    return b;
+                                };
+                            }
+                        });
+                        console.log(esb);
+                        response.data = esb;
+                        res.json(esb);
                     });
-                    console.log(esb);
-                    response.data = esb;
-                    res.json(esb);
-                });
+
+                } else {
+                    res.json([]);
+                }
 
             })
             .catch((err) => {
@@ -1067,8 +1200,12 @@ router.get('/securityQuestions', (req, res) => {
             .find()
             .toArray()
             .then((questions) => {
-                response.data = questions;
-                res.json(questions);
+                if (questions) {
+                    response.data = questions;
+                    res.json(questions);
+                } else {
+                    res.json([]);
+                }
             })
             .catch((err) => {
                 sendError(err, res);
