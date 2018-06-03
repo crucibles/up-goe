@@ -63,6 +63,7 @@ export class GenSidetabComponent implements OnInit {
 	//for pages other than profile page  
 	editForm: FormGroup;
 	quests: Quest[] = []; //user's quests
+	questCourses: string[] = [];
 	questClicked: Quest;
 	//for progress bar; 
 	defaultPBClass: string = 'progress-bar progress-bar-striped';
@@ -136,8 +137,6 @@ export class GenSidetabComponent implements OnInit {
 	}
 
 	initializeForm() {
-		// console.log('Contact No.: ' + this.currentUser.getUserContactNo());
-
 		this.editForm = this.formBuilder.group({
 			schoolId: new FormControl({value: this.currentUser.getUserSchoolId(), disabled: true}),
 			email: new FormControl({value: this.currentUser.getUserEmail(), disabled: true}),
@@ -191,7 +190,10 @@ export class GenSidetabComponent implements OnInit {
 		this.questService.getUserJoinedQuests(user_id)
 			.subscribe(quests => {
 				console.warn(quests);
-				this.quests = quests.map(quest => new Quest(quest));
+				quests.forEach(quest => {
+					this.quests.push(new Quest(quest.questData));
+					this.questCourses.push(quest.course + '-' + quest.section);
+				});
 				console.warn(this.quests);
 				this.timeDisplays();
 			});

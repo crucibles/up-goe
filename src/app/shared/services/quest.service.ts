@@ -187,10 +187,10 @@ export class QuestService {
 			.set('section_id', section_id)
 			.set('method', 'getUserQuests');
 
-		return this.http.get<Quest[]>(this.sectionQuestUrl, {
+		return this.http.get<any[]>(this.sectionQuestUrl, {
 			params: params
 		}).pipe(
-			tap(quests => quests ? console.log(quests) : console.log('did not fetched quests')),
+			tap(quests => quests ? console.log(quests) : console.log('did not fetch quests')),
 			catchError(this.handleError(`getUserJoinedSectionQuests`, []))
 		);
 	}
