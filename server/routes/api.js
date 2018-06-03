@@ -767,81 +767,105 @@ router.get('/getSectionQuests', (req, res) => {
 /**
  * @description portal for requests regarding quests. api/sectionQuests
  * @author Cedric Yao Alvaro
+ * @author Donevir Hynson - modified 2 June 2018
  */
 router.get('/sections/quests', (req, res) => {
-
     connection((db) => {
         const myDB = db.db('up-goe-db');
-
         myDB.collection('sections')
             .find({
-
                 students: {
                     $elemMatch: {
                         status: "E",
                         user_id: req.query.id
                     }
                 }
-
             })
             .toArray()
             .then((sections) => {
+                if (req.query.method) {
+                    let questsOnly = sections.map(section => section.quests);
+                    let userQuests = [];
 
-                if (sections) {
-                    if (req.query.method) {
-                        let questsOnly = sections.map(section => section.quests);
-                        let userQuests = [];
+                    questsOnly.forEach(quests => {
+                        quests.forEach(quest => {
+                            if (quest.quest_participants == req.query.id) {
+                                userQuests.push(quest.quest_id);
+                            }
+                        })
+                    });
 
-                        questsOnly.forEach(quests => {
-                            quests.forEach(quest => {
-                                if (quest.quest_participants == req.query.id) {
-                                    userQuests.push(quest.quest_id);
-                                }
-                            })
-                        });
+                    // Removing duplicate entries in userQuests.
+                    userQuests = userQuests.filter(function(elem, pos) {
+                        return userQuests.indexOf(elem) == pos;
+                    });
 
-                        myDB.collection('quests')
-                            .find()
-                            .toArray()
-                            .then((quests) => {
-
-                                if (quests) {
-
-                                    let AllUserQuests = [];
-                                    quests.forEach(quest => {
-                                        userQuests.forEach(userQuest => {
-                                            if (quest._id == userQuest) {
-                                                AllUserQuests.push(quest);
-                                            }
-                                        })
+                    myDB.collection('quests')
+                        .find()
+                        .toArray()
+                        .then((quests) => {
+                            let AllUserQuests = [];
+                            sections.forEach(section => {
+                                section.quests.forEach(quest => {
+                                    userQuests.forEach(userQuest => {
+                                        if(quest.quest_id == userQuest) {
+                                            AllUserQuests.push({
+                                                course: section.course_id,
+                                                section: section.section_name,
+                                                questData: quest.quest_id
+                                            });
+                                        }
                                     })
-
-                                    response.data = AllUserQuests;
-                                    res.json(AllUserQuests);
-                                } else {
-                                    res.json([]);
-                                }
-
-                            })
-                            .catch((err) => {
-                                sendError(err, res);
+                                })
                             });
 
+                            // Replaces the questId in AllUserQuests.questData to quest object.
+                            quests.forEach(quest => {
+                                AllUserQuests.forEach(userQuest => {
+                                    if(quest._id == userQuest.questData) {
+                                        userQuest.questData = quest;
+                                    }
+                                });
+                            });
+
+                            myDB.collection('courses')
+                                .find()
+                                .toArray()
+                                .then((courses) => {
+                                    if(courses) {
+                                        // Replaces the course_id in AllUserQuests.course to course_name.
+                                        AllUserQuests.forEach(quest => {
+                                            courses.forEach(course => {
+                                                if(course._id == quest.course) {
+                                                    quest.course = course.course_name;
+                                                }
+                                            });
+                                        });
+
+                                        response.data = AllUserQuests;
+                                        res.json(AllUserQuests);
+                                    } else {
+                                        console.log('There are no courses found');
+                                        response.data = courses;
+                                        res.json(false);
+                                    }
+                                })
+                                .catch((err) => {
+                                    sendError(err, res);
+                                });
+                        })
+                        .catch((err) => {
+                            sendError(err, res);
+                        });
                     } else {
                         response.data = sections;
-                        res = res.json(sections);
+                        res.json(sections);
                     }
-                } else {
-                    res.json([]);
-                }
-
-
-            })
+                })
             .catch((err) => {
                 sendError(err, res);
             });
     });
-
 });
 
 /**
@@ -979,8 +1003,9 @@ router.post('/updateUser', (req, res) => {
                             user_contact_no: req.body.userContactNo
                         }
                     },
-                    function (err, res) {
-                        if (err) throw err;
+                    function(err, res) {
+                        if(err) throw err;
+                        response.data = req.body.currentUserId;
                     }
                 );
         });
@@ -1237,9 +1262,11 @@ router.post('/userReqPass', (req, res) => {
                             console.log('Email sent');
                         }
                     });
+                    response.data = user.user_email;
                     res.json(user.user_email);
                 } else {
                     console.log("User is not found");
+                    response.data = user;
                     res.json(false);
                 }
             })
@@ -1294,24 +1321,26 @@ router.post('/questLeaderboard', (req, res) => {
                                         }
                                     });
                                 });
-
-                                res.json(studentExp);
-                            } else {
-                                console.log('There are no users in the database');
-                                res.json(false);
-                            }
-                        })
-                        .catch((err) => {
-                            sendError(err, res);
-                        });
-                } else {
-                    console.log('There are no XP records in the database');
-                    res.json(false);
-                }
-            })
-            .catch((err) => {
-                sendError(err, res);
-            });
+                            response.data = studentExp;
+                            res.json(studentExp);
+                        } else {
+                            console.log('There are no users in the database');
+                            response.data = users;
+                            res.json(false);
+                        }
+                    })
+                    .catch((err) => {
+                        sendError(err, res);
+                    });
+            } else {
+                console.log('There are no XP records in the database');
+                response.data = experiences;
+                res.json(false);
+            }
+        })
+        .catch((err) => {
+            sendError(err, res);
+        });
     });
 });
 
