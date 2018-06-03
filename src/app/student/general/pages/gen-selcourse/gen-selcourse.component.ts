@@ -82,6 +82,7 @@ export class GenSelcourseComponent implements OnInit {
     let currentUser = JSON.parse(localStorage.getItem("currentUser"));
     this.userService.getUser(currentUser._id)
       .subscribe(user => {
+        console.warn(user);
         this.user = new User(user);
         this.getUserSections(this.user.getUserId());
       });

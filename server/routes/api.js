@@ -460,7 +460,9 @@ router.get('/sections', (req, res) => {
     if (req.query.instructor) {
         console.log("enter search for section1");
         getSectionsofInstructor(req, res);
-    } else if (req.query.id) {
+    } 
+    
+    if (req.query.id) {
         getSectionsOfStudent(req, res);
     } else if (req.query.class) {
 
@@ -559,7 +561,7 @@ router.get('/sections', (req, res) => {
     }
 
     function getSectionsOfStudent(req, res) {
-        console.log("enter search for section");
+        console.log("enter search for section" + req.query);
         connection((db) => {
             const myDB = db.db('up-goe-db');
 
@@ -572,11 +574,8 @@ router.get('/sections', (req, res) => {
                     }
                 })
                 .toArray()
-                // editing the section body adding a course name in it.
                 .then((sections) => {
-
-                    if (sections) {
-
+                        console.log(sections);
                         async.forEach(sections, processEachSection, afterAllSection);
 
                         function processEachSection(section, callback) {
@@ -600,11 +599,6 @@ router.get('/sections', (req, res) => {
                             response.data = myObjArr;
                             res.send(myObjArr);
                         }
-
-                    } else {
-                        res.json([]);
-                    }
-
 
 
                 })
@@ -913,9 +907,10 @@ router.get('/users', (req, res) => {
     connection((db) => {
         const myDB = db.db('up-goe-db');
         myDB.collection('users')
-            .findOne(
+            .find(
                 ObjectID(req.query.id)
             )
+            .toArray()
             .then((users) => {
                 if (users) {
                     response.data = users;
