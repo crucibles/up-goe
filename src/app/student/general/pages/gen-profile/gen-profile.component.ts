@@ -12,12 +12,14 @@ import {
 import {
     Course,
     Quest,
-    User
+    User,
+    Badge
 } from 'shared/models';
 
 import {
     PageService,
-    UserService
+    UserService,
+    BadgeService
 } from 'shared/services';
 
 /* AHJ: Remove once the services are implemented properly */
@@ -57,7 +59,7 @@ const MAXXP: number = 10000;
 
 export class GenProfileComponent implements OnInit {
     user: User;
-
+    badges: Badge[];
     // lineChart
     lineChartColors: Array<any>;
     lineChartData: Array<any> = [];
@@ -77,7 +79,8 @@ export class GenProfileComponent implements OnInit {
      */
     constructor(
         private pageService: PageService,
-        private userService: UserService
+        private userService: UserService,
+        private badgeService: BadgeService
     ) {
     }
 
@@ -87,8 +90,34 @@ export class GenProfileComponent implements OnInit {
         this.getGrades();
         this.setPerformanceGraph();
         this.userService.updateUserConditions(this.userService.getCurrentUser().getUserId()).subscribe((x) => {
-            console.log(x);
+            console.log("done updating");
+            console.log("result" + x);
+
+            this.userService.getUser(this.userService.getCurrentUser().getUserId())
+                .subscribe((user) => {
+                    this.userService.setCurrentUser(user);
+                });
+
+            this.badgeService.checkIfWillEarnABadge().subscribe((badge) => {
+                console.log(badge);
+                this.badgeService.getCurrentStudentSystemBadges().subscribe((x) => {
+                    let y = [];
+                    y.push(x);
+                    console.warn(y);
+                    let bs = y.map(z => {
+                        return z.map((a) => {
+                            return new Badge(a);
+                        });
+                    });
+                    this.badges = bs[0];
+
+                    console.warn(bs);
+                });
+            });
+
+
         });
+
     }
 
     /**

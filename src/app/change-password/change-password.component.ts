@@ -47,7 +47,6 @@ export class ChangePasswordComponent implements OnInit {
         this.userService.getUserReqPass(user_email).subscribe(user => {
             this.email = user_email;
             if(user) {
-                // this.email = user;
                 this.sent = true;
             } else {
                 this.failSent = true;

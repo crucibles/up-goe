@@ -27,10 +27,12 @@
 			</li>
 
 			<!-- display all quest for all sections -->
-			<li *ngFor="let quest of quests; let i = index">
+			<li *ngFor="let quest of quests; let title of questCourses; let i = index">
 				<!-- the quest progress bar and some basic information -->
 				<a [tooltip]="questTemplate" placement="auto" container="body" (click)="openQuest(questClickedTemplate, quest)">
+					{{questCourses[i]}} <br>
 					{{quest.getQuestTitle()}}
+					<!-- {{quest.quest.getQuestTitle()}} -->
 					<div class="progress">
 						<div ngClass="{{this.defaultPBClass}} {{this.progressBarClass? this.progressBarClass[i]: ''}}" role="progressbar" aria-valuenow="40"
 						 aria-valuemin="0" aria-valuemax="100" [style.width]="this.questTimePercentage? this.questTimePercentage[i]: '0%'">
@@ -46,6 +48,12 @@
 						<div>{{this.formatDateTime(quest.getQuestStartTimeDate())}}</div>
 						<div class="quest-display-box">Deadline:</div>
 						<div>{{this.formatDateTime(quest.getQuestEndTimeDate())}}</div>
+						<!-- <div class="quest-display-box">Description:</div>
+						<div>{{quest.quest.getQuestDescription()}}</div>
+						<div class="quest-display-box">Started on:</div>
+						<div>{{this.formatDateTime(quest.quest.getQuestStartTimeDate())}}</div>
+						<div class="quest-display-box">Deadline:</div>
+						<div>{{this.formatDateTime(quest.quest.getQuestEndTimeDate())}}</div> -->
 					</ng-template>
 
 					<!-- template when quest is clicked -->
@@ -111,7 +119,7 @@
 				<!-- Edit button -->
 				<li style="text-align: right">
 					<!-- submit button (if done editing)-->
-					<button *ngIf="isEditing" type="submit" class="btn btn-primary" [disabled]="!editForm.valid">
+					<button *ngIf="isEditing" type="submit" class="btn btn-primary" [disabled]="!editForm.valid" (click)="submit()">
 						Submit
 					</button>
 
@@ -129,7 +137,7 @@
 					</li>
 					<li> Email: </li>
 					<li>
-						<input type="text" formControlName="email" class="user-information" [class.remove-border]="!isEditing" />
+						<input type="text" formControlName="email" class="user-information remove-border" />
 					</li>
 					<li> Contact #: </li>
 					<li>

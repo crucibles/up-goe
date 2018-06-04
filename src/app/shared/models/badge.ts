@@ -130,8 +130,8 @@ export class Conditions {
     hp: number;
     xp: number;
     ailment: string;
-    log_in_streak: string;
-    log_in_total: string;
+    log_in_streak: number;
+    log_in_total: Date[];
     items: any[];
     items_used: string;
     items_owned: string;
@@ -148,8 +148,8 @@ export class Conditions {
             this.hp = conditions.hp ? conditions.hp : 0;
             this.xp = conditions.xp ? conditions.xp : 0;
             this.ailment = conditions.ailment ? conditions.ailment : "";
-            this.log_in_streak = conditions.log_in_streak ? conditions.log_in_streak : "";
-            this.log_in_total = conditions.log_in_total ? conditions.log_in_total : "";
+            this.log_in_streak = conditions.log_in_streak ? conditions.log_in_streak : 0;
+            this.log_in_total = conditions.log_in_total ? conditions.log_in_total : [];
             this.items = conditions.items ? conditions.items : "";
             this.items_used = conditions.items_used ? conditions.items_used : "";
             this.items_owned = conditions.items_owned ? conditions.items_owned : "";
@@ -162,8 +162,8 @@ export class Conditions {
             this.hp = 0;
             this.xp = 0;
             this.ailment = "";
-            this.log_in_streak = "";
-            this.log_in_total = "";
+            this.log_in_streak = 0;
+            this.log_in_total = [];
             this.items = [];
             this.items_used = "";
             this.items_owned = "";

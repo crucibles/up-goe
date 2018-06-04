@@ -82,6 +82,7 @@ export class GenSelcourseComponent implements OnInit {
     let currentUser = JSON.parse(localStorage.getItem("currentUser"));
     this.userService.getUser(currentUser._id)
       .subscribe(user => {
+        console.warn(user);
         this.user = new User(user);
         this.getUserSections(this.user.getUserId());
       });
@@ -93,8 +94,8 @@ export class GenSelcourseComponent implements OnInit {
   getStatusOfSection(students) {
     let currentUser = JSON.parse(localStorage.getItem("currentUser"));
     let student = students ? students.filter(user => user.user_id == currentUser._id) : AsyncAction;
-    let status = student[0] ? student[0].status: "";
-    
+    let status = student[0] ? student[0].status : "";
+
     if (status == "E") {
       return "Enrolled";
     } else if (status == "R") {
@@ -117,7 +118,7 @@ export class GenSelcourseComponent implements OnInit {
       .subscribe(sections => {
         console.warn(sections);
         this.sections = sections;
-        //this.sections = sections.map(section => new Section(section));
+        this.sectionService.setCurrentUserSections(sections);
       });
   }
 
@@ -125,7 +126,7 @@ export class GenSelcourseComponent implements OnInit {
    * @summary searches the string entered by the user and stores result in 'course_found' variable
    */
   search() {
-
+    console.warn(this.sections);
     if (this.course_search == null || this.course_search.length == 0) {
 
       this.isSearching = false;
@@ -149,8 +150,23 @@ export class GenSelcourseComponent implements OnInit {
 
   }
 
-  openSectionPage(section_id: string) {    
+  openSectionPage(section_id: string) {
     this.pageService.openSectionPage(section_id);
+  }
+
+  /**
+ * @description portal for post requests that regards to sections "api/sections"
+ * @author Cedric Yao Alvaro
+ * 
+ * 1. Student requestin to enroll in a section
+ */
+  requestToEnroll(section_id: string) {
+    console.warn("requesting");
+    this.sectionService.sendRequestToSection(this.user.getUserId(), section_id).subscribe((section) => {
+      this.getUserSections(this.user.getUserId());
+      this.course_search = null;
+      this.search();
+    });
   }
 
 

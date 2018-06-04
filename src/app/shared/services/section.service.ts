@@ -96,6 +96,10 @@ export class SectionService {
 		return this.currentUserSections;
 	}
 
+	setCurrentUserSections(userSections) {
+		this.currentUserSections = userSections;
+	}
+
 	/**
 	 * Adds received newly created course to the database
 	 * @param course new course to be added to the database
@@ -123,14 +127,14 @@ export class SectionService {
 			items,
 			badges,
 			schedule
-        }).pipe(
-            tap(data => {
+		}).pipe(
+			tap(data => {
 				console.log(data);
-                // Returns data from api.js to sign-up.component.ts.
-                return data;
-            }),
-            catchError(this.handleError<User>(`creat course error course_name=${courseName}`))
-        );
+				// Returns data from api.js to sign-up.component.ts.
+				return data;
+			}),
+			catchError(this.handleError<User>(`creat course error course_name=${courseName}`))
+		);
 	}
 
 	/**
@@ -148,6 +152,20 @@ export class SectionService {
 	 */
 	sendRequestToSection(user_id: string, section_id: string) {
 		const url = this.secUrl;
+
+		let body = {
+			user_id: user_id,
+			section_id: section_id
+		}
+
+		return this.http.post(url, body).pipe(
+			tap(data => {
+				console.log(data);
+				return data;
+			}),
+			catchError(this.handleError<any>(`requesting failed for =${body}`))
+		);
+
 	}
 
 	/**
@@ -157,6 +175,22 @@ export class SectionService {
 	 */
 	approveUserToSection(user_id: string, section_id: string) {
 		const url = this.secUrl;
+
+
+		let body = {
+			user_id: user_id,
+			section_id: section_id,
+			approve: "yes"
+		}
+
+		return this.http.post(url, body).pipe(
+			tap(data => {
+				console.log(data);
+				return data;
+			}),
+			catchError(this.handleError<any>(`requesting failed for =${body}`))
+		);
+
 	}
 
 	/**
@@ -433,7 +467,7 @@ export class SectionService {
 	 * };
 	 * The expected values of array is the section's information and the attached course_name
 	 */
-	getInstructorSections(user_id){
+	getInstructorSections(user_id) {
 		const url = this.secUrl;
 
 		let params = new HttpParams().set('instructor', user_id);
@@ -488,10 +522,7 @@ export class SectionService {
 				tap(sections => {
 					console.warn(sections);
 					this.currentUserSections = sections;
-					this.getUserEnrolledSections();
 					localStorage.setItem("currentUserSections", JSON.stringify(sections));
-
-					console.warn(this.currentUserSections);
 					const outcome = sections ?
 						'fetched sections of user ' + user_id : 'did not find sections of user ' + user_id;
 				}),
@@ -519,14 +550,18 @@ export class SectionService {
 
 		let enrolledSections = [];
 
-		this.currentUserSections.map((section) => {
+		if (this.currentUserSections) {
 
-			if (this.multiFilter(section.section.students, filter).length) {
-				console.log(section);
-				enrolledSections.push(section);
-			}
+			this.currentUserSections.map((section) => {
 
-		});
+				if (this.multiFilter(section.section.students, filter).length) {
+					console.log(section);
+					enrolledSections.push(section);
+				}
+
+			});
+
+		}
 
 		console.warn(enrolledSections);
 		return enrolledSections;
@@ -582,22 +617,26 @@ export class SectionService {
 		console.warn(this.userService.getCurrentUser().getUserId());
 		let sjq = [];
 		let counter = 0;
-		this.currentUserSections.map((x) => {
-			console.log(x);
-			x.section.quests.map((y) => {
-				console.log(y);
-				if (y.quest_participants) {
-					y.quest_participants.map((z) => {
-						console.log(z);
-						if (z = this.userService.getCurrentUser().getUserId()) {
-							console.warn("matched");
-							sjq[counter] = y.quest_id;
-							counter++;
-						}
-					})
-				}
-			})
-		})
+		if (this.currentUserSections) {
+
+			this.currentUserSections.map((x) => {
+				console.log(x);
+				x.section.quests.map((y) => {
+					console.log(y);
+					if (y.quest_participants) {
+						y.quest_participants.map((z) => {
+							console.log(z);
+							if (z = this.userService.getCurrentUser().getUserId()) {
+								console.warn("matched");
+								sjq[counter] = y.quest_id;
+								counter++;
+							}
+						})
+					}
+				})
+			});
+
+		}
 		console.warn(sjq);
 		return sjq;
 	}
