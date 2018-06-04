@@ -39,11 +39,13 @@
 						<td>{{section.section.instructor}}</td>
 						<td>{{getStatusOfSection(this.section.section.students)}}</td>
 						<td>
-							<a *ngIf="this.getStatusOfSection(this.section.section.students) == 'Open'" class=clickable>Add</a>
+							<a *ngIf="this.getStatusOfSection(this.section.section.students) == 'Open'" (click)="requestToEnroll(section.section._id)" class=clickable>Add</a>
 						</td>
 					</tr>
 				</ng-container>
 			</ng-container>
+
+			<!-- If user is not searching -->
 			<ng-container *ngIf="!isSearching">
 				<!--Shows if user has no enrolled course-->
 				<tr *ngIf="!sections || sections.length == 0">
@@ -54,7 +56,7 @@
 				<!--AHJ: Fix zebra form-->
 				<ng-container *ngIf="sections != null && sections.length != 0">
 					<tr *ngFor="let section of sections; let i = index;" [class.odd]="i%2 == 0">
-						<ng-container>
+						<ng-container *ngIf="this.section.section.students">
 							<td *ngIf="this.getStatusOfSection(this.section.section.students) == 'Enrolled'">
 								<a class="clickable" (click)=openSectionPage(section.section._id)>{{section.course_name}}</a>
 							</td>

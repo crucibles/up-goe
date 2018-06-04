@@ -43,10 +43,12 @@ import {
 export class UserService {
 
     private userUrl = 'api/users';    // URL to: server/routes/api.js for users
+    private userUpdateUrl = 'api/updateUser'; // URL to: server/routes/api.js for updating user details
     private loginUrl = 'api/login';   // URL to: server/routes/api.js for login
     private signupUrl = 'api/signup'; // URL to: server/routes/api.js for sign up
     private securityQuestionsUrl = 'api/securityQuestions'; // URL to: server/routes/api.js for security questions
     private userReqPassUrl = 'api/userReqPass'; // URL to: server/routes/api.js for user request password
+    private editStudentProfileUrl = 'api/editStudentProfile'; // URL to: server/routes/api.js for edit student profile
     private currentUser: User;
 
     constructor(
@@ -68,8 +70,19 @@ export class UserService {
         return this.currentUser;
     }
 
+    setCurrentUser(user: User) {
+        console.log(user);
+        this.cookieService.delete('currentUser');
+        localStorage.removeItem('currentUser');
+        this.currentUser = new User(user);
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        this.cookieService.set('currentUser', this.currentUser.getUserEmail());
+    }
+
     /**
      * @summary: Obtains a user from server by id
+     * @author Cedric Yao Alvaro
+     * @returns {User}
      */
     getUser(id: string): any {
         const url = this.userUrl;
@@ -78,12 +91,12 @@ export class UserService {
             params: params
         })
             .pipe(
-            map(users => users[0]), // returns a {0|1} element array
-            tap(h => {
-                console.log(h);
-                const outcome = h ? 'fetched user ' + id : 'did not find user ' + id;
-            }),
-            catchError(this.handleError<User>(`getUser user_id=${id}`))
+                map(users => users[0]), // returns a {0|1} element array
+                tap(h => {
+                    const outcome = h ? 'fetched user ' + id : 'did not find user ' + id;
+                    return new User(h);
+                }),
+                catchError(this.handleError<User>(`getUser user_id=${id}`))
             );
     }
 
@@ -115,6 +128,16 @@ export class UserService {
         );
     }
 
+    updateUserConditions(user_id: string) {
+        const url = this.userUpdateUrl;
+        return this.http.post(url, { user_id: user_id }).pipe(
+            tap(data => {
+                console.log(data);
+                return data;
+            })
+        );
+    }
+
     /**
      * Logs out the user
      * add subscribe when have server side
@@ -123,6 +146,7 @@ export class UserService {
     logOut() {
         // remove user from local storage to log user out
         localStorage.removeItem('currentUser');
+        localStorage.removeItem('currentUserSections');
         this.cookieService.delete('currentUser');
         this.router.navigate(['/log-in']);
     }
@@ -165,9 +189,12 @@ export class UserService {
                 return data;
             }),
             catchError(this.handleError<User>(`signup user_email=${email}`))
-            );
+        );
     }
 
+    /**
+     * Retrieves the security questions in the database.
+     */
     getSecurityQuestions() {
         const url = this.securityQuestionsUrl;
         return this.http.get(url, {}).pipe(
@@ -177,9 +204,21 @@ export class UserService {
         );
     }
 
+    /**
+     * Retrieves the password of the requesting user from the database.
+     */
     getUserReqPass(user_email: String) {
         const url = this.userReqPassUrl;
-        return this.http.post(url, {user_email}).pipe(
+        return this.http.post(url, { user_email }).pipe(
+            tap(data => {
+                return data;
+            })
+        );
+    }
+
+    changeProfileData(currentUserId: String, userContactNo: String) {
+        const url = this.userUpdateUrl;
+        return this.http.post(url, {currentUserId, userContactNo}).pipe(
             tap(data => {
                 return data;
             })

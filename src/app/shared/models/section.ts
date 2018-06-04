@@ -23,7 +23,7 @@ export class Section {
         section?: any
     ) {
         if (section) {
-            this._id = section.course_id ? section.course_id : "";
+            this._id = section._id ? section._id : "";
             this.course_id = section.course_id ? section.course_id : "";
             this.section_name = section.section_name ? section.section_name : "";
             this.students = [];
@@ -163,7 +163,7 @@ export class Section {
 
 		//obtains the participants and locates the current user by filtering participants of the section quest
 		//returns true if found; false otherwise
-        let isParticipant = sectionQuest.searchParticipant(user_id);
+        let isParticipant = sectionQuest? sectionQuest.searchParticipant(user_id): null;
         if(isParticipant){
             return true;
         } else {

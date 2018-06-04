@@ -1,3 +1,5 @@
+import { Conditions, Badge } from "shared/models/badge";
+
 export const imageDir: string = "/assets/images/";
 /**
  * A class to represent users
@@ -30,6 +32,7 @@ export class User {
   private user_school_id: string;
   private user_security_question: string;
   private user_security_answer: string;
+  private user_conditions: Conditions;
 
   constructor(
     user?: any
@@ -48,6 +51,7 @@ export class User {
       this.user_school_id = user.user_school_id ? user.user_school_id : "";
       this.user_security_question = user.user_security_question ? user.user_security_question : "";
       this.user_security_answer = user.user_security_answer ? user.user_security_answer : "";
+      this.user_conditions = new Conditions(user.user_conditions);
     } else {
       this.user_fname = "";
       this.user_mname = "";
@@ -61,7 +65,7 @@ export class User {
       this.user_school_id = "";
       this.user_security_question = "";
       this.user_security_answer = "";
-
+      this.user_conditions = new Conditions();
     }
   }
 
@@ -77,7 +81,8 @@ export class User {
     user_photo,
     user_school_id,
     user_security_question,
-    user_security_answer
+    user_security_answer,
+    user_conditions
   ) {
     this.user_fname = user_fname;
     this.user_mname = user_mname;
@@ -91,6 +96,7 @@ export class User {
     this.user_school_id = user_school_id;
     this.user_security_question = user_security_question;
     this.user_security_answer = user_security_answer;
+    this.user_conditions = new Conditions(user_conditions);
   }
 
   getUserId() {
@@ -166,7 +172,7 @@ export class User {
   }
 
   getUserSchoolId() {
-    return this.user_school_id? this.user_school_id: "";
+    return this.user_school_id ? this.user_school_id : "";
   }
 
   getUserSecurityQuestion() {
@@ -175,6 +181,14 @@ export class User {
 
   getUserSecurityAnswer() {
     return this.user_security_answer;
+  }
+
+  getUserConditions() {
+    return this.user_conditions;
+  }
+
+  setUserConditions(user_conditions) {
+    this.user_conditions = user_conditions;
   }
 
   setUserId(_id) {
@@ -236,16 +250,16 @@ export class User {
 	* @returns string of the formatted date
 	*/
 	private formatDate(date_obj) {
-    let months: string[] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+		let months: string[] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 		let month = months[date_obj.getMonth()];
 		let day = date_obj.getDate();
-    let year = date_obj.getFullYear();
-    
+		let year = date_obj.getFullYear();
+
 		let datestring: string = month + " " + day + ", " + year;
 		return datestring;
-  }
-  
+	}
+
 };
 
 export const TOTXP: number[] = [1000, 2123, 3439, 4655, 6053, 6104];

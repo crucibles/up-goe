@@ -9,6 +9,14 @@ import {
 } from '@angular/router';
 
 //Application Imports
+import { 
+  AuthGuardService 
+} from 'shared/services/auth-guard.service';
+
+import {
+  ChangePasswordComponent
+} from './change-password/change-password.component';
+
 import {
   LogInComponent
 } from 'log-in/log-in.component';
@@ -21,15 +29,6 @@ import {
   SignUpComponent
 } from 'sign-up/sign-up.component';
 
-import { 
-  AuthGuardService 
-} from 'shared/services/auth-guard.service';
-
-import {
-  ChangePasswordComponent
-} from './change-password/change-password.component';
-
-
 const routes: Routes = [
   {
     path: '',
@@ -39,11 +38,13 @@ const routes: Routes = [
   },
   {
     path: 'student/general',
-    loadChildren: 'student/general/general.module#GeneralModule'
+    loadChildren: 'student/general/general.module#GeneralModule',
+    canActivate: [AuthGuardService], 
   },
   {
     path: 'teacher/general',
-    loadChildren: 'teacher/general/general.module#GeneralModule'
+    loadChildren: 'teacher/general/general.module#GeneralModule',
+    canActivate: [AuthGuardService], 
   },
   {
     path: 'log-in',

@@ -23,7 +23,10 @@ import {
 import {
     ToastsManager
 } from 'ng2-toastr/src/toast-manager';
-import { UserService } from 'shared/services';
+
+import {
+    UserService
+} from 'shared/services';
 
 
 @Injectable()
@@ -45,22 +48,52 @@ export class AuthGuardService implements CanActivate, CanLoad {
         console.log(route.routeConfig.path);
         console.warn(route);
         console.log(state);
-        if (this.auth.isAuthenticated() && (route.routeConfig.path == "log-in" || route.routeConfig.path == "sign-up" || route.routeConfig.path == "")) {
+
+        if (this.auth.isLoggedIn() && (route.routeConfig.path == "log-in" || route.routeConfig.path == "sign-up" || route.routeConfig.path == "")) {
             console.warn("You are already logged in.");
-            this.toastr.success(""+this.userService.getCurrentUser().getUserFirstName(), "Welcome back");
-            this.router.navigate(['/student/general/select-course']);
+            this.toastr.success("" + this.userService.getCurrentUser().getUserFirstName(), "Welcome back");
+            if (this.getUserType() == "student") {
+
+                this.router.navigate(['/student/general/select-course']);
+
+            } else if (this.getUserType() == "teacher") {
+
+                this.router.navigate(['/teacher/general/select-course']);
+
+            }
+
             return false;
-        } else if (!this.auth.isAuthenticated() && route.routeConfig.path != "log-in" && route.routeConfig.path != "sign-up") {
-            console.warn("You are not logged in.");
+        } else if (!this.auth.isLoggedIn() && route.routeConfig.path != "log-in" && route.routeConfig.path != "sign-up") {
+
             // not logged in so redirect to login page with the return url and return false
+            this.toastr.error("You are not Logged in.", "Log in first");
             this.router.navigate(['/log-in'], { queryParams: { returnUrl: state.url } });
             return false;
-        } else if (!this.auth.isAuthenticated() && route.routeConfig.path == "log-in") {
+
+        } else if (!this.auth.isLoggedIn() && route.routeConfig.path == "log-in") {
+
             return true;
+
+        } else if (this.auth.isLoggedIn() && route.routeConfig.path.split("/")[0] == "teacher" && this.getUserType() == "student") {
+
+            this.toastr.info("Redirecting to home page", "Unauthorized user type");
+            this.router.navigate(['/student/general/select-course']);
+            return false;
+
+        } else if (this.auth.isLoggedIn() && route.routeConfig.path.split("/")[0] == "student" && this.getUserType() == "teacher") {
+
+            this.toastr.info("Redirecting to home page", "Unauthorized user type");
+            this.router.navigate(['/teacher/general/select-course']);
+            return false;
+
         } else {
             console.log("just continue");
             return true;
         }
+    }
+
+    getUserType() {
+        return this.userService.getCurrentUser().getUserType();
     }
 
 }

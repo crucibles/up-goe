@@ -63,6 +63,7 @@ export class GenSidetabComponent implements OnInit {
 	//for pages other than profile page  
 	editForm: FormGroup;
 	quests: Quest[] = []; //user's quests
+	questCourses: string[] = [];
 	questClicked: Quest;
 	//for progress bar; 
 	defaultPBClass: string = 'progress-bar progress-bar-striped';
@@ -112,10 +113,33 @@ export class GenSidetabComponent implements OnInit {
 		}
 	}
 
+	submit() {
+		if(this.editForm.get('contactNo').dirty) {
+			let currentUserId = this.userService.getCurrentUser().getUserId();
+			let userContactNo = this.editForm.value.contactNo;
+
+			this.userService.changeProfileData(currentUserId, userContactNo)
+			.subscribe(isAdded => { // No returned value yet...
+				if(isAdded) {
+					console.log('Profile succesfully edited.');
+					this.initializeForm();
+				} else {
+					console.log('Profile failed to be edited.');
+				}
+			});
+			console.log('Profile succesfully edited.');
+			this.currentUser.setUserContactno(userContactNo);
+		}
+	}
+
+	get userContactNo() {
+		return this.editForm.get('contactNo') as FormControl;
+	}
+
 	initializeForm() {
 		this.editForm = this.formBuilder.group({
 			schoolId: new FormControl({value: this.currentUser.getUserSchoolId(), disabled: true}),
-			email: new FormControl(this.currentUser.getUserEmail(), Validators.required),
+			email: new FormControl({value: this.currentUser.getUserEmail(), disabled: true}),
 			contactNo: new FormControl(this.currentUser.getUserContactNo(), Validators.required),
 		});
 		this.editForm.disable();
@@ -166,7 +190,11 @@ export class GenSidetabComponent implements OnInit {
 		this.questService.getUserJoinedQuests(user_id)
 			.subscribe(quests => {
 				console.warn(quests);
-				this.quests = quests.map(quest => new Quest(quest));
+				quests.forEach(quest => {
+					console.log(quest.questData);
+					this.quests.push(new Quest(quest.questData));
+					this.questCourses.push(quest.course + '-' + quest.section);
+				});
 				console.warn(this.quests);
 				this.timeDisplays();
 			});
@@ -186,6 +214,7 @@ export class GenSidetabComponent implements OnInit {
 		this.isEditing = !this.isEditing;
 		this.editForm.enable();
 		this.editForm.get("schoolId").disable();
+		this.editForm.get("email").disable();
 	}
 
 	openQuest(template: TemplateRef<any>, quest: any) { //'quest: any' in here means the quest has not been converted to Quest type

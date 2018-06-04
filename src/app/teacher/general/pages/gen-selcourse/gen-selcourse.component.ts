@@ -35,7 +35,7 @@ export class GenSelcourseComponent implements OnInit {
   sections: Section[];
   table: any;
   courses: Course[];
-  user: User;
+  currentUser: User;
   allcourses: Course[];
 
 	//for search bar
@@ -60,11 +60,11 @@ export class GenSelcourseComponent implements OnInit {
    * Obtains information of the current user
    */
   getUser(): void {
-    let currentUser = JSON.parse(localStorage.getItem("currentUser"));
-    this.userService.getUser(currentUser._id)
+    let user = JSON.parse(localStorage.getItem("currentUser"));
+    this.userService.getUser(user._id)
       .subscribe(user => {
-        this.user = new User(user);
-        this.getUserSections(this.user.getUserId());
+        this.currentUser = new User(user);
+        this.getUserSections(this.currentUser.getUserId());
       });
   }
 
@@ -90,9 +90,11 @@ export class GenSelcourseComponent implements OnInit {
    * @returns an Array of objects with a structure of [{section: {Section}, course_name: Section's course_name}, {...}]
    */
   getUserSections(user_id): void {
-    this.sectionService.getUserSections(user_id)
+    this.sectionService.getInstructorSections(user_id)
       .subscribe(sections => {
         this.sections = sections;
+        console.log("<<<<<<<LOOK HERE");
+        console.log(this.sections);
         //this.sections = sections.map(section => new Section(section));
       });
   }

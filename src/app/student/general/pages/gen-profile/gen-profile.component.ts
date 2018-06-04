@@ -12,12 +12,14 @@ import {
 import {
     Course,
     Quest,
-    User
+    User,
+    Badge
 } from 'shared/models';
 
 import {
     PageService,
-    UserService
+    UserService,
+    BadgeService
 } from 'shared/services';
 
 /* AHJ: Remove once the services are implemented properly */
@@ -58,7 +60,7 @@ const MAXXP: number = 10000;
 
 export class GenProfileComponent implements OnInit {
     user: User;
-
+    badges: Badge[];
     // lineChart
     lineChartColors: Array<any>;
     lineChartData: Array<any> = [];
@@ -78,7 +80,8 @@ export class GenProfileComponent implements OnInit {
      */
     constructor(
         private pageService: PageService,
-        private userService: UserService
+        private userService: UserService,
+        private badgeService: BadgeService
     ) {
     }
 
@@ -87,6 +90,35 @@ export class GenProfileComponent implements OnInit {
         this.getUser();
         this.getGrades();
         this.setPerformanceGraph();
+        this.userService.updateUserConditions(this.userService.getCurrentUser().getUserId()).subscribe((x) => {
+            console.log("done updating");
+            console.log("result" + x);
+
+            this.userService.getUser(this.userService.getCurrentUser().getUserId())
+                .subscribe((user) => {
+                    this.userService.setCurrentUser(user);
+                });
+
+            this.badgeService.checkIfWillEarnABadge().subscribe((badge) => {
+                console.log(badge);
+                this.badgeService.getCurrentStudentSystemBadges().subscribe((x) => {
+                    let y = [];
+                    y.push(x);
+                    console.warn(y);
+                    let bs = y.map(z => {
+                        return z.map((a) => {
+                            return new Badge(a);
+                        });
+                    });
+                    this.badges = bs[0];
+
+                    console.warn(bs);
+                });
+            });
+
+
+        });
+
     }
 
     /**
@@ -107,7 +139,7 @@ export class GenProfileComponent implements OnInit {
     getGrades(): void {
         let grades = TOTXP ? TOTXP : [];
         let max: number = MAXXP ? MAXXP : 10;
-        
+
         //AHJ: unimplemented
         //replace SECTIONS with this.getUserSectionExp(user_id) [section.service] function if the function is working
         SECTIONS.forEach(section => {
@@ -117,7 +149,7 @@ export class GenProfileComponent implements OnInit {
             section.week_total_exp.forEach(grade => {
                 // get the decimal percentage
                 let percentage: number = (grade / section.max_exp) * 100;
-    
+
                 // round the decimal up to two decimal points
                 dataGrade.push(Math.round((percentage + 0.00001) * 100) / 100);
             });
@@ -127,7 +159,7 @@ export class GenProfileComponent implements OnInit {
                 data: dataGrade,
                 label: className
             };
-            
+
             this.lineChartData.push(dataLine);
         })
         console.log(this.lineChartData);

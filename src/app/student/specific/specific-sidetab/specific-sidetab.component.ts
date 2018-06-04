@@ -78,6 +78,8 @@ export class SpecificSidetabComponent implements OnInit {
 	@Input('sectionId') section_id: string;
 	
 	currentUser: User;
+	user;
+
 	//image dir
 	image: string = "";
 	sectionId: string = this.section_id;
@@ -130,10 +132,34 @@ export class SpecificSidetabComponent implements OnInit {
 		this.checkSize();
 	}
 
+	submit() {
+		if(this.editForm.get('contactNo').dirty) {
+			let currentUserId = this.userService.getCurrentUser().getUserId();
+			let userContactNo = this.editForm.value.contactNo;
+
+			this.userService.changeProfileData(currentUserId, userContactNo)
+			.subscribe(isAdded => { // No returned value yet...
+				if(isAdded) {
+					console.log('Profile succesfully edited.');
+					this.initializeForm();
+				} else {
+					console.log('Profile failed to be edited.');
+				}
+			});
+			console.log('Profile succesfully edited.');
+			this.currentUser.setUserContactno(userContactNo);
+		}
+	}
+
+	get userContactNo() {
+		return this.editForm.get('contactNo') as FormControl;
+	}
+
 	initializeForm() {
 		this.editForm = this.formBuilder.group({
 			schoolId: new FormControl({ value: this.currentUser.getUserSchoolId(), disabled: true }),
-			email: new FormControl(this.currentUser.getUserEmail(), Validators.required),
+			email: new FormControl({ value: this.currentUser.getUserEmail(), disabled: true }),
+			// contactNo: new FormControl(this.currentUser.getUserContactNo(), Validators.required),
 			contactNo: new FormControl(this.currentUser.getUserContactNo(), Validators.required),
 		});
 		this.editForm.disable();
@@ -157,19 +183,18 @@ export class SpecificSidetabComponent implements OnInit {
 	 * @param user_id the id of the user that asks for the list of quests
 	 */
 	setQuests(user_id): void {
-		// AHJ: unimplemented; add quest service to obtain quests of the current section
-		console.warn(this.sectionService.getCurrentSection());
-		this.quests = [];
-		let counter = 0;
-		this.sectionService.getCurrentSection().getQuests().map((sq) => {
-			this.questService.getQuest(sq.getSectionQuestId()).subscribe((quest) => {
-				this.quests.push(new Quest(quest));
-				counter++;
-				if(this.sectionService.getCurrentSection().getQuests().length == counter){
-					this.isDataLoaded = true;
-				}
+			console.warn(this.sectionService.getCurrentSection());
+			this.quests = [];
+			let counter = 0;
+			this.sectionService.getCurrentSection().getQuests().map((sq) => {
+				this.questService.getQuest(sq.getSectionQuestId()).subscribe((quest) => {
+					this.quests.push(new Quest(quest));
+					counter++;
+					if(this.sectionService.getCurrentSection().getQuests().length == counter){
+						this.isDataLoaded = true;
+					}
+				});
 			});
-		});
 	}
 
 	/**
@@ -178,13 +203,12 @@ export class SpecificSidetabComponent implements OnInit {
 	 * @param quest quest to be viewed
 	 */
 	openQuest(template: TemplateRef<any>, quest: any) { //'quest: any' in here means the quest has not been converted to Quest type
-		//AHJ: Unimplemented
-		//WARNING!! Remove QUESTS in specific-qm.html when this is implemented
-		console.log(quest);
-		this.questClicked = quest;
-		if (this.questClicked) {
-			this.bsModalRef = this.modalService.show(template);
-		}
+			
+			console.log(quest);
+			this.questClicked = quest;
+			if (this.questClicked) {
+				this.bsModalRef = this.modalService.show(template);
+			}
 	}
 
 	/**
@@ -237,6 +261,7 @@ export class SpecificSidetabComponent implements OnInit {
 		this.isEditing = !this.isEditing;
 		this.editForm.enable();
 		this.editForm.get("schoolId").disable();
+		this.editForm.get("email").disable();
 	}
 
 	/* Below are helper functions */

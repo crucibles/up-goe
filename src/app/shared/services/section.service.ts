@@ -64,7 +64,7 @@ export class SectionService {
 	/**
 	 * Used for obtaining course information of sections at api.js
 	 */
-	private courseSectionUrl = "api/courses/sections";
+	private createCourseSectionUrl = "api/createCourseSection";
 
 	/**
 	 * Used for obtaining student information from sections at api.js
@@ -96,12 +96,45 @@ export class SectionService {
 		return this.currentUserSections;
 	}
 
+	setCurrentUserSections(userSections) {
+		this.currentUserSections = userSections;
+	}
+
 	/**
 	 * Adds received newly created course to the database
-	 * @param course - new course to be added to the database
+	 * @param course new course to be added to the database
 	 */
-	createCourse(course: Course) {
-		const url = this.courseUrl;
+	createCourseSection(
+		courseName,
+		courseDescription,
+		sectionName,
+		students,
+		instructor,
+		quests,
+		items,
+		badges,
+		schedule
+	) {
+		const url = this.createCourseSectionUrl;
+		console.log("HERE1");
+		return this.http.post<User>(url, {
+			courseName,
+			courseDescription,
+			sectionName,
+			students,
+			instructor,
+			quests,
+			items,
+			badges,
+			schedule
+		}).pipe(
+			tap(data => {
+				console.log(data);
+				// Returns data from api.js to sign-up.component.ts.
+				return data;
+			}),
+			catchError(this.handleError<User>(`creat course error course_name=${courseName}`))
+		);
 	}
 
 	/**
@@ -119,6 +152,20 @@ export class SectionService {
 	 */
 	sendRequestToSection(user_id: string, section_id: string) {
 		const url = this.secUrl;
+
+		let body = {
+			user_id: user_id,
+			section_id: section_id
+		}
+
+		return this.http.post(url, body).pipe(
+			tap(data => {
+				console.log(data);
+				return data;
+			}),
+			catchError(this.handleError<any>(`requesting failed for =${body}`))
+		);
+
 	}
 
 	/**
@@ -128,6 +175,22 @@ export class SectionService {
 	 */
 	approveUserToSection(user_id: string, section_id: string) {
 		const url = this.secUrl;
+
+
+		let body = {
+			user_id: user_id,
+			section_id: section_id,
+			approve: "yes"
+		}
+
+		return this.http.post(url, body).pipe(
+			tap(data => {
+				console.log(data);
+				return data;
+			}),
+			catchError(this.handleError<any>(`requesting failed for =${body}`))
+		);
+
 	}
 
 	/**
@@ -167,7 +230,7 @@ export class SectionService {
 	 * @param section_id id of section to be deleted
 	 */
 	deleteCourse(section_id) {
-		const url = this.courseSectionUrl;
+		//const url = this.courseSectionUrl;
 	}
 
 	/**
@@ -247,8 +310,11 @@ export class SectionService {
 		// Another note: Since the section is stored in the local storage, then maybe this function is deprecated and we can refer to 
 		// getCourse(section_id) function in this same service instead?
 		const url = this.secUrl;
+		let params = new HttpParams().set('id', section_id);
 
-		return this.http.get<Course>(url).pipe(
+		return this.http.get<Course>(url, {
+			params: params
+		}).pipe(
 			map(sections => sections[0]),
 			tap(h => {
 				const outcome = h ?
@@ -263,7 +329,7 @@ export class SectionService {
 	 * @author Cedric Y. Alvaro
 	 * @returns {Section} section information of the current section being navigated
 	 */
-	getCurrentSection() {
+	getCurrentSection(): Section {
 		return this.currentSection;
 	}
 
@@ -279,9 +345,9 @@ export class SectionService {
 	/**
 	 * Returns current section to its subscribers
 	 * @author Cedric Y. Alvaro
-	 * @returns {course section any} information of the current course section being navigated
+	 * @returns {any} information of the current course section being navigated
 	 */
-	getCurrentCourseSection() {
+	getCurrentCourseSection(): any {
 		return this.currentCourseSection;
 	}
 
@@ -289,7 +355,7 @@ export class SectionService {
 
 	/**
 	 * @author Cedric Y. Alvaro
-	 * Sets the current section the user is navigating
+	 * @description Sets the current section the user is navigating
 	 */
 	setCurrentSection(section: Section) {
 		this.currentSection = section;
@@ -298,7 +364,7 @@ export class SectionService {
 
 	/**
 	 * @author Cedric Y. Alvaro
-	 * Sets the current sectionId for reference of the current section the user is navigating.
+	 * @description Sets the current sectionId for reference of the current section the user is navigating.
 	 */
 	setCurrentSectionId(section_id: any) {
 		this.currentSectionId = section_id;
@@ -306,10 +372,10 @@ export class SectionService {
 
 	/**
 	 * Returns current section to its subscribers
-	 * 
+	 * @author Cedric Y. Alvaro
 	 * @returns {Course} section information of the current section being navigated
 	 */
-	getCurrentCourse() {
+	getCurrentCourse(): Course {
 		return this.currentCourse;
 	}
 
@@ -318,17 +384,22 @@ export class SectionService {
    * Returns students of the section based on section id
    * @description Returns the information of section's enrolled student as provided in the User class.
    * @param section_id id of the section whose array of students are to be retrieved
+   * @author Cedric Yao Alvaro
+   * @returns {User.ids[]} array of students ids enrolled in the section of User class
    * 
-   * @returns {User[]} array of students enrolled in the section of User class
-   * 
-   * @example
-   * arrayReturned = [new User(user1), new User(user2)]
    */
-	getSectionStudents(section_id) {
+	getSectionStudents(section_id, isAll?: boolean) {
 
 		const url = this.secUrl;
-
-		let params = new HttpParams().set('students', section_id);
+		let params: HttpParams;
+		if(isAll){
+			params = new HttpParams()
+			.set('students', section_id)
+			.set('all', isAll.toString())
+		} else {
+			params = new HttpParams()
+			.set('students', section_id);
+		}
 
 		return this.http.get<any>(
 			url, {
@@ -389,9 +460,50 @@ export class SectionService {
 	}
 
 	/**
+	 * Returns the array of sections of an instructor based on user id
+	 * @param user_id id of the instructor whose array of sections are to be retrieved
+	 * @author Cedric Yao Alvaro
+	 * @returns array of sections
+	 * array[i].course_name - the name of the section's course where the user is enrolled in
+	 * array[i].section     - enrolled sections and pending sections of the student 
+	 * 
+	 * @example
+	 * array[i] = {
+	 * course_name: "CMSC 128",
+	 * section: section
+	 * };
+	 * The expected values of array is the section's information and the attached course_name
+	 */
+	getInstructorSections(user_id) {
+		const url = this.secUrl;
+
+		let params = new HttpParams().set('instructor', user_id);
+
+		return this.http.get<any>(
+			url, {
+				params: params
+			})
+			.pipe(
+				tap(sections => {
+					let courseSections: any = sections;
+
+					console.log("EDITING");
+					console.log(sections);
+					this.currentUserSections = courseSections.map(courseSection => courseSection.section);
+					localStorage.setItem("currentUserSections", JSON.stringify(sections));
+
+					console.warn(this.currentUserSections);
+					const outcome = sections ?
+						'fetched sections of user ' + user_id : 'did not find sections of user ' + user_id;
+				}),
+				catchError(this.handleError<any>(`getUserSections user_id=${user_id}`))
+			);
+	}
+
+	/**
 	 * Returns the array of sections based on user id
 	 * @param user_id id of the user whose array of sections are to be retrieved
-	 * 
+	 * @author Cedric Yao Alvaro
 	 * @returns array of sections
 	 * array[i].course_name - the name of the section's course where the user is enrolled in
 	 * array[i].section     - enrolled sections and pending sections of the student 
@@ -417,10 +529,7 @@ export class SectionService {
 				tap(sections => {
 					console.warn(sections);
 					this.currentUserSections = sections;
-					this.getUserEnrolledSections();
 					localStorage.setItem("currentUserSections", JSON.stringify(sections));
-
-					console.warn(this.currentUserSections);
 					const outcome = sections ?
 						'fetched sections of user ' + user_id : 'did not find sections of user ' + user_id;
 				}),
@@ -448,14 +557,17 @@ export class SectionService {
 
 		let enrolledSections = [];
 
-		this.currentUserSections.map((section) => {
-
-			if (this.multiFilter(section.section.students, filter).length) {
+		if (this.currentUserSections) {
+			console.log(this.currentUserSections);
+			this.currentUserSections.map((section) => {
 				console.log(section);
-				enrolledSections.push(section);
-			}
+				if (this.multiFilter(section.section.students, filter).length) {
+					enrolledSections.push(section);
+				}
 
-		});
+			});
+
+		}
 
 		console.warn(enrolledSections);
 		return enrolledSections;
@@ -477,7 +589,8 @@ export class SectionService {
 
 		let filter = {
 			user_id: [currentUserId],
-			status: ["E"]
+			status: ["E"],
+			user_type: "student"
 		}
 
 		let enrolledSections = [];
@@ -510,57 +623,40 @@ export class SectionService {
 		console.warn(this.userService.getCurrentUser().getUserId());
 		let sjq = [];
 		let counter = 0;
-		this.currentUserSections.map((x) => {
-			console.log(x);
-			x.section.quests.map((y) => {
-				console.log(y);
-				if (y.quest_participants) {
-					y.quest_participants.map((z) => {
-						console.log(z);
-						if (z = this.userService.getCurrentUser().getUserId()) {
-							console.warn("matched");
-							sjq[counter] = y.quest_id;
-							counter++;
-						}
-					})
-				}
-			})
-		})
+		if (this.currentUserSections) {
+
+			this.currentUserSections.map((x) => {
+				console.log(x);
+				x.section.quests.map((y) => {
+					console.log(y);
+					if (y.quest_participants) {
+						y.quest_participants.map((z) => {
+							console.log(z);
+							if (z = this.userService.getCurrentUser().getUserId()) {
+								console.warn("matched");
+								sjq[counter] = y.quest_id;
+								counter++;
+							}
+						})
+					}
+				})
+			});
+
+		}
 		console.warn(sjq);
 		return sjq;
 	}
 
-	/**
-   * Filters an array of objects with multiple criteria.
-   *
-   * @param  {Array}  array: the array to filter
-   * @param  {Object} filters: an object with the filter criteria as the property names
-   * 
-   * the value of each key is an array with the values to filter:
-   * let filters = {
-   * 	color: ["Blue", "Black"],
-   * 	size: [70, 50]
-   * };
-   * 
-   * @return {Array}
-   */
-	multiFilter(array, filters) {
-		const filterKeys = Object.keys(filters);
-		// filters all elements passing the criteria
-		return array.filter((item) => {
-			// dynamically validate all filter criteria
-			return filterKeys.every(key => !!~filters[key].indexOf(item[key]));
-		});
-	}
+
 
 	/**
 	 * Search section by either its class name or code
-	 * @param string string that contains the typed class name or code
+	 * @param string it contains the typed class name or code
 	 */
 	searchSection(string: any): Observable<any> {
 		console.log("hi");
 		console.warn("hello");
-		const searchUrl = "api/sections";
+		const searchUrl = this.secUrl;
 
 		let params = new HttpParams().set('class', string);
 
@@ -599,4 +695,28 @@ export class SectionService {
 			return of(result as T);
 		};
 	}
+
+
+	/**
+	* Filters an array of objects with multiple criteria.
+	*
+	* @param  array: the array to filter
+	* @param  filters: an object with the filter criteria as the property names
+	* @author Cedric Yao Alvaro
+	* the value of each key is an array with the values to filter:
+	* let filters = {
+	* 	color: ["Blue", "Black"],
+	* 	size: [70, 50]
+	* };
+	* 
+	*/
+	multiFilter(array, filters) {
+		const filterKeys = Object.keys(filters);
+		// filters all elements passing the criteria
+		return array.filter((item) => {
+			// dynamically validate all filter criteria
+			return filterKeys.every(key => !!~filters[key].indexOf(item[key]));
+		});
+	}
+
 }

@@ -15,7 +15,7 @@ export class AuthService {
         private cookieService: CookieService
     ) { }
 
-    public isAuthenticated(): boolean {
+    public isLoggedIn(): boolean {
         if (localStorage.getItem('currentUser')){
             return true;
         }

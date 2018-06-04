@@ -140,8 +140,9 @@ export class PageService {
 	 * 
 	 * @returns {boolean} returns true if user is navigating on profile page; false if otherwise
 	 */
-	public isProfilePage(isProfile: boolean) {
+	public isProfilePage(isProfile: boolean): boolean {
 		this.isProfile.emit(isProfile);
+		return isProfile;
 	}
 
 	public openSectionPage(sectionId: string) {
@@ -150,7 +151,7 @@ export class PageService {
 
 	public openTeacherSectionPage(sectionId: string) {
 		console.log(sectionId);
-		this.router.navigate(['/teacher/specific/specific-quest-map', sectionId]);
+		this.router.navigate(['/teacher/specific/specific-news', sectionId]);
 	}
 
 	/**

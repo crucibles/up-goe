@@ -48,6 +48,7 @@ export class LogInComponent implements OnInit {
 
     public signupForm: FormGroup;
 
+    private isLoggingIn: boolean = false;
     returnUrl: string;
     private loginForm: FormGroup;
     private warning: boolean;
@@ -68,25 +69,28 @@ export class LogInComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || 'student/general/select-course';
+        this.returnUrl = this.route.snapshot.queryParams['returnUrl'];
         this.warning = false;
+        this.isLoggingIn = false;
     }
 
     logIn() {
         let email = this.loginForm.value.email;
         let password = this.loginForm.value.password;
-
+        this.isLoggingIn = true;
         this.userService.logIn(email, password)
             .subscribe(
                 user => {
                     if (user) {
+                        console.log(user);
                         user = new User(user);
                         this.toastr.success("You are succesfully logged in!", "Welcome " + user.getUserFirstName());
-                        this.router.navigateByUrl(this.returnUrl);
+                        this.router.navigateByUrl(this.returnUrl? this.returnUrl: user.getUserType()+'/general/select-course');
                         this.badgeModal.open();
                     } else {
                         console.log("User does not exists!");
                         this.warning = true;
+                        this.isLoggingIn = false;
                     }
                 }, error => {
                     // login failed so display error

@@ -11,10 +11,12 @@ import {
 	templateUrl: './app.component.html',
 	styleUrls: ['./app.component.css']
 })
+
 export class AppComponent {
 	title = 'up-goe';
 
 	constructor(public toastr: ToastsManager, vcr: ViewContainerRef) {
 		this.toastr.setRootViewContainerRef(vcr);
 	}
+	
 }
