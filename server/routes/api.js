@@ -87,7 +87,7 @@ router.get('/courses', (req, res) => {
                         response.data = courses[0];
                         res.json(courses[0]);
                     } else {
-                        res.json([]);
+                        res.json(false);
                     }
                 })
                 .catch((err) => {
@@ -105,7 +105,7 @@ router.get('/courses', (req, res) => {
                         response.data = courses;
                         res.json(courses);
                     } else {
-                        res.json([]);
+                        res.json(false);
                     }
                 })
                 .catch((err) => {
@@ -237,7 +237,7 @@ router.post('/login', (req, res) => {
 
                 } else {
 
-                    res.json([]);
+                    res.json(false);
                 }
             })
             .catch((err) => {
@@ -263,7 +263,7 @@ router.get('/quests', (req, res) => {
                         response.data = quests;
                         res.json(quests);
                     } else {
-                        res.json([]);
+                        res.json(false);
                     }
                 })
                 .catch((err) => {
@@ -282,7 +282,7 @@ router.get('/quests', (req, res) => {
                         response.data = quests;
                         res.json(quests);
                     } else {
-                        res.json([]);
+                        res.json(false);
                     }
                 })
                 .catch((err) => {
@@ -343,7 +343,7 @@ router.get('/posts', (req, res) => {
                         }
 
                     } else {
-                        res.json([]);
+                        res.json(false);
                     }
 
 
@@ -361,7 +361,7 @@ router.get('/posts', (req, res) => {
                     if (x) {
                         res.json(x);
                     } else {
-                        res.json([]);
+                        res.json(false);
                     }
 
                 })
@@ -382,70 +382,111 @@ router.get('/posts', (req, res) => {
  */
 router.post('/sections', (req, res) => {
 
-    if (!req.body.approve) {
+    console.log("IN THE QUEST JOINING");
+    console.log(req.body.user_id);
 
+    if (req.body.quest_id) {
         connection((db) => {
             const myDB = db.db('up-goe-db');
 
             myDB.collection('sections')
                 .updateOne(
-                    { _id: ObjectID(req.body.section_id) },
                     {
-                        $push: {
-                            students: {
-                                user_id: req.body.user_id,
-                                status: "R"
+                        _id: ObjectID(req.body.section_id)
+                    },
+                    {
+                        $addToSet: {
+                            "quests.$[elem].quest_participants": req.body.user_id
+                        }
+                    },
+                    {
+                        arrayFilters: [{ "elem.quest_id": req.body.quest_id }]
+                    }
+                ).then(result => {
+                    if (result) {
+                        res.json(result);
+                    } else {
+                        res.json(false);
+                    }
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                })
+
+        });
+
+    } else {
+
+
+        if (!req.body.approve) {
+
+            connection((db) => {
+                const myDB = db.db('up-goe-db');
+
+                myDB.collection('sections')
+                    .updateOne(
+                        { _id: ObjectID(req.body.section_id) },
+                        {
+                            $push: {
+                                students: {
+                                    user_id: req.body.user_id,
+                                    status: "R"
+                                }
                             }
                         }
-                    }
-                ).then(result => {
+                    ).then(result => {
 
-                    if (result) {
-                        res.json(result);
-                    } else {
-                        res.json(false);
-                    }
-
-                })
-                .catch((err) => {
-                    sendError(err, res);
-                })
-
-        });
-
-    } else if (req.body.approve) {
-
-        connection((db) => {
-            const myDB = db.db('up-goe-db');
-
-            myDB.collection('sections')
-                .updateOne(
-                    {
-                        _id: ObjectID(req.body.section_id),
-                        "students.user_id": req.body.user_id
-                    },
-                    {
-                        $set: {
-                            "students.$[elem].status": "E"
+                        if (result) {
+                            res.json(result);
+                        } else {
+                            res.json(false);
                         }
-                    },
-                    {
-                        arrayFilters: [{ "elem.user_id": req.body.user_id }]
-                    }
-                ).then(result => {
-                    if (result) {
-                        res.json(result);
-                    } else {
-                        res.json(false);
-                    }
-                })
-                .catch((err) => {
-                    sendError(err, res);
-                })
 
-        });
+                    })
+                    .catch((err) => {
+                        sendError(err, res);
+                    })
+
+            });
+
+        } else if (req.body.approve) {
+
+            connection((db) => {
+                const myDB = db.db('up-goe-db');
+
+                myDB.collection('sections')
+                    .updateOne(
+                        {
+                            _id: ObjectID(req.body.section_id),
+                            "students.user_id": req.body.user_id
+                        },
+                        {
+                            $set: {
+                                "students.$[elem].status": "E"
+                            }
+                        },
+                        {
+                            arrayFilters: [{ "elem.user_id": req.body.user_id }]
+                        }
+                    ).then(result => {
+                        if (result) {
+                            res.json(result);
+                        } else {
+                            res.json(false);
+                        }
+                    })
+                    .catch((err) => {
+                        sendError(err, res);
+                    })
+
+            });
+
+        }
+
 
     }
+
+
 
 })
 
@@ -460,8 +501,8 @@ router.get('/sections', (req, res) => {
     if (req.query.instructor) {
         console.log("enter search for section1");
         getSectionsofInstructor(req, res);
-    } 
-    
+    }
+
     if (req.query.id) {
         getSectionsOfStudent(req, res);
     } else if (req.query.class) {
@@ -497,7 +538,7 @@ router.get('/sections', (req, res) => {
                         res.send(enrolled);
 
                     } else {
-                        res.json([]);
+                        res.json(false);
                     }
 
                 })
@@ -548,7 +589,7 @@ router.get('/sections', (req, res) => {
                         }
 
                     } else {
-                        res.json([]);
+                        res.json(false);
                     }
 
 
@@ -575,30 +616,30 @@ router.get('/sections', (req, res) => {
                 })
                 .toArray()
                 .then((sections) => {
-                        console.log(sections);
-                        async.forEach(sections, processEachSection, afterAllSection);
+                    console.log(sections);
+                    async.forEach(sections, processEachSection, afterAllSection);
 
-                        function processEachSection(section, callback) {
-                            console.log(section);
-                            myDB.collection('courses')
-                                .find(ObjectID(section.course_id))
-                                .toArray()
-                                .then((course) => {
-                                    Promise.all(course[0].course_name).then(() => {
-                                        myObjArr.push({
-                                            section: section,
-                                            course_name: course[0].course_name
-                                        });
-                                        callback(null);
+                    function processEachSection(section, callback) {
+                        console.log(section);
+                        myDB.collection('courses')
+                            .find(ObjectID(section.course_id))
+                            .toArray()
+                            .then((course) => {
+                                Promise.all(course[0].course_name).then(() => {
+                                    myObjArr.push({
+                                        section: section,
+                                        course_name: course[0].course_name
                                     });
+                                    callback(null);
                                 });
+                            });
 
-                        }
+                    }
 
-                        function afterAllSection(err) {
-                            response.data = myObjArr;
-                            res.send(myObjArr);
-                        }
+                    function afterAllSection(err) {
+                        response.data = myObjArr;
+                        res.send(myObjArr);
+                    }
 
 
                 })
@@ -703,7 +744,7 @@ router.get('/sections', (req, res) => {
                             });
 
                     } else {
-                        res.json([]);
+                        res.json(false);
                     }
 
 
@@ -756,7 +797,7 @@ router.get('/getSectionQuests', (req, res) => {
                         });
 
                 } else {
-                    res.json([]);
+                    res.json(false);
                 }
             });
     })
@@ -819,7 +860,7 @@ router.get('/sections/quests', (req, res) => {
                                     response.data = AllUserQuests;
                                     res.json(AllUserQuests);
                                 } else {
-                                    res.json([]);
+                                    res.json(false);
                                 }
 
                             })
@@ -832,7 +873,7 @@ router.get('/sections/quests', (req, res) => {
                         res = res.json(sections);
                     }
                 } else {
-                    res.json([]);
+                    res.json(false);
                 }
 
 
@@ -1108,7 +1149,7 @@ router.post('/badges', (req, res) => {
 
                             } else {
 
-                                res.json([]);
+                                res.json(false);
 
                             }
 
@@ -1117,7 +1158,7 @@ router.post('/badges', (req, res) => {
                         });
 
                     } else {
-                        res.json([]);
+                        res.json(false);
                     }
 
 
@@ -1171,7 +1212,7 @@ router.get('/badges', (req, res) => {
                     });
 
                 } else {
-                    res.json([]);
+                    res.json(false);
                 }
 
             })
@@ -1199,7 +1240,7 @@ router.get('/securityQuestions', (req, res) => {
                     response.data = questions;
                     res.json(questions);
                 } else {
-                    res.json([]);
+                    res.json(false);
                 }
             })
             .catch((err) => {

@@ -129,7 +129,7 @@ export class QuestService {
 	 * Returns the section's array quests
 	 * @param section_id id of the section whose array of quests needed to be retrieved
 	 */
-	getSectionQuests(section_id): Observable<any[]>{
+	getSectionQuests(section_id): Observable<any[]> {
 		let params = new HttpParams()
 			.set('section_id', section_id)
 			.set('method', 'getSectionQuests');
@@ -224,9 +224,22 @@ export class QuestService {
 	 */
 	joinQuest(user_id, quest_id, section_id) {
 		const url = this.sectionUrl;
+
+		let body = {
+			user_id: user_id,
+			section_id: section_id,
+			quest_id: quest_id
+		}
+		console.warn(body);
+		return this.http.post(url, body).pipe(
+			tap(data => {
+				console.warn(data);
+				return data;
+			})
+		);
 	}
 
-	/**
+	/**\
 	 * Submits student's quest submission.
 	 * @description Submits the user's submission and removes user from the quest participant's list 
 	 * by calling endQuest() 
