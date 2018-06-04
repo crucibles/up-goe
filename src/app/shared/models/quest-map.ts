@@ -36,8 +36,14 @@ export class QuestMap {
         this.questCoordinates = [];
 
 		for (let questPosition of questPositions) {
-            quests = quests.filter(quest => quest.getQuestId() == questPosition.questId);
-            var title = quests.length == 0? "<No title>": quests[0].getQuestTitle();
+			console.log("HERE<<<<<<<<<<<<<<<<<<<<<<<<");
+			console.log(questPosition.questId);
+			console.log(quests.map(quest => quest.getQuestId()));
+			console.log("HERE<<<<<<<<<<<<<<<<<<<<<<<<");
+			let quest = quests.filter(quest => quest.getQuestId() == questPosition.questId);
+			console.log("RESULT form filter:");
+			console.log(quest);
+            var title = quest.length == 0? "<No title>": quest[0].getQuestTitle();
 			if (questPosition.type === "scatter") {
 				dataset = {
 					type: "scatter",

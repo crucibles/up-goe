@@ -78,10 +78,11 @@ export class QuestService {
 
 	}
 
-	addQuestMapCoordinates(quest_map_id: String, newQuestCoord: any[]): Observable<QuestMap> {
-		let url = "api/questmaps";
+	addQuestMapCoordinates(section_id: String, quest_map_id: String, newQuestCoord: any[]): Observable<QuestMap> {
+		let url = this.questMapUrl;
 		return this.http.post<QuestMap>(url, {
 			method: "addQuestMapCoordinates",
+			section_id: section_id,
 			quest_map_id: quest_map_id,
 			quest_coordinates: newQuestCoord
 		})
@@ -155,11 +156,12 @@ export class QuestService {
 		const url = this.questUrl;
 	}
 
-	editQuestMapCoordinateAt(quest_map_id, quest_id, x, y): Observable<any> {
+	editQuestMapCoordinateAt(section_id, quest_map_id, quest_id, x, y): Observable<any> {
 		let url = this.questMapUrl;
 
 		return this.http.post<QuestMap>(url, {
 			method: "editQuestMapCoordinateAt",
+			section_id: section_id,
 			quest_map_id: quest_map_id,
 			quest_coordinates: {
 				quest_id: quest_id,

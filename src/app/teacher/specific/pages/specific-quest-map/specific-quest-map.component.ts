@@ -446,12 +446,12 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 			newQuestCoordinates.push(coord);
 
 			if (newQuestCoordinates.length > 0) {
-				this.questService.addQuestMapCoordinates(this.questMap.getQuestMapId(), newQuestCoordinates).subscribe(questmap => {
+				this.questService.addQuestMapCoordinates(this.currentSection.getSectionId(), this.questMap.getQuestMapId(), newQuestCoordinates).subscribe(questmap => {
 					console.log(questmap);
 				});
 			}
 		} else {
-			this.questService.editQuestMapCoordinateAt(this.questMap.getQuestMapId(), quest._id, basisX, basisY).subscribe(() => {
+			this.questService.editQuestMapCoordinateAt(this.currentSection.getSectionId(), this.questMap.getQuestMapId(), quest._id, basisX, basisY).subscribe(() => {
 				console.log("done editing qm coord!");
 			})
 		}
