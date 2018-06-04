@@ -747,7 +747,7 @@ router.get('/sections', (req, res) => {
 
     } else if (req.query.students) {
         getEnrolledStudents(req, res);
-    }
+    } 
 
     function getEnrolledStudents(req, res) {
         connection((db) => {
@@ -758,9 +758,8 @@ router.get('/sections', (req, res) => {
                 .then((sections) => {
 
                     if (sections) {
-
                         let enrolled = sections.students.map((x) => {
-                            if (x.status == 'E') {
+                            if (x.status == 'E' || req.query.all) {
                                 return x.user_id;
                             } else {
                                 return "";
