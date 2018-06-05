@@ -36,6 +36,7 @@ import {
 import {
 	BadgeService,
 	CommentPostService,
+	ExperienceService,
 	ItemService,
 	PageService,
 	QuestService,
@@ -91,6 +92,7 @@ import {
 	providers: [
 		BadgeService,
 		CommentPostService,
+		ExperienceService,
 		FileService,
 		QuestService,
 		PageService,
