@@ -388,11 +388,18 @@ export class SectionService {
    * @returns {User.ids[]} array of students ids enrolled in the section of User class
    * 
    */
-	getSectionStudents(section_id) {
+	getSectionStudents(section_id, isAll?: boolean) {
 
 		const url = this.secUrl;
-
-		let params = new HttpParams().set('students', section_id);
+		let params: HttpParams;
+		if(isAll){
+			params = new HttpParams()
+			.set('students', section_id)
+			.set('all', isAll.toString())
+		} else {
+			params = new HttpParams()
+			.set('students', section_id);
+		}
 
 		return this.http.get<any>(
 			url, {
@@ -551,11 +558,10 @@ export class SectionService {
 		let enrolledSections = [];
 
 		if (this.currentUserSections) {
-
+			console.log(this.currentUserSections);
 			this.currentUserSections.map((section) => {
-
+				console.log(section);
 				if (this.multiFilter(section.section.students, filter).length) {
-					console.log(section);
 					enrolledSections.push(section);
 				}
 

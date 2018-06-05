@@ -41,40 +41,6 @@ import {
 
 import Chart = require('chart.js');
 
-const SECTION: any = {
-	_id: "2",
-	course_id: "sad3",
-	section_name: "A",
-	students: [
-		{
-			user_id: "1",
-			status: "E"
-		},
-		{
-			user_id: "2",
-			status: "R"
-		}
-	],
-	instructor: "Miguel Guillermo",
-	quests: [
-		new SectionQuest({ quest_id: "5a3b8e82b19a9e18d42d3890", quest_participants: ["5a37f4500d1126321c11e5e7", "2"], quest_prerequisite: [] }),
-		new SectionQuest({ quest_id: "5a3b8e82b19a9e18d42d3890", quest_participants: ["1", "2"], quest_prerequisite: [] })
-	],
-	items: [],
-	badges: []
-};
-
-const MOCKQUESTMAP: String[] = [
-	"5a3b8e82b19a9e18d42d3890,scatter,5,25",
-	"5a3b8e82b19a9e18d42d3890,scatter,10,25",
-	"1,scatter,15,25,67890",
-	"7678,scatter,15,30,56743",
-	",line,5,25,10,25",
-	",line,10,25,15,25",
-	",line,15,25,15,30",
-	",exclude,15,25,N",
-];
-
 @Component({
 	selector: 'app-specific-quest-map',
 	templateUrl: './specific-quest-map.component.html',
@@ -165,16 +131,27 @@ export class SpecificQuestMapComponent implements OnInit {
 	}
 
 	loadQuestMap() {
-		this.questService.getUserJoinedQuests(this.currentUser.getUserId())
-			.subscribe(quests => {
-				console.log(quests);
-				this.quests = quests.map(quest => new Quest(quest));
-				//AHJ: unimplemented; getter for quest map data (remove comment marker belowif available)
-				//this.questService.getQuestMap(this.currentSection.getCourseId()).subscribe(data => {
-				this.questMap = new QuestMap(MOCKQUESTMAP, this.quests);
+		// this.questService.getUserJoinedQuests(this.currentUser.getUserId())
+		// 	.subscribe(quests => {
+		// 		console.log(quests);
+		// 		this.quests = quests.map(quest => new Quest(quest));
+		// 		//AHJ: unimplemented; getter for quest map data (remove comment marker belowif available)
+		// 		//this.questService.getQuestMap(this.currentSection.getCourseId()).subscribe(data => {
+		// 		this.questMap = new QuestMap(MOCKQUESTMAP, this.quests);
+		// 		this.setQuestMap();
+		// 		//});
+		// 	});
+		this.questService.getSectionQuests(this.currentSection.getSectionId()).subscribe(quests => {
+			console.log("QUEST LOADED");
+			console.log(quests);
+			this.quests = quests.map(quest => new Quest(quest));
+			this.questService.getSectionQuestMap(this.currentSection.getSectionId()).subscribe(questmap => {
+				console.log("QUESTMAP LOADEd");
+				console.log(questmap);
+				this.questMap = new QuestMap(questmap, this.quests, true);
 				this.setQuestMap();
-				//});
 			});
+		});
 	}
 
 	openQuest(quest: any) { //'quest: any' in here means the quest has not been converted to Quest type

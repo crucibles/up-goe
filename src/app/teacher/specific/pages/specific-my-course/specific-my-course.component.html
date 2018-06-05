@@ -20,8 +20,8 @@
 			<tbody>
 				<!--Shows if user has no classmates yet-->
 				<tr *ngIf="!classmates || classmates.length == 0">
-					<td colspan="3" style="text-align: center">You have no course enrolled yet!
-						<br>Input your class code now.
+					<td colspan="3" style="text-align: center">
+						You have no students yet!
 					</td>
 				</tr>
 				<!--Shows list of classmates and their respective information-->
@@ -32,7 +32,9 @@
 						</td>
 						<td>{{classmate.getUserFormattedBirthdate()}}</td>
 						<td>{{classmate.getUserEmail()}}</td>
-						<td>{{this.getStudentStatus(classmate.getUserId())}}</td>
+						<td [class.clickable]="this.getStudentStatus(classmate.getUserId()) == 'Requesting'" (click)="approveStudent(classmate.getUserId())" >
+							{{this.getStudentStatus(classmate.getUserId())}}
+						</td>
 					</tr>
 				</ng-container>
 			</tbody>
@@ -87,21 +89,5 @@
 				<br> Birthdate: {{this.classmateClicked.getUserFormattedBirthdate()}}
 			</div>
 		</div>
-
-		<!--Student's Badge Section-->
-		<div class="student-badge" style="margin-top: 20px">
-			<h5 class="modal-title">{{this.classmateClicked.getUserFirstName()}}'s Badges</h5>
-
-			<div *ngIf="!this.badgesDisplay || this.badgesDisplay.length == 0">
-				You have no badges yet.
-			</div>
-			<!-- Badge Display -->
-			<div *ngIf="this.badgesDisplay && this.badgesDisplay.length != 0" class="badge-display">
-				<ng-container *ngFor="let badge of badgesDisplay">
-					<img class="badge-img" [src]="badge.getBadgePhoto()" tooltip="{{badge.getBadgeDescription()}}" placement="top" />
-				</ng-container>
-			</div>
-		</div>
-
 	</div>
 </ng-template>
