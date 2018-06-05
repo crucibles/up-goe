@@ -370,9 +370,8 @@ router.get('/experiences', (req, res) => {
 });
 
 /**
- * @description portal for requests regarding users. api/users
- * @author Cedric Yao Alvaro
- * @author Donevir Hynson - modified Jan 11 2018
+ * @description portal for requests regarding experiences. api/experiences
+ * @author AJ Ruth Sumandang
  */
 router.post('/experiences', (req, res) => {
     if (req.body.method == "setStudentQuestGrade") {
@@ -417,7 +416,7 @@ router.post('/experiences', (req, res) => {
 });
 
 /**
- * @description portal for requests regarding users. api/users
+ * @description portal for requests regarding users. api/login
  * @author Cedric Yao Alvaro
  * @author Donevir Hynson - modified Jan 11 2018
  */
