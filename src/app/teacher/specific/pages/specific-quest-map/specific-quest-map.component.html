@@ -3,15 +3,10 @@
 </h3>
 
 <!--Graph for quest map-->
-<div class="row" *ngIf="quests">
+<div class="row">
 	<div style="display: block">
-		<canvas id="quest-map" baseChart width="650" height="300"></canvas>
+		<canvas id="quest-map" baseChart width="650" height="300" #chartCanvas></canvas>
 	</div>
-</div>
-
-<div *ngIf="!quests">
-	Loading...
-	<img class="loading-icon" src="/assets/images/loading.gif" />
 </div>
 
 <ng-template class="create-quest-modal" #createQuestTemplate>
@@ -24,7 +19,7 @@
 	</div>
 
 	<!--Modal Body-->
-	<form class="create-quest-body" [formGroup]="createQuestForm" (ngSubmit)="createQuest()">
+	<form class="create-quest-body" [formGroup]="createQuestForm">
 		<div class="modal-body">
 			<div class="row">
 				<div class="col-md-3">
@@ -49,10 +44,10 @@
 				</div>
 				<div class="col-md-7">
 					<label>
-						<input type="radio" formControlName="questRetakable" value="Y"> Yes
+						<input type="radio" formControlName="questRetakable" value="true"> Yes
 					</label>
 					<label>
-						<input type="radio" formControlName="questRetakable" value="N"> No
+						<input type="radio" formControlName="questRetakable" value="false"> No
 					</label>
 				</div>
 			</div>
@@ -117,7 +112,7 @@
 		<div class="modal-footer">
 			<!-- shows submit & abandon buttons if user is a participant -->
 			<button class="btn btn-danger mr-auto" (click)="resetQuest()">Reset</button>
-			<button class="btn btn-success" [disabled]="createQuestForm.invalid">Create</button>
+			<button class="btn btn-success" [disabled]="createQuestForm.invalid" (click)="createQuest()">Create</button>
 		</div>
 	</form>
 </ng-template>
@@ -129,7 +124,6 @@
 	<div class="modal-header">
 		<h4 class="modal-title">
 			{{this.questClicked.getQuestTitle()}}
-			<h6 *ngIf="isParticipating(this.questClicked.getQuestId())" style="text-align: center">(In Progress)</h6>
 		</h4>
 		<button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
 			<span aria-hidden="true">&times;</span>
@@ -155,19 +149,6 @@
 				<br>
 			</div>
 		</div>
-	</div>
-
-	<!-- Quest Modal Buttons -->
-	<div class="modal-footer">
-		<!-- shows submit & abandon buttons if user is a participant -->
-		<ng-container *ngIf="isParticipating(this.questClicked.getQuestId())">
-			<button type="submit" class="btn btn-danger mr-auto" (click)="abandonQuest()">Abandon Quest</button>
-			<button type="submit" class="btn btn-success" (click)="submitQuest()">Submit Quest</button>
-		</ng-container>
-		<!-- shows accept button if user is not yet a participant -->
-		<ng-container *ngIf="!isParticipating(this.questClicked.getQuestId())">
-			<button type="submit" class="btn btn-success" (click)="acceptQuest()">Accept the Quest</button>
-		</ng-container>
 	</div>
 </ng-template>
 <!-- quest modal template end -->

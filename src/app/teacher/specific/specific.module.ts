@@ -13,7 +13,8 @@ import {
   SpecificMyCourseComponent,
   SpecificNewsComponent,
   SpecificProfileComponent,
-  SpecificQuestMapComponent
+  SpecificQuestMapComponent,
+  GradesComponent
 } from 'teacher/specific/pages';
 
 import {
@@ -48,6 +49,7 @@ import {
     GeneralModule
   ],
   declarations: [
+    GradesComponent,
     SpecificCharacterComponent,
     SpecificComponent,
     SpecificMyCourseComponent,

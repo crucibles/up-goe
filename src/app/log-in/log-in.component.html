@@ -57,7 +57,14 @@
                     <br>    
                     <button type="submit" 
                             class="btn btn-primary"
-                            [disabled]="loginForm.invalid">Login
+                            [disabled]="loginForm.invalid"
+                            >
+                            <span *ngIf="!isLoggingIn">
+                                Login
+                            </span>
+                            <span *ngIf="isLoggingIn">
+                                Logging in...
+                            </span>
                     </button>
                 </td>
             </tr>

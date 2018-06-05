@@ -113,7 +113,7 @@ router.get('/courses', (req, res) => {
                         response.data = courses[0];
                         res.json(courses[0]);
                     } else {
-                        res.json([]);
+                        res.json(false);
                     }
                 })
                 .catch((err) => {
@@ -131,7 +131,7 @@ router.get('/courses', (req, res) => {
                         response.data = courses;
                         res.json(courses);
                     } else {
-                        res.json([]);
+                        res.json(false);
                     }
                 })
                 .catch((err) => {
@@ -150,7 +150,6 @@ router.post('/createCourseSection', (req, res) => {
     console.log("__________start new 2_____________________");
     console.log("success enter");
     connection((db) => {
-        const myDB = db.db('up-goe-db');
         console.log("success2 enter");
         var newCourseObj = {
             course_name: req.body.courseName,
@@ -172,7 +171,8 @@ router.post('/createCourseSection', (req, res) => {
 
         async.waterfall([
             insertCourse,
-            insertSection
+            insertSection,
+            insertQuestMap
         ], function (err, results) {
             console.log(">>>enter last callback,<<<<");
             if (err) {
@@ -188,43 +188,69 @@ router.post('/createCourseSection', (req, res) => {
         });
 
         function insertCourse(callback) {
+            const myDB = db.db('up-goe-db');
+            console.log("=======insercourse======");
+            console.log(newCourseObj.course_name);
             myDB.collection('courses')
-                .count({
-                    course_name: newCourseObj.course_name
-                }).then(count => {
-                    if (count) {
-                        console.log("Duplicate course name: " + newCourseObj.course_name);
-                        response.data = newUserObj.user_email;
-                        // Returns false to signal that user already exists
-                        res.json(false);
-                    } else {
-                        console.log("<<insert course");
-                        myDB.collection('courses')
-                            .insertOne(newCourseObj, function (err, result) {
-                                if (err) {
-                                    console.log(err);
-                                    response.message = err;
-                                    throw err;
-                                }
-                                response.data = newCourseObj;
-                                console.log("------------------------");
-                                console.log(result.insertedId);
-                                console.log("------------------------");
-                                newSectionObj.course_id = result.insertedId;
-                                console.log(newSectionObj);
-                                console.log("------------------------");
-                                callback(null, newSectionObj);
-                            })
+                .insertOne(newCourseObj, function (err, result) {
+                    if (err) {
+                        console.log(err);
+                        response.message = err;
+                        throw err;
                     }
+                    response.data = newCourseObj;
+                    console.log("------------------------");
+                    console.log(result.insertedId);
+                    console.log("------------------------");
+                    newSectionObj.course_id = result.insertedId + '';
+                    console.log(newSectionObj);
+                    console.log("------------------------");
+                    callback(null, newSectionObj);
                 });
         };
 
         function insertSection(sectionObj, callback) {
+            const myDB = db.db('up-goe-db');
             console.log("<<insert section");
             console.log(sectionObj);
             console.log(">>/////");
             myDB.collection('sections')
                 .insertOne((sectionObj), function (err, result) {
+                    console.log("inserted!");
+                    if (err) {
+                        console.log("error inserted!");
+                        console.log(err);
+                        response.message = err;
+                        throw err;
+                    }
+                    console.log("end insert sec");
+                    console.log(result);
+                    resultId = result.insertedId + '';
+                    response.data = result;
+                    callback(null, resultId);
+                    console.log("end insert sec");
+                });
+        };
+
+        function insertQuestMap(resultId, callback) {
+            const myDB = db.db('up-goe-db');
+            console.log("<<insert questmap");
+            console.log(resultId);
+            console.log(">>/////");
+            let newQuestMapObj = {
+                section_id: resultId,
+                quest_coordinates: [
+                    {
+                        quest_id: "",
+                        type: "scatter",
+                        x1: 5,
+                        y1: 25
+                    }
+                ]
+            };
+
+            myDB.collection('questmaps')
+                .insertOne((newQuestMapObj), function (err, result) {
                     console.log("inserted!");
                     if (err) {
                         console.log("error inserted!");
@@ -241,8 +267,182 @@ router.post('/createCourseSection', (req, res) => {
     });
 });
 
+router.post('/createQuest', (req, res) => {
+    console.log("_______________CREATING QUEST__________")
+    connection((db) => {
+        var newQuestObj = {
+            quest_title: req.body.quest_title,
+            quest_description: req.body.quest_description,
+            quest_retakable: req.body.quest_retakable,
+            quest_badge: req.body.quest_badge,
+            quest_xp: req.body.quest_xp,
+            quest_hp: req.body.quest_hp,
+            quest_item: req.body.quest_item,
+            quest_start_date: req.body.quest_start_date,
+            quest_end_date: req.body.quest_end_date,
+            quest_party: req.body.quest_party
+        };
+
+        async.waterfall([
+            insertQuest,
+            addQuestToSection
+        ], function (err, resultId) {
+            console.log(">>>enter last callback,<<<<");
+            if (err) {
+                console.log("entered err");
+                console.log(err);
+                response.message = err;
+                throw err;
+            }
+
+            let questObj = {
+                _id: resultId,
+                quest_title: req.body.quest_title,
+                quest_description: req.body.quest_description,
+                quest_retakable: req.body.quest_retakable,
+                quest_badge: req.body.quest_badge,
+                quest_xp: req.body.quest_xp,
+                quest_hp: req.body.quest_hp,
+                quest_item: req.body.quest_item,
+                quest_start_date: req.body.quest_start_date,
+                quest_end_date: req.body.quest_end_date,
+                quest_party: req.body.quest_party
+            }
+            console.log(questObj);
+            res.json(questObj);
+        });
+
+        function insertQuest(callback) {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('quests')
+                .insertOne(newQuestObj, function (err, result) {
+                    if (err) {
+                        console.log(err);
+                        response.message = err;
+                        throw err;
+                    }
+                    response.data = newQuestObj;
+                    console.log("------------------------");
+                    console.log(result.insertedId);
+                    console.log("------------------------");
+                    callback(null, result.insertedId);
+                });
+        }
+
+        function addQuestToSection(resultId, callback) {
+            const myDB = db.db('up-goe-db');
+            console.log("rebodysecid: " + req.body.section_id);
+            console.log("rebodyresid: " + resultId);
+            myDB.collection('section')
+                .update(
+                    { _id: req.body.section_id },
+                    {
+                        $push: {
+                            quests: {
+                                quest_id: resultId,
+                                quest_participants: [],
+                                quest_prerequisite: []
+                            }
+                        }
+                    },
+                    function (err, section) {
+                        console.log("ENTER section callback");
+                        response.data = section;
+                        callback(null, resultId);
+                    }
+                );
+        };
+    });
+});
+
 /**
- * @description portal for requests regarding users. api/users
+ * @description portal for requests regarding experiences. api/users
+ * @author Sumandang, AJ Ruth H.
+ */
+router.get('/experiences', (req, res) => {
+    console.log("-----------GET EXP--------------")
+    connection((db) => {
+        const myDB = db.db('up-goe-db');
+        console.log("req.params");
+        console.log(req.query);
+
+        let query = {
+            section_id: req.query.section_id
+        };
+
+        if (req.query.user_id) {
+            query = {
+                section_id: req.query.section_id,
+                user_id: req.query.user_id
+            }
+        }
+        console.log(query);
+        console.log("query");
+
+        myDB.collection('experiences')
+            .find(query)
+            .toArray()
+            .then(experiences => {
+                console.log("<experiences>");
+                console.log(experiences);
+                res.json(experiences);
+            })
+            .catch(err => {
+                console.log('err')
+                console.log(err)
+                sendError(err, res);
+            })
+    });
+});
+
+/**
+ * @description portal for requests regarding experiences. api/experiences
+ * @author AJ Ruth Sumandang
+ */
+router.post('/experiences', (req, res) => {
+    if (req.body.method == "setStudentQuestGrade") {
+        console.log("beforesetenter")
+        setStudentQuestGrade(req, res);
+    }
+
+    function setStudentQuestGrade(req, res) {
+        console.log("-------entered setgrade------------");
+        console.log(req.body);
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('experiences')
+                .updateOne(
+                    {
+                        user_id: req.body.user_id,
+                        section_id: req.body.section_id
+                    },
+                    {
+                        $set: {
+                            "quests_taken.$[elem].quest_grade":  req.body.grade,
+                            "quests_taken.$[elem].is_graded": true  
+                        }
+                    },
+                    {
+                        arrayFilters: [{
+                            "elem.quest_id": req.body.quest_id
+                        }]
+                    }
+                )
+                .then(grade => {
+                    console.log("grade");
+                    console.log(grade);
+                    res.json(true);
+                })
+                .catch(err => {
+                    console.log("ERROR");
+                    sendError(err, res);
+                })
+        })
+    }
+});
+
+/**
+ * @description portal for requests regarding users. api/login
  * @author Cedric Yao Alvaro
  * @author Donevir Hynson - modified Jan 11 2018
  */
@@ -273,6 +473,165 @@ router.post('/login', (req, res) => {
 });
 
 /**
+ * @description protal for requests regarding questmaps. api/questmaps
+ * @author Sumandang. AJ Ruth H.
+ */
+router.get('/questmaps', (req, res) => {
+    console.log("getter quest maps");
+    if (req.query.method && req.query.method == "getSectionQuestMap") {
+        getSectionQuestMap(req, res);
+    }
+
+    function getSectionQuestMap(req, res) {
+        console.log("getSectionQuestMap");
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('questmaps')
+                .findOne({
+                    section_id: req.query.section_id
+                })
+                .then((questmap) => {
+                    console.log("---------");
+                    console.log(questmap);
+                    console.log("---------");
+                    res.json(questmap);
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                });
+        });
+    }
+});
+
+/**
+ * @description protal for requests regarding questmaps. api/questmaps
+ * @author Sumandang. AJ Ruth H.
+ */
+router.post('/questmaps', (req, res) => {
+    console.log("quest maps");
+    console.log(req.body.method);
+    if (req.body.method && req.body.method == "addQuestMapCoordinates") {
+        console.log("ADDQuestMapCoordinates");
+        addQuestMapCoordinates(req, res);
+    } else if (req.body.method && req.body.method == "editQuestMapCoordinateAt") {
+        console.log("EDITQuestMapCoordinates");
+        editQuestMapCoordinateAt(req, res);
+    }
+
+    function addQuestMapCoordinates(req, res) {
+        console.log("----enterADD-----");
+        console.log("addQuestMapCoordinates");
+        console.log(req.body);
+        console.log(req.body.quest_map_id);
+        console.log(req.body.quest_coordinates);
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            console.log(req.body.quest_map_id);
+            myDB.collection('questmaps')
+                .update(
+                    { _id: ObjectID(req.body.quest_map_id) },
+                    {
+                        $push: {
+                            quest_coordinates: {
+                                $each: req.body.quest_coordinates
+                            }
+                        }
+                    },
+                    function (err, result) {
+                        console.log("try add qmp");
+                        if (err) {
+                            console.log(err);
+                            throw err;
+                        }
+                        console.log("-----");
+                        console.log(result);
+                        console.log("-----");
+                        console.log("success");
+                        response.data = result;
+                        addQuestToSection(req, res);
+                    }
+                );
+        });
+    }
+
+    function editQuestMapCoordinateAt(req, res) {
+        console.log("----enterEDIT-----");
+        console.log("addQuestMapCoordinates");
+        console.log(req.body);
+        console.log(req.body.quest_map_id);
+        console.log(req.body.quesquest_id);
+        console.log(req.body.quest_coordinates);
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+
+            myDB.collection('questmaps')
+                .updateOne(
+                    {
+                        _id: ObjectID(req.body.quest_map_id)
+                    },
+                    {
+                        $set: {
+                            "quest_coordinates.$[elem].quest_id": req.body.quest_coordinates.quest_id
+                        }
+                    },
+                    {
+                        upsert: true,
+                        arrayFilters: [
+                            {
+                                $and: [
+                                    { "elem.x1": req.body.quest_coordinates.x1 },
+                                    { "elem.y1": req.body.quest_coordinates.y1 }
+                                ]
+                            }
+                        ]
+                    }
+                )
+                .then((questmaps) => {
+                    console.log("===entered questmap pdate edit ====");
+                    console.log(questmaps);
+                    response.data = questmaps;
+                    console.log("===entered questmap pdate edit ====");
+                    addQuestToSection(req, res);
+                })
+                .catch(err => {
+                    console.log("err");
+                    console.log(err);
+                    sendError(err, res);
+                    res.json(false);
+                    throw err;
+                });
+        });
+
+    };
+
+    function addQuestToSection(req, res) {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            console.log("rebodysecid: " + req.body.section_id);
+            console.log("rebodyresid: " + req.body.quest_coordinates.quest_id);
+            myDB.collection('section')
+                .update(
+                    { _id: req.body.section_id },
+                    {
+                        $push: {
+                            quests: {
+                                quest_id: req.body.quest_coordinates.quest_id,
+                                quest_participants: [],
+                                quest_prerequisite: []
+                            }
+                        }
+                    },
+                    function (err, section) {
+                        console.log("ENTER add Quest to Section of QUESTMAP callback");
+                        response.data = section;
+                        res.json(req.body.quest_coordinates);
+                    }
+                );
+        })
+    };
+});
+
+/**
  * @description portal for requests regarding quests. api/quests
  * @author Cedric Yao Alvaro
  */
@@ -289,7 +648,7 @@ router.get('/quests', (req, res) => {
                         response.data = quests;
                         res.json(quests);
                     } else {
-                        res.json([]);
+                        res.json(false);
                     }
                 })
                 .catch((err) => {
@@ -308,7 +667,7 @@ router.get('/quests', (req, res) => {
                         response.data = quests;
                         res.json(quests);
                     } else {
-                        res.json([]);
+                        res.json(false);
                     }
                 })
                 .catch((err) => {
@@ -369,7 +728,7 @@ router.get('/posts', (req, res) => {
                         }
 
                     } else {
-                        res.json([]);
+                        res.json(false);
                     }
 
 
@@ -387,7 +746,7 @@ router.get('/posts', (req, res) => {
                     if (x) {
                         res.json(x);
                     } else {
-                        res.json([]);
+                        res.json(false);
                     }
 
                 })
@@ -408,59 +767,71 @@ router.get('/posts', (req, res) => {
  */
 router.post('/sections', (req, res) => {
 
-    if (!req.body.approve) {
+    console.log("IN THE QUEST JOINING");
+    console.log(req.body.user_id);
+
+    if (req.body.quest_id) {
+
+        if (req.body.abandon) {
+            abandonQuest(req, res);
+        } else {
+
+            if (req.body.data) {
+                //upload here
+                submitQuest(req, res);
+            } else {
+                joinQuest(req, res);
+            }
+
+        }
+
+    } else {
+
+        enrollAndRequest(req, res);
+
+    }
+
+
+    function abandonQuest(req, res) {
 
         connection((db) => {
             const myDB = db.db('up-goe-db');
 
             myDB.collection('sections')
                 .updateOne(
-                    { _id: ObjectID(req.body.section_id) },
                     {
-                        $push: {
-                            students: {
-                                user_id: req.body.user_id,
-                                status: "R"
-                            }
-                        }
-                    }
-                ).then(result => {
-
-                    if (result) {
-                        res.json(result);
-                    } else {
-                        res.json(false);
-                    }
-
-                })
-                .catch((err) => {
-                    sendError(err, res);
-                })
-
-        });
-
-    } else if (req.body.approve) {
-
-        connection((db) => {
-            const myDB = db.db('up-goe-db');
-
-            myDB.collection('sections')
-                .updateOne(
-                    {
-                        _id: ObjectID(req.body.section_id),
-                        "students.user_id": req.body.user_id
+                        _id: ObjectID(req.body.section_id)
                     },
                     {
-                        $set: {
-                            "students.$[elem].status": "E"
+                        $pull: {
+                            "quests.$[elem].quest_participants": req.body.user_id
                         }
                     },
                     {
-                        arrayFilters: [{ "elem.user_id": req.body.user_id }]
+                        arrayFilters: [{ "elem.quest_id": req.body.quest_id }]
                     }
                 ).then(result => {
                     if (result) {
-                        res.json(result);
+
+                        myDB.collection('experiences')
+                            .updateOne(
+                                {
+                                    user_id: req.body.user_id,
+                                    section_id: req.body.section_id
+                                },
+                                {
+                                    $pull: {
+                                        "quests_taken": {
+                                            quest_id: req.body.quest_id
+                                        }
+                                    }
+                                }
+                            )
+                            .then(x => {
+                                console.log("remove  ======================== QUEST TAKEN FINALLY");
+                                res.json(x);
+                            })
+
                     } else {
                         res.json(false);
                     }
@@ -472,6 +843,196 @@ router.post('/sections', (req, res) => {
         });
 
     }
+
+    function submitQuest(req, res) {
+
+
+
+        var submitObj = {
+            quest_id: req.body.quest_id,
+            quest_grade: 0,
+            is_graded: false,
+            file: req.body.data,
+            date_submitted: new Date(Date.now())
+        }
+
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+
+            console.log("TRYING TO ADD SUBMIT THE QUEST ");
+            myDB.collection('experiences')
+                .updateOne(
+                    {
+                        user_id: req.body.user_id,
+                        section_id: req.body.section_id
+                    },
+                    {
+                        $set: {
+                            "quests_taken.$[elem]": submitObj,
+
+                        }
+                    },
+                    {
+                        arrayFilters: [{ "elem.quest_id": req.body.quest_id }]
+                    }
+                )
+                .then(x => {
+                    console.log("SUBMITTING QUEST FINALLY");
+                    console.log(x);
+                    res.json(x);
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                })
+
+
+        });
+
+    }
+
+    function joinQuest(req, res) {
+
+        var myObj = {
+            quest_id: req.body.quest_id,
+            quest_grade: 0,
+            is_graded: false,
+            file: null,
+            date_submitted: ""
+        }
+
+
+
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+
+            myDB.collection('sections')
+                .updateOne(
+                    {
+                        _id: ObjectID(req.body.section_id)
+                    },
+                    {
+                        $addToSet: {
+                            "quests.$[elem].quest_participants": req.body.user_id
+                        }
+                    },
+                    {
+                        arrayFilters: [{ "elem.quest_id": req.body.quest_id }]
+                    }
+                ).then(result => {
+                    console.log("TRYING TO ADD QUEST TAKEN");
+                    myDB.collection('experiences')
+                        .updateOne(
+                            {
+                                user_id: req.body.user_id,
+                                section_id: req.body.section_id
+                            },
+                            {
+                                $addToSet: {
+                                    "quests_taken": myObj
+                                }
+                            }
+                        )
+                        .then(x => {
+                            console.log("ADDING QUEST TAKEN FINALLY");
+                            console.log(x);
+                            res.json(x);
+                        })
+
+
+
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                })
+
+        });
+
+    }
+
+    function enrollAndRequest(req, res) {
+
+        if (!req.body.approve) {
+
+            connection((db) => {
+                const myDB = db.db('up-goe-db');
+
+                myDB.collection('sections')
+                    .updateOne(
+                        { _id: ObjectID(req.body.section_id) },
+                        {
+                            $push: {
+                                students: {
+                                    user_id: req.body.user_id,
+                                    status: "R"
+                                }
+                            }
+                        }
+                    ).then(result => {
+
+                        if (result) {
+                            res.json(result);
+                        } else {
+                            res.json(false);
+                        }
+
+                    })
+                    .catch((err) => {
+                        sendError(err, res);
+                    })
+
+            });
+
+        } else if (req.body.approve) {
+
+            connection((db) => {
+                const myDB = db.db('up-goe-db');
+
+                myDB.collection('sections')
+                    .updateOne(
+                        {
+                            _id: ObjectID(req.body.section_id),
+                            "students.user_id": req.body.user_id
+                        },
+                        {
+                            $set: {
+                                "students.$[elem].status": "E"
+                            }
+                        },
+                        {
+                            arrayFilters: [{ "elem.user_id": req.body.user_id }]
+                        }
+                    ).then(result => {
+
+                        let newUserXP = {
+                            user_id: req.body.user_id,
+                            section_id: req.body.section_id,
+                            total_xp: [],
+                            quests_taken: []
+                        }
+
+                        myDB.collection('experiences')
+                            .insertOne(newUserXP, function (err, result) {
+                                if (err) {
+                                    console.log(err);
+                                    response.message = err;
+                                    throw err;
+                                }
+                                response.data = newUserXP;
+                                res.json(result);
+                            })
+
+                    })
+                    .catch((err) => {
+                        sendError(err, res);
+                    })
+
+            });
+
+        }
+
+    }
+
+
 
 })
 
@@ -486,8 +1047,8 @@ router.get('/sections', (req, res) => {
     if (req.query.instructor) {
         console.log("enter search for section1");
         getSectionsofInstructor(req, res);
-    } 
-    
+    }
+
     if (req.query.id) {
         getSectionsOfStudent(req, res);
     } else if (req.query.class) {
@@ -511,9 +1072,8 @@ router.get('/sections', (req, res) => {
                 .then((sections) => {
 
                     if (sections) {
-
                         let enrolled = sections.students.map((x) => {
-                            if (x.status == 'E') {
+                            if (x.status == 'E' || req.query.all) {
                                 return x.user_id;
                             } else {
                                 return "";
@@ -523,7 +1083,7 @@ router.get('/sections', (req, res) => {
                         res.send(enrolled);
 
                     } else {
-                        res.json([]);
+                        res.json(false);
                     }
 
                 })
@@ -577,7 +1137,7 @@ router.get('/sections', (req, res) => {
                         }
 
                     } else {
-                        res.json([]);
+                        res.json(false);
                     }
 
 
@@ -604,30 +1164,30 @@ router.get('/sections', (req, res) => {
                 })
                 .toArray()
                 .then((sections) => {
-                        console.log(sections);
-                        async.forEach(sections, processEachSection, afterAllSection);
+                    console.log(sections);
+                    async.forEach(sections, processEachSection, afterAllSection);
 
-                        function processEachSection(section, callback) {
-                            console.log(section);
-                            myDB.collection('courses')
-                                .find(ObjectID(section.course_id))
-                                .toArray()
-                                .then((course) => {
-                                    Promise.all(course[0].course_name).then(() => {
-                                        myObjArr.push({
-                                            section: section,
-                                            course_name: course[0].course_name
-                                        });
-                                        callback(null);
+                    function processEachSection(section, callback) {
+                        console.log(section);
+                        myDB.collection('courses')
+                            .find(ObjectID(section.course_id))
+                            .toArray()
+                            .then((course) => {
+                                Promise.all(course[0].course_name).then(() => {
+                                    myObjArr.push({
+                                        section: section,
+                                        course_name: course[0].course_name
                                     });
+                                    callback(null);
                                 });
+                            });
 
-                        }
+                    }
 
-                        function afterAllSection(err) {
-                            response.data = myObjArr;
-                            res.send(myObjArr);
-                        }
+                    function afterAllSection(err) {
+                        response.data = myObjArr;
+                        res.send(myObjArr);
+                    }
 
 
                 })
@@ -732,7 +1292,7 @@ router.get('/sections', (req, res) => {
                             });
 
                     } else {
-                        res.json([]);
+                        res.json(false);
                     }
 
 
@@ -754,39 +1314,54 @@ router.get('/getSectionQuests', (req, res) => {
     connection((db) => {
         const myDB = db.db('up-goe-db');
 
+        console.log("----------getSectionQuests----------");
         console.log(req.query.section_id);
-        myDB.collection('sections')
-            .findOne(ObjectID(req.query.section_id))
-            .then(section => {
+        console.log("----");
+        myDB.collection('questmaps')
+            .findOne({
+                "section_id": req.query.section_id
+            })
+            .then(questmap => {
+                console.log("questmap");
+                console.log(questmap);
+                let questIds = [];
+                questmap.quest_coordinates.forEach(coord => {
+                    if (coord.quest_id) {
+                        questIds.push(coord.quest_id);
+                    }
+                });
 
-                if (section) {
-
-                    let questIds = section.map(section => section.quests.quest_id);
-                    console.log(questIds);
-                    myDB.collection('quests')
-                        .find({
-                            _id: {
-                                $in: questIds
-                            }
+                console.log("questIds");
+                console.log(questIds);
+                myDB.collection('quests')
+                    .find()
+                    .toArray()
+                    .then((quests) => {
+                        console.log("quests after locating questmap");
+                        let sectionQuests = [];
+                        console.log(quests);
+                        console.log("comparing.....");
+                        questIds.forEach(questId => {
+                            console.log("compare ID");
+                            console.log(questId);
+                            quests.forEach(quest => {
+                                console.log(questId);
+                                console.log(quest._id);
+                                if (quest._id == questId) {
+                                    console.log(quest);
+                                    sectionQuests.push(quest);
+                                }
+                            });
                         })
-                        .toArray()
-                        .then((quests) => {
-
-                            if (quests) {
-                                response.data = quests;
-                                res.json(quests);
-                            } else {
-                                res.json(false);
-                            }
-
-                        })
-                        .catch((err) => {
-                            sendError(err, res);
-                        });
-
-                } else {
-                    res.json([]);
-                }
+                        console.log(sectionQuests);
+                        res.json(sectionQuests);
+                    })
+                    .catch((err) => {
+                        sendError(err, res);
+                    });
+            })
+            .catch((err) => {
+                sendError(err, res);
             });
     })
 });
@@ -825,7 +1400,7 @@ router.get('/sections/quests', (req, res) => {
                     });
 
                     // Removing duplicate entries in userQuests.
-                    userQuests = userQuests.filter(function(elem, pos) {
+                    userQuests = userQuests.filter(function (elem, pos) {
                         return userQuests.indexOf(elem) == pos;
                     });
 
@@ -837,7 +1412,7 @@ router.get('/sections/quests', (req, res) => {
                             sections.forEach(section => {
                                 section.quests.forEach(quest => {
                                     userQuests.forEach(userQuest => {
-                                        if(quest.quest_id == userQuest) {
+                                        if (quest.quest_id == userQuest) {
                                             AllUserQuests.push({
                                                 course: section.course_id,
                                                 section: section.section_name,
@@ -851,7 +1426,7 @@ router.get('/sections/quests', (req, res) => {
                             // Replaces the questId in AllUserQuests.questData to quest object.
                             quests.forEach(quest => {
                                 AllUserQuests.forEach(userQuest => {
-                                    if(quest._id == userQuest.questData) {
+                                    if (quest._id == userQuest.questData) {
                                         userQuest.questData = quest;
                                     }
                                 });
@@ -861,11 +1436,11 @@ router.get('/sections/quests', (req, res) => {
                                 .find()
                                 .toArray()
                                 .then((courses) => {
-                                    if(courses) {
+                                    if (courses) {
                                         // Replaces the course_id in AllUserQuests.course to course_name.
                                         AllUserQuests.forEach(quest => {
                                             courses.forEach(course => {
-                                                if(course._id == quest.course) {
+                                                if (course._id == quest.course) {
                                                     quest.course = course.course_name;
                                                 }
                                             });
@@ -886,11 +1461,11 @@ router.get('/sections/quests', (req, res) => {
                         .catch((err) => {
                             sendError(err, res);
                         });
-                    } else {
-                        response.data = sections;
-                        res.json(sections);
-                    }
-                })
+                } else {
+                    response.data = sections;
+                    res.json(sections);
+                }
+            })
             .catch((err) => {
                 sendError(err, res);
             });
@@ -1032,8 +1607,8 @@ router.post('/updateUser', (req, res) => {
                             user_contact_no: req.body.userContactNo
                         }
                     },
-                    function(err, res) {
-                        if(err) throw err;
+                    function (err, res) {
+                        if (err) throw err;
                         response.data = req.body.currentUserId;
                     }
                 );
@@ -1189,7 +1764,7 @@ router.post('/badges', (req, res) => {
 
                             } else {
 
-                                res.json([]);
+                                res.json(false);
 
                             }
 
@@ -1198,7 +1773,7 @@ router.post('/badges', (req, res) => {
                         });
 
                     } else {
-                        res.json([]);
+                        res.json(false);
                     }
 
 
@@ -1252,7 +1827,7 @@ router.get('/badges', (req, res) => {
                     });
 
                 } else {
-                    res.json([]);
+                    res.json(false);
                 }
 
             })
@@ -1280,7 +1855,7 @@ router.get('/securityQuestions', (req, res) => {
                     response.data = questions;
                     res.json(questions);
                 } else {
-                    res.json([]);
+                    res.json(false);
                 }
             })
             .catch((err) => {
@@ -1380,26 +1955,26 @@ router.post('/questLeaderboard', (req, res) => {
                                         }
                                     });
                                 });
-                            response.data = studentExp;
-                            res.json(studentExp);
-                        } else {
-                            console.log('There are no users in the database');
-                            response.data = users;
-                            res.json(false);
-                        }
-                    })
-                    .catch((err) => {
-                        sendError(err, res);
-                    });
-            } else {
-                console.log('There are no XP records in the database');
-                response.data = experiences;
-                res.json(false);
-            }
-        })
-        .catch((err) => {
-            sendError(err, res);
-        });
+                                response.data = studentExp;
+                                res.json(studentExp);
+                            } else {
+                                console.log('There are no users in the database');
+                                response.data = users;
+                                res.json(false);
+                            }
+                        })
+                        .catch((err) => {
+                            sendError(err, res);
+                        });
+                } else {
+                    console.log('There are no XP records in the database');
+                    response.data = experiences;
+                    res.json(false);
+                }
+            })
+            .catch((err) => {
+                sendError(err, res);
+            });
     });
 });
 
