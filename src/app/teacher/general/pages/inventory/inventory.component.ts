@@ -2,8 +2,7 @@
 import {
 	Component,
 	OnInit,
-	TemplateRef,
-	ViewChild
+	TemplateRef
 } from '@angular/core';
 
 import {
@@ -12,10 +11,6 @@ import {
 	FormGroup,
 	Validators
 } from '@angular/forms';
-
-import { 
-	Binary 
-} from "@angular/compiler";
 
 //Third-Party Imports
 import {
@@ -63,63 +58,63 @@ const BADGES = [
 		is_system: false,
 		badge_attainers: []
 	},
-	// {
-	// 	_id: "2",
-	// 	badge_name: "Badge2",
-	// 	badge_photo: "badge2.png",
-	// 	badge_description: "Earn this lol",
-	// 	badge_conditions: new Conditions(),
-	// 	is_system: false,
-	// 	badge_attainers: []
-	// },
-	// {
-	// 	_id: "1",
-	// 	badge_photo: "badge1.png",
-	// 	badge_description: "Earn this lol",
-	// 	badge_conditions: new Conditions(),
-	// 	is_system: false,
-	// 	badge_attainers: []
-	// },
-	// {
-	// 	_id: "2",
-	// 	badge_photo: "badge2.png",
-	// 	badge_description: "Earn this lol",
-	// 	badge_conditions: new Conditions(),
-	// 	is_system: false,
-	// 	badge_attainers: []
-	// },
-	// {
-	// 	_id: "1",
-	// 	badge_photo: "badge1.png",
-	// 	badge_description: "Earn this lol",
-	// 	badge_conditions: new Conditions(),
-	// 	is_system: false,
-	// 	badge_attainers: []
-	// },
-	// {
-	// 	_id: "2",
-	// 	badge_photo: "badge2.png",
-	// 	badge_description: "Earn this lol",
-	// 	badge_conditions: new Conditions(),
-	// 	is_system: false,
-	// 	badge_attainers: []
-	// },
-	// {
-	// 	_id: "1",
-	// 	badge_photo: "badge1.png",
-	// 	badge_description: "Earn this lol",
-	// 	badge_conditions: new Conditions(),
-	// 	is_system: false,
-	// 	badge_attainers: []
-	// },
-	// {
-	// 	_id: "2",
-	// 	badge_photo: "badge2.png",
-	// 	badge_description: "Earn this lol",
-	// 	badge_conditions: new Conditions(),
-	// 	is_system: false,
-	// 	badge_attainers: []
-	// }
+	{
+		_id: "2",
+		badge_name: "Badge2",
+		badge_photo: "badge2.png",
+		badge_description: "Earn this lol",
+		badge_conditions: new Conditions(),
+		is_system: false,
+		badge_attainers: []
+	},
+	{
+		_id: "1",
+		badge_photo: "badge1.png",
+		badge_description: "Earn this lol",
+		badge_conditions: new Conditions(),
+		is_system: false,
+		badge_attainers: []
+	},
+	{
+		_id: "2",
+		badge_photo: "badge2.png",
+		badge_description: "Earn this lol",
+		badge_conditions: new Conditions(),
+		is_system: false,
+		badge_attainers: []
+	},
+	{
+		_id: "1",
+		badge_photo: "badge1.png",
+		badge_description: "Earn this lol",
+		badge_conditions: new Conditions(),
+		is_system: false,
+		badge_attainers: []
+	},
+	{
+		_id: "2",
+		badge_photo: "badge2.png",
+		badge_description: "Earn this lol",
+		badge_conditions: new Conditions(),
+		is_system: false,
+		badge_attainers: []
+	},
+	{
+		_id: "1",
+		badge_photo: "badge1.png",
+		badge_description: "Earn this lol",
+		badge_conditions: new Conditions(),
+		is_system: false,
+		badge_attainers: []
+	},
+	{
+		_id: "2",
+		badge_photo: "badge2.png",
+		badge_description: "Earn this lol",
+		badge_conditions: new Conditions(),
+		is_system: false,
+		badge_attainers: []
+	}
 ]
 
 @Component({
@@ -129,7 +124,6 @@ const BADGES = [
 })
 
 export class InventoryComponent implements OnInit {
-	@ViewChild('imageInput') imageInput;
 	//modal
 	private bsModalRef: BsModalRef;
 	private itemForm: FormGroup;
@@ -143,8 +137,6 @@ export class InventoryComponent implements OnInit {
 	items: Item[];
 	badges: Badge[];
 	instructorSections: any[];
-	badgeImage: Binary;
-	// formData: any;
 
 	constructor(
 		private formBuilder: FormBuilder,
@@ -162,45 +154,13 @@ export class InventoryComponent implements OnInit {
 	}
 
 	createBadge() {
-		// console.log("description:" + this.badgeForm.value.badgeName);
-		console.log('Trying to create badge.. yay!');
-		console.log('badge name: ' + this.badgeForm.value.badgeName);
-		console.log('badge image: ' + this.badgeForm.value.badgeImage);
-		console.log('badge description: ' + this.badgeForm.value.badgeDescription);
-		console.log('badge section: ' + this.badgeForm.value.badgeSection);
-		console.log('badge XP: ' + this.badgeForm.value.badgeXP);
-		console.log('badge loginstreak: ' + this.badgeForm.value.badgeLoginStreak);
-		// console.log('\nbadge file: ');
-		// console.log(this.badgeImgFile);
-		console.log(this.imageInput);
-		let imageFile = this.imageInput.nativeElement;
-		console.log('uhmm. hi?');
-		if(imageFile.files && imageFile.files[0]) {
-			const formData = new FormData();
-			formData.append('image', imageFile.files[0]);
-			console.log(formData);
-			this.badgeService.uploadBadge(formData).subscribe(res => {
-				console.log('hooooooooooraaaaaaaaaaaahhhhhh');
-			});
-		}
-
-		// this.badgeService.uploadBadge(this.badgeImgFile).subscribe(res => {
-		// this.badgeService.uploadBadge(this.formData).subscribe(res => {
-			
-		// 	if(res) {
-		// 		console.log('image uploaded');
-		// 	} else {
-		// 		console.log('failed to upload');
-		// 	}
-		// });
-
-		// this.badgeService.createBadge(this.setBadge()).subscribe(data => {
-		// 	if(data) {
-		// 		console.log('Yay badge created');
-		// 	} else {
-		// 		console.log('no badge created');
-		// 	}
-		// });
+		this.badgeService.createBadge(this.setBadge()).subscribe(data => {
+			if(data) {
+				console.log('Your badge was successfuly created.');
+			} else {
+				console.log('Your badge failed to be created.');
+			}
+		});
 
 		this.bsModalRef.hide();
 		this.badgeForm.reset();
@@ -227,29 +187,15 @@ export class InventoryComponent implements OnInit {
 	}
 
 
-	public badgeImageEvent(event: any) {		
-		if (event.target.files && event.target.files[0]) {
-			const fileSelected: File = event.target.files[0];
+	public badgeImageEvent($event: any) {		
+		if ($event.target.files && $event.target.files[0]) {
+			const fileSelected: File = $event.target.files[0];
 			var reader = new FileReader();
-			// this.badgeImgFile = fileSelected;
-			// this.formData = new FormData();
-			// this.formData.append("image", fileSelected);
-			// console.log('form data =============');
-			// console.log(this.formData);
-			// console.log('--------------target------------');
-			// console.log(event.target);
+			
+			reader.readAsDataURL($event.target.files[0]); // read file as data url
 
-			// this.badgeService.createBadge(fileSelected, fileSelected.name).subscribe(data => {
-			// 	if(data) {
-			// 		console.log('succeessful');
-			// 	} else {
-			// 		console.log('eww you\'re not.')
-			// 	}
-			// });
-			reader.readAsDataURL(event.target.files[0]); // read file as data url
-
-			reader.onload = (event) => { // called once readAsDataURL is completed
-				let target: any = event.target;
+			reader.onload = ($event) => { // called once readAsDataURL is completed
+				let target: any = $event.target;
 				let content: string = target.result;
 				this.badgeImgUrl = content;
 			}
@@ -334,7 +280,6 @@ export class InventoryComponent implements OnInit {
 	 * @param itemTemplate template
 	 */
 	openItemModal(itemTemplate: TemplateRef<any>) {
-		console.log("here!");
 		this.bsModalRef = this.modalService.show(itemTemplate);
 	}
 
@@ -344,25 +289,13 @@ export class InventoryComponent implements OnInit {
 	 * @param itemTemplate template
 	 */
 	openBadgeModal(badgeTemplate: TemplateRef<any>) {
-		console.log("here!");
 		this.bsModalRef = this.modalService.show(badgeTemplate);
-	}
-
-	samplevar: boolean = false;
-	sampleTemplate(sampleTemplate: TemplateRef<any>) {
-		console.log('sample templaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaate');
-		if(this.samplevar) {
-			console.log('you are iiiiiiiiiin');
-		} else {
-			console.log('ooooooooooooouuuuuuuuuuuuuuuuut');
-		}
 	}
 
 	getSections(): void {
 		this.sectionService.getInstructorSections(
 			this.userService.getCurrentUser().getUserId()
 		).subscribe(data => {
-			console.log('here is the data ' + data[0].section.course_id);
 			this.instructorSections = data;
 		});
 	}

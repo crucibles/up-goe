@@ -132,8 +132,10 @@ export class BadgeService {
      * @param badge New badge to be added to the database
      */
     createBadge(badge: Badge) {
+        console.log('this your badge');
+        console.log(badge);
         const url = this.badgeUrl;
-        return this.http.post(url, badge).pipe(
+        return this.http.post<any>(url, badge).pipe(
             tap(data => {
                 if(data) return data
                 else return false;

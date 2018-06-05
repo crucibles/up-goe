@@ -10,8 +10,8 @@ const async = require('async');
 const nodemailer = require('nodemailer');
 const xoauth2 = require('xoauth2');
 const cookie = require('ng2-cookies');
-const multer = require('multer');
-const path = require('path');
+// const multer = require('multer');
+// const path = require('path');
 
 /**
  * Note: queries are string, body can be object because of bodyParsers;
@@ -70,46 +70,25 @@ router.use(function timeLog(req, res, next) {
     next();
 });
 
-const storage = multer.diskStorage({
-    destination: './public/assets/images',
-    filename: function(req, file, cb) {
-        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-    }
-});
+// const storage = multer.diskStorage({
+//     destination: './public/assets/images',
+//     filename: function(req, file, cb) {
+//         cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+//     }
+// });
 
 // const upload = multer({
 //     storage: storage,
 //     limits: {fileSize: 10000000}
 // }).single('appImage');
 
-const upload = multer({
-    storage: storage,
-    limits: {fileSize: 10000000}
-});
-
-router.post('/upload', upload.single('appImage'),
-    function (req, res) {
-        console.log('req------------------------');
-        // console.log(req);
-    // upload(req, res, (err) => {
-    //     if(err) {
-    //         console.log(err);
-    //     } else {
-    //         if(req.file)
-    //         console.log(req.file);
-    //         else console.log('walay sulod');
-    //         res.json(true);
-    //     }
-    // });
-});
-
-// router.post('/upload', (req, res) => {
+// router.post('/uploadBadgeImg', (req, res) => {
+//     console.log('you entererd here in api');
 //     upload(req, res, (err) => {
 //         if(err) {
 //             console.log(err);
 //         } else {
-//             if(req.file)
-//             console.log(req.file);
+//             if(req.file) console.log(req.file);
 //             else console.log('walay sulod');
 //             res.json(true);
 //         }
@@ -1128,9 +1107,33 @@ router.post('/badges', (req, res) => {
     console.log("METHOD!!!!!!!!!!!!!!!!!");
     console.log(req.method);
 
-    if(req.body.badge) {
-        console.log(req.body.badge);
-        // res.json(true);
+    if(req.body.badge_name) {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('badges')
+                .count({badge_name: req.body.badge_name})
+                .then((count) => {
+                    if(count > 0) {
+                        console.log('This badge already exists.');
+                        response.data = req.body.badge_name;
+                        res.json(false);
+                    } else {
+                        myDB.collection('badges')
+                            .insertOne((req.body), function(err, res) {
+                                if(err) {
+                                    console.log('Error inserting new badge.')
+                                    throw err;
+                                } else {
+                                    console.log('Badge successfully inserted.');
+                                }
+                            });
+                    }
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                });
+        });
+        res.json(true);
     } else {
 
         connection((db) => {
