@@ -7,6 +7,19 @@ td {
     align-items: flex-end;
 }
 
+.remove-border {
+    border: none;
+}
+
+/*For form's input*/
+.user-information {
+    width: 100%;
+}
+
+.disable {
+    color: gray;
+}
+
 /*Header3 Design*/
 #title:after {
     content:' ';

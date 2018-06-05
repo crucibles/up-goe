@@ -9,113 +9,115 @@
 	</div>
 </div>
 
-<ng-template class="create-quest-modal" #createQuestTemplate>
-	<!--Modal Header-->
-	<div class="modal-header">
-		<h4 class="modal-title">Create Quest</h4>
-		<button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
-			<span aria-hidden="true">&times;</span>
-		</button>
-	</div>
-
-	<!--Modal Body-->
-	<form class="create-quest-body" [formGroup]="createQuestForm">
-		<div class="modal-body">
-			<div class="row">
-				<div class="col-md-3">
-					Quest Title
+<ng-container *ngIf="isCreateModalReady">
+	<ng-template class="create-quest-modal" #createQuestTemplate>
+		<!--Modal Header-->
+		<div class="modal-header">
+			<h4 class="modal-title">Create Quest</h4>
+			<button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+	
+		<!--Modal Body-->
+		<form class="create-quest-body" [formGroup]="createQuestForm">
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-md-3">
+						Quest Title
+					</div>
+					<div class="col-md-7">
+						<input type="text" formControlName="questTitle" class="information-input remove-border" required/>
+					</div>
+					<div *ngIf="questTitle.invalid" class="col-md-2 required-text">*required</div>
 				</div>
-				<div class="col-md-7">
-					<input type="text" formControlName="questTitle" class="information-input remove-border" required/>
+				<div class="row">
+					<div class="col-md-3">
+						Quest Description:
+					</div>
+					<div class="col-md-7">
+						<textarea type="text" formControlName="questDescription" class="information-input remove-border"></textarea>
+					</div>
 				</div>
-				<div *ngIf="questTitle.invalid" class="col-md-2 required-text">*required</div>
-			</div>
-			<div class="row">
-				<div class="col-md-3">
-					Quest Description:
+				<div class="row">
+					<div class="col-md-3">
+						Quest Retakable:
+					</div>
+					<div class="col-md-7">
+						<label>
+							<input type="radio" formControlName="questRetakable" value="true"> Yes
+						</label>
+						<label>
+							<input type="radio" formControlName="questRetakable" value="false"> No
+						</label>
+					</div>
 				</div>
-				<div class="col-md-7">
-					<textarea type="text" formControlName="questDescription" class="information-input remove-border"></textarea>
+				<div class="row">
+					<div class="col-md-3">
+						Quest Badgee:
+					</div>
+					<div class="col-md-7">
+						<label formArrayName="questBadges" style="margin-right: 5px" *ngFor="let badge of questBadgesArray.controls; let i = index">
+							<ng-container [formGroupName]="i">
+								<input type="checkbox" formControlName="isChecked">
+							</ng-container>
+							{{questBadges[i].badgeName}}
+						</label>
+					</div>
 				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-3">
-					Quest Retakable:
+				<div class="row">
+					<div class="col-md-3">
+						Deadline:
+					</div>
+					<div class="col-md-7">
+						<input id="end-date" type="datetime-local" formControlName="questEndDate" class="information-input remove-border" required/>
+					</div>
+					<div *ngIf="questEndDate.invalid" class="col-md-2 required-text">
+						<span *ngIf="questEndDate.errors.required">
+							*required
+						</span>
+						<span *ngIf="questEndDate.errors.pattern">
+							*correct date
+						</span>
+					</div>
 				</div>
-				<div class="col-md-7">
-					<label>
-						<input type="radio" formControlName="questRetakable" value="true"> Yes
-					</label>
-					<label>
-						<input type="radio" formControlName="questRetakable" value="false"> No
-					</label>
+				<div class="row">
+					<div class="col-md-3">
+						EXP gained:
+					</div>
+					<div class="col-md-7">
+						<input id="questEXP" type="text" formControlName="questEXP" class="information-input remove-border" required/>
+					</div>
+					<div *ngIf="questEXP.errors" class="col-md-2 required-text">
+						<span *ngIf="questEXP.errors.required">
+							*required
+						</span>
+						<span *ngIf="questEXP.errors.pattern">
+							*must be number
+						</span>
+					</div>
 				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-3">
-					Quest Badgee:
-				</div>
-				<div class="col-md-7">
-					<label formArrayName="questBadges" style="margin-right: 5px" *ngFor="let badge of questBadgesArray.controls; let i = index">
-						<ng-container [formGroupName]="i">
-							<input type="checkbox" formControlName="isChecked">
-						</ng-container>
-						{{questBadges[i].badgeName}}
-					</label>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-3">
-					Deadline:
-				</div>
-				<div class="col-md-7">
-					<input id="end-date" type="datetime-local" formControlName="questEndDate" class="information-input remove-border" required/>
-				</div>
-				<div *ngIf="questEndDate.invalid" class="col-md-2 required-text">
-					<span *ngIf="questEndDate.errors.required">
-						*required
-					</span>
-					<span *ngIf="questEndDate.errors.pattern">
-						*correct date
-					</span>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-3">
-					EXP gained:
-				</div>
-				<div class="col-md-7">
-					<input id="questEXP" type="text" formControlName="questEXP" class="information-input remove-border" required/>
-				</div>
-				<div *ngIf="questEXP.errors" class="col-md-2 required-text">
-					<span *ngIf="questEXP.errors.required">
-						*required
-					</span>
-					<span *ngIf="questEXP.errors.pattern">
+				<div class="row">
+					<div class="col-md-3">
+						HP gained:
+					</div>
+					<div class="col-md-7">
+						<input type="text" formControlName="questHP" class="information-input remove-border" />
+					</div>
+					<div *ngIf="questHP.invalid && questHP.errors.pattern" class="col-md-2 required-text">
 						*must be number
-					</span>
+					</div>
 				</div>
 			</div>
-			<div class="row">
-				<div class="col-md-3">
-					HP gained:
-				</div>
-				<div class="col-md-7">
-					<input type="text" formControlName="questHP" class="information-input remove-border" />
-				</div>
-				<div *ngIf="questHP.invalid && questHP.errors.pattern" class="col-md-2 required-text">
-					*must be number
-				</div>
+			<!-- Quest Modal Buttons -->
+			<div class="modal-footer">
+				<!-- shows submit & abandon buttons if user is a participant -->
+				<button class="btn btn-danger mr-auto" (click)="resetQuest()">Reset</button>
+				<button class="btn btn-success" [disabled]="createQuestForm.invalid" (click)="createQuest()">Create</button>
 			</div>
-		</div>
-		<!-- Quest Modal Buttons -->
-		<div class="modal-footer">
-			<!-- shows submit & abandon buttons if user is a participant -->
-			<button class="btn btn-danger mr-auto" (click)="resetQuest()">Reset</button>
-			<button class="btn btn-success" [disabled]="createQuestForm.invalid" (click)="createQuest()">Create</button>
-		</div>
-	</form>
-</ng-template>
+		</form>
+	</ng-template>
+</ng-container>
 
 <!-- Modal Template for Quests-->
 <ng-template #questTemplate>

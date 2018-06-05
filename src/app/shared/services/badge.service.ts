@@ -191,8 +191,19 @@ export class BadgeService {
      * 
      * @returns array of section-level badges
      */
-    getSectionBadges(section_id) {
+    getSectionBadges(section_id): Observable<any[]> {
         const url = this.badgeUrl;
+
+        let params = new HttpParams()
+			.set('section_id', section_id)
+			.set('method', 'getSectionBadges');
+
+		return this.http.get<any[]>(url, {
+			params: params
+		}).pipe(
+			tap(quests => quests ? console.log(quests) : console.log('did not fetched quests')),
+			catchError(this.handleError(`getSectionBadges`, []))
+		);
     }
 
     /**
