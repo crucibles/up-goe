@@ -19,7 +19,8 @@ import {
 import {
     PageService,
     UserService,
-    BadgeService
+    BadgeService,
+    QuestService
 } from 'shared/services';
 
 /* AHJ: Remove once the services are implemented properly */
@@ -81,7 +82,8 @@ export class GenProfileComponent implements OnInit {
     constructor(
         private pageService: PageService,
         private userService: UserService,
-        private badgeService: BadgeService
+        private badgeService: BadgeService,
+        private questService: QuestService
     ) {
     }
 

@@ -43,6 +43,8 @@ import {
 	SectionService,
 	UserService
 } from 'shared/services';
+import { IfObservable } from 'rxjs/observable/IfObservable';
+import { Observable } from 'rxjs/Observable';
 
 
 @Component({
@@ -101,6 +103,7 @@ export class GenSidetabComponent implements OnInit {
 		this.image = imageDir + "not-found.jpg";
 		this.setUser();
 		this.initializeForm();
+		console.log("SIDETABK");
 	}
 
 	ngOnInit() {
@@ -109,6 +112,7 @@ export class GenSidetabComponent implements OnInit {
 		if (this.isProfile) {
 			this.getUserSections(this.currentUser.getUserId());
 		} else {
+			console.warn("refreshing quests");
 			this.getQuests(this.currentUser.getUserId());
 		}
 	}

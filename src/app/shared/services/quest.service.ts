@@ -58,6 +58,9 @@ export class QuestService {
 	 */
 	private sectionQuestUrl = "api/sections/quests";
 
+
+	private experienceUrl = "api/experiences";
+
 	constructor(
 		private http: HttpClient,
 		private sectionService: SectionService,
@@ -65,16 +68,31 @@ export class QuestService {
 	) { }
 
 	/**
-	 * Lets the student abandon/quit a quest.
-	 * @description Let the user abandon the quest, put status ailments on user, 
-	 * and removes user from the quest participant's list by calling endQuest()  
+	 * Lets the student abandon/quit a quest. Removing the id in the quest participants.
+	 * @description Let the student abandon the quest
 	 * 
 	 * @param quest_id id of the quest to be abandoned by user
 	 * @param user_id id of the student abandoning the quest
+	 * @author Cedric Alvaro
 	 * 
-	 * @see endQuest()
 	 */
-	abandonQuest(quest_id, user_id) {
+	abandonQuest(user_id, quest_id, section_id) {
+
+		const url = this.sectionUrl;
+
+		let body = {
+			user_id: user_id,
+			section_id: section_id,
+			quest_id: quest_id,
+			abandon: true
+		}
+		console.warn(body);
+		return this.http.post(url, body).pipe(
+			tap(data => {
+				console.warn(data);
+				return data;
+			})
+		);
 
 	}
 
@@ -319,9 +337,22 @@ export class QuestService {
 	 */
 	joinQuest(user_id, quest_id, section_id) {
 		const url = this.sectionUrl;
+
+		let body = {
+			user_id: user_id,
+			section_id: section_id,
+			quest_id: quest_id
+		}
+		console.warn(body);
+		return this.http.post(url, body).pipe(
+			tap(data => {
+				console.warn(data);
+				return data;
+			})
+		);
 	}
 
-	/**
+	/**\
 	 * Submits student's quest submission.
 	 * @description Submits the user's submission and removes user from the quest participant's list 
 	 * by calling endQuest() 
@@ -330,9 +361,23 @@ export class QuestService {
 	 * 
 	 * @see endQuest
 	 */
-	submitQuest(idk) {
-		//AHJ: Still needs work here! di ko kabalo unsaon ni xD like ang parameter or unsa atung pagsubmit and all
-		//AHJ: Idk what url to use
+	submitQuest(data: any, user_id, quest_id, section_id) {
+		const url = this.sectionUrl;
+
+		let body = {
+			user_id: user_id,
+			section_id: section_id,
+			quest_id: quest_id,
+			data: data
+		}
+
+		console.warn(body.data);
+		return this.http.post(url, body).pipe(
+			tap(data => {
+				console.warn(data);
+				return data;
+			})
+		);
 	}
 
 	/**
