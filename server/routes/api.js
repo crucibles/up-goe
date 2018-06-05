@@ -330,7 +330,93 @@ router.post('/createQuest', (req, res) => {
 });
 
 /**
- * @description portal for requests regarding users. api/users
+ * @description portal for requests regarding experiences. api/users
+ * @author Sumandang, AJ Ruth H.
+ */
+router.get('/experiences', (req, res) => {
+    console.log("-----------GET EXP--------------")
+    connection((db) => {
+        const myDB = db.db('up-goe-db');
+        console.log("req.params");
+        console.log(req.query);
+
+        let query = {
+            section_id: req.query.section_id
+        };
+
+        if (req.query.user_id) {
+            query = {
+                section_id: req.query.section_id,
+                user_id: req.query.user_id
+            }
+        }
+        console.log(query);
+        console.log("query");
+
+        myDB.collection('experiences')
+            .find(query)
+            .toArray()
+            .then(experiences => {
+                console.log("<experiences>");
+                console.log(experiences);
+                res.json(experiences);
+            })
+            .catch(err => {
+                console.log('err')
+                console.log(err)
+                sendError(err, res);
+            })
+    });
+});
+
+/**
+ * @description portal for requests regarding experiences. api/experiences
+ * @author AJ Ruth Sumandang
+ */
+router.post('/experiences', (req, res) => {
+    if (req.body.method == "setStudentQuestGrade") {
+        console.log("beforesetenter")
+        setStudentQuestGrade(req, res);
+    }
+
+    function setStudentQuestGrade(req, res) {
+        console.log("-------entered setgrade------------");
+        console.log(req.body);
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('experiences')
+                .updateOne(
+                    {
+                        user_id: req.body.user_id,
+                        section_id: req.body.section_id
+                    },
+                    {
+                        $set: {
+                            "quests_taken.$[elem].quest_grade":  req.body.grade,
+                            "quests_taken.$[elem].is_graded": true  
+                        }
+                    },
+                    {
+                        arrayFilters: [{
+                            "elem.quest_id": req.body.quest_id
+                        }]
+                    }
+                )
+                .then(grade => {
+                    console.log("grade");
+                    console.log(grade);
+                    res.json(true);
+                })
+                .catch(err => {
+                    console.log("ERROR");
+                    sendError(err, res);
+                })
+        })
+    }
+});
+
+/**
+ * @description portal for requests regarding users. api/login
  * @author Cedric Yao Alvaro
  * @author Donevir Hynson - modified Jan 11 2018
  */
@@ -949,7 +1035,7 @@ router.get('/sections', (req, res) => {
 
     } else if (req.query.students) {
         getEnrolledStudents(req, res);
-    } 
+    }
 
     function getEnrolledStudents(req, res) {
         connection((db) => {

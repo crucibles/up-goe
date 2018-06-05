@@ -29,21 +29,22 @@ const SECTIONS: any[] = [
     {
         course_name: "CMSC 128",
         section_name: "A",
-        week_total_exp: [10, 30, 70, 300, 500],
-        max_exp: 700
-    },
-    {
-        course_name: "CMSC 128",
-        section_name: "B",
-        week_total_exp: [120, 40, 80, 321, 700],
-        max_exp: 1200
-    },
-    {
-        course_name: "CMSC 141",
-        section_name: "J",
-        week_total_exp: [10, 30, 70, 300, 500],
-        max_exp: 1000
-    },
+        week_total_exp: [10, 20, 30, 35],
+        max_exp: 200
+    }
+    // },
+    // {
+    //     course_name: "CMSC 128",
+    //     section_name: "B",
+    //     week_total_exp: [120, 40, 80, 321, 700],
+    //     max_exp: 1200
+    // },
+    // {
+    //     course_name: "CMSC 141",
+    //     section_name: "J",
+    //     week_total_exp: [10, 30, 70, 300, 500],
+    //     max_exp: 1000
+    // },
 ];
 
 //TOTXP - total accumulative weekly experience points of current student
@@ -163,7 +164,7 @@ export class GenProfileComponent implements OnInit {
 
             this.lineChartData.push(dataLine);
         })
-
+        console.log(this.lineChartData);
     }
 
     /* Below are the helper functions */

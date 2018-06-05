@@ -245,9 +245,9 @@ export class InventoryComponent implements OnInit {
 	}
 
 	/**
-	 * Open item modal
-	 * @description Open 'Add Item' modal.
-	 * @param itemTemplate template
+	 * Open badge modal
+	 * @description Open 'Add Badge' modal.
+	 * @param badgeTemplate template
 	 */
 	openBadgeModal(badgeTemplate: TemplateRef<any>) {
 		console.log("here!");
