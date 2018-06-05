@@ -147,7 +147,7 @@ export class SpecificQuestMapComponent implements OnInit {
 			this.questService.getSectionQuestMap(this.currentSection.getSectionId()).subscribe(questmap => {
 				console.log("QUESTMAP LOADEd");
 				console.log(questmap);
-				this.questMap = new QuestMap(questmap, this.quests, true);
+				this.questMap = new QuestMap(questmap, this.quests);
 				this.setQuestMap();
 			});
 		});
