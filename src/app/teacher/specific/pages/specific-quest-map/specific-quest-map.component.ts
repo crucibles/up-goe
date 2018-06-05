@@ -80,6 +80,7 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 	@ViewChild('questTemplate') questTemplate: TemplateRef<any>;
 	@ViewChild('createQuestTemplate') createQuestTemplate: TemplateRef<any>;
 	@ViewChild('chartCanvas') chartCanvas: ElementRef;
+	private isCreateModalReady: boolean = false;
 	private bsModalRef: BsModalRef;
 	private createQuestForm: FormGroup;
 
@@ -121,11 +122,11 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 
 	ngOnInit() {
 		console.log("Quest map");
+		this.isCreateModalReady = false;
 		this.setDefault();
 		this.getCurrentUser();
 		this.getCurrentSection();
 		this.createBadgeArray();
-		this.initializeForm();
 	}
 
 	ngAfterViewInit() {
@@ -135,17 +136,22 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 
 	createBadgeArray() {
 		let badges: Badge[] = [];
-		//this.badgeService.getSectionBadges("").map(badge => new Badge(badge));
-		//AHJ: unimplemented; retrieve badges
-		this.questBadges = badges.map(function week(badge) {
-			let obj = {
-				badgeId: badge.getBadgeId(),
-				badgeName: badge.getBadgeName(),
-				badgeDescription: badge.getBadgeDescription(),
-				isChecked: false
+		this.badgeService.getSectionBadges(this.currentSection.getSectionId()).subscribe(
+			badges => {
+				badges = badges.map(badge => new Badge(badge));
+				this.questBadges = badges.map(function week(badge) {
+					let obj = {
+						badgeId: badge.getBadgeId(),
+						badgeName: badge.getBadgeName(),
+						badgeDescription: badge.getBadgeDescription(),
+						isChecked: false
+					}
+					return obj;
+				});
+
+				this.initializeForm();
 			}
-			return obj;
-		});
+		);
 	}
 
 	initializeForm() {
@@ -158,6 +164,8 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 			questBadges: this.buildBadges(),
 			questEndDate: new FormControl("", Validators.required)
 		});
+
+		this.isCreateModalReady = true;
 	}
 
 	buildBadges() {

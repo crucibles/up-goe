@@ -98,6 +98,8 @@ export class SectionService {
 
 	setCurrentUserSections(userSections) {
 		this.currentUserSections = userSections;
+		console.log("SET CURRENT SECTIONSSSSs");
+		console.log(this.currentUserSections);
 	}
 
 	/**

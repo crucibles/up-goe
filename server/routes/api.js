@@ -393,8 +393,8 @@ router.post('/experiences', (req, res) => {
                     },
                     {
                         $set: {
-                            "quests_taken.$[elem].quest_grade":  req.body.grade,
-                            "quests_taken.$[elem].is_graded": true  
+                            "quests_taken.$[elem].quest_grade": req.body.grade,
+                            "quests_taken.$[elem].is_graded": true
                         }
                     },
                     {
@@ -1538,48 +1538,90 @@ router.post('/badges', (req, res) => {
 router.get('/badges', (req, res) => {
     console.log("IM IN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 
-    connection((db) => {
-        const myDB = db.db('up-goe-db');
-        myDB.collection('badges')
-            .find()
-            .toArray()
-            .then((badges) => {
+    if (req.query.method && req.query.method == "getSectionBadges") {
+        getSectionBadges(req, res);
+    } else {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('badges')
+                .find()
+                .toArray()
+                .then((badges) => {
 
-                if (badges) {
+                    if (badges) {
 
-                    Promise.all(badges).then(badges => {
-                        // earned system badges
-                        let esb = badges.filter(b => {
-                            console.log(b);
-                            if (b.is_system_badge == true) {
-                                let a = b.badge_attainers.filter(user => {
-                                    console.log(user);
-                                    if (user == req.query.id) {
-                                        return user;
-                                    }
-                                });
-                                console.log(a);
-                                if (a.length > 0) {
-                                    return b;
-                                };
-                            }
+                        Promise.all(badges).then(badges => {
+                            // earned system badges
+                            let esb = badges.filter(b => {
+                                console.log(b);
+                                if (b.is_system_badge == true) {
+                                    let a = b.badge_attainers.filter(user => {
+                                        console.log(user);
+                                        if (user == req.query.id) {
+                                            return user;
+                                        }
+                                    });
+                                    console.log(a);
+                                    if (a.length > 0) {
+                                        return b;
+                                    };
+                                }
+                            });
+                            console.log(esb);
+                            response.data = esb;
+                            res.json(esb);
                         });
-                        console.log(esb);
-                        response.data = esb;
-                        res.json(esb);
-                    });
 
-                } else {
-                    res.json([]);
-                }
+                    } else {
+                        res.json([]);
+                    }
 
-            })
-            .catch((err) => {
-                sendError(err, res);
-            });
-    });
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                });
+        });
+    }
 
+    function getSectionBadges(req, res){
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+    
+            console.log("----------getSectionBadges----------");
+            console.log(req.query.section_id);
+            console.log("----");
+            myDB.collection('sections')
+                .findOne(ObjectID(req.query.section_id))
+                .then(section => {
+                    console.log("section after finding current one");
+                    console.log(section);
+                    let sectionBadges = [];
+                    section.badges.forEach(badge => {
+                        sectionBadges.push(ObjectID(badge));
+                    })
+                    
+                    myDB.collection('badges')
+                        .find({
+                            _id: {
+                                $in: sectionBadges
+                            }
+                        })
+                        .toArray()
+                        .then((badges) => {
+                            console.log("badges after section");
 
+                            console.log(badges);
+                            res.json(badges);
+                        })
+                        .catch((err) => {
+                            sendError(err, res);
+                        });
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                });
+        })
+    }
 });
 
 /**
