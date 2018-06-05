@@ -141,14 +141,14 @@
 		</button>
 	</div>
 
-	<form class="form-horizontal" [formGroup]="badgeForm" (ngSubmit)="createBadge()">
+	<form class="form-horizontal" [formGroup]="badgeForm" enctype="multipart/form-data">
 		<!--Modal Body-->
 		<div class="modal-body">
 			<div class="row">
 				<div class="col-md-3">
 					Badge Image
 					<label for="custom-btn-upload" class="btn btn-warning btn-upload">Upload</label>
-					<input type="file" id="custom-btn-upload" accept="image/*" formControlName="badgeImage" (change)="badgeImageEvent($event)">
+					<input type="file" #imageInput name="appImage" id="custom-btn-upload" accept="image/*" formControlName="badgeImage" (change)="badgeImageEvent($event)">
 				</div>
 				<div class="col-md-3 image-right">
 					<img class="item-img" [src]="badgeImgUrl" />
@@ -159,18 +159,61 @@
 			</div>
 			<div class="row">
 				<div class="col-md-3">
-					Badge Name
+					Badge Name:
 				</div>
 				<div class="col-md-9">
 					<input type="text" formControlName="badgeName" class="information-input remove-border" />
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-3">
+					Description:
+				</div>
+				<div class="col-md-9">
+					<input type="text" formControlName="badgeDescription" class="information-input remove-border" />
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-3">
+					Section:
+				</div>
+				<div class="col-md-9">
+					<select type="text" formControlName="badgeSection" class="information-input remove-border">
+						<option *ngFor="let section of instructorSections" [value]="section.section._id">
+							{{ section.course_name }} - {{ section.section.section_name }}
+						</option>
+					</select>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-3">
+					Conditions:
+				</div>
+				<div class="col-md-9">
+					<table>
+						<tr>
+							<td><label for="badgeXP">XP:</label></td>
+							<td><input type="number" formControlName="badgeXP" class="information-input remove-border" id="badgeXP" /></td>
+						</tr>
+						<tr>
+							<td><label for="badgeLoginStreak">Streak:</label></td>
+							<td><input type="number" formControlName="badgeLoginStreak" class="information-input remove-border" id="badgeLoginStreak" /></td>
+						</tr>
+					</table>
 				</div>
 			</div>
 		</div>
 		<!-- Quest Modal Buttons -->
 		<div class="modal-footer">
 			<!-- shows submit & abandon buttons if user is a participant -->
-			<button type="submit" class="btn btn-success mr-auto">Create</button>
-			<button class="btn btn-danger" (click)="bsModalRef.hide()">Cancel</button>
+			<button type="submit" class="btn btn-success mr-auto" (click)="createBadge()">Create</button>
+			<!-- <button type="submit" class="btn btn-success mr-auto" (click)="sampleTemplate(sample)">Create</button> -->
+			<button class="btn btn-danger" (click)="badgeForm.reset();bsModalRef.hide()">Cancel</button>
 		</div>
+		<!-- <ng-template #sample>
+			<div>
+			{{ samplevar }}
+		</div>
+		</ng-template> -->
 	</form>
 </ng-template>

@@ -67,6 +67,7 @@ export class BadgeService {
      */
     private badgeUrl = 'api/badges';    // URL to: server/routes/api.js for users
     private userUrl = 'api/users';
+    private uploadBadgeUrl = 'api/upload';
 
     constructor(
         private userService: UserService,
@@ -132,7 +133,24 @@ export class BadgeService {
      */
     createBadge(badge: Badge) {
         const url = this.badgeUrl;
+        return this.http.post(url, badge).pipe(
+            tap(data => {
+                if(data) return data
+                else return false;
+            }),
+            catchError(this.handleError<any>(`creating new badge`))
+        );
+    }
 
+    uploadBadge(badgeFile: any) {
+        const url = this.uploadBadgeUrl;
+        return this.http.post(url, badgeFile).pipe(
+            tap(data => {
+                if(data) return data;
+                else return false;
+            }),
+            catchError(this.handleError<any>(`uploading badge image`))
+        );
     }
 
     /**

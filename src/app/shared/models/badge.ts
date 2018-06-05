@@ -1,3 +1,4 @@
+import { Binary } from "@angular/compiler";
 
 /**
  * A class to represent badges
@@ -14,7 +15,7 @@ export class Badge {
 
     private _id: string;
     private badge_name: string;
-    private badge_photo: string;
+    private badge_photo: Binary;
     private badge_description: string;
     private badge_conditions: Conditions;
     private is_system: boolean;
@@ -26,14 +27,14 @@ export class Badge {
         if (badge) {
             this._id = badge._id;
             this.badge_name = badge.badge_name? badge.badge_name: "";
-            this.badge_photo = badge.badge_photo ? badge.badge_photo : "";
+            this.badge_photo = badge.badge_photo ? badge.badge_photo : null;
             this.badge_description = badge.badge_description ? badge.badge_description : "";
             this.badge_conditions = badge.badge_conditions ? new Conditions(badge.badge_conditions) : new Conditions();
             this.is_system = badge.is_system ? badge.is_system : false;
             this.badge_attainers = badge.badge_attainers ? badge.badge_attainers : [];
         } else {
             this.badge_name = "";
-            this.badge_photo = "";
+            this.badge_photo = null;
             this.badge_description = "";
             this.badge_conditions = new Conditions();
             this.is_system = false;
@@ -50,7 +51,7 @@ export class Badge {
         badge_attainers
     ) {
         this.badge_name = badge_name? badge_name : "";
-        this.badge_photo = badge_photo ? badge_photo : "";
+        this.badge_photo = badge_photo ? badge_photo : null;
         this.badge_description = badge_description ? badge_description : "";
         this.badge_conditions = badge_conditions ? badge_conditions : new Conditions();
         this.is_system = is_system ? is_system : false;
@@ -68,18 +69,21 @@ export class Badge {
     /**
      * Returns image with directory
      */
-    getBadgePhoto(): string {
-        let image: string = "";
-
-        // if image does not exist or if user has not set an image
-        if (!this.badge_photo || this.badge_photo.length == 0) {
-            image = this.imageDir + "not-found.jpg";
-        } else {
-            image = this.imageDir + this.badge_photo;
-        }
-
-        return image;
+    getBadgePhoto(): Binary{
+        return this.badge_photo;
     }
+    // getBadgePhoto(): string {
+    //     let image: string = "";
+
+    //     // if image does not exist or if user has not set an image
+    //     if (!this.badge_photo || this.badge_photo.length == 0) {
+    //         image = this.imageDir + "not-found.jpg";
+    //     } else {
+    //         image = this.imageDir + this.badge_photo;
+    //     }
+
+    //     return image;
+    // }
 
     getBadgeDescription(): string {
         return this.badge_description;
@@ -105,7 +109,7 @@ export class Badge {
         this.badge_name = badge_name;
     }
 
-    setBadgePhoto(badge_photo: string) {
+    setBadgePhoto(badge_photo: Binary) {
         this.badge_photo = badge_photo;
     }
 

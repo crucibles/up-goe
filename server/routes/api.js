@@ -10,6 +10,8 @@ const async = require('async');
 const nodemailer = require('nodemailer');
 const xoauth2 = require('xoauth2');
 const cookie = require('ng2-cookies');
+const multer = require('multer');
+const path = require('path');
 
 /**
  * Note: queries are string, body can be object because of bodyParsers;
@@ -63,11 +65,56 @@ let response = {
     message: null
 };
 
-
 router.use(function timeLog(req, res, next) {
     console.log('Time: ', Date.now());
     next();
 });
+
+const storage = multer.diskStorage({
+    destination: './public/assets/images',
+    filename: function(req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    }
+});
+
+// const upload = multer({
+//     storage: storage,
+//     limits: {fileSize: 10000000}
+// }).single('appImage');
+
+const upload = multer({
+    storage: storage,
+    limits: {fileSize: 10000000}
+});
+
+router.post('/upload', upload.single('appImage'),
+    function (req, res) {
+        console.log('req------------------------');
+        // console.log(req);
+    // upload(req, res, (err) => {
+    //     if(err) {
+    //         console.log(err);
+    //     } else {
+    //         if(req.file)
+    //         console.log(req.file);
+    //         else console.log('walay sulod');
+    //         res.json(true);
+    //     }
+    // });
+});
+
+// router.post('/upload', (req, res) => {
+//     upload(req, res, (err) => {
+//         if(err) {
+//             console.log(err);
+//         } else {
+//             if(req.file)
+//             console.log(req.file);
+//             else console.log('walay sulod');
+//             res.json(true);
+//         }
+//     });
+// });
 
 /**
  * @description portal for requests regarding courses. api/courses
@@ -237,7 +284,7 @@ router.post('/login', (req, res) => {
 
                 } else {
 
-                    res.json([]);
+                    res.json(false);
                 }
             })
             .catch((err) => {
@@ -524,6 +571,7 @@ router.get('/sections', (req, res) => {
                     if (sections) {
 
                         async.forEach(sections, processEachSection, afterAllSection);
+                        // async.forEach(sections, processEachSection);
 
                         function processEachSection(section, callback) {
 
@@ -541,6 +589,8 @@ router.get('/sections', (req, res) => {
                                 });
 
                         }
+                        
+                        // res.json(myObjArr);
 
                         function afterAllSection(err) {
                             response.data = myObjArr;
@@ -1078,7 +1128,10 @@ router.post('/badges', (req, res) => {
     console.log("METHOD!!!!!!!!!!!!!!!!!");
     console.log(req.method);
 
-    if (req.method == "POST") {
+    if(req.body.badge) {
+        console.log(req.body.badge);
+        // res.json(true);
+    } else {
 
         connection((db) => {
             const myDB = db.db('up-goe-db');
@@ -1284,7 +1337,10 @@ router.post('/questLeaderboard', (req, res) => {
     connection((db) => {
         const myDB = db.db('up-goe-db');
         myDB.collection('experiences')
-            .find({ section_id: req.body.currSection })
+            .find({ 
+                section_id: req.body.currSection,
+                is_graded: true 
+            })
             .toArray()
             .then((experiences) => {
                 if (experiences) {
