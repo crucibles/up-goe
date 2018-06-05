@@ -225,7 +225,7 @@ export class GenProfileComponent implements OnInit {
             
                     let dataLine: any = {
                         data: dataGrade,
-                        label: courseSection.course_name + " - " +  section.getSectionId()
+                        label: courseSection.course_name + " - " +  section.getSectionName()
                     };
                     
                     if(this.lineChartData.length == 0){
