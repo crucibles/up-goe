@@ -1,62 +1,106 @@
 // Core Imports
 import {
-  Component,
-  OnInit
+	Component,
+	OnInit
 } from '@angular/core';
 
 import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators
+	FormBuilder,
+	FormControl,
+	FormGroup,
+	Validators
 } from '@angular/forms';
 
 //Application Imports
 import {
-  User
+	User
 } from 'shared/models';
 
 import {
-  UserService
+	UserService
 } from 'shared/services';
 
 @Component({
-  selector: 'app-gen-profile',
-  templateUrl: './gen-profile.component.html',
-  styleUrls: ['./gen-profile.component.css']
+	selector: 'app-gen-profile',
+	templateUrl: './gen-profile.component.html',
+	styleUrls: ['./gen-profile.component.css']
 })
 export class GenProfileComponent implements OnInit {
-  currentUser: User;
-  userForm: FormGroup;
+	// basic info
+	currentUser: User;
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private userService: UserService
-  ) { }
+	// for forms
+	userForm: FormGroup;
+	isEditing: boolean = false;
 
-  ngOnInit() {
-    this.getUser();
-  }
+	constructor(
+		private formBuilder: FormBuilder,
+		private userService: UserService
+	) { }
 
-  /**
-   * Obtains information of the current user
-   */
-  getUser(): void {
-    let currentUser = JSON.parse(localStorage.getItem("currentUser"));
-    this.userService.getUser(currentUser._id)
-      .subscribe(user => {
-        this.currentUser = new User(user);
-        this.initializeForm();
-      });
-  }
+	ngOnInit() {
+		this.setDefault();
+		this.getUser();
+	}
 
-  initializeForm() {
-    this.userForm = this.formBuilder.group({
-      schoolId: new FormControl(this.currentUser.getUserSchoolId()),
-      email: new FormControl(this.currentUser.getUserEmail(), Validators.required),
-      contactNo: new FormControl(this.currentUser.getUserContactNo(), Validators.required),
-    });
-    this.userForm.disable();
-  }
+	setDefault() {
+		this.isEditing = false;
+	}
+
+	/**
+	 * Obtains information of the current user
+	 */
+	getUser(): void {
+		this.currentUser = this.userService.getCurrentUser();
+		this.initializeForm();
+	}
+
+	initializeForm() {
+		this.userForm = this.formBuilder.group({
+			firstName: new FormControl(this.currentUser.getUserFirstName(), Validators.required),
+			middleName: new FormControl(this.currentUser.getUserMiddleName()),
+			lastName: new FormControl(this.currentUser.getUserLastName(), Validators.required),
+			birthDate: new FormControl(this.currentUser.getUserFormattedBirthdate(), Validators.required),
+			contactNo: new FormControl(this.currentUser.getUserContactNo(), Validators.required),
+			schoolId: new FormControl(this.currentUser.getUserSchoolId(), Validators.required),
+			email: new FormControl(this.currentUser.getUserEmail()),
+		});
+		this.userForm.disable();
+	}
+
+	editProfile() {
+		console.log("EDITPPROFILE");
+		if (this.userForm.invalid) {
+			return;
+		}
+		console.log("EDITPPROFILEentered");
+		console.log("editprofile");
+		console.log(this.userForm);
+
+		if (this.userForm.get('contactNo').dirty) {
+			let currentUserId = this.currentUser.getUserId();
+			let userContactNo = this.userForm.value.contactNo;
+
+			this.userService.changeProfileData(currentUserId, userContactNo)
+				.subscribe(isAdded => { // No returned value yet...
+					if (isAdded) {
+						console.log('Profile succesfully edited..');
+						this.initializeForm();
+					} else {
+						console.log('Profile failed to be edited.');
+					}
+				});
+			console.log('Profile succesfully edited.');
+			this.currentUser.setUserContactno(userContactNo);
+			this.userForm.disable();
+			this.isEditing = false;
+		}
+	}
+
+	startEditing() {
+		console.log("STARTEDITING");
+		this.isEditing = true;
+		this.userForm.get('contactNo').enable();
+	}
 
 }

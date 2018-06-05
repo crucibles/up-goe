@@ -1,42 +1,65 @@
-<form>
-	<div id="title" class="row row-fluid">
-		<h3 class="col-md-10">Personal Information</h3>
-		<h5 class="col-md-2 clickable pull-left">Edit</h5>
-	</div>
+<ng-container *ngIf="currentUser">
+	<form [formGroup]="userForm">
+		<div id="title" class="row row-fluid">
+			<h3 class="col-md-10">Personal Information</h3>
+			<h5 class="col-md-2 clickable pull-left">
+				<span *ngIf="!isEditing" (click)="startEditing()">
+					Edit
+				</span>
+				<span *ngIf="isEditing" [class.disable]="userForm.invalid" (click)="editProfile()">
+					Submit
+				</span>
+			</h5>
+		</div>
 
-	<table *ngIf="currentUser">
-		<tbody>
-			<tr>
-				<td>First Name:</td>
-				<td>{{this.currentUser.getUserFirstName()}}</td>
-			</tr>
-			<tr>
-				<td>Middle Name:</td>
-				<td>{{this.currentUser.getUserMiddleName()}}</td>
-			</tr>
-			<tr>
-				<td>Last Name:</td>
-				<td>{{this.currentUser.getUserLastName()}}</td>
-			</tr>
-			<tr>
-				<td>Birthdate:</td>
-				<td>{{this.currentUser.getUserFormattedBirthdate()}}</td>
-			</tr>
-			<tr>
-				<td>Contact No.:</td>
-				<td>{{this.currentUser.getUserContactNo()}}</td>
-			</tr>
-			<tr>
-				<td>School ID:</td>
-				<td>{{this.currentUser.getUserSchoolId()}}</td>
-			</tr>
-			<tr>
-				<td>E-mail Address:</td>
-				<td>{{this.currentUser.getUserEmail()}}</td>
-			</tr>
-		</tbody>
-	</table>
-	<ng-container *ngIf="!currentUser">
-		Loading...
-	</ng-container>
-</form>
+		<table>
+			<tbody>
+				<tr>
+					<td>First Name:</td>
+					<td>
+						<input type="text" formControlName="firstName" class="user-information remove-border" />
+					</td>
+				</tr>
+				<tr>
+					<td>Middle Name:</td>
+					<td>
+						<input type="text" formControlName="middleName" class="user-information remove-border" />
+					</td>
+				</tr>
+				<tr>
+					<td>Last Name:</td>
+					<td>
+						<input type="text" formControlName="lastName" class="user-information remove-border" />
+					</td>
+				</tr>
+				<tr>
+					<td>Birthdate:</td>
+					<td>
+						<input type="date" formControlName="birthDate" class="user-information remove-border" />
+					</td>
+				</tr>
+				<tr>
+					<td>Contact No.:</td>
+					<td>
+						<input type="text" formControlName="contactNo" class="user-information remove-border" />
+					</td>
+				</tr>
+				<tr>
+					<td>School ID:</td>
+					<td>
+						<input type="text" formControlName="schoolId" class="user-information remove-border" />
+					</td>
+				</tr>
+				<tr>
+					<td>E-mail Address:</td>
+					<td>
+						<input type="email" formControlName="email" class="user-information remove-border" />
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+</ng-container>
+<ng-container *ngIf="!currentUser">
+	Loading...
+</ng-container>
