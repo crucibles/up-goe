@@ -87,10 +87,6 @@ export class GenProfileComponent implements OnInit {
     }
 
     ngOnInit() {
-        console.warn("hello");
-        this.questService.joinQuest("5a37f4500d1126321c11e5e7", "5a3b8e82b19a9e18d42d3890", "5a3807410d1126321c11e5ee").subscribe((result) => {
-            console.warn(result);
-        });
         this.pageService.isProfilePage(true);
         this.getUser();
         this.getGrades();

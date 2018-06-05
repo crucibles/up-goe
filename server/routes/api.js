@@ -386,6 +386,137 @@ router.post('/sections', (req, res) => {
     console.log(req.body.user_id);
 
     if (req.body.quest_id) {
+
+        if (req.body.abandon) {
+            abandonQuest(req, res);
+        } else {
+
+            if (req.body.data) {
+                //upload here
+                submitQuest(req, res);
+            } else {
+                joinQuest(req, res);
+            }
+
+        }
+
+    } else {
+
+        enrollAndRequest(req, res);
+
+    }
+
+
+    function abandonQuest(req, res) {
+
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+
+            myDB.collection('sections')
+                .updateOne(
+                    {
+                        _id: ObjectID(req.body.section_id)
+                    },
+                    {
+                        $pull: {
+                            "quests.$[elem].quest_participants": req.body.user_id
+                        }
+                    },
+                    {
+                        arrayFilters: [{ "elem.quest_id": req.body.quest_id }]
+                    }
+                ).then(result => {
+                    if (result) {
+
+                        myDB.collection('experiences')
+                            .updateOne(
+                                {
+                                    user_id: req.body.user_id,
+                                    section_id: req.body.section_id
+                                },
+                                {
+                                    $pull: {
+                                        "quests_taken": {
+                                            quest_id: req.body.quest_id
+                                        }
+                                    }
+                                }
+                            )
+                            .then(x => {
+                                console.log("remove  ======================== QUEST TAKEN FINALLY");
+                                res.json(x);
+                            })
+
+                    } else {
+                        res.json(false);
+                    }
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                })
+
+        });
+
+    }
+
+    function submitQuest(req, res) {
+
+
+
+        var submitObj = {
+            quest_id: req.body.quest_id,
+            quest_grade: 0,
+            is_graded: false,
+            file: req.body.data,
+            date_submitted: new Date(Date.now())
+        }
+
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+
+            console.log("TRYING TO ADD SUBMIT THE QUEST ");
+            myDB.collection('experiences')
+                .updateOne(
+                    {
+                        user_id: req.body.user_id,
+                        section_id: req.body.section_id
+                    },
+                    {
+                        $set: {
+                            "quests_taken.$[elem]": submitObj,
+
+                        }
+                    },
+                    {
+                        arrayFilters: [{ "elem.quest_id": req.body.quest_id }]
+                    }
+                )
+                .then(x => {
+                    console.log("SUBMITTING QUEST FINALLY");
+                    console.log(x);
+                    res.json(x);
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                })
+
+
+        });
+
+    }
+
+    function joinQuest(req, res) {
+
+        var myObj = {
+            quest_id: req.body.quest_id,
+            quest_grade: 0,
+            is_graded: false,
+            file: null,
+            date_submitted: ""
+        }
+
+
+
         connection((db) => {
             const myDB = db.db('up-goe-db');
 
@@ -403,11 +534,27 @@ router.post('/sections', (req, res) => {
                         arrayFilters: [{ "elem.quest_id": req.body.quest_id }]
                     }
                 ).then(result => {
-                    if (result) {
-                        res.json(result);
-                    } else {
-                        res.json(false);
-                    }
+                    console.log("TRYING TO ADD QUEST TAKEN");
+                    myDB.collection('experiences')
+                        .updateOne(
+                            {
+                                user_id: req.body.user_id,
+                                section_id: req.body.section_id
+                            },
+                            {
+                                $addToSet: {
+                                    "quests_taken": myObj
+                                }
+                            }
+                        )
+                        .then(x => {
+                            console.log("ADDING QUEST TAKEN FINALLY");
+                            console.log(x);
+                            res.json(x);
+                        })
+
+
+
                 })
                 .catch((err) => {
                     sendError(err, res);
@@ -415,8 +562,9 @@ router.post('/sections', (req, res) => {
 
         });
 
-    } else {
+    }
 
+    function enrollAndRequest(req, res) {
 
         if (!req.body.approve) {
 
@@ -469,11 +617,25 @@ router.post('/sections', (req, res) => {
                             arrayFilters: [{ "elem.user_id": req.body.user_id }]
                         }
                     ).then(result => {
-                        if (result) {
-                            res.json(result);
-                        } else {
-                            res.json(false);
+
+                        let newUserXP = {
+                            user_id: req.body.user_id,
+                            section_id: req.body.section_id,
+                            total_xp: [],
+                            quests_taken: []
                         }
+
+                        myDB.collection('experiences')
+                            .insertOne(newUserXP, function (err, result) {
+                                if (err) {
+                                    console.log(err);
+                                    response.message = err;
+                                    throw err;
+                                }
+                                response.data = newUserXP;
+                                res.json(result);
+                            })
+
                     })
                     .catch((err) => {
                         sendError(err, res);
@@ -482,7 +644,6 @@ router.post('/sections', (req, res) => {
             });
 
         }
-
 
     }
 
@@ -882,7 +1043,7 @@ router.get('/sections/quests', (req, res) => {
                 sendError(err, res);
             });
     });
-
+    // 
 });
 
 /**
