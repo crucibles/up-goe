@@ -35,8 +35,8 @@ import {
 	LeaderboardService
 } from 'shared/services';
 
-import { 
-    AlertService 
+import {
+	AlertService
 } from 'shared/services/alert.service';
 
 import Chart = require('chart.js');
@@ -105,6 +105,7 @@ export class SpecificQuestMapComponent implements OnInit {
 		private leaderboardService: LeaderboardService
 	) {
 		this.currentUser = this.userService.getCurrentUser();
+		this.currentSection = this.sectionService.getCurrentSection();
 	}
 
 	ngOnInit() {
@@ -117,16 +118,16 @@ export class SpecificQuestMapComponent implements OnInit {
 	getQuestScores() {
 		var currentSection = this.sectionService.getCurrentSection().getSectionId();
 		var currentQuest = this.questClicked.getQuestId();
-        this.leaderboardService.getQuestScores(currentSection, currentQuest)
-        .subscribe((user) => {
-            if (user) {
-                this.leaderboardRecords = user;
-            } else {
-                console.log('Failed to acquire quest scores.');
-            }
-        }, error => {
-            this.alertService.error(error);
-        });
+		this.leaderboardService.getQuestScores(currentSection, currentQuest)
+			.subscribe((user) => {
+				if (user) {
+					this.leaderboardRecords = user;
+				} else {
+					console.log('Failed to acquire quest scores.');
+				}
+			}, error => {
+				this.alertService.error(error);
+			});
 	}
 
 	loadQuestMap() {
@@ -214,7 +215,7 @@ export class SpecificQuestMapComponent implements OnInit {
 						var tooltipItem = tooltipItems[0];
 						return data.datasets[tooltipItem.datasetIndex].label;
 					},
-					label: function(tooltipItem, data) {
+					label: function (tooltipItem, data) {
 						return "";
 					}
 				}
@@ -265,6 +266,8 @@ export class SpecificQuestMapComponent implements OnInit {
 	 */
 	setDefault() {
 		this.pageService.isProfilePage(false);
+		this.currentUser = this.userService.getCurrentUser();
+		this.currentSection = this.sectionService.getCurrentSection();
 	}
 
 	/**
@@ -283,7 +286,17 @@ export class SpecificQuestMapComponent implements OnInit {
 	}
 
 	acceptQuest() {
-		//AHJ: unimplemented
+		console.warn("hello");
+		let user_id = this.userService.getCurrentUser().getUserId();
+		let quest_id = this.questClicked.getQuestId();
+		let section_id = this.currentSection.getSectionId();
+
+		this.questService.joinQuest(user_id, quest_id, section_id).subscribe((result) => {
+			this.questService.getUserJoinedQuests(user_id).subscribe(x => {
+				console.log(x);
+			})
+		});
+
 	}
 
 	submitQuest() {
@@ -292,7 +305,16 @@ export class SpecificQuestMapComponent implements OnInit {
 	}
 
 	abandonQuest() {
-		//AHJ: unimplemented
+		console.warn("hello");
+		let user_id = this.userService.getCurrentUser().getUserId();
+		let quest_id = this.questClicked.getQuestId();
+		let section_id = this.currentSection.getSectionId();
+
+		this.questService.abandonQuest(user_id, quest_id, section_id).subscribe((result) => {
+			this.questService.getUserJoinedQuests(user_id).subscribe(x => {
+				console.log(x);
+			})
+		});
 	}
 
 	isParticipating(quest_id: string): boolean {

@@ -518,7 +518,7 @@ export class SectionService {
 	 * The expected values of array is the section's information and the attached course_name
 	 */
 	getUserSections(user_id): Observable<any[]> {
-
+		
 		const url = this.secUrl;
 
 		let params = new HttpParams().set('id', user_id);

@@ -87,7 +87,7 @@ router.get('/courses', (req, res) => {
                         response.data = courses[0];
                         res.json(courses[0]);
                     } else {
-                        res.json([]);
+                        res.json(false);
                     }
                 })
                 .catch((err) => {
@@ -105,7 +105,7 @@ router.get('/courses', (req, res) => {
                         response.data = courses;
                         res.json(courses);
                     } else {
-                        res.json([]);
+                        res.json(false);
                     }
                 })
                 .catch((err) => {
@@ -370,9 +370,8 @@ router.get('/experiences', (req, res) => {
 });
 
 /**
- * @description portal for requests regarding users. api/users
- * @author Cedric Yao Alvaro
- * @author Donevir Hynson - modified Jan 11 2018
+ * @description portal for requests regarding experiences. api/experiences
+ * @author AJ Ruth Sumandang
  */
 router.post('/experiences', (req, res) => {
     if (req.body.method == "setStudentQuestGrade") {
@@ -417,7 +416,7 @@ router.post('/experiences', (req, res) => {
 });
 
 /**
- * @description portal for requests regarding users. api/users
+ * @description portal for requests regarding users. api/login
  * @author Cedric Yao Alvaro
  * @author Donevir Hynson - modified Jan 11 2018
  */
@@ -438,7 +437,7 @@ router.post('/login', (req, res) => {
 
                 } else {
 
-                    res.json([]);
+                    res.json(false);
                 }
             })
             .catch((err) => {
@@ -623,7 +622,7 @@ router.get('/quests', (req, res) => {
                         response.data = quests;
                         res.json(quests);
                     } else {
-                        res.json([]);
+                        res.json(false);
                     }
                 })
                 .catch((err) => {
@@ -642,7 +641,7 @@ router.get('/quests', (req, res) => {
                         response.data = quests;
                         res.json(quests);
                     } else {
-                        res.json([]);
+                        res.json(false);
                     }
                 })
                 .catch((err) => {
@@ -703,7 +702,7 @@ router.get('/posts', (req, res) => {
                         }
 
                     } else {
-                        res.json([]);
+                        res.json(false);
                     }
 
 
@@ -721,7 +720,7 @@ router.get('/posts', (req, res) => {
                     if (x) {
                         res.json(x);
                     } else {
-                        res.json([]);
+                        res.json(false);
                     }
 
                 })
@@ -742,59 +741,71 @@ router.get('/posts', (req, res) => {
  */
 router.post('/sections', (req, res) => {
 
-    if (!req.body.approve) {
+    console.log("IN THE QUEST JOINING");
+    console.log(req.body.user_id);
+
+    if (req.body.quest_id) {
+
+        if (req.body.abandon) {
+            abandonQuest(req, res);
+        } else {
+
+            if (req.body.data) {
+                //upload here
+                submitQuest(req, res);
+            } else {
+                joinQuest(req, res);
+            }
+
+        }
+
+    } else {
+
+        enrollAndRequest(req, res);
+
+    }
+
+
+    function abandonQuest(req, res) {
 
         connection((db) => {
             const myDB = db.db('up-goe-db');
 
             myDB.collection('sections')
                 .updateOne(
-                    { _id: ObjectID(req.body.section_id) },
                     {
-                        $push: {
-                            students: {
-                                user_id: req.body.user_id,
-                                status: "R"
-                            }
-                        }
-                    }
-                ).then(result => {
-
-                    if (result) {
-                        res.json(result);
-                    } else {
-                        res.json(false);
-                    }
-
-                })
-                .catch((err) => {
-                    sendError(err, res);
-                })
-
-        });
-
-    } else if (req.body.approve) {
-
-        connection((db) => {
-            const myDB = db.db('up-goe-db');
-
-            myDB.collection('sections')
-                .updateOne(
-                    {
-                        _id: ObjectID(req.body.section_id),
-                        "students.user_id": req.body.user_id
+                        _id: ObjectID(req.body.section_id)
                     },
                     {
-                        $set: {
-                            "students.$[elem].status": "E"
+                        $pull: {
+                            "quests.$[elem].quest_participants": req.body.user_id
                         }
                     },
                     {
-                        arrayFilters: [{ "elem.user_id": req.body.user_id }]
+                        arrayFilters: [{ "elem.quest_id": req.body.quest_id }]
                     }
                 ).then(result => {
                     if (result) {
-                        res.json(result);
+
+                        myDB.collection('experiences')
+                            .updateOne(
+                                {
+                                    user_id: req.body.user_id,
+                                    section_id: req.body.section_id
+                                },
+                                {
+                                    $pull: {
+                                        "quests_taken": {
+                                            quest_id: req.body.quest_id
+                                        }
+                                    }
+                                }
+                            )
+                            .then(x => {
+                                console.log("remove  ======================== QUEST TAKEN FINALLY");
+                                res.json(x);
+                            })
+
                     } else {
                         res.json(false);
                     }
@@ -806,6 +817,196 @@ router.post('/sections', (req, res) => {
         });
 
     }
+
+    function submitQuest(req, res) {
+
+
+
+        var submitObj = {
+            quest_id: req.body.quest_id,
+            quest_grade: 0,
+            is_graded: false,
+            file: req.body.data,
+            date_submitted: new Date(Date.now())
+        }
+
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+
+            console.log("TRYING TO ADD SUBMIT THE QUEST ");
+            myDB.collection('experiences')
+                .updateOne(
+                    {
+                        user_id: req.body.user_id,
+                        section_id: req.body.section_id
+                    },
+                    {
+                        $set: {
+                            "quests_taken.$[elem]": submitObj,
+
+                        }
+                    },
+                    {
+                        arrayFilters: [{ "elem.quest_id": req.body.quest_id }]
+                    }
+                )
+                .then(x => {
+                    console.log("SUBMITTING QUEST FINALLY");
+                    console.log(x);
+                    res.json(x);
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                })
+
+
+        });
+
+    }
+
+    function joinQuest(req, res) {
+
+        var myObj = {
+            quest_id: req.body.quest_id,
+            quest_grade: 0,
+            is_graded: false,
+            file: null,
+            date_submitted: ""
+        }
+
+
+
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+
+            myDB.collection('sections')
+                .updateOne(
+                    {
+                        _id: ObjectID(req.body.section_id)
+                    },
+                    {
+                        $addToSet: {
+                            "quests.$[elem].quest_participants": req.body.user_id
+                        }
+                    },
+                    {
+                        arrayFilters: [{ "elem.quest_id": req.body.quest_id }]
+                    }
+                ).then(result => {
+                    console.log("TRYING TO ADD QUEST TAKEN");
+                    myDB.collection('experiences')
+                        .updateOne(
+                            {
+                                user_id: req.body.user_id,
+                                section_id: req.body.section_id
+                            },
+                            {
+                                $addToSet: {
+                                    "quests_taken": myObj
+                                }
+                            }
+                        )
+                        .then(x => {
+                            console.log("ADDING QUEST TAKEN FINALLY");
+                            console.log(x);
+                            res.json(x);
+                        })
+
+
+
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                })
+
+        });
+
+    }
+
+    function enrollAndRequest(req, res) {
+
+        if (!req.body.approve) {
+
+            connection((db) => {
+                const myDB = db.db('up-goe-db');
+
+                myDB.collection('sections')
+                    .updateOne(
+                        { _id: ObjectID(req.body.section_id) },
+                        {
+                            $push: {
+                                students: {
+                                    user_id: req.body.user_id,
+                                    status: "R"
+                                }
+                            }
+                        }
+                    ).then(result => {
+
+                        if (result) {
+                            res.json(result);
+                        } else {
+                            res.json(false);
+                        }
+
+                    })
+                    .catch((err) => {
+                        sendError(err, res);
+                    })
+
+            });
+
+        } else if (req.body.approve) {
+
+            connection((db) => {
+                const myDB = db.db('up-goe-db');
+
+                myDB.collection('sections')
+                    .updateOne(
+                        {
+                            _id: ObjectID(req.body.section_id),
+                            "students.user_id": req.body.user_id
+                        },
+                        {
+                            $set: {
+                                "students.$[elem].status": "E"
+                            }
+                        },
+                        {
+                            arrayFilters: [{ "elem.user_id": req.body.user_id }]
+                        }
+                    ).then(result => {
+
+                        let newUserXP = {
+                            user_id: req.body.user_id,
+                            section_id: req.body.section_id,
+                            total_xp: [],
+                            quests_taken: []
+                        }
+
+                        myDB.collection('experiences')
+                            .insertOne(newUserXP, function (err, result) {
+                                if (err) {
+                                    console.log(err);
+                                    response.message = err;
+                                    throw err;
+                                }
+                                response.data = newUserXP;
+                                res.json(result);
+                            })
+
+                    })
+                    .catch((err) => {
+                        sendError(err, res);
+                    })
+
+            });
+
+        }
+
+    }
+
+
 
 })
 
@@ -856,7 +1057,7 @@ router.get('/sections', (req, res) => {
                         res.send(enrolled);
 
                     } else {
-                        res.json([]);
+                        res.json(false);
                     }
 
                 })
@@ -907,7 +1108,7 @@ router.get('/sections', (req, res) => {
                         }
 
                     } else {
-                        res.json([]);
+                        res.json(false);
                     }
 
 
@@ -1062,7 +1263,7 @@ router.get('/sections', (req, res) => {
                             });
 
                     } else {
-                        res.json([]);
+                        res.json(false);
                     }
 
 
@@ -1507,7 +1708,7 @@ router.post('/badges', (req, res) => {
 
                             } else {
 
-                                res.json([]);
+                                res.json(false);
 
                             }
 
@@ -1516,7 +1717,7 @@ router.post('/badges', (req, res) => {
                         });
 
                     } else {
-                        res.json([]);
+                        res.json(false);
                     }
 
 
@@ -1573,9 +1774,8 @@ router.get('/badges', (req, res) => {
                         });
 
                     } else {
-                        res.json([]);
+                        res.json(false);
                     }
-
                 })
                 .catch((err) => {
                     sendError(err, res);
@@ -1583,10 +1783,10 @@ router.get('/badges', (req, res) => {
         });
     }
 
-    function getSectionBadges(req, res){
+    function getSectionBadges(req, res) {
         connection((db) => {
             const myDB = db.db('up-goe-db');
-    
+
             console.log("----------getSectionBadges----------");
             console.log(req.query.section_id);
             console.log("----");
@@ -1599,7 +1799,7 @@ router.get('/badges', (req, res) => {
                     section.badges.forEach(badge => {
                         sectionBadges.push(ObjectID(badge));
                     })
-                    
+
                     myDB.collection('badges')
                         .find({
                             _id: {
@@ -1640,7 +1840,7 @@ router.get('/securityQuestions', (req, res) => {
                     response.data = questions;
                     res.json(questions);
                 } else {
-                    res.json([]);
+                    res.json(false);
                 }
             })
             .catch((err) => {
