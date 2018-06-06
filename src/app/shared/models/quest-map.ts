@@ -84,7 +84,7 @@ export class QuestMap {
 			} else if (questPosition.type === "line") {
 				dataset = {
 					type: 'line',
-					label: 'Line Dataset 1',
+					label: '',
 					data: [{
 						x: questPosition.x,
 						y: questPosition.y
@@ -94,8 +94,8 @@ export class QuestMap {
 					}],
 					fill: false,
 					radius: 0,
-					borderWidth: 5,
-					borderColor: "rgba(60,186,159,0.2)"
+					borderWidth: 4,
+					borderColor: "#000"
 				}
 			}
 
@@ -105,7 +105,7 @@ export class QuestMap {
 
 		dataset = {
 			type: 'line',
-			label: 'Line Dataset 1',
+			label: '',
 			data: [{
 				x: minX,
 				y: mainquestY
@@ -114,7 +114,9 @@ export class QuestMap {
 				y: mainquestY
 			}],
 			fill: false,
-			radius: 0
+			radius: 0,
+			borderWidth: 4,
+			borderColor: "#000"
 		}
 
 		datasets.push(dataset);
@@ -181,7 +183,9 @@ export class QuestMap {
 					}],
 					showLine: false,
 					pointStyle: "cross",
-					radius: 4
+					radius: 3,
+					backgroundColor: "#000",
+					borderColor: "#000"
 				}
 				scatterPoints.push(scatterPoint);
 			}

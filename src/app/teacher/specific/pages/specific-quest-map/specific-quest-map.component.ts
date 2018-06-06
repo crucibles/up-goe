@@ -323,17 +323,12 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 		}
 
 		var HTMLchart = document.getElementById("quest-map");
-		console.log(this.chartCanvas);
 		var ctx = (<HTMLCanvasElement>HTMLchart).getContext("2d");
-		//var ctx: CanvasRenderingContext2D = this.chartCanvas.nativeElement.getContext("2d");
 
 		this.chart = new Chart(ctx, {
 			data: QM,
 			options: options
 		});
-
-		//this.onChartClick(HTMLchart, chart, this.chartWidth, this.chartHeight, xTick, yTick);
-
 	}
 
 	/**
@@ -377,7 +372,11 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 		console.log(this.chart.getElementAtEvent($event));
 	}
 
-	openCreateQuestModal() {
+	openCreateQuestModal(isFromHTML?: boolean) {
+		if(isFromHTML){
+			this.x = 5; 
+			this.y = 25;
+		}
 		this.bsModalRef = this.modalService.show(this.createQuestTemplate);
 	}
 

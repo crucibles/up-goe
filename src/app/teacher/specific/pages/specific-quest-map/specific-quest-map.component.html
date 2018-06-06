@@ -9,6 +9,10 @@
 	</div>
 </div>
 
+<div *ngIf="isCreateModalReady && quests && quests.length == 0">
+	You have no quest yet. Click <span class="clickable" (click)="openCreateQuestModal(true)">here</span> to create your first quest!
+</div>
+
 <ng-container *ngIf="isCreateModalReady">
 	<ng-template class="create-quest-modal" #createQuestTemplate>
 		<!--Modal Header-->
