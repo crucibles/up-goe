@@ -34,6 +34,7 @@ import {
 	UserService,
 	SectionService
 } from 'shared/services';
+import { ActivatedRoute } from '@angular/router';
 
 const ITEMS: any[] = [
 	{
@@ -137,6 +138,7 @@ export class InventoryComponent implements OnInit {
 	items: Item[];
 	badges: Badge[];
 	instructorSections: any[];
+	sectionId: any;
 
 	constructor(
 		private formBuilder: FormBuilder,
@@ -144,17 +146,22 @@ export class InventoryComponent implements OnInit {
 		private modalService: BsModalService,
 		private userService: UserService,
 		private sectionService: SectionService,
-		private badgeService: BadgeService
+		private badgeService: BadgeService,
+		private route: ActivatedRoute
 	) { }
 
 	ngOnInit() {
 		this.getUser();
 		this.initializeForm();
 		this.getSections();
+
+		this.route.paramMap.subscribe(params => {
+			this.sectionId = params.get('sectionId');
+		});
 	}
 
 	createBadge() {
-		this.badgeService.createBadge(this.setBadge()).subscribe(data => {
+		this.badgeService.createBadge(this.setBadge(), this.badgeForm.value.badgeSection).subscribe(data => {
 			if(data) {
 				console.log('Your badge was successfuly created.');
 			} else {

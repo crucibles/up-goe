@@ -39,6 +39,8 @@ import {
     of
 } from 'rxjs/observable/of';
 
+import { SectionService } from 'shared/services/section.service';
+
 
 const BADGES: any[] = [
 	{
@@ -71,7 +73,8 @@ export class BadgeService {
 
     constructor(
         private userService: UserService,
-        private http: HttpClient
+        private http: HttpClient,
+        private sectionService: SectionService
     ) { }
 
     /**
@@ -131,11 +134,17 @@ export class BadgeService {
      * Adds received new badge to the database
      * @param badge New badge to be added to the database
      */
-    createBadge(badge: Badge) {
+    createBadge(badge: Badge, sectionId?: string) {
         console.log('this your badge');
         console.log(badge);
         const url = this.badgeUrl;
-        return this.http.post<any>(url, badge).pipe(
+        let body =  {
+            badgeData: badge,
+            sectionId: sectionId
+        };
+
+        console.log(body);
+        return this.http.post<any>(url, body).pipe(
             tap(data => {
                 if(data) return data
                 else return false;

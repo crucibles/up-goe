@@ -1655,26 +1655,49 @@ router.post('/badges', (req, res) => {
     console.log("METHOD!!!!!!!!!!!!!!!!!");
     console.log(req.method);
 
-    if(req.body.badge_name) {
+    if(req.body.badgeData) {
         connection((db) => {
             const myDB = db.db('up-goe-db');
             myDB.collection('badges')
-                .count({badge_name: req.body.badge_name})
+                .count({badge_name: req.body.badgeData.badge_name})
                 .then((count) => {
                     if(count > 0) {
                         console.log('This badge already exists.');
-                        response.data = req.body.badge_name;
+                        response.data = req.body.badgeData.badge_name;
                         res.json(false);
                     } else {
                         myDB.collection('badges')
-                            .insertOne((req.body), function(err, res) {
+                            .insertOne((req.body.badgeData), function(err, res) {
                                 if(err) {
                                     console.log('Error inserting new badge.')
                                     throw err;
                                 } else {
                                     console.log('Badge successfully inserted.');
+                                    myDB.collection('badges') 
+                                        .findOne({badge_name: req.body.badgeData.badge_name})
+                                        .then(badge => {
+                                            console.log('-------------------------');
+                                            console.log(badge);
+                                            console.log(req.body.sectionId);
+                                            if(badge) {
+                                                myDB.collection('sections')
+                                                    .updateOne({_id: ObjectID(req.body.sectionId)}, {
+                                                        $push: {
+                                                            badges: JSON.stringify(badge._id).toString().substring(1,25)
+                                                        }
+                                                    })
+                                            }
+                                        })
+                                        .catch(err => {
+                                            sendError(err, res);
+                                        });
                                 }
                             });
+                        
+
+                        
+
+                        
                     }
                 })
                 .catch((err) => {
