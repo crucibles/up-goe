@@ -63,7 +63,6 @@ let response = {
     message: null
 };
 
-
 router.use(function timeLog(req, res, next) {
     console.log('Time: ', Date.now());
     next();
@@ -1084,6 +1083,7 @@ router.get('/sections', (req, res) => {
                     if (sections) {
 
                         async.forEach(sections, processEachSection, afterAllSection);
+                        // async.forEach(sections, processEachSection);
 
                         function processEachSection(section, callback) {
 
@@ -1101,6 +1101,8 @@ router.get('/sections', (req, res) => {
                                 });
 
                         }
+                        
+                        // res.json(myObjArr);
 
                         function afterAllSection(err) {
                             response.data = myObjArr;
@@ -1653,7 +1655,44 @@ router.post('/badges', (req, res) => {
     console.log("METHOD!!!!!!!!!!!!!!!!!");
     console.log(req.method);
 
-    if (req.method == "POST") {
+    if(req.body.badge_name) {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('badges')
+                .count({badge_name: req.body.badge_name})
+                .then((count) => {
+                    if(count > 0) {
+                        console.log('This badge already exists.');
+                        response.data = req.body.badge_name;
+                        res.json(false);
+                    } else {
+                        myDB.collection('badges')
+                            .insertOne((req.body), function(err, res) {
+                                if(err) {
+                                    console.log('Error inserting new badge.')
+                                    throw err;
+                                } else {
+                                    console.log('Badge successfully inserted.');
+                                }
+                            }).then((res) => {
+                            
+                            console.log(res);
+                            
+                            
+                            
+                        })
+                            
+                        })
+                        
+                        ;
+                    }
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                });
+        });
+        res.json(true);
+    } else {
 
         connection((db) => {
             const myDB = db.db('up-goe-db');
@@ -1900,7 +1939,10 @@ router.post('/questLeaderboard', (req, res) => {
     connection((db) => {
         const myDB = db.db('up-goe-db');
         myDB.collection('experiences')
-            .find({ section_id: req.body.currSection })
+            .find({ 
+                section_id: req.body.currSection,
+                is_graded: true 
+            })
             .toArray()
             .then((experiences) => {
                 if (experiences) {
