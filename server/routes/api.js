@@ -1650,11 +1650,9 @@ router.post('/updateUser', (req, res) => {
 /**
  * @description portal for requests regarding Badges. api/badges
  * @author Cedric Yao Alvaro
+ * @author Donevir Hynson - modified 6 June 2018
  */
 router.post('/badges', (req, res) => {
-    console.log("METHOD!!!!!!!!!!!!!!!!!");
-    console.log(req.method);
-
     if(req.body.badgeData) {
         connection((db) => {
             const myDB = db.db('up-goe-db');
@@ -1676,9 +1674,6 @@ router.post('/badges', (req, res) => {
                                     myDB.collection('badges') 
                                         .findOne({badge_name: req.body.badgeData.badge_name})
                                         .then(badge => {
-                                            console.log('-------------------------');
-                                            console.log(badge);
-                                            console.log(req.body.sectionId);
                                             if(badge) {
                                                 myDB.collection('sections')
                                                     .updateOne({_id: ObjectID(req.body.sectionId)}, {
@@ -1693,11 +1688,6 @@ router.post('/badges', (req, res) => {
                                         });
                                 }
                             });
-                        
-
-                        
-
-                        
                     }
                 })
                 .catch((err) => {
@@ -1706,7 +1696,6 @@ router.post('/badges', (req, res) => {
         });
         res.json(true);
     } else {
-
         connection((db) => {
             const myDB = db.db('up-goe-db');
             myDB.collection('badges')
@@ -1715,24 +1704,14 @@ router.post('/badges', (req, res) => {
                 .then((badges) => {
 
                     if (badges) {
-
                         Promise.all(badges).then((badge) => {
-                            console.log(req.body);
-                            console.log("===================");
-                            console.log(badge);
-
                             let earnedbadge = badge.filter((b) => {
-                                console.log("STreaks");
-                                console.log(b.badge_conditions.log_in_streak);
-                                console.log(req.body.conditions.log_in_streak);
                                 if (b.badge_conditions.log_in_streak <= req.body.conditions.log_in_streak) {
                                     return b;
                                 }
-
                             });
 
                             if (earnedbadge.length > 0) {
-
                                 Promise.all(earnedbadge).then((eb) => {
                                     console.log(eb[0]._id);
                                     connection((db) => {
@@ -1745,7 +1724,6 @@ router.post('/badges', (req, res) => {
                                                         "badge_attainers": req.body.user_id
                                                     }
                                                 }
-
                                             )
                                             .then(badge => {
                                                 console.log("badge updated");
@@ -1755,37 +1733,20 @@ router.post('/badges', (req, res) => {
                                                 sendError(err, res);
                                             });
                                     });
-
                                 });
-
                             } else {
-
                                 res.json(false);
-
                             }
-
-
-
                         });
-
                     } else {
                         res.json(false);
                     }
-
-
-
                 })
                 .catch((err) => {
                     sendError(err, res);
                 });
         });
-
     }
-
-
-
-
-
 });
 
 router.get('/badges', (req, res) => {
