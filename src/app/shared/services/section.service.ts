@@ -98,6 +98,8 @@ export class SectionService {
 
 	setCurrentUserSections(userSections) {
 		this.currentUserSections = userSections;
+		console.log("SET CURRENT SECTIONSSSSs");
+		console.log(this.currentUserSections);
 	}
 
 	/**
@@ -479,7 +481,7 @@ export class SectionService {
 
 		let params = new HttpParams().set('instructor', user_id);
 
-		return this.http.get<any>(
+		return this.http.get<Section[]>(
 			url, {
 				params: params
 			})
@@ -495,6 +497,7 @@ export class SectionService {
 					console.warn(this.currentUserSections);
 					const outcome = sections ?
 						'fetched sections of user ' + user_id : 'did not find sections of user ' + user_id;
+					return sections;
 				}),
 				catchError(this.handleError<any>(`getUserSections user_id=${user_id}`))
 			);
@@ -515,11 +518,15 @@ export class SectionService {
 	 * };
 	 * The expected values of array is the section's information and the attached course_name
 	 */
-	getUserSections(user_id): Observable<any[]> {
+	getUserSections(user_id, section_id?: string): Observable<any[]> {
 		
 		const url = this.secUrl;
 
 		let params = new HttpParams().set('id', user_id);
+		if(section_id){
+			params = new HttpParams().set('id', user_id)
+			.set('section_id', section_id);
+		}
 
 		return this.http.get<any>(
 			url, {

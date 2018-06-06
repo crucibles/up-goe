@@ -61,6 +61,9 @@
 				<br>
 			</div>
 		</div>
+		<div *ngIf="isParticipating(this.questClicked.getQuestId()) && !isQuestTaken(this.questClicked.getQuestId())">
+			<textarea [(ngModel)]="commentBox" style="width: 100%" placeholder="Place your comment here."></textarea>
+		</div>
 	</div>
 
 	<!-- Quest Modal Buttons -->
@@ -68,7 +71,7 @@
 		<!-- shows submit & abandon buttons if user is a participant -->
 		<ng-container *ngIf="isParticipating(this.questClicked.getQuestId()) && !isQuestTaken(this.questClicked.getQuestId())">
 			<button type="submit" class="btn btn-danger mr-auto" (click)="abandonQuest()">Abandon Quest</button>
-			<button type="submit" class="btn btn-success" (click)="submitQuest()">Submit Quest</button>
+			<button type="submit" class="btn btn-success" (click)="submitQuest(comment)">Submit Quest</button>
 		</ng-container>
 		<!-- shows accept button if user is not yet a participant -->
 		<ng-container *ngIf="!isParticipating(this.questClicked.getQuestId())">
@@ -91,9 +94,8 @@
 			<thead style="font-weight: bold">
 				<tr>
 					<td>Rank</td>
-					<td>Student No.</td>
+					<td>Student ID</td>
 					<td>XP</td>
-					<td>Quest Started</td>
 					<td>Quest Completed</td>
 				</tr>
 			</thead>
@@ -102,7 +104,6 @@
 					<td>{{ rank+1 }}</td>
 					<td>{{ xp.studentId }}</td>
 					<td>{{ xp.score }}</td>
-					<td>{{ questClicked.getQuestStartTimeDate() }}</td>
 					<td>{{ xp.dateCompleted }}</td>
 				</tr>
 			</tbody>

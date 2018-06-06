@@ -4,19 +4,25 @@ import {
     OnInit
 } from '@angular/core';
 
+import {
+    ActivatedRoute
+} from '@angular/router';
+
 //Application Imports
 import {
-    User
+    Section,
+    User,
+    Experience
 } from 'shared/models';
 
 import {
+    ExperienceService,
     PageService,
+    SectionService,
     UserService
 } from 'shared/services';
-import { ActivatedRoute } from '@angular/router';
 
-const TOTXP: number[] = [10, 20, 30, 40, 100];
-const MAXXP: number = 200;
+const MAXXP: number = 5000;
 
 @Component({
     selector: 'app-specific-profile',
@@ -24,10 +30,15 @@ const MAXXP: number = 200;
     styleUrls: ['./specific-profile.component.css']
 })
 export class SpecificProfileComponent implements OnInit {
-    user: User;
-    grades: number[];
+    //basic info
+    currentSection: Section;
+    currentUser: User;
+
+    //performance graph data
+    userSubmission: Experience;
 
     // lineChart
+    isChartReady: boolean = false;
     lineChartColors: Array<any>;
     lineChartData: Array<any> = [];
     lineChartLabels: Array<any> = ['Week 0', 'Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7', 'Week 8', 'Week 9', 'Week 10', 'Week 11', 'Week 12', 'Week 13', 'Week 14', 'Week 15', 'Week 16'];
@@ -44,29 +55,31 @@ export class SpecificProfileComponent implements OnInit {
      * @param userService uses the UserService to obtains data needed for user
      */
     constructor(
+        private experienceService: ExperienceService,
         private pageService: PageService,
         private route: ActivatedRoute,
+        private sectionService: SectionService,
         private userService: UserService
     ) {
     }
 
     ngOnInit() {
-        this.getUser();
-        this.getCurrentSection();
-        this.getGrades();
         this.setDefault();
+        this.getGrades();
+        this.setPerformanceGraph();
     }
 
 
-    getCurrentSection(){
-        this.route.paramMap.subscribe(params => {
-			let sectionId = params.get('sectionId');
-		});
+    getCurrentSection() {
+        this.currentSection = this.sectionService.getCurrentSection();
     }
 
     setDefault() {
         this.pageService.isProfilePage(true);
-        this.setPerformanceGraph();
+        this.lineChartData = [];
+        this.isChartReady = false;
+        this.getUser();
+        this.getCurrentSection();
     }
 
     /**
@@ -74,30 +87,40 @@ export class SpecificProfileComponent implements OnInit {
      * @description Stores the current user to the 'user' variable from the user.service function
      */
     getUser(): void {
-        this.user = this.userService.getCurrentUser();
+        this.currentUser = this.userService.getCurrentUser();
     }
 
     /**
      * Stores the user's grades
      */
     getGrades(): void {
-        this.grades = TOTXP ? TOTXP : [];
         let dataGrade: number[] = [];
         let max: number = MAXXP ? MAXXP : 10;
 
-        this.grades.forEach(grade => {
-            // get the decimal percentage
-            let percentage: number = (grade / MAXXP) * 100;
+        this.experienceService.getSectionGrades(this.currentSection.getSectionId(), this.currentUser.getUserId())
+        .subscribe(submissions => {
+            if(submissions.length > 0){
+                this.userSubmission = submissions.map(submission => new Experience(submission))[0];
 
-            // round the decimal up to two decimal points
-            dataGrade.push(Math.round((percentage + 0.00001) * 100) / 100);
-        })
+                let grades = this.userSubmission.getWeeklyAccumulativeGrades();
+                console.log(grades);
+                grades.forEach(grade => {
+                    // get the decimal percentage
+                    let percentage: number = (grade / MAXXP) * 100;
+        
+                    // round the decimal up to two decimal points
+                    dataGrade.push(Math.round((percentage + 0.00001) * 100) / 100);
+                });
+        
+                let dataLine: any = {
+                    data: dataGrade,
+                    label: this.sectionService.getCurrentCourse().getCourseName() + " - " + this.currentSection.getSectionName()
+                };
 
-        let dataLine: any = {
-            data: dataGrade,
-            label: 'CMSC 128'
-        };
-        this.lineChartData.push(dataLine);
+                this.lineChartData.push(dataLine);
+                this.isChartReady = true;
+            }
+        });
     }
 
     /* Below are the helper functions */

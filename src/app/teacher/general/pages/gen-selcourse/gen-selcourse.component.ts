@@ -32,11 +32,11 @@ import {
 })
 export class GenSelcourseComponent implements OnInit {
 
-  sections: Section[];
-  table: any;
-  courses: Course[];
-  currentUser: User;
-  allcourses: Course[];
+	sections: Section[];
+	table: any;
+	courses: Course[];
+	currentUser: User;
+	allcourses: Course[];
 
 	//for search bar
 	course_search: string;
@@ -53,70 +53,79 @@ export class GenSelcourseComponent implements OnInit {
 	}
 
 	ngOnInit() {
+		this.setDefault();
 		this.getUser();
 	}
 
-  /**
-   * Obtains information of the current user
-   */
-  getUser(): void {
-    let user = JSON.parse(localStorage.getItem("currentUser"));
-    this.userService.getUser(user._id)
-      .subscribe(user => {
-        this.currentUser = new User(user);
-        this.getUserSections(this.currentUser.getUserId());
-      });
-  }
+	setDefault() {
+		this.pageService.isCourseCreate.subscribe(isCourseCreated => {
+			if (isCourseCreated) {
+				this.getUserSections(this.currentUser.getUserId());
+			}
+		});
+	}
 
-  /**
-   * Obtains status of user's sections
-   */
-  getStatusOfSection(students) {
-    let currentUser = JSON.parse(localStorage.getItem("currentUser"));
-    let status = students.filter(user => user.user_id == currentUser._id)[0].status;
-    if (status == "E") {
-      return "Enrolled";
-    } else if (status == "R") {
-      return "Requesting";
-    }
+	/**
+	 * Obtains information of the current user
+	 */
+	getUser(): void {
+		let user = JSON.parse(localStorage.getItem("currentUser"));
+		this.userService.getUser(user._id)
+			.subscribe(user => {
+				this.currentUser = new User(user);
+				this.getUserSections(this.currentUser.getUserId());
+			});
+	}
 
-  }
+	/**
+	 * Obtains status of user's sections
+	 */
+	getStatusOfSection(students) {
+		let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+		let status = students.filter(user => user.user_id == currentUser._id)[0].status;
+		if (status == "E") {
+			return "Enrolled";
+		} else if (status == "R") {
+			return "Requesting";
+		}
 
-  /**
-   * Obtains sections and its respective course of the current use
-   * @description Obtains sections and its respective course of the current user by storing it to 'courses' 
-   * and 'section' array respectively
-   * @param user_id id of the user whose array of 
-   * @returns an Array of objects with a structure of [{section: {Section}, course_name: Section's course_name}, {...}]
-   */
-  getUserSections(user_id): void {
-    this.sectionService.getInstructorSections(user_id)
-      .subscribe(sections => {
-        this.sections = sections;
-        console.log("<<<<<<<LOOK HERE");
-        console.log(this.sections);
-        //this.sections = sections.map(section => new Section(section));
-      });
-  }
+	}
 
-  /**
-   * @summary searches the string entered by the user and stores result in 'course_found' variable
-   */
-  search() {
-    if (this.course_search == null || this.course_search.length == 0) {
-      this.isSearching = false;
-    } else {
-      this.isSearching = true;
-      console.log(this.course_search);
-      this.sectionService.searchSection(this.course_search).subscribe((sections) => {
-        console.warn(sections);
-        this.course_found = sections;
-      })
-    }
-  }
+	/**
+	 * Obtains sections and its respective course of the current use
+	 * @description Obtains sections and its respective course of the current user by storing it to 'courses' 
+	 * and 'section' array respectively
+	 * @param user_id id of the user whose array of 
+	 * @returns an Array of objects with a structure of [{section: {Section}, course_name: Section's course_name}, {...}]
+	 */
+	getUserSections(user_id): void {
+		this.sectionService.getInstructorSections(user_id)
+			.subscribe(sections => {
+				this.sections = sections;
+				console.log("<<<<<<<LOOK HERE");
+				console.log(this.sections);
+				//this.sections = sections.map(section => new Section(section));
+			});
+	}
+
+	/**
+	 * @summary searches the string entered by the user and stores result in 'course_found' variable
+	 */
+	search() {
+		if (this.course_search == null || this.course_search.length == 0) {
+			this.isSearching = false;
+		} else {
+			this.isSearching = true;
+			console.log(this.course_search);
+			this.sectionService.searchSection(this.course_search).subscribe((sections) => {
+				console.warn(sections);
+				this.course_found = sections;
+			})
+		}
+	}
 
 	openSectionPage(section_id: string) {
-    //AHJ: unimplemented; dapat dili na kaayo hardcode? Pwede gud ni pero murag hugaw
+		//AHJ: unimplemented; dapat dili na kaayo hardcode? Pwede gud ni pero murag hugaw
 		this.pageService.openTeacherSectionPage(section_id);
 	}
 

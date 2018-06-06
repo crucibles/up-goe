@@ -82,7 +82,6 @@ let response = {
     message: null
 };
 
-
 router.use(function timeLog(req, res, next) {
     console.log('Time: ', Date.now());
     requestTime = Date.now();
@@ -327,7 +326,7 @@ router.post('/createQuest', (req, res) => {
             const myDB = db.db('up-goe-db');
             console.log("rebodysecid: " + req.body.section_id);
             console.log("rebodyresid: " + resultId);
-            myDB.collection('section')
+            myDB.collection('sections')
                 .update(
                     { _id: req.body.section_id },
                     {
@@ -631,6 +630,13 @@ router.post('/questmaps', (req, res) => {
                         console.log(result);
                         console.log("-----");
                         console.log("success");
+                        req.body.quest_coordinates.forEach(coord => {
+                            if(coord.quest_id){
+                                req.body.quest_coordinates = coord;
+                                console.log("FOUND IT");
+                                console.log(req.body.quest_coordinates);
+                            }
+                        });
                         response.data = result;
                         addQuestToSection(req, res);
                     }
@@ -690,12 +696,13 @@ router.post('/questmaps', (req, res) => {
 
     function addQuestToSection(req, res) {
         connection((db) => {
+            console.log("ADDING QUEST TO SECTION");
             const myDB = db.db('up-goe-db');
             console.log("rebodysecid: " + req.body.section_id);
             console.log("rebodyresid: " + req.body.quest_coordinates.quest_id);
-            myDB.collection('section')
+            myDB.collection('sections')
                 .update(
-                    { _id: req.body.section_id },
+                    { _id: ObjectID(req.body.section_id) },
                     {
                         $push: {
                             quests: {
@@ -704,13 +711,17 @@ router.post('/questmaps', (req, res) => {
                                 quest_prerequisite: []
                             }
                         }
-                    },
-                    function (err, section) {
-                        console.log("ENTER add Quest to Section of QUESTMAP callback");
-                        response.data = section;
-                        res.json(req.body.quest_coordinates);
                     }
-                );
+                )
+                .then(section => {
+                    console.log("section!");
+                    console.log(section);
+                    res.json(true);
+                })
+                .catch(err => {
+                    console.log("error!");
+                    sendError(err, res);
+                });
         })
     };
 });
@@ -937,6 +948,7 @@ router.post('/sections', (req, res) => {
             quest_grade: 0,
             is_graded: false,
             file: req.body.data,
+            comment: req.body.comment,
             date_submitted: new Date(Date.now())
         }
 
@@ -951,7 +963,6 @@ router.post('/sections', (req, res) => {
                     {
                         user_id: req.body.user_id,
                         "quests_taken.quest_id": req.body.quest_id
-                        
                     },
                     {
                         $set: {
@@ -971,8 +982,6 @@ router.post('/sections', (req, res) => {
                 .catch((err) => {
                     sendError(err, res);
                 })
-
-
         });
 
     }
@@ -984,10 +993,17 @@ router.post('/sections', (req, res) => {
             quest_grade: 0,
             is_graded: false,
             file: null,
+            comment: "",
             date_submitted: ""
         }
 
+        console.log("added to section Id");
+        console.log(req.body.section_id);
+        console.log("added to quest Id");
+        console.log(req.body.quest_id);
 
+        console.log("added user Id");
+        console.log(req.body.user_id);
 
         connection((db) => {
             const myDB = db.db('up-goe-db');
@@ -1007,6 +1023,7 @@ router.post('/sections', (req, res) => {
                     }
                 ).then(result => {
                     console.log("TRYING TO ADD QUEST TAKEN");
+                    console.log(result);
                     myDB.collection('experiences')
                         .updateOne(
                             {
@@ -1137,6 +1154,9 @@ router.get('/sections', (req, res) => {
     }
 
     if (req.query.id) {
+        console.log("/sections");
+        console.log("req.query");
+        console.log(req.query);
         getSectionsOfStudent(req, res);
     } else if (req.query.class) {
 
@@ -1197,6 +1217,7 @@ router.get('/sections', (req, res) => {
                     if (sections) {
 
                         async.forEach(sections, processEachSection, afterAllSection);
+                        // async.forEach(sections, processEachSection);
 
                         function processEachSection(section, callback) {
 
@@ -1214,6 +1235,8 @@ router.get('/sections', (req, res) => {
                                 });
 
                         }
+                        
+                        // res.json(myObjArr);
 
                         function afterAllSection(err) {
                             response.data = myObjArr;
@@ -1235,17 +1258,32 @@ router.get('/sections', (req, res) => {
 
     function getSectionsOfStudent(req, res) {
         console.log("enter search for section" + req.query);
+        console.log(req.query);
         connection((db) => {
             const myDB = db.db('up-goe-db');
 
-            myDB.collection('sections')
-                .find({
+            let query = {
+                students: {
+                    $elemMatch: {
+                        user_id: req.query.id
+                    }
+                }
+            };
+
+            if(req.query.section_id){
+                console.log("NAAAAAAAAAAAAAA SECTION_ID HOHO");
+                query = {
+                    _id: ObjectID(req.query.section_id),
                     students: {
                         $elemMatch: {
                             user_id: req.query.id
                         }
                     }
-                })
+                }
+            }
+
+            myDB.collection('sections')
+                .find(query)
                 .toArray()
                 .then((sections) => {
                     console.log(sections);
@@ -1618,6 +1656,7 @@ router.get('/users', (req, res) => {
 
     connection((db) => {
         const myDB = db.db('up-goe-db');
+        console.log(req.query.id);
         myDB.collection('users')
             .find(
                 ObjectID(req.query.id)
@@ -1766,7 +1805,57 @@ router.post('/badges', (req, res) => {
     console.log("METHOD!!!!!!!!!!!!!!!!!");
     console.log(req.method);
 
-    if (req.method == "POST") {
+    if(req.body.badgeData) {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('badges')
+                .count({badge_name: req.body.badgeData.badge_name})
+                .then((count) => {
+                    if(count > 0) {
+                        console.log('This badge already exists.');
+                        response.data = req.body.badgeData.badge_name;
+                        res.json(false);
+                    } else {
+                        myDB.collection('badges')
+                            .insertOne((req.body.badgeData), function(err, res) {
+                                if(err) {
+                                    console.log('Error inserting new badge.')
+                                    throw err;
+                                } else {
+                                    console.log('Badge successfully inserted.');
+                                    myDB.collection('badges') 
+                                        .findOne({badge_name: req.body.badgeData.badge_name})
+                                        .then(badge => {
+                                            console.log('-------------------------');
+                                            console.log(badge);
+                                            console.log(req.body.sectionId);
+                                            if(badge) {
+                                                myDB.collection('sections')
+                                                    .updateOne({_id: ObjectID(req.body.sectionId)}, {
+                                                        $push: {
+                                                            badges: JSON.stringify(badge._id).toString().substring(1,25)
+                                                        }
+                                                    })
+                                            }
+                                        })
+                                        .catch(err => {
+                                            sendError(err, res);
+                                        });
+                                }
+                            });
+                        
+
+                        
+
+                        
+                    }
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                });
+        });
+        res.json(true);
+    } else {
 
         connection((db) => {
             const myDB = db.db('up-goe-db');
@@ -1852,48 +1941,89 @@ router.post('/badges', (req, res) => {
 router.get('/badges', (req, res) => {
     console.log("IM IN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 
-    connection((db) => {
-        const myDB = db.db('up-goe-db');
-        myDB.collection('badges')
-            .find()
-            .toArray()
-            .then((badges) => {
+    if (req.query.method && req.query.method == "getSectionBadges") {
+        getSectionBadges(req, res);
+    } else {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('badges')
+                .find()
+                .toArray()
+                .then((badges) => {
 
-                if (badges) {
+                    if (badges) {
 
-                    Promise.all(badges).then(badges => {
-                        // earned system badges
-                        let esb = badges.filter(b => {
-                            console.log(b);
-                            if (b.is_system_badge == true) {
-                                let a = b.badge_attainers.filter(user => {
-                                    console.log(user);
-                                    if (user == req.query.id) {
-                                        return user;
-                                    }
-                                });
-                                console.log(a);
-                                if (a.length > 0) {
-                                    return b;
-                                };
-                            }
+                        Promise.all(badges).then(badges => {
+                            // earned system badges
+                            let esb = badges.filter(b => {
+                                console.log(b);
+                                if (b.is_system_badge == true) {
+                                    let a = b.badge_attainers.filter(user => {
+                                        console.log(user);
+                                        if (user == req.query.id) {
+                                            return user;
+                                        }
+                                    });
+                                    console.log(a);
+                                    if (a.length > 0) {
+                                        return b;
+                                    };
+                                }
+                            });
+                            console.log(esb);
+                            response.data = esb;
+                            res.json(esb);
                         });
-                        console.log(esb);
-                        response.data = esb;
-                        res.json(esb);
-                    });
 
-                } else {
-                    res.json(false);
-                }
+                    } else {
+                        res.json(false);
+                    }
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                });
+        });
+    }
 
-            })
-            .catch((err) => {
-                sendError(err, res);
-            });
-    });
+    function getSectionBadges(req, res) {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
 
+            console.log("----------getSectionBadges----------");
+            console.log(req.query.section_id);
+            console.log("----");
+            myDB.collection('sections')
+                .findOne(ObjectID(req.query.section_id))
+                .then(section => {
+                    console.log("section after finding current one");
+                    console.log(section);
+                    let sectionBadges = [];
+                    section.badges.forEach(badge => {
+                        sectionBadges.push(ObjectID(badge));
+                    })
 
+                    myDB.collection('badges')
+                        .find({
+                            _id: {
+                                $in: sectionBadges
+                            }
+                        })
+                        .toArray()
+                        .then((badges) => {
+                            console.log("badges after section");
+
+                            console.log(badges);
+                            res.json(badges);
+                        })
+                        .catch((err) => {
+                            sendError(err, res);
+                        });
+                })
+                .catch((err) => {
+                    sendError(err, res);
+                });
+        })
+    }
 });
 
 /**
@@ -1972,7 +2102,10 @@ router.post('/questLeaderboard', (req, res) => {
     connection((db) => {
         const myDB = db.db('up-goe-db');
         myDB.collection('experiences')
-            .find({ section_id: req.body.currSection })
+            .find({ 
+                section_id: req.body.currSection,
+                is_graded: true 
+            })
             .toArray()
             .then((experiences) => {
                 if (experiences) {

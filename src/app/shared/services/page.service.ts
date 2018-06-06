@@ -27,6 +27,7 @@ import {
 export class PageService {
 
 	@Output() isProfile: EventEmitter<boolean> = new EventEmitter();
+	@Output() isCourseCreate: EventEmitter<boolean> = new EventEmitter();
 
 	public lineChartColors: Array<any> = [
 		{ // light grey
@@ -143,6 +144,17 @@ export class PageService {
 	public isProfilePage(isProfile: boolean): boolean {
 		this.isProfile.emit(isProfile);
 		return isProfile;
+	}
+
+	/**
+	 * Used to inform subscribers that the page is either in profile page or not
+	 * @param isProfile identifies if page is profile page or not
+	 * 
+	 * @returns {boolean} returns true if user is navigating on profile page; false if otherwise
+	 */
+	public isCourseCreated(isCourseCreated: boolean): boolean {
+		this.isCourseCreate.emit(isCourseCreated);
+		return isCourseCreated;
 	}
 
 	public openSectionPage(sectionId: string) {

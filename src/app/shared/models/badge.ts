@@ -1,3 +1,4 @@
+import { Binary } from "@angular/compiler";
 
 /**
  * A class to represent badges
@@ -17,7 +18,7 @@ export class Badge {
     private badge_photo: string;
     private badge_description: string;
     private badge_conditions: Conditions;
-    private is_system: boolean;
+    private is_system_badge: boolean;
     private badge_attainers: string[];
 
     constructor(
@@ -29,14 +30,14 @@ export class Badge {
             this.badge_photo = badge.badge_photo ? badge.badge_photo : "";
             this.badge_description = badge.badge_description ? badge.badge_description : "";
             this.badge_conditions = badge.badge_conditions ? new Conditions(badge.badge_conditions) : new Conditions();
-            this.is_system = badge.is_system ? badge.is_system : false;
+            this.is_system_badge = badge.is_system_badge ? badge.is_system_badge : false;
             this.badge_attainers = badge.badge_attainers ? badge.badge_attainers : [];
         } else {
             this.badge_name = "";
             this.badge_photo = "";
             this.badge_description = "";
             this.badge_conditions = new Conditions();
-            this.is_system = false;
+            this.is_system_badge = false;
             this.badge_attainers = [];
         }
     }
@@ -46,14 +47,14 @@ export class Badge {
         badge_photo,
         badge_description,
         badge_conditions,
-        is_system,
+        is_system_badge,
         badge_attainers
     ) {
         this.badge_name = badge_name? badge_name : "";
         this.badge_photo = badge_photo ? badge_photo : "";
         this.badge_description = badge_description ? badge_description : "";
         this.badge_conditions = badge_conditions ? badge_conditions : new Conditions();
-        this.is_system = is_system ? is_system : false;
+        this.is_system_badge = is_system_badge ? is_system_badge : false;
         this.badge_attainers = badge_attainers ? badge_attainers : [];
     }
 
@@ -68,6 +69,9 @@ export class Badge {
     /**
      * Returns image with directory
      */
+    // getBadgePhoto(): string{
+    //     return this.badge_photo;
+    // }
     getBadgePhoto(): string {
         let image: string = "";
 
@@ -90,7 +94,7 @@ export class Badge {
     }
 
     getisSystem(): boolean {
-        return this.is_system;
+        return this.is_system_badge;
     }
 
     getBadgeAttainers(): string[] {
@@ -117,8 +121,8 @@ export class Badge {
         this.badge_conditions = badge_conditions;
     }
 
-    setIsSystem(is_system) {
-        this.is_system = is_system;
+    setIsSystem(is_system_badge) {
+        this.is_system_badge = is_system_badge;
     }
 
     setBadgeAttainers(badge_attainers) {
