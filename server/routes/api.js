@@ -1674,7 +1674,17 @@ router.post('/badges', (req, res) => {
                                 } else {
                                     console.log('Badge successfully inserted.');
                                 }
-                            });
+                            }).then((res) => {
+                            
+                            console.log(res);
+                            
+                            
+                            
+                        })
+                            
+                        })
+                        
+                        ;
                     }
                 })
                 .catch((err) => {
