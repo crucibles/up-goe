@@ -10,8 +10,6 @@ const async = require('async');
 const nodemailer = require('nodemailer');
 const xoauth2 = require('xoauth2');
 const cookie = require('ng2-cookies');
-// const multer = require('multer');
-// const path = require('path');
 
 /**
  * Note: queries are string, body can be object because of bodyParsers;
@@ -69,31 +67,6 @@ router.use(function timeLog(req, res, next) {
     console.log('Time: ', Date.now());
     next();
 });
-
-// const storage = multer.diskStorage({
-//     destination: './public/assets/images',
-//     filename: function(req, file, cb) {
-//         cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-//     }
-// });
-
-// const upload = multer({
-//     storage: storage,
-//     limits: {fileSize: 10000000}
-// }).single('appImage');
-
-// router.post('/uploadBadgeImg', (req, res) => {
-//     console.log('you entererd here in api');
-//     upload(req, res, (err) => {
-//         if(err) {
-//             console.log(err);
-//         } else {
-//             if(req.file) console.log(req.file);
-//             else console.log('walay sulod');
-//             res.json(true);
-//         }
-//     });
-// });
 
 /**
  * @description portal for requests regarding courses. api/courses

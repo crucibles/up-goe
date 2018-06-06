@@ -11,6 +11,7 @@ import {
 import {
 	Router
 } from '@angular/router';
+
 //Application Imports
 import {
 	Course,
@@ -41,12 +42,15 @@ import { AsyncAction } from 'rxjs/scheduler/AsyncAction';
 	styleUrls: ['./gen-selcourse.component.css']
 })
 export class GenSelcourseComponent implements OnInit {
-
+	
 	sections: Section[];
+	courseSections: any[];
 	table: any;
 	courses: Course[];
 	user: User;
 	allcourses: Course[];
+	instructors: User[];
+	tempSections = [];
 
 	//for search bar
 	course_search: string;
@@ -73,6 +77,45 @@ export class GenSelcourseComponent implements OnInit {
 			this.toastr.info("Invalid accessing the specific page of the inputted id!", "Info")
 		}
 		this.getUser();
+	}
+
+	/**
+	 * Acquires the full name of the instructor based on the instructorId.
+	 * @param instructorId 
+	 */
+	toInstructor(instructorId) {
+		let instructor = instructorId ? this.tempSections.filter(
+			section => instructorId == section.sectionData.getInstructor()
+		) : AsyncAction;
+
+		return instructor[0].instructorName;
+	}
+
+	getInstructors() {
+		this.tempSections = [];
+		let tempInstructors: string[] = [];
+
+		this.sections.forEach(section => {
+			if(tempInstructors == null) {
+				tempInstructors.push(section.getInstructor());
+				this.tempSections.push({
+					sectionData: new Section(section),
+					instructorName: ""
+				});
+			} else if (tempInstructors.indexOf(section.getInstructor()) == -1) {
+				tempInstructors.push(section.getInstructor());
+				this.tempSections.push({
+					sectionData: new Section(section),
+					instructorName: ""
+				});
+			}
+		});
+
+		this.tempSections.forEach(section => {
+			this.userService.getUser(section.sectionData.getInstructor()).subscribe(res => {
+				section.instructorName = (new User(res).getUserFullName());
+			});
+		});
 	}
 
 	/**
@@ -117,8 +160,10 @@ export class GenSelcourseComponent implements OnInit {
 		this.sectionService.getUserSections(user_id)
 			.subscribe(sections => {
 				console.warn(sections);
-				this.sections = sections;
+				this.courseSections = sections;
+				this.sections = sections.map(section => new Section(section.section));
 				this.sectionService.setCurrentUserSections(sections);
+				this.getInstructors();
 			});
 	}
 
