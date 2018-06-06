@@ -361,14 +361,15 @@ export class QuestService {
 	 * 
 	 * @see endQuest
 	 */
-	submitQuest(data: any, user_id, quest_id, section_id) {
+	submitQuest(data: any, comment: string, user_id, quest_id, section_id) {
 		const url = this.sectionUrl;
 
 		let body = {
 			user_id: user_id,
 			section_id: section_id,
 			quest_id: quest_id,
-			data: data
+			data: data,
+			comment: comment
 		}
 
 		console.warn(body.data);

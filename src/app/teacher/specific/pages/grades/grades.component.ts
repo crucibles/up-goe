@@ -87,7 +87,12 @@ export class GradesComponent implements OnInit {
     }
 
     getQuestGrades(quest_id: string){
-        this.submissions = this.sectionGrades.filter(submission => submission.getQuestSubmission(quest_id) != null);
+        this.submissions = this.sectionGrades.filter(submission => {
+            console.log(submission.getQuestSubmission(quest_id));
+            console.log(submission.getQuestSubmissionDate(quest_id));
+            return submission.getQuestSubmission(quest_id) != null && submission.getQuestSubmissionDate(quest_id) != ""
+        }
+        );
     }
 
     setStudentGrade(userId, questId, inputGrade){

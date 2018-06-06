@@ -30,7 +30,7 @@
                         <button type="submit" (click)="setStudentGrade(submission.getUserId(), questSelect.value, inputGrade.value)">Submit</button>
                     </td>
                     <td>{{this.pageService.formatDateTime(submission.getQuestSubmissionDate(questSelect.value))}}</td>
-                    <td>___</td>
+                    <td>{{submission.getQuestSubmissionComment(questSelect.value)}}</td>
                 </tr>
             </ng-container>
         </tbody>

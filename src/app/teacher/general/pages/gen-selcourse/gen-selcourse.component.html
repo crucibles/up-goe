@@ -33,9 +33,9 @@
 					</td>
 					<td>{{this.course_found[0].section.section_name}}</td>
 					<td>{{this.course_found[0].section.instructor}}</td>
-					<td>
+					<!-- <td>
 						<a *ngIf="this.getStatusOfSection(this.course_found[0].section.students) != 'Enrolled'" class=clickable>Add</a>
-					</td>
+					</td> -->
 				</tr>
 			</ng-container>
 			<ng-container *ngIf="!isSearching">

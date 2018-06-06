@@ -229,26 +229,6 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 		console.log(this.currentUser);
 	}
 
-	acceptQuest() {
-		//AHJ: unimplemented
-		this.bsModalRef.hide();
-	}
-
-	submitQuest() {
-		//AHJ: unimplemented
-		this.bsModalRef.hide();
-	}
-
-	abandonQuest() {
-		//AHJ: unimplemented
-		this.bsModalRef.hide();
-	}
-
-	isParticipating(quest_id: string): boolean {
-		let isParticipant = this.currentSection.isQuestParticipant(this.currentUser.getUserId(), quest_id);
-		return isParticipant;
-	}
-
 	pointClicked(event: Event) {
 		console.log("clicked!");
 		let activePoint = this.chart.getElementAtEvent(event);
@@ -455,11 +435,23 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 
 			if (newQuestCoordinates.length > 0) {
 				this.questService.addQuestMapCoordinates(this.currentSection.getSectionId(), this.questMap.getQuestMapId(), newQuestCoordinates).subscribe(questmap => {
+					this.questService.getSectionQuestMap(this.currentSection.getSectionId()).subscribe(questmap => {
+						console.log("QUESTMAP LOADEd");
+						console.log(questmap);
+						this.questMap = new QuestMap(questmap, this.quests, true);
+						this.setQuestMap();
+					});
 					console.log(questmap);
 				});
 			}
 		} else {
 			this.questService.editQuestMapCoordinateAt(this.currentSection.getSectionId(), this.questMap.getQuestMapId(), quest._id, basisX, basisY).subscribe(() => {
+				this.questService.getSectionQuestMap(this.currentSection.getSectionId()).subscribe(questmap => {
+					console.log("QUESTMAP LOADEd");
+					console.log(questmap);
+					this.questMap = new QuestMap(questmap, this.quests, true);
+					this.setQuestMap();
+				});
 				console.log("done editing qm coord!");
 			})
 		}
