@@ -23,14 +23,18 @@ import {
 	Badge,
 	Item,
 	User,
-	Conditions
+	Conditions,
+	Section,
+	Course
 } from 'shared/models';
 
 import {
 	BadgeService,
 	ItemService,
-	UserService
+	UserService,
+	SectionService
 } from 'shared/services';
+import { ActivatedRoute } from '@angular/router';
 
 const ITEMS: any[] = [
 	{
@@ -128,26 +132,81 @@ export class InventoryComponent implements OnInit {
 	//url of uploaded image
 	private itemImgUrl: string = "/assets/images/not-found.jpg";
 	private badgeImgUrl: string = "/assets/images/not-found.jpg";
+	private badgeImgFile: File;
 
 	currentUser: User;
 	items: Item[];
 	badges: Badge[];
+	instructorSections: any[];
+	sectionId: any;
 
 	constructor(
 		private formBuilder: FormBuilder,
 		private itemService: ItemService,
 		private modalService: BsModalService,
-		private userService: UserService
+		private userService: UserService,
+		private sectionService: SectionService,
+		private badgeService: BadgeService,
+		private route: ActivatedRoute
 	) { }
 
 	ngOnInit() {
 		this.getUser();
 		this.initializeForm();
+		this.getSections();
+
+		this.route.paramMap.subscribe(params => {
+			this.sectionId = params.get('sectionId');
+		});
 	}
 
 	createBadge() {
-		console.log("description:" + this.badgeForm.value.badgeName);
+		this.badgeService.createBadge(this.setBadge(), this.badgeForm.value.badgeSection).subscribe(data => {
+			if(data) {
+				console.log('Your badge was successfuly created.');
+			} else {
+				console.log('Your badge failed to be created.');
+			}
+		});
 
+		this.bsModalRef.hide();
+		this.badgeForm.reset();
+	}
+
+	private setConditions() {
+		let badgeCondition = new Conditions();
+		badgeCondition.setXp(this.badgeForm.value.badgeXP);
+		badgeCondition.setLogInstreak(this.badgeForm.value.badgeLoginStreak);
+		return badgeCondition;
+	}
+
+	private setBadge() {
+		let badge = new Badge();
+		badge.setBadge(
+			this.badgeForm.value.badgeName,
+			this.badgeForm.value.badgeImage,
+			this.badgeForm.value.badgeDescription,
+			this.setConditions(),
+			false,
+			false
+		);
+		return badge;
+	}
+
+
+	public badgeImageEvent($event: any) {		
+		if ($event.target.files && $event.target.files[0]) {
+			const fileSelected: File = $event.target.files[0];
+			var reader = new FileReader();
+			
+			reader.readAsDataURL($event.target.files[0]); // read file as data url
+
+			reader.onload = ($event) => { // called once readAsDataURL is completed
+				let target: any = $event.target;
+				let content: string = target.result;
+				this.badgeImgUrl = content;
+			}
+		}
 	}
 
 	createItem() {
@@ -167,7 +226,10 @@ export class InventoryComponent implements OnInit {
 		this.badgeForm = this.formBuilder.group({
 			badgeName: new FormControl("", Validators.required),
 			badgeImage: new FormControl(""),
-			badgeDescription: new FormControl("", Validators.required)
+			badgeDescription: new FormControl("", Validators.required),
+			badgeSection: new FormControl("", Validators.required),
+			badgeXP: new FormControl("", Validators.required),
+			badgeLoginStreak: new FormControl("", Validators.required)
 		});
 	}
 
@@ -182,21 +244,6 @@ export class InventoryComponent implements OnInit {
 				let target: any = $event.target;
 				let content: string = target.result;
 				this.itemImgUrl = content;
-			}
-		}
-	}
-
-	public badgeImageEvent($event: any) {
-		if ($event.target.files && $event.target.files[0]) {
-			const fileSelected: File = $event.target.files[0];
-			var reader = new FileReader();
-
-			reader.readAsDataURL($event.target.files[0]); // read file as data url
-
-			reader.onload = ($event) => { // called once readAsDataURL is completed
-				let target: any = $event.target;
-				let content: string = target.result;
-				this.badgeImgUrl = content;
 			}
 		}
 	}
@@ -240,18 +287,23 @@ export class InventoryComponent implements OnInit {
 	 * @param itemTemplate template
 	 */
 	openItemModal(itemTemplate: TemplateRef<any>) {
-		console.log("here!");
 		this.bsModalRef = this.modalService.show(itemTemplate);
 	}
 
 	/**
-	 * Open item modal
-	 * @description Open 'Add Item' modal.
-	 * @param itemTemplate template
+	 * Open badge modal
+	 * @description Open 'Add Badge' modal.
+	 * @param badgeTemplate template
 	 */
 	openBadgeModal(badgeTemplate: TemplateRef<any>) {
-		console.log("here!");
 		this.bsModalRef = this.modalService.show(badgeTemplate);
 	}
 
+	getSections(): void {
+		this.sectionService.getInstructorSections(
+			this.userService.getCurrentUser().getUserId()
+		).subscribe(data => {
+			this.instructorSections = data;
+		});
+	}
 }

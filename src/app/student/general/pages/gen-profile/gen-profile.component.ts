@@ -12,11 +12,18 @@ import {
 import {
     Course,
     Quest,
-    User
+    User,
+    Badge,
+    Section,
+    Experience
 } from 'shared/models';
 
 import {
+    BadgeService,
+    ExperienceService,
+    QuestService,
     PageService,
+    SectionService,
     UserService
 } from 'shared/services';
 
@@ -26,21 +33,22 @@ const SECTIONS: any[] = [
     {
         course_name: "CMSC 128",
         section_name: "A",
-        week_total_exp: [10, 30, 70, 300, 500],
-        max_exp: 700
-    },
-    {
-        course_name: "CMSC 128",
-        section_name: "B",
-        week_total_exp: [120, 40, 80, 321, 700],
-        max_exp: 1200
-    },
-    {
-        course_name: "CMSC 141",
-        section_name: "J",
-        week_total_exp: [10, 30, 70, 300, 500],
-        max_exp: 1000
-    },
+        week_total_exp: [10, 20, 30, 35],
+        max_exp: 200
+    }
+    // },
+    // {
+    //     course_name: "CMSC 128",
+    //     section_name: "B",
+    //     week_total_exp: [120, 40, 80, 321, 700],
+    //     max_exp: 1200
+    // },
+    // {
+    //     course_name: "CMSC 141",
+    //     section_name: "J",
+    //     week_total_exp: [10, 30, 70, 300, 500],
+    //     max_exp: 1000
+    // },
 ];
 
 //TOTXP - total accumulative weekly experience points of current student
@@ -56,9 +64,13 @@ const MAXXP: number = 10000;
 })
 
 export class GenProfileComponent implements OnInit {
+    //basic info
     user: User;
+    courseSections: any[] = [];
 
+    badges: Badge[];
     // lineChart
+    isChartReady: boolean = false;
     lineChartColors: Array<any>;
     lineChartData: Array<any> = [];
     lineChartLabels: Array<any> = ['Week 0', 'Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7', 'Week 8', 'Week 9', 'Week 10', 'Week 11', 'Week 12', 'Week 13', 'Week 14', 'Week 15', 'Week 16'];
@@ -76,19 +88,54 @@ export class GenProfileComponent implements OnInit {
      * @param userService used to obtains data needed for user
      */
     constructor(
+        private badgeService: BadgeService,
+        private experienceService: ExperienceService,
+        private questService: QuestService,
         private pageService: PageService,
+        private sectionService: SectionService,
         private userService: UserService
     ) {
     }
 
     ngOnInit() {
         this.pageService.isProfilePage(true);
+        this.isChartReady = false;
         this.getUser();
-        this.getGrades();
+        //this.getGrades();
         this.setPerformanceGraph();
         this.userService.updateUserConditions(this.userService.getCurrentUser().getUserId()).subscribe((x) => {
-            console.log(x);
+            console.log("done updating");
+            console.log("result" + x);
+
+            this.userService.getUser(this.userService.getCurrentUser().getUserId())
+                .subscribe((user) => {
+                    this.userService.setCurrentUser(user);
+                    console.log("CHECK IF WITH COURSE");
+                    console.log( this.sectionService.getCurrentUserSections());
+                    this.courseSections = this.sectionService.getCurrentUserSections();
+                    this.setPerformanceGraphData();
+                });
+
+            this.badgeService.checkIfWillEarnABadge().subscribe((badge) => {
+                console.log(badge);
+                this.badgeService.getCurrentStudentSystemBadges().subscribe((x) => {
+                    let y = [];
+                    y.push(x);
+                    console.warn(y);
+                    let bs = y.map(z => {
+                        return z.map((a) => {
+                            return new Badge(a);
+                        });
+                    });
+                    this.badges = bs[0];
+
+                    console.warn(bs);
+                });
+            });
+
+
         });
+
     }
 
     /**
@@ -131,14 +178,14 @@ export class GenProfileComponent implements OnInit {
             };
 
             this.lineChartData.push(dataLine);
+            console.log(this.lineChartData);
         })
-
     }
 
     /* Below are the helper functions */
 
     /**
-    * Sets the performance graph's display and design in the profile page
+    * Sets the performance graph's design in the profile page
     */
     setPerformanceGraph() {
         this.lineChartColors = this.pageService.lineChartColors;
@@ -149,6 +196,49 @@ export class GenProfileComponent implements OnInit {
                 yAxes: [{ id: 'y-axis-1', type: 'linear', position: 'left', ticks: { min: 0, max: 100 } }]
             }
         };
+    }
+
+    /**
+    * Sets the performance graph's displayed data in the profile page
+    */
+    setPerformanceGraphData() {
+        let dataGrade: number[] = [];
+        let max: number = MAXXP ? MAXXP : 10;
+        console.log("this.currentSections");
+        console.log(this.courseSections);
+        this.courseSections.forEach(courseSection => {
+            let section = new Section(courseSection.section);
+            this.experienceService.getSectionGrades(section.getSectionId(), this.user.getUserId())
+            .subscribe(sectionSubmissions => {
+                if(sectionSubmissions.length > 0){
+                    let submissions = sectionSubmissions.map(submission => new Experience(submission))[0];
+    
+                    let grades = submissions.getWeeklyAccumulativeGrades();
+                    console.log(grades);
+                    grades.forEach(grade => {
+                        // get the decimal percentage
+                        let percentage: number = (grade / MAXXP) * 100;
+            
+                        // round the decimal up to two decimal points
+                        dataGrade.push(Math.round((percentage + 0.00001) * 100) / 100);
+                    });
+            
+                    let dataLine: any = {
+                        data: dataGrade,
+                        label: courseSection.course_name + " - " +  section.getSectionName()
+                    };
+                    
+                    if(this.lineChartData.length == 0){
+                        this.lineChartData.push(dataLine);
+                    } else {
+                        let chartData = this.lineChartData;
+                        chartData.push(dataLine);
+                        this.lineChartData = chartData;
+                    }
+                    this.isChartReady = true;
+                }
+            });
+        });
     }
 
     /**

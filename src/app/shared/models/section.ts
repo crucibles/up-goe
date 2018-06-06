@@ -30,6 +30,9 @@ export class Section {
             this.students = section.students? section.students.map(student => new Student(student)) : [];
             this.instructor = section.instructor ? section.instructor : "";
             this.quests = section.quests ? section.quests.map(quest => new SectionQuest(quest)) : [];
+            if(!section.quests){
+                console.log("EMPTY");
+            }
             this.items = section.items ? section.items : [];
             this.badges = section.badges ? section.badges : [];
         } else {
@@ -163,12 +166,26 @@ export class Section {
 
 		//obtains the participants and locates the current user by filtering participants of the section quest
 		//returns true if found; false otherwise
-        let isParticipant = sectionQuest.searchParticipant(user_id);
+        let isParticipant = sectionQuest? sectionQuest.searchParticipant(user_id): null;
         if(isParticipant){
             return true;
         } else {
             return false;
         }
+    }
+
+    /**
+     * Sets the student's current status
+     * @param user_id id of the student whose status is to be changed
+     * @param newStatus new status of the chosen student
+     */
+    setStudentStatus(user_id, newStatus){
+        this.students = this.students.map(student => {
+            if(student.getStudentUserId() == user_id){
+                student.setStatus(newStatus);
+            } 
+            return student;
+        });
     }
     
 }
@@ -243,6 +260,8 @@ export class SectionQuest {
     constructor(
         sectionQuest?: any
     ) {
+        console.log("sectionQuest");
+        console.log(sectionQuest);
         if(sectionQuest){
             this.quest_id = sectionQuest.quest_id ? sectionQuest.quest_id: "";
             this.quest_participants = sectionQuest.quest_participants ? sectionQuest.quest_participants: [];

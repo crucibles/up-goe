@@ -21,7 +21,8 @@ import {
   SpecificMyCourseComponent,
   SpecificNewsComponent, 
   SpecificProfileComponent,
-  SpecificQuestMapComponent
+  SpecificQuestMapComponent,
+  GradesComponent
 } from 'teacher/specific/pages';
 
 import { 
@@ -43,17 +44,12 @@ const specificRoutes: Routes = [
     component: SpecificComponent,
     children: [
       {
-        path: 'specific-profile/',
-        loadChildren: 'teacher/general/general.module#GeneralModule',
-        component: GenSelcourseComponent
-      },
-      {
         path: 'specific-news/',
-        component: GenSelcourseComponent
+        component: SpecificNewsComponent
       },
       {
         path: 'specific-my-course/',
-        component: GenSelcourseComponent
+        component: SpecificMyCourseComponent
       },
       {
         path: 'specific-character/:sectionId',
@@ -74,6 +70,10 @@ const specificRoutes: Routes = [
       {
         path: 'specific-quest-map/:sectionId',
         component: SpecificQuestMapComponent
+      },
+      {
+        path: 'grades/:sectionId',
+        component: GradesComponent
       },
       {
         path: '**',

@@ -26,7 +26,8 @@ import {
 import {
 	CommentPostService,
 	UserService,
-	PageService
+	PageService,
+	SectionService
 } from 'shared/services';
 
 @Component({
@@ -63,7 +64,8 @@ export class SpecificNewsComponent implements OnInit {
 		private commentPostService: CommentPostService,
 		private pageService: PageService,
 		private route: ActivatedRoute,
-		private userService: UserService
+		private userService: UserService,
+		private sectionService: SectionService
 	) { }
 
 	ngOnInit() {

@@ -5,7 +5,7 @@
 
   <!--Line Graph for performance-->
   <div class="row">
-    <div style="display: block">
+    <div style="display: block" *ngIf="isChartReady">
       <canvas baseChart width="650" height="300" [datasets]="lineChartData" [labels]="lineChartLabels" [options]="lineChartOptions"
         [colors]="lineChartColors" [legend]="true" [chartType]="'line'" (chartHover)="chartHovered($event)" (chartClick)="chartClicked($event)"></canvas>
     </div>
@@ -33,7 +33,7 @@
   <!--Shows badges if badges exist-->
   <ng-container *ngIf="badges && badges.length != 0">
     <div *ngFor="let badge of badges">
-
+      <img class="badge-img" [src]="badge.getBadgePhoto()" tooltip="{{badge.getBadgeDescription()}}" placement="top" />
     </div>
   </ng-container>
   <!--Informs user if he or she has no badges yet-->

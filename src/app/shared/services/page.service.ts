@@ -27,6 +27,7 @@ import {
 export class PageService {
 
 	@Output() isProfile: EventEmitter<boolean> = new EventEmitter();
+	@Output() isCourseCreate: EventEmitter<boolean> = new EventEmitter();
 
 	public lineChartColors: Array<any> = [
 		{ // light grey
@@ -145,13 +146,24 @@ export class PageService {
 		return isProfile;
 	}
 
+	/**
+	 * Used to inform subscribers that the page is either in profile page or not
+	 * @param isProfile identifies if page is profile page or not
+	 * 
+	 * @returns {boolean} returns true if user is navigating on profile page; false if otherwise
+	 */
+	public isCourseCreated(isCourseCreated: boolean): boolean {
+		this.isCourseCreate.emit(isCourseCreated);
+		return isCourseCreated;
+	}
+
 	public openSectionPage(sectionId: string) {
 		this.router.navigate(['/student/specific/specific-news', sectionId]);
 	}
 
 	public openTeacherSectionPage(sectionId: string) {
 		console.log(sectionId);
-		this.router.navigate(['/teacher/specific/specific-quest-map', sectionId]);
+		this.router.navigate(['/teacher/specific/specific-news', sectionId]);
 	}
 
 	/**
@@ -160,7 +172,7 @@ export class PageService {
 	* 
 	* @returns string of the formatted date
 	*/
-	private formatDate(date_obj) {
+	public formatDate(date_obj) {
 		let months: string[] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 		
 		let month = months[date_obj.getMonth()];
@@ -176,7 +188,7 @@ export class PageService {
 	* 
 	* @returns formatted time string
 	*/
-	private formatTime(date_obj) {
+	public formatTime(date_obj) {
 		// formats a javascript Date object into a 12h AM/PM time string
 		var hour = date_obj.getHours();
 		var minute = date_obj.getMinutes();
@@ -192,5 +204,7 @@ export class PageService {
 		return hour + ":" + minute + amPM;
 	}
 
-
+	public getCurrentDate(){
+		return new Date();
+	}
 }

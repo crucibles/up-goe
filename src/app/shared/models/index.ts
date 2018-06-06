@@ -1,6 +1,7 @@
 export * from './badge';
 export * from './comment-post';
 export * from './course';
+export * from './experience';
 export * from './inventory';
 export * from './item';
 export * from './quest';

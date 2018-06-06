@@ -30,7 +30,8 @@ import {
 import {
 	Course,
 	Quest,
-	User
+	User,
+	QuestMap
 } from 'shared/models';
 
 import { SectionService } from 'shared/services/section.service';
@@ -42,6 +43,10 @@ export class QuestService {
 	 * Used for accessing/adding/editing/deleting quests
 	 */
 	private questUrl = "api/quests";
+	/**
+	 * Used for accessing/adding/editing/deleting quests
+	 */
+	private questMapUrl = "api/questmaps";
 
 	/**
 	 * Used for accessing/editing quests of a section
@@ -53,6 +58,9 @@ export class QuestService {
 	 */
 	private sectionQuestUrl = "api/sections/quests";
 
+
+	private experienceUrl = "api/experiences";
+
 	constructor(
 		private http: HttpClient,
 		private sectionService: SectionService,
@@ -60,25 +68,94 @@ export class QuestService {
 	) { }
 
 	/**
-	 * Lets the student abandon/quit a quest.
-	 * @description Let the user abandon the quest, put status ailments on user, 
-	 * and removes user from the quest participant's list by calling endQuest()  
+	 * Lets the student abandon/quit a quest. Removing the id in the quest participants.
+	 * @description Let the student abandon the quest
 	 * 
 	 * @param quest_id id of the quest to be abandoned by user
 	 * @param user_id id of the student abandoning the quest
+	 * @author Cedric Alvaro
 	 * 
-	 * @see endQuest()
 	 */
-	abandonQuest(quest_id, user_id) {
+	abandonQuest(user_id, quest_id, section_id) {
 
+		const url = this.sectionUrl;
+
+		let body = {
+			user_id: user_id,
+			section_id: section_id,
+			quest_id: quest_id,
+			abandon: true
+		}
+		console.warn(body);
+		return this.http.post(url, body).pipe(
+			tap(data => {
+				console.warn(data);
+				return data;
+			})
+		);
+
+	}
+
+	addQuestMapCoordinates(section_id: String, quest_map_id: String, newQuestCoord: any[]): Observable<QuestMap> {
+		let url = this.questMapUrl;
+		return this.http.post<QuestMap>(url, {
+			method: "addQuestMapCoordinates",
+			section_id: section_id,
+			quest_map_id: quest_map_id,
+			quest_coordinates: newQuestCoord
+		})
+			.pipe(
+				tap(data => {
+					// Returns data from api.js to spec-quest-map.ts
+					return data;
+				}),
+				catchError(this.handleError<QuestMap>(`createQuest =${quest_map_id}`))
+			);
 	}
 
 	/**
 	 * Adds newly created quest into the database
 	 * @param quest quest to be added to the database
+	 * @param section_id id of the section where the quest belongs to
 	 */
-	createQuest(quest) {
-		const url = this.questUrl;
+	createQuest(
+		section_id,
+		quest_title,
+		quest_description,
+		quest_retakable,
+		quest_badge,
+		quest_item,
+		quest_xp,
+		quest_hp,
+		quest_start_date,
+		quest_end_date,
+		quest_party,
+		quest_prerequisite
+	): Observable<Quest> {
+		const url = "api/createQuest";
+		console.log("CREATING..");
+
+		return this.http.post<Quest>(url, {
+			section_id,
+			quest_title,
+			quest_description,
+			quest_retakable,
+			quest_badge,
+			quest_item,
+			quest_xp,
+			quest_hp,
+			quest_start_date,
+			quest_end_date,
+			quest_party,
+			quest_prerequisite
+		})
+			.pipe(
+				tap(data => {
+					// Returns data from api.js to spec-quest-map.ts
+					return data;
+				}),
+				catchError(this.handleError<Quest>(`createQuest =${quest_title}`))
+			);
 	}
 
 	/**
@@ -95,6 +172,28 @@ export class QuestService {
 	 */
 	editQuest(quest) {
 		const url = this.questUrl;
+	}
+
+	editQuestMapCoordinateAt(section_id, quest_map_id, quest_id, x, y): Observable<any> {
+		let url = this.questMapUrl;
+
+		return this.http.post<QuestMap>(url, {
+			method: "editQuestMapCoordinateAt",
+			section_id: section_id,
+			quest_map_id: quest_map_id,
+			quest_coordinates: {
+				quest_id: quest_id,
+				x1: x,
+				y1: y,
+			}
+		})
+			.pipe(
+				tap(data => {
+					// Returns data from api.js to spec-quest-map.ts
+					return data;
+				}),
+				catchError(this.handleError<QuestMap>(`createQuest =${quest_map_id}`))
+			);
 	}
 
 	/**
@@ -114,6 +213,7 @@ export class QuestService {
 	 */
 	getQuest(quest_id: string): Observable<Quest> {
 		const url = `${this.questUrl}/?quest_id=${quest_id}`;
+		console.log("entered quest!!!");
 		return this.http.get<Quest>(url).pipe(
 			map(quests => quests[0]), // returns a {0|1} element array
 			tap(h => {
@@ -121,6 +221,37 @@ export class QuestService {
 				const outcome = h ? 'fetched quest ' + quest_id : 'did not find quest ' + quest_id;
 			}),
 			catchError(this.handleError<User>(`getQuest quest_id=${quest_id}`))
+		);
+	}
+
+	getSectionQuestMap(section_id): Observable<any> {
+		const url = this.questMapUrl;
+		let params = new HttpParams()
+			.set('section_id', section_id)
+			.set('method', 'getSectionQuestMap');
+
+		return this.http.get<any>(url, {
+			params: params
+		}).pipe(
+			tap(quests => quests ? console.log(quests) : console.log('did not fetched quests')),
+			catchError(this.handleError(`getUserJoinedSectionQuests`, []))
+		);
+	}
+
+	/**
+	 * Returns the section's array quests
+	 * @param section_id id of the section whose array of quests needed to be retrieved
+	 */
+	getSectionQuests(section_id): Observable<any[]> {
+		let params = new HttpParams()
+			.set('section_id', section_id)
+			.set('method', 'getSectionQuests');
+
+		return this.http.get<Quest[]>('api/getSectionQuests', {
+			params: params
+		}).pipe(
+			tap(quests => quests ? console.log(quests) : console.log('did not fetched quests')),
+			catchError(this.handleError(`getUserJoinedSectionQuests`, []))
 		);
 	}
 
@@ -169,10 +300,10 @@ export class QuestService {
 			.set('section_id', section_id)
 			.set('method', 'getUserQuests');
 
-		return this.http.get<Quest[]>(this.sectionQuestUrl, {
+		return this.http.get<any[]>(this.sectionQuestUrl, {
 			params: params
 		}).pipe(
-			tap(quests => quests ? console.log(quests) : console.log('did not fetched quests')),
+			tap(quests => quests ? console.log(quests) : console.log('did not fetch quests')),
 			catchError(this.handleError(`getUserJoinedSectionQuests`, []))
 		);
 	}
@@ -206,9 +337,22 @@ export class QuestService {
 	 */
 	joinQuest(user_id, quest_id, section_id) {
 		const url = this.sectionUrl;
+
+		let body = {
+			user_id: user_id,
+			section_id: section_id,
+			quest_id: quest_id
+		}
+		console.warn(body);
+		return this.http.post(url, body).pipe(
+			tap(data => {
+				console.warn(data);
+				return data;
+			})
+		);
 	}
 
-	/**
+	/**\
 	 * Submits student's quest submission.
 	 * @description Submits the user's submission and removes user from the quest participant's list 
 	 * by calling endQuest() 
@@ -217,9 +361,24 @@ export class QuestService {
 	 * 
 	 * @see endQuest
 	 */
-	submitQuest(idk) {
-		//AHJ: Still needs work here! di ko kabalo unsaon ni xD like ang parameter or unsa atung pagsubmit and all
-		//AHJ: Idk what url to use
+	submitQuest(data: any, comment: string, user_id, quest_id, section_id) {
+		const url = this.sectionUrl;
+
+		let body = {
+			user_id: user_id,
+			section_id: section_id,
+			quest_id: quest_id,
+			data: data,
+			comment: comment
+		}
+
+		console.warn(body.data);
+		return this.http.post(url, body).pipe(
+			tap(data => {
+				console.warn(data);
+				return data;
+			})
+		);
 	}
 
 	/**
