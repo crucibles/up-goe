@@ -951,6 +951,7 @@ router.post('/sections', (req, res) => {
                     {
                         user_id: req.body.user_id,
                         "quests_taken.quest_id": req.body.quest_id
+                        
                     },
                     {
                         $set: {
