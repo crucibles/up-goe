@@ -481,7 +481,7 @@ export class SectionService {
 
 		let params = new HttpParams().set('instructor', user_id);
 
-		return this.http.get<any>(
+		return this.http.get<Section[]>(
 			url, {
 				params: params
 			})
@@ -497,6 +497,7 @@ export class SectionService {
 					console.warn(this.currentUserSections);
 					const outcome = sections ?
 						'fetched sections of user ' + user_id : 'did not find sections of user ' + user_id;
+					return sections;
 				}),
 				catchError(this.handleError<any>(`getUserSections user_id=${user_id}`))
 			);
