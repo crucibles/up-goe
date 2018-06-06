@@ -4,7 +4,8 @@ import {
 	OnInit,
 	ViewChild,
 	TemplateRef,
-	Input
+	Input,
+	ElementRef
 } from '@angular/core';
 
 import {
@@ -71,22 +72,9 @@ export class SpecificQuestMapComponent implements OnInit {
 	isQuestTakn: boolean = false;
 
 	currentUser: User;
-	//AHJ: unimplemented; remove this when quest is retrieved properly
-	private QUEST: any = {
-		_id: "1",
-		quest_title: "Missing Ring!",
-		quest_description: "Retrieve the missing ring.",
-		quest_retakable: false,
-		quest_badge: "324",
-		quest_item: ["1324", "2323", "324234"],
-		quest_xp: 134,
-		quest_hp: 3432,
-		quest_start_time_date: new Date('01/01/2017'),
-		quest_end_time_date: new Date('10/10/2019'),
-		quest_party: false,
-		quest_prerequisite: []
-	}
 
+	
+    commentBox: any = "";
 	private questModalRef: BsModalRef;
 	private lbModalRef: BsModalRef;
 	private currentSection: Section;
@@ -105,7 +93,7 @@ export class SpecificQuestMapComponent implements OnInit {
 		private leaderboardService: LeaderboardService
 	) {
 		this.currentUser = this.userService.getCurrentUser();
-		this.currentSection = this.sectionService.getCurrentSection();
+		this.currentSection = new Section(this.sectionService.getCurrentSection());
 	}
 
 	ngOnInit() {
@@ -116,7 +104,7 @@ export class SpecificQuestMapComponent implements OnInit {
 	}
 
 	getQuestScores() {
-		var currentSection = this.sectionService.getCurrentSection().getSectionId();
+		var currentSection = this.currentSection.getSectionId();
 		var currentQuest = this.questClicked.getQuestId();
 		this.leaderboardService.getQuestScores(currentSection, currentQuest)
 			.subscribe((user) => {
@@ -292,16 +280,38 @@ export class SpecificQuestMapComponent implements OnInit {
 		let section_id = this.currentSection.getSectionId();
 
 		this.questService.joinQuest(user_id, quest_id, section_id).subscribe((result) => {
-			this.questService.getUserJoinedQuests(user_id).subscribe(x => {
-				console.log(x);
-			})
+			console.log("JOINED QUEST!!!");
+			console.log(result);
+			// this.questService.getUserJoinedQuests(user_id).subscribe(x => {
+			// 	console.log("x");
+			// 	console.log(x);
+			// })
+			this.sectionService.getUserSections(this.currentUser.getUserId(), this.currentSection.getSectionId()).subscribe(
+				sections => {
+					console.log(sections);
+					this.sectionService.setCurrentSection(sections[0].section);
+					this.currentSection = new Section(this.sectionService.getCurrentSection());
+					console.log(this.currentSection);
+				}
+			)
 		});
 
 	}
 
-	submitQuest() {
-		//AHJ: unimplemented; remove variable below if submitQuest prpoerly implemented
-		this.isQuestTakn = true;
+	submitQuest(comment) {
+		//AHJ: unimplemented; remove variable below if submitQuest properly implemented
+		console.log(this.commentBox);
+		console.log(comment);
+		let user_id = this.userService.getCurrentUser().getUserId();
+		let quest_id = this.questClicked.getQuestId();
+		let section_id = this.currentSection.getSectionId();
+		
+		this.questService.submitQuest("hello", this.commentBox, user_id, quest_id, section_id).subscribe((result) => {
+			this.isQuestTakn = true;
+			this.questService.getUserJoinedQuests(user_id).subscribe(x => {
+				console.log(x);
+			})
+		});
 	}
 
 	abandonQuest() {

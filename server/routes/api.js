@@ -306,7 +306,7 @@ router.post('/createQuest', (req, res) => {
             const myDB = db.db('up-goe-db');
             console.log("rebodysecid: " + req.body.section_id);
             console.log("rebodyresid: " + resultId);
-            myDB.collection('section')
+            myDB.collection('sections')
                 .update(
                     { _id: req.body.section_id },
                     {
@@ -520,6 +520,13 @@ router.post('/questmaps', (req, res) => {
                         console.log(result);
                         console.log("-----");
                         console.log("success");
+                        req.body.quest_coordinates.forEach(coord => {
+                            if(coord.quest_id){
+                                req.body.quest_coordinates = coord;
+                                console.log("FOUND IT");
+                                console.log(req.body.quest_coordinates);
+                            }
+                        });
                         response.data = result;
                         addQuestToSection(req, res);
                     }
@@ -579,12 +586,13 @@ router.post('/questmaps', (req, res) => {
 
     function addQuestToSection(req, res) {
         connection((db) => {
+            console.log("ADDING QUEST TO SECTION");
             const myDB = db.db('up-goe-db');
             console.log("rebodysecid: " + req.body.section_id);
             console.log("rebodyresid: " + req.body.quest_coordinates.quest_id);
-            myDB.collection('section')
+            myDB.collection('sections')
                 .update(
-                    { _id: req.body.section_id },
+                    { _id: ObjectID(req.body.section_id) },
                     {
                         $push: {
                             quests: {
@@ -593,13 +601,17 @@ router.post('/questmaps', (req, res) => {
                                 quest_prerequisite: []
                             }
                         }
-                    },
-                    function (err, section) {
-                        console.log("ENTER add Quest to Section of QUESTMAP callback");
-                        response.data = section;
-                        res.json(req.body.quest_coordinates);
                     }
-                );
+                )
+                .then(section => {
+                    console.log("section!");
+                    console.log(section);
+                    res.json(true);
+                })
+                .catch(err => {
+                    console.log("error!");
+                    sendError(err, res);
+                });
         })
     };
 });
@@ -826,6 +838,7 @@ router.post('/sections', (req, res) => {
             quest_grade: 0,
             is_graded: false,
             file: req.body.data,
+            comment: req.body.comment,
             date_submitted: new Date(Date.now())
         }
 
@@ -837,7 +850,7 @@ router.post('/sections', (req, res) => {
                 .updateOne(
                     {
                         user_id: req.body.user_id,
-                        section_id: req.body.section_id
+                        "quests_taken.quest_id": req.body.quest_id
                     },
                     {
                         $set: {
@@ -857,8 +870,6 @@ router.post('/sections', (req, res) => {
                 .catch((err) => {
                     sendError(err, res);
                 })
-
-
         });
 
     }
@@ -870,10 +881,17 @@ router.post('/sections', (req, res) => {
             quest_grade: 0,
             is_graded: false,
             file: null,
+            comment: "",
             date_submitted: ""
         }
 
+        console.log("added to section Id");
+        console.log(req.body.section_id);
+        console.log("added to quest Id");
+        console.log(req.body.quest_id);
 
+        console.log("added user Id");
+        console.log(req.body.user_id);
 
         connection((db) => {
             const myDB = db.db('up-goe-db');
@@ -893,6 +911,7 @@ router.post('/sections', (req, res) => {
                     }
                 ).then(result => {
                     console.log("TRYING TO ADD QUEST TAKEN");
+                    console.log(result);
                     myDB.collection('experiences')
                         .updateOne(
                             {
@@ -1023,6 +1042,9 @@ router.get('/sections', (req, res) => {
     }
 
     if (req.query.id) {
+        console.log("/sections");
+        console.log("req.query");
+        console.log(req.query);
         getSectionsOfStudent(req, res);
     } else if (req.query.class) {
 
@@ -1124,17 +1146,32 @@ router.get('/sections', (req, res) => {
 
     function getSectionsOfStudent(req, res) {
         console.log("enter search for section" + req.query);
+        console.log(req.query);
         connection((db) => {
             const myDB = db.db('up-goe-db');
 
-            myDB.collection('sections')
-                .find({
+            let query = {
+                students: {
+                    $elemMatch: {
+                        user_id: req.query.id
+                    }
+                }
+            };
+
+            if(req.query.section_id){
+                console.log("NAAAAAAAAAAAAAA SECTION_ID HOHO");
+                query = {
+                    _id: ObjectID(req.query.section_id),
                     students: {
                         $elemMatch: {
                             user_id: req.query.id
                         }
                     }
-                })
+                }
+            }
+
+            myDB.collection('sections')
+                .find(query)
                 .toArray()
                 .then((sections) => {
                     console.log(sections);
@@ -1507,6 +1544,7 @@ router.get('/users', (req, res) => {
 
     connection((db) => {
         const myDB = db.db('up-goe-db');
+        console.log(req.query.id);
         myDB.collection('users')
             .find(
                 ObjectID(req.query.id)

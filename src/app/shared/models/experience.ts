@@ -64,7 +64,18 @@ export class Experience {
      */
     getQuestSubmissionDate(quest_id): any {
         let questSubmission: any[] = this.quests_taken.filter(quest => quest.quest_id == quest_id);
-        return questSubmission.length > 0 && questSubmission[0].submission_date ? questSubmission[0].submission_date : "";
+    
+        return questSubmission.length > 0 && questSubmission[0].date_submitted ? questSubmission[0].date_submitted : "";
+    }
+
+    /**
+     * Retrieves a student's grade for a particular quest
+     * @param quest_id the id of the quest whose user submission is to be retrieved.
+     */
+    getQuestSubmissionComment(quest_id): any {
+        let questSubmission: any[] = this.quests_taken.filter(quest => quest.quest_id == quest_id);
+  
+        return questSubmission.length > 0 && questSubmission[0].comment ? questSubmission[0].comment : "";
     }
 
     /**
@@ -126,8 +137,9 @@ export class Experience {
         let smallestIndex = -1;
         console.log("<groupbyweekfunc");
         console.log(this.quests_taken);
+        this.quests_taken = this.quests_taken.filter(quest => quest.date_submitted != "");
         this.quests_taken.forEach(quest => {
-            let date = new Date(quest.submission_date);
+            let date = new Date(quest.date_submitted);
             let index = Math.floor(date.getTime()) / (1000 * 60 * 60 * 24 * 7);
             index = Math.floor(index);
             if(smallestIndex < 0 || smallestIndex > index){
