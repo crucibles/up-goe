@@ -55,14 +55,14 @@
 				</tr>
 				<!--AHJ: Fix zebra form-->
 				<ng-container *ngIf="sections != null && sections.length != 0">
-					<tr *ngFor="let section of sections; let i = index;" [class.odd]="i%2 == 0">
+					<tr *ngFor="let section of courseSections; let i = index;" [class.odd]="i%2 == 0">
 						<ng-container *ngIf="this.section.section.students">
 							<td *ngIf="this.getStatusOfSection(this.section.section.students) == 'Enrolled'">
 								<a class="clickable" (click)=openSectionPage(section.section._id)>{{section.course_name}}</a>
 							</td>
 							<td *ngIf="this.getStatusOfSection(this.section.section.students) != 'Enrolled'">{{section.course_name}}</td>
 							<td>{{section.section.section_name}}</td>
-							<td>{{section.section.instructor}}</td>
+							<td>{{this.toInstructor(section.section.instructor)}}</td>
 							<td>{{this.getStatusOfSection(section.section.students)}}</td>
 						</ng-container>
 					</tr>

@@ -39,6 +39,8 @@ import {
     of
 } from 'rxjs/observable/of';
 
+import { SectionService } from 'shared/services/section.service';
+
 
 const BADGES: any[] = [
 	{
@@ -67,10 +69,12 @@ export class BadgeService {
      */
     private badgeUrl = 'api/badges';    // URL to: server/routes/api.js for users
     private userUrl = 'api/users';
+    private uploadBadgeUrl = 'api/upload';
 
     constructor(
         private userService: UserService,
-        private http: HttpClient
+        private http: HttpClient,
+        private sectionService: SectionService
     ) { }
 
     /**
@@ -130,9 +134,34 @@ export class BadgeService {
      * Adds received new badge to the database
      * @param badge New badge to be added to the database
      */
-    createBadge(badge: Badge) {
+    createBadge(badge: Badge, sectionId?: string) {
+        console.log('this your badge');
+        console.log(badge);
         const url = this.badgeUrl;
+        let body =  {
+            badgeData: badge,
+            sectionId: sectionId
+        };
 
+        console.log(body);
+        return this.http.post<any>(url, body).pipe(
+            tap(data => {
+                if(data) return data
+                else return false;
+            }),
+            catchError(this.handleError<any>(`creating new badge`))
+        );
+    }
+
+    uploadBadge(badgeFile: any) {
+        const url = this.uploadBadgeUrl;
+        return this.http.post(url, badgeFile).pipe(
+            tap(data => {
+                if(data) return data;
+                else return false;
+            }),
+            catchError(this.handleError<any>(`uploading badge image`))
+        );
     }
 
     /**
