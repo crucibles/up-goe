@@ -1544,6 +1544,7 @@ router.get('/users', (req, res) => {
 
     connection((db) => {
         const myDB = db.db('up-goe-db');
+        console.log(req.query.id);
         myDB.collection('users')
             .find(
                 ObjectID(req.query.id)

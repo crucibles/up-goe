@@ -64,9 +64,18 @@ export class Experience {
      */
     getQuestSubmissionDate(quest_id): any {
         let questSubmission: any[] = this.quests_taken.filter(quest => quest.quest_id == quest_id);
-        console.log("questSubmissiondate");
-        console.log(questSubmission);
+    
         return questSubmission.length > 0 && questSubmission[0].date_submitted ? questSubmission[0].date_submitted : "";
+    }
+
+    /**
+     * Retrieves a student's grade for a particular quest
+     * @param quest_id the id of the quest whose user submission is to be retrieved.
+     */
+    getQuestSubmissionComment(quest_id): any {
+        let questSubmission: any[] = this.quests_taken.filter(quest => quest.quest_id == quest_id);
+  
+        return questSubmission.length > 0 && questSubmission[0].comment ? questSubmission[0].comment : "";
     }
 
     /**
