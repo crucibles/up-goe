@@ -64,7 +64,9 @@ export class Experience {
      */
     getQuestSubmissionDate(quest_id): any {
         let questSubmission: any[] = this.quests_taken.filter(quest => quest.quest_id == quest_id);
-        return questSubmission.length > 0 && questSubmission[0].submission_date ? questSubmission[0].submission_date : "";
+        console.log("questSubmissiondate");
+        console.log(questSubmission);
+        return questSubmission.length > 0 && questSubmission[0].date_submitted ? questSubmission[0].date_submitted : "";
     }
 
     /**
@@ -126,8 +128,9 @@ export class Experience {
         let smallestIndex = -1;
         console.log("<groupbyweekfunc");
         console.log(this.quests_taken);
+        this.quests_taken = this.quests_taken.filter(quest => quest.date_submitted != "");
         this.quests_taken.forEach(quest => {
-            let date = new Date(quest.submission_date);
+            let date = new Date(quest.date_submitted);
             let index = Math.floor(date.getTime()) / (1000 * 60 * 60 * 24 * 7);
             index = Math.floor(index);
             if(smallestIndex < 0 || smallestIndex > index){

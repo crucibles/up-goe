@@ -163,6 +163,7 @@ export class CreateCourseComponent implements OnInit {
 			[]
 		).subscribe(marj => {
 			console.log("MARJMARJORIE!");
+			this.pageService.isCourseCreated(true);
 		});
 		//this.sectionService.createSection(section);
 	}

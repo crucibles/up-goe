@@ -265,6 +265,7 @@ export class SpecificMyCourseComponent implements OnInit {
 	approveStudent(userId: string){
 		this.sectionService.approveUserToSection(userId, this.currentSection.getSectionId()).subscribe(
 			approve => {
+				this.currentSection.setStudentStatus(userId, "E");
 				console.log("approved");
 			}
 		)
