@@ -10,6 +10,25 @@ const async = require('async');
 const nodemailer = require('nodemailer');
 const xoauth2 = require('xoauth2');
 const cookie = require('ng2-cookies');
+const fs = require('fs');
+const mongoose = require("mongoose");
+// var DIR = './uploads/';
+const multer = require('multer');
+var requestTime;
+
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './uploads/')
+    },
+    filename: function (req, file, cb) {
+        console.log(req.cookies);
+        cb(null, file.fieldname + '-' + requestTime )
+    }
+});
+
+var upload = multer({ storage: storage }).single('file');
+// var upload = multer({ dest: DIR }).single('photo');
+
 
 /**
  * Note: queries are string, body can be object because of bodyParsers;
@@ -66,6 +85,7 @@ let response = {
 
 router.use(function timeLog(req, res, next) {
     console.log('Time: ', Date.now());
+    requestTime = Date.now();
     next();
 });
 
@@ -392,8 +412,8 @@ router.post('/experiences', (req, res) => {
                     },
                     {
                         $set: {
-                            "quests_taken.$[elem].quest_grade":  req.body.grade,
-                            "quests_taken.$[elem].is_graded": true  
+                            "quests_taken.$[elem].quest_grade": req.body.grade,
+                            "quests_taken.$[elem].is_graded": true
                         }
                     },
                     {
@@ -403,8 +423,47 @@ router.post('/experiences', (req, res) => {
                     }
                 )
                 .then(grade => {
-                    console.log("grade");
-                    console.log(grade);
+
+                    connection((db) => {
+                        const myDB = db.db('up-goe-db');
+                        myDB.collection('quests')
+                            .find(ObjectID(req.body.quest_id))
+                            .toArray()
+                            .then((quests) => {
+                                if (quests[0] && quest[0].quest_badge) {
+
+                                    myDB.collection('sections')
+                                        .updateOne(
+                                            {
+                                                _id: ObjectID(req.body.section_id)
+                                            },
+                                            {
+                                                $addToSet: {
+                                                    "students.$[elem].badges": quest[0].quest_badge,
+
+                                                }
+                                            },
+                                            {
+                                                arrayFilters: [{ "elem.user_id": req.body.user_id }]
+                                            }
+                                        )
+                                        .then(x => {
+                                            console.log("adding badge to section student finally");
+                                            res.json(x);
+                                        })
+
+                                } else {
+                                    res.json(false);
+                                }
+                            })
+                            .catch((err) => {
+                                sendError(err, res);
+                            });
+                    });
+
+
+
+
                     res.json(true);
                 })
                 .catch(err => {
@@ -413,6 +472,57 @@ router.post('/experiences', (req, res) => {
                 })
         })
     }
+});
+
+router.post('/trial', (req, res) => {
+    var path = '';
+    console.warn("hey");
+    console.log(req.body);
+
+    upload(req, res, function (err) {
+        if (err) {
+            // An error occurred when uploading
+            console.log(err);
+            return res.status(422).send("an Error occured")
+        }
+        // No error occured.
+        path = req.file.path;
+        return res.send(path.substring(8, path.length));
+    })
+
+
+    // connection((db) => {
+    //     const myDB = db.db('up-goe-db');
+    //     gfs = Grid(db);
+
+    //     console.warn("im in");
+    //     let part = req.files.file;
+    //     let writeStream = gfs.createWriteStream({
+    //         filename: 'img_' + part.name,
+    //         mode: 'w',
+    //         content_type: part.mimetype
+    //     });
+
+    //     writeStream.on('close', (file) => {
+    //         // checking for file
+    //         if (!file) {
+    //             res.status(400).send('No file received');
+    //         }
+    //         return res.status(200).send({
+    //             message: 'Success',
+    //             file: file
+    //         });
+    //     });
+    //     // using callbacks is important !
+    //     // writeStream should end the operation once all data is written to the DB 
+    //     writeStream.write(part.data, () => {
+    //         writeStream.end();
+    //     });
+
+    // });
+
+
+
 });
 
 /**
@@ -830,6 +940,8 @@ router.post('/sections', (req, res) => {
             date_submitted: new Date(Date.now())
         }
 
+        console.log(submitObj);
+
         connection((db) => {
             const myDB = db.db('up-goe-db');
 
@@ -838,7 +950,7 @@ router.post('/sections', (req, res) => {
                 .updateOne(
                     {
                         user_id: req.body.user_id,
-                        section_id: req.body.section_id
+                        "quests_taken.quest_id": req.body.quest_id
                     },
                     {
                         $set: {

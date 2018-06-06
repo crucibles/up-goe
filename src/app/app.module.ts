@@ -75,6 +75,8 @@ import {
 	ToastOptions
 } from 'ng2-toastr/ng2-toastr';
 
+
+
 @NgModule({
 	declarations: [
 		AppComponent,

@@ -5,7 +5,8 @@ import {
 	Input,
 	HostListener,
 	ElementRef,
-	TemplateRef
+	TemplateRef,
+	ViewChild
 } from '@angular/core';
 
 import {
@@ -46,6 +47,9 @@ import {
 import { IfObservable } from 'rxjs/observable/IfObservable';
 import { Observable } from 'rxjs/Observable';
 
+//import the file uploader plugin
+import { FileUploader } from 'ng2-file-upload/ng2-file-upload';
+const URL = 'http://localhost:3000/api/trial';
 
 @Component({
 	selector: 'gen-sidetab',
@@ -57,7 +61,10 @@ import { Observable } from 'rxjs/Observable';
 })
 export class GenSidetabComponent implements OnInit {
 	@Input('isProfile') isProfile: boolean = false;
+	@ViewChild('fileInput') fileInput;
 
+
+	public uploader: FileUploader = new FileUploader({ url: URL, itemAlias: 'file' });
 	//current user
 	currentUser: User;
 	image: string = "";
@@ -104,9 +111,21 @@ export class GenSidetabComponent implements OnInit {
 		this.setUser();
 		this.initializeForm();
 		console.log("SIDETABK");
+		this.uploader = new FileUploader({ url: URL, itemAlias: 'file' });
 	}
 
 	ngOnInit() {
+
+		//override the onAfterAddingfile property of the uploader so it doesn't authenticate with //credentials.
+		this.uploader.onAfterAddingFile = (file) => { file.withCredentials = false; };
+		//overide the onCompleteItem property of the uploader so we are 
+		//able to deal with the server response.
+		this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
+			console.log("ImageUpload:uploaded:", item, status, response);
+			console.log(response);
+			this.submitQuest(this.questClicked.getQuestId(), response);
+		};
+
 		this.checkSize();
 		this.setDefault();
 		if (this.isProfile) {
@@ -118,19 +137,19 @@ export class GenSidetabComponent implements OnInit {
 	}
 
 	submit() {
-		if(this.editForm.get('contactNo').dirty) {
+		if (this.editForm.get('contactNo').dirty) {
 			let currentUserId = this.userService.getCurrentUser().getUserId();
 			let userContactNo = this.editForm.value.contactNo;
 
 			this.userService.changeProfileData(currentUserId, userContactNo)
-			.subscribe(isAdded => { // No returned value yet...
-				if(isAdded) {
-					console.log('Profile succesfully edited.');
-					this.initializeForm();
-				} else {
-					console.log('Profile failed to be edited.');
-				}
-			});
+				.subscribe(isAdded => { // No returned value yet...
+					if (isAdded) {
+						console.log('Profile succesfully edited.');
+						this.initializeForm();
+					} else {
+						console.log('Profile failed to be edited.');
+					}
+				});
 			console.log('Profile succesfully edited.');
 			this.currentUser.setUserContactno(userContactNo);
 		}
@@ -142,8 +161,8 @@ export class GenSidetabComponent implements OnInit {
 
 	initializeForm() {
 		this.editForm = this.formBuilder.group({
-			schoolId: new FormControl({value: this.currentUser.getUserSchoolId(), disabled: true}),
-			email: new FormControl({value: this.currentUser.getUserEmail(), disabled: true}),
+			schoolId: new FormControl({ value: this.currentUser.getUserSchoolId(), disabled: true }),
+			email: new FormControl({ value: this.currentUser.getUserEmail(), disabled: true }),
 			contactNo: new FormControl(this.currentUser.getUserContactNo(), Validators.required),
 		});
 		this.editForm.disable();
@@ -232,10 +251,33 @@ export class GenSidetabComponent implements OnInit {
 		}
 	}
 
-	submitQuest(questId: String) {
+	upload(x) {
+		console.warn(x);
+		if (x.files && x.files[0]) {
+
+			this.questService.uploadFileForSubmitQuest(x.files[0]).subscribe(res => {
+				// do stuff here
+				console.log(res);
+			})
+			// let formData = new FormData();
+			// formData.append('file', x, 'hehe');
+			// console.warn(formData);
+			// this.questService.uploadFileForSubmitQuest(formData).subscribe(res => {
+			// 	// do stuff here
+			// 	console.log(res);
+			// })
+		}
+	}
+
+	submitQuest(questId: String, fileName: String) {
+		let user_id = this.userService.getCurrentUser().getUserId();
 		//AHJ: unimplemented
 		console.log("'" + this.questClicked.getQuestTitle() + "' submitted!");
 		this.bsModalRef.hide();
+
+		this.questService.submitQuest(fileName, user_id, questId).subscribe(res => {
+			console.warn(res);
+		});
 	}
 
 	abandonQuest(questId: String) {

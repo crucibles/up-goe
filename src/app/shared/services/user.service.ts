@@ -120,7 +120,7 @@ export class UserService {
                 if (data) {
                     this.currentUser = new User(data);
                     localStorage.setItem('currentUser', JSON.stringify(data));
-                    this.cookieService.set('currentUser', this.currentUser.getUserEmail());
+                    this.cookieService.set('currentUser', this.currentUser.getUserId());
                 }
                 return data;
             }),
