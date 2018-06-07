@@ -184,6 +184,13 @@ export class GenSelcourseComponent implements OnInit {
 				console.warn(sections);
 				this.courseSections = sections;
 				this.sections = sections.map(section => new Section(section.section));
+				this.sections = this.sectionService.getSortedSections(
+					this.sections,
+					{
+						sortColumn: "courseName",
+						sortDirection: "asc"
+					}
+				);
 				this.sectionService.setCurrentUserSections(sections);
 				this.getInstructors();
 			});

@@ -104,6 +104,13 @@ export class GenSelcourseComponent implements OnInit {
 		this.sectionService.getInstructorSections(user_id)
 			.subscribe(sections => {
 				this.sections = sections;
+				this.sections = this.sectionService.getSortedSections(
+					this.sections,
+					{
+						sortColumn: "courseName",
+						sortDirection: "asc"
+					}
+				);
 				console.log("<<<<<<<LOOK HERE");
 				console.log(this.sections);
 				//this.sections = sections.map(section => new Section(section));
