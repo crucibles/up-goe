@@ -41,7 +41,7 @@
 						<td>{{section.section.instructor}}</td>
 						<td>{{getStatusOfSection(this.section.section.students)}}</td>
 						<td>
-							<a *ngIf="this.getStatusOfSection(this.section.section.students) == 'Open'" (click)="requestToEnroll(section.section._id)" class=clickable>Add</a>
+							<a *ngIf="this.getStatusOfSection(this.section.section.students) == 'Open'" (click)="requestToEnroll(section.section._id)" class=clickable>Enroll</a>
 						</td>
 					</tr>
 				</ng-container>
