@@ -80,7 +80,6 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 	//modal
 	@ViewChild('questTemplate') questTemplate: TemplateRef<any>;
 	@ViewChild('createQuestTemplate') createQuestTemplate: TemplateRef<any>;
-	@ViewChild('chartCanvas') chartCanvas: ElementRef;
 	private isCreateModalReady: boolean = false;
 	private bsModalRef: BsModalRef;
 	private createQuestForm: FormGroup;
