@@ -414,6 +414,7 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 			quest = new Quest(quest);
 			console.log(quest);
 			this.addNewQuestLine(quest);
+			this.bsModalRef.hide()
 		});
 	}
 

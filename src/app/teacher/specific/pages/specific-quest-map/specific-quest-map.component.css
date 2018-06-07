@@ -1,3 +1,7 @@
+.hidden {
+    display: none;
+}
+
 .modal-header h4 {
     margin: 0 auto;
 }
