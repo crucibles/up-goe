@@ -30,7 +30,7 @@ export class LeaderboardService {
 
 	getQuestScores(currSection: string, currQuest: string) {
 		const url = this.questLeaderboardUrl;
-		return this.http.post<null>(url, {currSection, currQuest}).pipe(
+		return this.http.post<any>(url, {currSection, currQuest}).pipe(
 			tap(data => {
 				if(data) {
 					return data;

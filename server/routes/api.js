@@ -328,6 +328,32 @@ router.post('/createQuest', (req, res) => {
     });
 });
 
+router.post('/currentExperience', (req, res) => {
+    connection((db) => {
+        const myDB = db.db('up-goe-db');
+        myDB.collection('experiences')
+            .findOne({
+                user_id: req.body.user_id,
+                section_id: req.body.section_id
+            })
+            .then(exp => {
+                if(exp) {
+                    exp.quests_taken.forEach(quest => {
+                        if(quest.quest_id == req.body.quest_id) {
+                            if(quest.is_graded) res.json("true");
+                            else res.json("false");
+                        }
+                    });
+                } else {
+                    res.json(false);
+                }
+            })
+            .catch(err => {
+                sendError(err, res);
+            });
+    });
+});
+
 /**
  * @description portal for requests regarding experiences. api/users
  * @author Sumandang, AJ Ruth H.
@@ -1953,7 +1979,11 @@ router.post('/questLeaderboard', (req, res) => {
         myDB.collection('experiences')
             .find({ 
                 section_id: req.body.currSection,
-                is_graded: true 
+                quests_taken: {
+                    $elemMatch: {
+                        is_graded: true 
+                    }
+                }
             })
             .toArray()
             .then((experiences) => {
@@ -1967,7 +1997,7 @@ router.post('/questLeaderboard', (req, res) => {
                                 studentExp.push({
                                     studentId: exp.user_id,
                                     score: quest.quest_grade,
-                                    dateCompleted: quest.quest_date_completed
+                                    dateCompleted: quest.date_submitted
                                 });
                             }
                         });
@@ -1991,6 +2021,9 @@ router.post('/questLeaderboard', (req, res) => {
                                         }
                                     });
                                 });
+                                console.log('\n\nXP')
+                                console.log(studentExp);
+                                console.log('\n\n')
                                 response.data = studentExp;
                                 res.json(studentExp);
                             } else {

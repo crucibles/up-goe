@@ -314,7 +314,7 @@ export class SectionService {
 		const url = this.secUrl;
 		let params = new HttpParams().set('id', section_id);
 
-		return this.http.get<Course>(url, {
+		return this.http.get<any>(url, {
 			params: params
 		}).pipe(
 			map(sections => sections[0]),
