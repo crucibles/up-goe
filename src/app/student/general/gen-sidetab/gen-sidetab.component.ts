@@ -49,7 +49,7 @@ import { Observable } from 'rxjs/Observable';
 
 //import the file uploader plugin
 import { FileUploader } from 'ng2-file-upload/ng2-file-upload';
-const URL = 'http://localhost:3000/api/trial';
+const URL = 'http://localhost:3000/api/upload';
 
 @Component({
 	selector: 'gen-sidetab',
@@ -184,6 +184,7 @@ export class GenSidetabComponent implements OnInit {
 	 */
 	setUser(): void {
 		this.currentUser = this.userService.getCurrentUser();
+		// this.image = this.currentUser.getUserPhoto();
 		this.image = this.currentUser.getUserPhoto();
 	}
 
@@ -275,7 +276,7 @@ export class GenSidetabComponent implements OnInit {
 		console.log("'" + this.questClicked.getQuestTitle() + "' submitted!");
 		this.bsModalRef.hide();
 
-		this.questService.submitQuest(fileName, user_id, questId).subscribe(res => {
+		this.questService.submitQuest(fileName, "", user_id, questId, "").subscribe(res => {
 			console.warn(res);
 		});
 	}

@@ -15,8 +15,8 @@
 			<tr>
 				<th scope="col">Course Name</th>
 				<th scope="col">Section</th>
-				<th scope="col">Instructor</th>
-				<th scope="col" *ngIf="isSearching && course_found && course_found.length != 0">Options</th>
+				<th scope="col">Day</th>
+				<th scope="col">Time</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -27,16 +27,24 @@
 					<td colspan="3" style="text-align: center">Course not found!</td>
 				</tr>
 				<!--Shows if course has been found-->
-				<tr *ngIf="course_found && course_found.length != 0" [class.odd]="true">
-					<td>
-						{{this.course_found[0].course_name}}
-					</td>
-					<td>{{this.course_found[0].section.section_name}}</td>
-					<td>{{this.course_found[0].section.instructor}}</td>
-					<!-- <td>
-						<a *ngIf="this.getStatusOfSection(this.course_found[0].section.students) != 'Enrolled'" class=clickable>Add</a>
-					</td> -->
-				</tr>
+				<ng-container *ngIf="course_found && course_found.length != 0" [class.odd]="true">
+					<tr *ngFor="let section of course_found; let i = index;" [class.odd]="i%2 == 0">
+						<td>
+							<a class="clickable" (click)=openSectionPage(section.section._id)>{{section.course_name}}</a>
+						</td>
+						<td>{{section.section.section_name}}</td>
+						<td>
+							<div *ngFor="let schedule of section.section.schedule">
+								{{schedule.day}}
+							</div>
+						</td>
+						<td>
+							<div *ngFor="let schedule of section.section.schedule">
+								{{schedule.minTime}} - {{schedule.maxTime}}
+							</div>
+						</td>
+					</tr>
+				</ng-container>
 			</ng-container>
 			<ng-container *ngIf="!isSearching">
 				<!--Shows if user has no enrolled course-->
@@ -53,7 +61,16 @@
 								<a class="clickable" (click)=openSectionPage(section.section._id)>{{section.course_name}}</a>
 							</td>
 							<td>{{section.section.section_name}}</td>
-							<td>{{this.currentUser.getUserFullName()}}</td>
+							<td>
+								<div *ngFor="let schedule of section.section.schedule">
+									{{schedule.day}}
+								</div>
+							</td>
+							<td>
+								<div *ngFor="let schedule of section.section.schedule">
+									{{schedule.minTime}} - {{schedule.maxTime}}
+								</div>
+							</td>
 						</ng-container>
 					</tr>
 				</ng-container>
