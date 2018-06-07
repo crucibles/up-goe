@@ -230,7 +230,7 @@ export class BadgeService {
         let params = new HttpParams()
             .set('section_id', section_id)
             .set('method', 'getSectionBadges');
-
+        console.log("getsectionbadges");
         return this.http.get<any[]>(url, {
             params: params
         }).pipe(

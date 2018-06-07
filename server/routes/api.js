@@ -394,6 +394,7 @@ router.get('/experiences', (req, res) => {
  * @author AJ Ruth Sumandang
  */
 router.post('/experiences', (req, res) => {
+    var holder = "";
     if (req.body.method == "setStudentQuestGrade") {
         console.log("beforesetenter")
         setStudentQuestGrade(req, res);
@@ -430,8 +431,9 @@ router.post('/experiences', (req, res) => {
                             .find(ObjectID(req.body.quest_id))
                             .toArray()
                             .then((quests) => {
-                                if (quests[0] && quest[0].quest_badge) {
-
+                                console.log(quests);
+                                if (quests[0] && quests[0].quest_badge) {
+                                    holder = quests[0].quest_badge;
                                     myDB.collection('sections')
                                         .updateOne(
                                             {
@@ -439,7 +441,7 @@ router.post('/experiences', (req, res) => {
                                             },
                                             {
                                                 $addToSet: {
-                                                    "students.$[elem].badges": quest[0].quest_badge,
+                                                    "students.$[elem].badges": quests[0].quest_badge,
 
                                                 }
                                             },
@@ -448,8 +450,20 @@ router.post('/experiences', (req, res) => {
                                             }
                                         )
                                         .then(x => {
-                                            console.log("adding badge to section student finally");
-                                            res.json(x);
+                                            console.log("adding badge to section student finally" + holder);
+                                            holder = holder.toString().trim();
+                                            myDB.collection('badges')
+                                                .updateOne(
+                                                    {
+                                                        _id: ObjectID(holder)
+                                                    },
+                                                    {
+                                                        $addToSet: {
+                                                            "badge_attainers": req.body.user_id,
+                                                        }
+                                                    }
+                                                );
+                                            res.json(true);
                                         })
 
                                 } else {
@@ -461,10 +475,6 @@ router.post('/experiences', (req, res) => {
                             });
                     });
 
-
-
-
-                    res.json(true);
                 })
                 .catch(err => {
                     console.log("ERROR");
@@ -1054,7 +1064,8 @@ router.post('/sections', (req, res) => {
                             $push: {
                                 students: {
                                     user_id: req.body.user_id,
-                                    status: "R"
+                                    status: "R",
+                                    badges: []
                                 }
                             }
                         }
@@ -1781,43 +1792,6 @@ router.post('/updateUser', (req, res) => {
 
 });
 
-
-router.get('/badges', (req, res) => {
-    if (req.query.method == "ALL") {
-
-        connection((db) => {
-            const myDB = db.db('up-goe-db');
-            myDB.collection('badges')
-                .find()
-                .toArray()
-                .then((badges) => {
-                    if (badges) {
-                        res.json(badges);
-                    } else {
-                        res.json(false);
-                    }
-                })
-        });
-
-    } else if (req.query.badge_id) {
-
-        connection((db) => {
-            const myDB = db.db('up-goe-db');
-            myDB.collection('badges')
-                .find({ _id: ObjectID(req.query.badge_id) })
-                .toArray()
-                .then((badges) => {
-                    if (badges) {
-                        res.json(badges);
-                    } else {
-                        res.json(false);
-                    }
-                })
-        });
-
-    }
-});
-
 /**
  * @description portal for requests regarding Badges. api/badges
  * @author Cedric Yao Alvaro
@@ -1953,16 +1927,43 @@ router.post('/badges', (req, res) => {
 
     }
 
-
-
-
-
 });
 
 router.get('/badges', (req, res) => {
     console.log("IM IN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    if (req.query.method == "ALL") {
 
-    if (req.query.method && req.query.method == "getSectionBadges") {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('badges')
+                .find()
+                .toArray()
+                .then((badges) => {
+                    if (badges) {
+                        res.json(badges);
+                    } else {
+                        res.json(false);
+                    }
+                })
+        });
+
+    } else if (req.query.badge_id) {
+
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('badges')
+                .find({ _id: ObjectID(req.query.badge_id) })
+                .toArray()
+                .then((badges) => {
+                    if (badges) {
+                        res.json(badges);
+                    } else {
+                        res.json(false);
+                    }
+                })
+        });
+
+    } else if (req.query.method && req.query.method == "getSectionBadges") {
         getSectionBadges(req, res);
     } else {
         connection((db) => {

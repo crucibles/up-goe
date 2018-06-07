@@ -31,167 +31,9 @@ import {
 import {
 	PageService,
 	SectionService,
-	UserService
+	UserService,
+	BadgeService
 } from 'shared/services';
-
-const BADGES = [
-	{
-		_id: "1",
-		badge_photo: "badge1.png",
-		badge_description: "Earn this lol",
-		badge_conditions: new Conditions(),
-		is_system: false,
-		badge_attainers: []
-	},
-	{
-		_id: "2",
-		badge_photo: "badge2.png",
-		badge_description: "Earn this lol",
-		badge_conditions: new Conditions(),
-		is_system: false,
-		badge_attainers: []
-	},
-	{
-		_id: "1",
-		badge_photo: "badge1.png",
-		badge_description: "Earn this lol",
-		badge_conditions: new Conditions(),
-		is_system: false,
-		badge_attainers: []
-	},
-	{
-		_id: "2",
-		badge_photo: "badge2.png",
-		badge_description: "Earn this lol",
-		badge_conditions: new Conditions(),
-		is_system: false,
-		badge_attainers: []
-	},
-	{
-		_id: "1",
-		badge_photo: "badge1.png",
-		badge_description: "Earn this lol",
-		badge_conditions: new Conditions(),
-		is_system: false,
-		badge_attainers: []
-	},
-	{
-		_id: "2",
-		badge_photo: "badge2.png",
-		badge_description: "Earn this lol",
-		badge_conditions: new Conditions(),
-		is_system: false,
-		badge_attainers: []
-	},
-	{
-		_id: "1",
-		badge_photo: "badge1.png",
-		badge_description: "Earn this lol",
-		badge_conditions: new Conditions(),
-		is_system: false,
-		badge_attainers: []
-	},
-	{
-		_id: "2",
-		badge_photo: "badge2.png",
-		badge_description: "Earn this lol",
-		badge_conditions: new Conditions(),
-		is_system: false,
-		badge_attainers: []
-	},
-	{
-		_id: "1",
-		badge_photo: "badge1.png",
-		badge_description: "Earn this lol",
-		badge_conditions: new Conditions(),
-		is_system: false,
-		badge_attainers: []
-	},
-	{
-		_id: "2",
-		badge_photo: "badge2.png",
-		badge_description: "Earn this lol",
-		badge_conditions: new Conditions(),
-		is_system: false,
-		badge_attainers: []
-	},
-	{
-		_id: "1",
-		badge_photo: "badge1.png",
-		badge_description: "Earn this lol",
-		badge_conditions: new Conditions(),
-		is_system: false,
-		badge_attainers: []
-	},
-	{
-		_id: "2",
-		badge_photo: "badge2.png",
-		badge_description: "Earn this lol",
-		badge_conditions: new Conditions(),
-		is_system: false,
-		badge_attainers: []
-	}
-];
-
-const dummyCourseSection: any = {
-	course: {
-		_id: "1",
-		course_name: "CMSC 128",
-		course_description: "Gonna fly hiiiigh ~"
-	},
-	section: {
-		_id: "2",
-		course_id: "sad3",
-		section_name: "A",
-		students: [
-			{
-				user_id: "1",
-				status: "E"
-			},
-			{
-				user_id: "2",
-				status: "R"
-			}
-		],
-		instructor: "Miguel Guillermo",
-		quests: [],
-		items: [],
-		badges: []
-	}
-}
-
-const STUDENTS: any[] = [
-	{
-		_id: "1",
-		user_fname: "Cedric",
-		user_mname: "Yao",
-		user_lname: "Alvaro",
-		user_birthdate: new Date('08/02/1997'),
-		user_email: "cyalvaro@up.edu.ph",
-		user_password: "p",
-		user_type: "S",
-		user_contact_no: "09499709292",
-		user_photo: "cute-cat.jpg",
-		user_school_id: "2014-60690",
-		user_security_question: 'Gigil si akoe?',
-		user_security_answer: 'Petmalu!'
-	},
-	{
-		_id: "2",
-		user_fname: "Donevir",
-		user_mname: "Yao",
-		user_lname: "Alvaro",
-		user_birthdate: new Date('08/02/1997'),
-		user_email: "cyalvaro@up.edu.ph",
-		user_password: "p",
-		user_type: "S",
-		user_contact_no: "09499709292",
-		user_photo: "cute-dog.jpg",
-		user_school_id: "2014-60690",
-		user_security_question: 'Gigil si akoe?',
-		user_security_answer: 'Petmalu!'
-	}
-];
 
 @Component({
 	selector: 'app-specific-my-course',
@@ -218,7 +60,8 @@ export class SpecificMyCourseComponent implements OnInit {
 		private pageService: PageService,
 		private sectionService: SectionService,
 		private userService: UserService,
-		private route: ActivatedRoute
+		private route: ActivatedRoute,
+		private badgeService: BadgeService
 	) { }
 
 	ngOnInit() {
@@ -273,7 +116,9 @@ export class SpecificMyCourseComponent implements OnInit {
 
 	getSectionBadges() {
 		//AHJ: unimplemented; since getting current section badge is unavailable... BADGES variable is being used instead
-		this.sectionBadges = BADGES.map(badge => new Badge(badge));
+		this.badgeService.getSectionBadges(this.sectionService.getCurrentSection().getSectionId()).subscribe(badges => {
+			this.sectionBadges = badges.map(badge => new Badge(badge));
+		});
 	}
 
 	/**
@@ -308,7 +153,9 @@ export class SpecificMyCourseComponent implements OnInit {
 	getClassmateBadges() {
 		//AHJ: unimplemented; idk unsay method gamiton pra maobtain ang badges sa isa ka student however I just create an array of dummy
 		//badges to display
-		this.badgesDisplay = BADGES.map(badge => new Badge(badge));
+		this.badgeService.getSectionBadges(this.sectionService.getCurrentSection().getSectionId()).subscribe(badges => {
+			this.badgesDisplay = badges.map(badge => new Badge(badge));
+		});
 		console.log(this.badgesDisplay);
 	}
 }
