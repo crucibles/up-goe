@@ -76,7 +76,7 @@ const QUESTS: any[] = [
 
 export class SpecificSidetabComponent implements OnInit {
 	@Input('sectionId') section_id: string;
-	
+
 	currentUser: User;
 	user;
 
@@ -133,19 +133,19 @@ export class SpecificSidetabComponent implements OnInit {
 	}
 
 	submit() {
-		if(this.editForm.get('contactNo').dirty) {
+		if (this.editForm.get('contactNo').dirty) {
 			let currentUserId = this.userService.getCurrentUser().getUserId();
 			let userContactNo = this.editForm.value.contactNo;
 
 			this.userService.changeProfileData(currentUserId, userContactNo)
-			.subscribe(isAdded => { // No returned value yet...
-				if(isAdded) {
-					console.log('Profile succesfully edited.');
-					this.initializeForm();
-				} else {
-					console.log('Profile failed to be edited.');
-				}
-			});
+				.subscribe(isAdded => { // No returned value yet...
+					if (isAdded) {
+						console.log('Profile succesfully edited.');
+						this.initializeForm();
+					} else {
+						console.log('Profile failed to be edited.');
+					}
+				});
 			console.log('Profile succesfully edited.');
 			this.currentUser.setUserContactno(userContactNo);
 		}
@@ -183,18 +183,23 @@ export class SpecificSidetabComponent implements OnInit {
 	 * @param user_id the id of the user that asks for the list of quests
 	 */
 	setQuests(user_id): void {
-			console.warn(this.sectionService.getCurrentSection().getQuests());
-			this.quests = [];
-			let counter = 0;
-			this.sectionService.getCurrentSection().getQuests().map((sq) => {
-				this.questService.getQuest(sq.getSectionQuestId()).subscribe((quest) => {
-					this.quests.push(new Quest(quest));
-					counter++;
-					if(this.sectionService.getCurrentSection().getQuests().length == counter){
-						this.isDataLoaded = true;
+		console.warn(this.sectionService.getCurrentSection().getQuests());
+		this.quests = [];
+		let counter = 0;
+		this.sectionService.getCurrentSection().getQuests().map((sq) => {
+			this.questService.getQuest(sq.getSectionQuestId()).subscribe((quest) => {
+
+				sq.getQuestParticipants().forEach(qp => {
+					if (qp == user_id) {
+						this.quests.push(new Quest(quest));
 					}
 				});
+				counter++;
+				if (this.sectionService.getCurrentSection().getQuests().length == counter) {
+					this.isDataLoaded = true;
+				}
 			});
+		});
 	}
 
 	/**
@@ -203,12 +208,12 @@ export class SpecificSidetabComponent implements OnInit {
 	 * @param quest quest to be viewed
 	 */
 	openQuest(template: TemplateRef<any>, quest: any) { //'quest: any' in here means the quest has not been converted to Quest type
-			
-			console.log(quest);
-			this.questClicked = quest;
-			if (this.questClicked) {
-				this.bsModalRef = this.modalService.show(template);
-			}
+
+		console.log(quest);
+		this.questClicked = quest;
+		if (this.questClicked) {
+			this.bsModalRef = this.modalService.show(template);
+		}
 	}
 
 	/**
