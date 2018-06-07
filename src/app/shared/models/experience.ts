@@ -37,6 +37,16 @@ export class Experience {
         return this.quests_taken;
     }
 
+    getTotalExperience(): number{
+        let totalEXP = 0;
+        if(this.quests_taken.length > 0){
+            this.quests_taken.forEach(quest => {
+                totalEXP = quest.quest_grade? totalEXP + quest.quest_grade: totalEXP; 
+            });
+        }
+        return totalEXP;
+    }
+
     /**
      * Retrieves a student's quest submission 
      * @param quest_id the id of the quest whose user submission is to be retrieved.

@@ -4,8 +4,8 @@ import {
     OnInit
 } from '@angular/core';
 
-import { 
-    ActivatedRoute 
+import {
+    ActivatedRoute
 } from '@angular/router';
 
 
@@ -13,16 +13,16 @@ import {
 import {
     ExperienceService,
     PageService,
-    QuestService, 
-    SectionService, 
-    UserService 
+    QuestService,
+    SectionService,
+    UserService
 } from 'shared/services';
 
-import { 
-    Section, 
-    SectionQuest, 
-    User, 
-    Quest, 
+import {
+    Section,
+    SectionQuest,
+    User,
+    Quest,
     Experience
 } from 'shared/models';
 
@@ -40,6 +40,7 @@ export class GradesComponent implements OnInit {
     private quests: Quest[];
 
     //student's grade
+    private studentGrades: StudentGrades[];
     private sectionGrades: Experience[];
     private submissions: Experience[];
 
@@ -50,43 +51,70 @@ export class GradesComponent implements OnInit {
         private route: ActivatedRoute,
         private sectionService: SectionService,
         private userService: UserService
-    ) { 
+    ) {
     }
 
     ngOnInit() {
         this.setDefault();
         this.getCurrentSection();
         this.getCurrentUser();
-        this.getQuest();
+        this.getSectionInformation();
     }
 
     getCurrentUser() {
         this.route.paramMap.subscribe(params => {
             let sectionId = params.get('sectionId');
-		});
-		//AHJ: unimplemented... or not sure. Di ko sure kung tama na ning pagkuha sa current user
-		this.currentUser = new User(this.userService.getCurrentUser());
-	}
+        });
+        //AHJ: unimplemented... or not sure. Di ko sure kung tama na ning pagkuha sa current user
+        this.currentUser = new User(this.userService.getCurrentUser());
+    }
 
 
     /**
 	 * Obtains the user's navigated section
 	 * @description Obtains the current section and stores it into 'currentSection' variable
 	 */
-	getCurrentSection() {
-		this.currentSection = this.sectionService.getCurrentSection();
-	}
+    getCurrentSection() {
+        this.currentSection = this.sectionService.getCurrentSection();
+    }
 
-    getQuest() {
+    getSectionInformation() {
+        // obtain section quest
         this.questService.getSectionQuests(this.currentSection.getSectionId()).subscribe(quests => {
             this.quests = quests.map(quest => new Quest(quest));
+
+            //obtain section experiences
             this.experienceService.getSectionGrades(this.currentSection.getSectionId()).subscribe(experiences => {
                 this.sectionGrades = experiences.map(submission => new Experience(submission));
-            })
+
+                //obtain section's students
+                let sectionId = this.currentSection.getSectionId();
+                this.sectionService.getSectionStudents(sectionId).subscribe((students) => {
+                    console.warn(students);
+                    students.forEach(student => {
+                        //obtain student tot EXP
+                        if (student && student.length > 1) {
+                            this.userService.getUser(student).subscribe((user) => {
+                                console.warn(user);
+                                let student = new User(user);
+                                let studentEXP: Experience = this.submissions.find(
+                                    submission => submission.getUserId() == student.getUserId()
+                                );
+
+                                let grades = studentEXP? studentEXP.getTotalExperience(): 0;
+                                this.studentGrades.push({
+                                    student: new User(user),
+                                    grade: grades
+                                });
+                            })
+                        }
+                    })
+                });
+            });
         });
     }
 
-    getQuestGrades(quest_id: string){
+    getQuestGrades(quest_id: string) {
         this.submissions = this.sectionGrades.filter(submission => {
             console.log(submission.getQuestSubmission(quest_id));
             console.log(submission.getQuestSubmissionDate(quest_id));
@@ -95,7 +123,7 @@ export class GradesComponent implements OnInit {
         );
     }
 
-    setStudentGrade(userId, questId, inputGrade){
+    setStudentGrade(userId, questId, inputGrade) {
         this.experienceService.setStudentQuestGrade(this.currentSection.getSectionId(), userId, questId, inputGrade).subscribe(
             grade => {
                 console.log("FINISH subscription grade");
@@ -110,5 +138,11 @@ export class GradesComponent implements OnInit {
     setDefault() {
         this.pageService.isProfilePage(false);
         this.submissions = [];
+        this.studentGrades = [];
     }
+}
+
+export interface StudentGrades {
+    student: User,
+    grade: number
 }
