@@ -138,10 +138,17 @@ export class GenSelcourseComponent implements OnInit {
 				console.warn(user);
 				this.user = new User(user);
 				this.getUserSections(this.user.getUserId());
-				if(!this.user.isLoggedInToday()){
-					this.badgeModal.open();
-					this.user.setLoggedInToday();
-					this.userService.updateUserConditions(this.user.getUserId());
+				if (!this.user.isLoggedInToday()) {
+					console.log("this.user");
+					console.log(this.user);
+					this.userService.updateUserConditions(this.user.getUserId()).subscribe(x => {
+						console.log("done updating");
+						console.log("result" + x);
+						console.log(this.user);
+						this.badgeModal.open();
+						this.user.setLoggedInToday();
+						this.userService.setCurrentUser(this.user);
+					});
 				}
 			});
 	}
@@ -230,6 +237,6 @@ export class GenSelcourseComponent implements OnInit {
 	}
 
 	onSorted($event) {
-		this.sections = this.sectionService.getSortedSections(this.sections, $event);
+		this.courseSections = this.sectionService.getSortedSections(this.courseSections, $event);
 	}
 }

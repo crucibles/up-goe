@@ -188,12 +188,21 @@ export class User {
   }
 
   isLoggedInToday(): boolean{
+    this.user_conditions.getLogInTotal().forEach(cond => {
+      console.log("------------------------------");
+      console.log(cond);
+      console.log(new Date(cond).getDate());
+      console.log(new Date(Date.now()));
+      console.log(new Date(Date.now()).getDate());
+    })
     let date = this.user_conditions.getLogInTotal().filter(date => new Date(date).getDate() == new Date(Date.now()).getDate());
     return date && date.length > 0;
   }
 
   setLoggedInToday(){
+    console.log(this.user_conditions);
     this.user_conditions.addToLoggedInTotal();
+    console.log(this.user_conditions);
   }
 
   setUserConditions(user_conditions) {

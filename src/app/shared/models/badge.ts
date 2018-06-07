@@ -180,7 +180,7 @@ export class Conditions {
     }
 
     addToLoggedInTotal(){
-        let date = Date.now();
+        let date = new Date(Date.now());
         this.log_in_streak++;
         this.log_in_total.push(date);
     }

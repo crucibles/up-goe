@@ -1668,10 +1668,10 @@ router.post('/updateUser', (req, res) => {
 
                             Promise.all(user.user_conditions.log_in_total).then((date) => {
 
-                                h = date.map((d) => {
+                                h = date.filter((d) => {
                                     console.log(new Date(d).toLocaleDateString());
                                     console.log(x.toLocaleDateString());
-                                    if (new Date(d).toLocaleDateString().trim() == x.toLocaleDateString().trim()) {
+                                    if (new Date(d).toLocaleDateString() == x.toLocaleDateString()) {
                                         return new Date(d).toLocaleDateString();
                                     } else {
                                         return false;

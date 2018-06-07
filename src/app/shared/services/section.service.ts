@@ -740,32 +740,28 @@ export class SectionService {
 				val2 = b["course_name"];
 			} else {
 				let query = "";
-				switch (criteria.sortColumn) {
-					case "sectionName":
-						query = "section_name";
-						val1 = a["section"][query];
-						val2 = b["section"][query];
-						break;
-					case "instructor":
-						query = "instructor";
-						val1 = a["section"][query];
-						val2 = b["section"][query];
-						break;
-					// case "status":
-					// 	query = "section_name";
-					// 	val1 = a["section"][query];
-					// 	val2 = b["section"][query];
-					// 	break;
+				if (criteria.sortColumn == "sectionName") {
+					query = "section_name";
+				} else {
+					query = "instructor";
 				}
+				val1 = a["section"][query];
+				val2 = b["section"][query];
 			}
-			val1 = val1.toLowerCase();
-			val2 = val1.toLowerCase();
-
+			console.log(val1);
+			console.log(val2);
+			val1 = val1.toLowerCase()
+			val2 = val2.toLowerCase();
+			console.log(val1);
+			console.log(val2);
+			
 			if (val1 > val2) {
 				return firstValue;
 			}
-			else {
+			else if(val1 < val2){
 				return secondValue;
+			} else {
+				return 0;
 			}
 		});
 	}
