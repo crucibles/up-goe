@@ -17,6 +17,8 @@
 				<th scope="col">Section</th>
 				<th scope="col">Instructor</th>
 				<th scope="col">Status</th>
+				<th scope="col">Day</th>
+				<th scope="col">Time</th>
 				<th scope="col" *ngIf="isSearching && course_found && course_found.length != 0">Options</th>
 			</tr>
 		</thead>
@@ -38,6 +40,16 @@
 						<td>{{section.section.section_name}}</td>
 						<td>{{section.section.instructor}}</td>
 						<td>{{getStatusOfSection(this.section.section.students)}}</td>
+						<td>
+							<div *ngFor="let schedule of section.section.schedule">
+								{{schedule.day}}
+							</div>
+						</td>
+						<td>
+							<div *ngFor="let schedule of section.section.schedule">
+								{{schedule.minTime}} - {{schedule.maxTime}}
+							</div>
+						</td>
 						<td>
 							<a *ngIf="this.getStatusOfSection(this.section.section.students) == 'Open'" (click)="requestToEnroll(section.section._id)" class=clickable>Add</a>
 						</td>
@@ -64,6 +76,16 @@
 							<td>{{section.section.section_name}}</td>
 							<td>{{this.toInstructor(section.section.instructor)}}</td>
 							<td>{{this.getStatusOfSection(section.section.students)}}</td>
+							<td>
+								<div *ngFor="let schedule of section.section.schedule">
+									{{schedule.day}}
+								</div>
+							</td>
+							<td>
+								<div *ngFor="let schedule of section.section.schedule">
+									{{schedule.minTime}} - {{schedule.maxTime}}
+								</div>
+							</td>
 						</ng-container>
 					</tr>
 				</ng-container>

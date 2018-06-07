@@ -1,6 +1,6 @@
 //Core Imports
 import {
-	Injectable
+    Injectable
 } from '@angular/core';
 
 //Application Imports
@@ -43,22 +43,22 @@ import { SectionService } from 'shared/services/section.service';
 
 
 const BADGES: any[] = [
-	{
-		_id: "1",
-		badge_name: "Badge Taker",
-		badge_photo: "",
-		badge_description: "You take a badge!",
-		is_system: false,
-		badge_attainers: []
-	},
-	{
-		_id: "2",
-		badge_name: "Badge Giver",
-		badge_photo: "",
-		badge_description: "You gave a badge!",
-		is_system: false,
-		badge_attainers: []
-	}
+    {
+        _id: "1",
+        badge_name: "Badge Taker",
+        badge_photo: "",
+        badge_description: "You take a badge!",
+        is_system: false,
+        badge_attainers: []
+    },
+    {
+        _id: "2",
+        badge_name: "Badge Giver",
+        badge_photo: "",
+        badge_description: "You gave a badge!",
+        is_system: false,
+        badge_attainers: []
+    }
 ];
 
 @Injectable()
@@ -91,10 +91,10 @@ export class BadgeService {
 
     checkIfWillEarnABadge() {
         const url = this.badgeUrl;
-        
+
         let student = this.userService.getCurrentUser();
         let conditions = student.getUserConditions();
-        
+
         let body = {
             conditions: conditions,
             user_id: student.getUserId()
@@ -138,7 +138,7 @@ export class BadgeService {
         console.log('this your badge');
         console.log(badge);
         const url = this.badgeUrl;
-        let body =  {
+        let body = {
             badgeData: badge,
             sectionId: sectionId
         };
@@ -146,7 +146,7 @@ export class BadgeService {
         console.log(body);
         return this.http.post<any>(url, body).pipe(
             tap(data => {
-                if(data) return data
+                if (data) return data
                 else return false;
             }),
             catchError(this.handleError<any>(`creating new badge`))
@@ -157,7 +157,7 @@ export class BadgeService {
         const url = this.uploadBadgeUrl;
         return this.http.post(url, badgeFile).pipe(
             tap(data => {
-                if(data) return data;
+                if (data) return data;
                 else return false;
             }),
             catchError(this.handleError<any>(`uploading badge image`))
@@ -184,14 +184,38 @@ export class BadgeService {
 
 
 
+    getAllbadges(): Observable<any[]> {
+        const url = this.badgeUrl;
+
+        let params = new HttpParams()
+            .set('method', 'ALL');
+
+        return this.http.get<any[]>(url, {
+            params: params
+        }).pipe(
+            tap(badges => console.log(badges)),
+            catchError(this.handleError(`getSectionBadges`, []))
+        );
+    }
+
     /**
      * Returns the badge information given the badge id
      * @param badge_id id of the badge whose information is needed to be retrieved
      * 
      * @returns badge information of the chosen badge
      */
-    getBadge(badge_id) {
+    getBadge(badge_id): Observable<any[]> {
         const url = this.badgeUrl;
+
+        let params = new HttpParams()
+            .set('badge_id', badge_id);
+
+        return this.http.get<any[]>(url, {
+			params: params
+		}).pipe(
+			tap(badges => console.log(badges)),
+			catchError(this.handleError(`getSectionBadges`, []))
+		);
     }
 
     /**
@@ -204,15 +228,15 @@ export class BadgeService {
         const url = this.badgeUrl;
 
         let params = new HttpParams()
-			.set('section_id', section_id)
-			.set('method', 'getSectionBadges');
+            .set('section_id', section_id)
+            .set('method', 'getSectionBadges');
 
-		return this.http.get<any[]>(url, {
-			params: params
-		}).pipe(
-			tap(quests => quests ? console.log(quests) : console.log('did not fetched quests')),
-			catchError(this.handleError(`getSectionBadges`, []))
-		);
+        return this.http.get<any[]>(url, {
+            params: params
+        }).pipe(
+            tap(badges => console.log(badges)),
+            catchError(this.handleError(`getSectionBadges`, []))
+        );
     }
 
     /**

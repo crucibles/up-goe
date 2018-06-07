@@ -274,7 +274,12 @@ export class InventoryComponent implements OnInit {
 	getTeacherBadges() {
 		//AHJ: unimplemented; add items relative to the teacher; 
 		//remove dummy below if itemService.getTeacherInventoryItems() get properly implemented
-		this.badges = BADGES.map(badge => new Badge(badge));
+		// this.badges = BADGES.map(badge => new Badge(badge));
+
+		this.badgeService.getAllbadges().subscribe(badge => {
+			console.warn(badge);
+			this.badges = badge.map(b => new Badge(b));
+		});
 
 		/*this.itemService.getTeacherInventoryItems().subscribe(items => {
 			this.items = items.map(item => new Item(item));

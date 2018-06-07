@@ -10,6 +10,7 @@ import {
 import {
   UserService
 } from 'shared/services';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'specific-topnavbar',
@@ -26,7 +27,8 @@ export class SpecificTopnavbarComponent implements OnInit {
 
   constructor(
     private elementRef: ElementRef,
-    private userService: UserService
+    private userService: UserService,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -39,6 +41,10 @@ export class SpecificTopnavbarComponent implements OnInit {
   logOut() {
     console.log("logout");
     this.userService.logOut();
+  }
+
+  goBack() {
+    this.router.navigateByUrl('student/general/select-course');
   }
 
   /* Helper function */

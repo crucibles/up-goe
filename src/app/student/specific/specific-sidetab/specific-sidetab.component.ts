@@ -183,7 +183,7 @@ export class SpecificSidetabComponent implements OnInit {
 	 * @param user_id the id of the user that asks for the list of quests
 	 */
 	setQuests(user_id): void {
-			console.warn(this.sectionService.getCurrentSection());
+			console.warn(this.sectionService.getCurrentSection().getQuests());
 			this.quests = [];
 			let counter = 0;
 			this.sectionService.getCurrentSection().getQuests().map((sq) => {

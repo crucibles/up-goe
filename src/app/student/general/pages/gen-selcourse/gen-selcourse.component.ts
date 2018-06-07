@@ -73,8 +73,7 @@ export class GenSelcourseComponent implements OnInit {
 		console.log(url[2]);
 		if (url[2] == "specific") {
 			this.pageService.isProfilePage(false);
-			this.router.navigateByUrl('student/general/select-course');
-			this.toastr.info("Invalid accessing the specific page of the inputted id!", "Info")
+			this.router.navigate(['student/general/select-course']);
 		}
 		this.getUser();
 	}

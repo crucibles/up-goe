@@ -32,7 +32,8 @@ import {
 })
 export class GenSelcourseComponent implements OnInit {
 
-	sections: Section[];
+	sections: any[];
+	schedules: any[];
 	table: any;
 	courses: Course[];
 	currentUser: User;
@@ -41,7 +42,7 @@ export class GenSelcourseComponent implements OnInit {
 	//for search bar
 	course_search: string;
 	isSearching: boolean = false;
-	course_found: Course[];
+	course_found: any[];
 
 	constructor(
 		private pageService: PageService,
@@ -104,7 +105,10 @@ export class GenSelcourseComponent implements OnInit {
 				this.sections = sections;
 				console.log("<<<<<<<LOOK HERE");
 				console.log(this.sections);
-				//this.sections = sections.map(section => new Section(section));
+				this.schedules = this.sections.map(x => {
+					return x.section.schedule;
+				})
+				console.warn(this.schedules);
 			});
 	}
 

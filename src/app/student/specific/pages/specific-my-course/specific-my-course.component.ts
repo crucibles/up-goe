@@ -31,7 +31,8 @@ import {
 import {
 	PageService,
 	SectionService,
-	UserService
+	UserService,
+	BadgeService
 } from 'shared/services';
 
 const BADGES = [
@@ -218,7 +219,8 @@ export class SpecificMyCourseComponent implements OnInit {
 		private pageService: PageService,
 		private sectionService: SectionService,
 		private route: ActivatedRoute,
-		private userService: UserService
+		private userService: UserService,
+		private badgeService: BadgeService
 	) {
 	}
 
@@ -270,7 +272,12 @@ export class SpecificMyCourseComponent implements OnInit {
 
 	getSectionBadges() {
 		//AHJ: unimplemented; since getting current section badge is unavailable... BADGES variable is being used instead
-		this.sectionBadges = BADGES.map(badge => new Badge(badge));
+		// this.sectionBadges = BADGES.map(badge => new Badge(badge));
+
+			this.badgeService.getSectionBadges(this.sectionService.getCurrentSection().getSectionId()).subscribe(badges => {
+				this.sectionBadges = badges.map(badge => new Badge(badge));
+			})
+		
 	}
 
 	/**

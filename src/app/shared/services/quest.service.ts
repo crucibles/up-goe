@@ -53,6 +53,8 @@ export class QuestService {
 	 */
 	private sectionUrl = "api/sections";
 
+	private downloadUrl = "api/download";
+
 	/**
 	 * Used for accessing/adding quests in section
 	 */
@@ -352,6 +354,21 @@ export class QuestService {
 		);
 	}
 
+	uploadFileForSubmitQuest(x: any) {
+		const url = 'api/trial';
+		console.warn(x);
+		let body = {
+			file: x
+		};
+		console.warn(body);
+		return this.http.post(url, body).pipe(
+			tap(data => {
+				console.warn(data);
+				return data;
+			})
+		);
+	}
+
 	/**\
 	 * Submits student's quest submission.
 	 * @description Submits the user's submission and removes user from the quest participant's list 
@@ -361,7 +378,7 @@ export class QuestService {
 	 * 
 	 * @see endQuest
 	 */
-	submitQuest(data: any, comment: string, user_id, quest_id, section_id) {
+	submitQuest(data: String, comment: string, user_id, quest_id, section_id) {
 		const url = this.sectionUrl;
 
 		let body = {
@@ -369,11 +386,28 @@ export class QuestService {
 			section_id: section_id,
 			quest_id: quest_id,
 			data: data,
-			comment: comment
+			comment: comment,
+			time: data.substring(5, data.length),
+			
 		}
 
 		console.warn(body.data);
 		return this.http.post(url, body).pipe(
+			tap(data => {
+				console.warn(data);
+				return data;
+			})
+		);
+	}
+
+	downloadQuestSubmitted(fileName: string) {
+		const url = this.downloadUrl;
+
+		let params = new HttpParams().set('file', fileName);
+
+		return this.http.get(url, {
+			params: params
+		}).pipe(
 			tap(data => {
 				console.warn(data);
 				return data;
