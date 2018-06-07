@@ -22,7 +22,8 @@ import {
 import {
 	SectionService,
 	UserService,
-	PageService
+	PageService,
+	SortService
 } from 'shared/services';
 
 @Component({
@@ -46,6 +47,7 @@ export class GenSelcourseComponent implements OnInit {
 	constructor(
 		private pageService: PageService,
 		private sectionService: SectionService,
+		private sortService: SortService,
 		private userService: UserService,
 		private router: Router
 	) {
@@ -122,6 +124,10 @@ export class GenSelcourseComponent implements OnInit {
 				this.course_found = sections;
 			})
 		}
+	}
+
+	onSorted($event) {
+		this.sections = this.sectionService.getSortedSections(this.sections, $event);
 	}
 
 	openSectionPage(section_id: string) {

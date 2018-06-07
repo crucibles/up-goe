@@ -43,15 +43,16 @@ import {
 	SectionService,
 	UserService,
 	LeaderboardService,
-	FileService
+	FileService,
+	SortService
 } from 'shared/services';
 
 import {
 	BrowserAnimationsModule
 } from '@angular/platform-browser/animations';
 
-import { 
-	ChangePasswordComponent 
+import {
+	ChangePasswordComponent
 } from './change-password/change-password.component';
 
 import {
@@ -71,9 +72,10 @@ import {
 } from 'sign-up/sign-up.component';
 
 import {
-	ToastModule, 
+	ToastModule,
 	ToastOptions
 } from 'ng2-toastr/ng2-toastr';
+import { SortableColumnComponent, SortableTableDirective } from 'shared/pages';
 
 @NgModule({
 	declarations: [
@@ -97,6 +99,7 @@ import {
 		QuestService,
 		PageService,
 		SectionService,
+		SortService,
 		UserService,
 		ItemService,
 		CookieService,
