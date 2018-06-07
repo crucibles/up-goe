@@ -30,8 +30,8 @@
 			<li *ngFor="let quest of quests; let title of questCourses; let i = index">
 				<!-- the quest progress bar and some basic information -->
 				<a [tooltip]="questTemplate" placement="auto" container="body" (click)="openQuest(questClickedTemplate, quest)">
-					{{questCourses[i]}} <br>
-					{{quest.getQuestTitle()}}
+					{{questCourses[i]}}
+					<br> {{quest.getQuestTitle()}}
 					<!-- {{quest.quest.getQuestTitle()}} -->
 					<div class="progress">
 						<div ngClass="{{this.defaultPBClass}} {{this.progressBarClass? this.progressBarClass[i]: ''}}" role="progressbar" aria-valuenow="40"
@@ -94,8 +94,17 @@
 						<div class="modal-footer">
 							<!-- shows submit & abandon buttons if user is a participant -->
 							<button type="submit" class="btn btn-success mr-auto" (click)="abandonQuest(this.questClicked.getQuestId())">Abandon Quest</button>
-							<button type="submit" class="btn btn-success" (click)="submitQuest(this.questClicked.getQuestId())">Submit Quest</button>
 						</div>
+						<!-- (ngSubmit)="func()" -->
+						<div class="modal-footer">
+							<!-- File input for the file-upload plugin, with special ng2-file-upload directive called ng2FileSelect -->
+							<input type="file" name="photo" ng2FileSelect [uploader]="uploader" />
+							<!-- button to trigger the file upload when submitted -->
+							<button type="button" class="btn btn-success btn-s" (click)="uploader.uploadAll()" [disabled]="!uploader.getNotUploadedItems().length">
+								Submit Quest
+							</button>
+						</div>
+
 					</ng-template>
 				</a>
 

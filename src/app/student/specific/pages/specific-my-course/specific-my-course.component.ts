@@ -31,7 +31,8 @@ import {
 import {
 	PageService,
 	SectionService,
-	UserService
+	UserService,
+	BadgeService
 } from 'shared/services';
 
 const BADGES = [
@@ -210,7 +211,8 @@ export class SpecificMyCourseComponent implements OnInit {
 	//classmate's properties
 	private classmates: User[];
 	private classmateClicked: User;
-	private badgesDisplay: Badge[];
+	private badgesDisplay: Badge[] = [];
+	private instructorName = "";
 
 
 	constructor(
@@ -218,13 +220,22 @@ export class SpecificMyCourseComponent implements OnInit {
 		private pageService: PageService,
 		private sectionService: SectionService,
 		private route: ActivatedRoute,
-		private userService: UserService
+		private userService: UserService,
+		private badgeService: BadgeService
 	) {
 	}
 
 	ngOnInit() {
 		this.setDefault();
 		this.getCurrentCourseSection();
+		this.getInstuctorOfMyCourse();
+	}
+
+	getInstuctorOfMyCourse() {
+		this.userService.getUser(this.currentSection.getInstructor()).subscribe(x => {
+			let user = new User(x);
+			this.instructorName = user.getUserFullName();
+		});
 	}
 
 	/**
@@ -270,7 +281,12 @@ export class SpecificMyCourseComponent implements OnInit {
 
 	getSectionBadges() {
 		//AHJ: unimplemented; since getting current section badge is unavailable... BADGES variable is being used instead
-		this.sectionBadges = BADGES.map(badge => new Badge(badge));
+		// this.sectionBadges = BADGES.map(badge => new Badge(badge));
+
+		this.badgeService.getSectionBadges(this.sectionService.getCurrentSection().getSectionId()).subscribe(badges => {
+			this.sectionBadges = badges.map(badge => new Badge(badge));
+		});
+
 	}
 
 	/**
@@ -299,14 +315,23 @@ export class SpecificMyCourseComponent implements OnInit {
 			console.log("here!");
 			console.log(this.classmateClicked);
 			this.bsModalRef = this.modalService.show(studentTemplate);
-			this.getClassmateBadges();
+			this.getClassmateBadges(classmate);
 		}
 	}
 
-	getClassmateBadges() {
+	getClassmateBadges(classmate: User) {
 		//AHJ: unimplemented; idk unsay method gamiton pra maobtain ang badges sa isa ka student however I just create an array of dummy
 		//badges to display
-		this.badgesDisplay = BADGES.map(badge => new Badge(badge));
+		this.badgeService.getSectionBadges(this.sectionService.getCurrentSection().getSectionId()).subscribe(badges => {
+			badges.map(badge => {
+				let x = new Badge(badge);
+				x.getBadgeAttainers().filter(user => {
+					if(classmate.getUserId() == user){
+						this.badgesDisplay.push(x);
+					}
+				});
+			});
+		});
 		console.log(this.badgesDisplay);
 	}
 }

@@ -18,6 +18,7 @@ export class Section {
     private quests: SectionQuest[];
     private items: string[];
     private badges: string[];
+    private schedule: any[];
 
     constructor(
         section?: any
@@ -35,6 +36,7 @@ export class Section {
             }
             this.items = section.items ? section.items : [];
             this.badges = section.badges ? section.badges : [];
+            this.schedule = section.schedule? section.schedule: [];
         } else {
             this.course_id = "";
             this.section_name = "";
@@ -43,6 +45,7 @@ export class Section {
             this.quests = [];
             this.items = [];
             this.badges = [];
+            this.schedule = [];
         }
     }
 
@@ -53,7 +56,8 @@ export class Section {
         instructor,
         quests,
         items,
-        badges
+        badges,
+        schedule
     ) {
         this.course_id = course_id;
         this.section_name = section_name;
@@ -62,10 +66,15 @@ export class Section {
         this.quests = quests;
         this.items = items;
         this.badges = badges;
+        this.schedule = schedule;
     }
 
     getSectionId() {
         return this._id;
+    }
+
+    getSchedule() {
+        return this.schedule;
     }
 
     getCourseId() {

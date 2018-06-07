@@ -145,8 +145,22 @@ export class CreateCourseComponent implements OnInit {
 	}
 
 	submitCourseSection() {
+		console.warn(this.sectionForm);
 		let newSection: Section = new Section();
-		newSection.setSection("", this.sectionForm.value.courseSection, [], this.currentUser.getUserFullName(), [], [], []);
+		let sched = [];
+		sched = this.sectionForm.value.scheduleDays;
+		let schedule = sched.filter((sched) => {
+			if(sched.isChecked){
+				return sched;
+			}
+		}).map((sched) => {
+			sched.maxTime = new Date(sched.maxTime).toLocaleTimeString();
+			sched.minTime = new Date(sched.minTime).toLocaleTimeString();
+			return sched;
+		})
+		
+		newSection.setSection("", this.sectionForm.value.courseSection, [], this.currentUser.getUserFullName(), [], [], [], schedule);
+		console.warn("NEW SECTION", newSection);
 		let newCourse: Course = new Course();
 		newCourse.setCourse(this.sectionForm.value.courseName, this.sectionForm.value.courseDescription);
 		console.log(newCourse);
@@ -160,7 +174,7 @@ export class CreateCourseComponent implements OnInit {
 			[],
 			[],
 			[],
-			[]
+			schedule
 		).subscribe(marj => {
 			console.log("MARJMARJORIE!");
 			this.pageService.isCourseCreated(true);

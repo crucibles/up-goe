@@ -10,6 +10,30 @@ const async = require('async');
 const nodemailer = require('nodemailer');
 const xoauth2 = require('xoauth2');
 const cookie = require('ng2-cookies');
+const fs = require('fs');
+const mongoose = require("mongoose");
+// var DIR = './uploads/';
+const multer = require('multer');
+var requestTime;
+
+router.use(function timeLog(req, res, next) {
+    console.log('Time: ', Date.now());
+    requestTime = Date.now();
+    next();
+});
+
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './uploads/')
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.fieldname + '-' + requestTime + ".jpg")
+    }
+});
+
+var upload = multer({ storage: storage }).single('file');
+// var upload = multer({ dest: DIR }).single('photo');
+
 
 /**
  * Note: queries are string, body can be object because of bodyParsers;
@@ -63,10 +87,7 @@ let response = {
     message: null
 };
 
-router.use(function timeLog(req, res, next) {
-    console.log('Time: ', Date.now());
-    next();
-});
+
 
 /**
  * @description portal for requests regarding courses. api/courses
@@ -399,6 +420,7 @@ router.get('/experiences', (req, res) => {
  * @author AJ Ruth Sumandang
  */
 router.post('/experiences', (req, res) => {
+    var holder = "";
     if (req.body.method == "setStudentQuestGrade") {
         console.log("beforesetenter")
         setStudentQuestGrade(req, res);
@@ -428,9 +450,57 @@ router.post('/experiences', (req, res) => {
                     }
                 )
                 .then(grade => {
-                    console.log("grade");
-                    console.log(grade);
-                    res.json(true);
+
+                    connection((db) => {
+                        const myDB = db.db('up-goe-db');
+                        myDB.collection('quests')
+                            .find(ObjectID(req.body.quest_id))
+                            .toArray()
+                            .then((quests) => {
+                                console.log(quests);
+                                if (quests[0] && quests[0].quest_badge) {
+                                    holder = quests[0].quest_badge;
+                                    myDB.collection('sections')
+                                        .updateOne(
+                                            {
+                                                _id: ObjectID(req.body.section_id)
+                                            },
+                                            {
+                                                $addToSet: {
+                                                    "students.$[elem].badges": quests[0].quest_badge,
+
+                                                }
+                                            },
+                                            {
+                                                arrayFilters: [{ "elem.user_id": req.body.user_id }]
+                                            }
+                                        )
+                                        .then(x => {
+                                            console.log("adding badge to section student finally" + holder);
+                                            holder = holder.toString().trim();
+                                            myDB.collection('badges')
+                                                .updateOne(
+                                                    {
+                                                        _id: ObjectID(holder)
+                                                    },
+                                                    {
+                                                        $addToSet: {
+                                                            "badge_attainers": req.body.user_id,
+                                                        }
+                                                    }
+                                                );
+                                            res.json(true);
+                                        })
+
+                                } else {
+                                    res.json(false);
+                                }
+                            })
+                            .catch((err) => {
+                                sendError(err, res);
+                            });
+                    });
+
                 })
                 .catch(err => {
                     console.log("ERROR");
@@ -439,6 +509,43 @@ router.post('/experiences', (req, res) => {
         })
     }
 });
+
+router.post('/upload', (req, res) => {
+    var path = '';
+    console.warn("hey");
+    console.log(req.body);
+
+    upload(req, res, function (err) {
+        if (err) {
+            // An error occurred when uploading
+            console.log(err);
+            return res.status(422).send("an Error occured")
+        }
+        // No error occured.
+        path = req.file.path;
+        // return res.send(path.substring(8, path.length));
+        return res.send(req.file);
+    })
+
+});
+
+router.get('/download', (req, res) => {
+    console.log("downloading================================================================");
+    // let file = "./uploads/" + req.query.file;
+    let file = "./uploads/" + req.query.file;
+    console.log(file);
+    // fs.readFile(file, function (err, data) {
+    //     res.contentType('application/pdf');
+    //     res.send(data);
+    // })
+
+    // res.contentType('application/pdf');
+    // res.download(file);
+
+    console.log("downloading..");
+})
+
+
 
 /**
  * @description portal for requests regarding users. api/login
@@ -547,7 +654,7 @@ router.post('/questmaps', (req, res) => {
                         console.log("-----");
                         console.log("success");
                         req.body.quest_coordinates.forEach(coord => {
-                            if(coord.quest_id){
+                            if (coord.quest_id) {
                                 req.body.quest_coordinates = coord;
                                 console.log("FOUND IT");
                                 console.log(req.body.quest_coordinates);
@@ -865,8 +972,10 @@ router.post('/sections', (req, res) => {
             is_graded: false,
             file: req.body.data,
             comment: req.body.comment,
-            date_submitted: new Date(Date.now())
+            date_submitted: Date(req.body.time)
         }
+
+        console.log(submitObj);
 
         connection((db) => {
             const myDB = db.db('up-goe-db');
@@ -981,7 +1090,8 @@ router.post('/sections', (req, res) => {
                             $push: {
                                 students: {
                                     user_id: req.body.user_id,
-                                    status: "R"
+                                    status: "R",
+                                    badges: []
                                 }
                             }
                         }
@@ -1065,9 +1175,7 @@ router.get('/sections', (req, res) => {
     if (req.query.instructor) {
         console.log("enter search for section1");
         getSectionsofInstructor(req, res);
-    }
-
-    if (req.query.id) {
+    } else if (req.query.id) {
         console.log("/sections");
         console.log("req.query");
         console.log(req.query);
@@ -1149,7 +1257,7 @@ router.get('/sections', (req, res) => {
                                 });
 
                         }
-                        
+
                         // res.json(myObjArr);
 
                         function afterAllSection(err) {
@@ -1184,7 +1292,7 @@ router.get('/sections', (req, res) => {
                 }
             };
 
-            if(req.query.section_id){
+            if (req.query.section_id) {
                 console.log("NAAAAAAAAAAAAAA SECTION_ID HOHO");
                 query = {
                     _id: ObjectID(req.query.section_id),
@@ -1710,7 +1818,6 @@ router.post('/updateUser', (req, res) => {
 
 });
 
-
 /**
  * @description portal for requests regarding Badges. api/badges
  * @author Cedric Yao Alvaro
@@ -1721,28 +1828,28 @@ router.post('/badges', (req, res) => {
         connection((db) => {
             const myDB = db.db('up-goe-db');
             myDB.collection('badges')
-                .count({badge_name: req.body.badgeData.badge_name})
+                .count({ badge_name: req.body.badgeData.badge_name })
                 .then((count) => {
-                    if(count > 0) {
+                    if (count > 0) {
                         console.log('This badge already exists.');
                         response.data = req.body.badgeData.badge_name;
                         res.json(false);
                     } else {
                         myDB.collection('badges')
-                            .insertOne((req.body.badgeData), function(err, res) {
-                                if(err) {
+                            .insertOne((req.body.badgeData), function (err, res) {
+                                if (err) {
                                     console.log('Error inserting new badge.')
                                     throw err;
                                 } else {
                                     console.log('Badge successfully inserted.');
-                                    myDB.collection('badges') 
-                                        .findOne({badge_name: req.body.badgeData.badge_name})
+                                    myDB.collection('badges')
+                                        .findOne({ badge_name: req.body.badgeData.badge_name })
                                         .then(badge => {
                                             if(badge) {
                                                 myDB.collection('sections')
-                                                    .updateOne({_id: ObjectID(req.body.sectionId)}, {
+                                                    .updateOne({ _id: ObjectID(req.body.sectionId) }, {
                                                         $push: {
-                                                            badges: JSON.stringify(badge._id).toString().substring(1,25)
+                                                            badges: JSON.stringify(badge._id).toString().substring(1, 25)
                                                         }
                                                     })
                                             }
@@ -1815,8 +1922,39 @@ router.post('/badges', (req, res) => {
 
 router.get('/badges', (req, res) => {
     console.log("IM IN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    if (req.query.method == "ALL") {
 
-    if (req.query.method && req.query.method == "getSectionBadges") {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('badges')
+                .find()
+                .toArray()
+                .then((badges) => {
+                    if (badges) {
+                        res.json(badges);
+                    } else {
+                        res.json(false);
+                    }
+                })
+        });
+
+    } else if (req.query.badge_id) {
+
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('badges')
+                .find({ _id: ObjectID(req.query.badge_id) })
+                .toArray()
+                .then((badges) => {
+                    if (badges) {
+                        res.json(badges);
+                    } else {
+                        res.json(false);
+                    }
+                })
+        });
+
+    } else if (req.query.method && req.query.method == "getSectionBadges") {
         getSectionBadges(req, res);
     } else {
         connection((db) => {
@@ -1977,7 +2115,7 @@ router.post('/questLeaderboard', (req, res) => {
     connection((db) => {
         const myDB = db.db('up-goe-db');
         myDB.collection('experiences')
-            .find({ 
+            .find({
                 section_id: req.body.currSection,
                 quests_taken: {
                     $elemMatch: {
