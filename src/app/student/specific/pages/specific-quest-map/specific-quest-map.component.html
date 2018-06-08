@@ -61,7 +61,7 @@
 				<br>
 			</div>
 		</div>
-		<div *ngIf="isParticipating(this.questClicked.getQuestId()) && !isQuestTaken(this.questClicked.getQuestId())">
+		<div *ngIf="isParticipating(this.questClicked.getQuestId()) && isPending()">
 			<textarea [(ngModel)]="commentBox" style="width: 100%" placeholder="Place your comment here."></textarea>
 		</div>
 	</div>
@@ -69,7 +69,8 @@
 	<!-- Quest Modal Buttons -->
 	<div class="modal-footer">
 		<!-- shows submit & abandon buttons if user is a participant -->
-		<ng-container *ngIf="isParticipating(this.questClicked.getQuestId()) && !isQuestTaken(this.questClicked.getQuestId())">
+		<!-- <ng-container *ngIf="isParticipating(this.questClicked.getQuestId()) && !isQuestTaken(this.questClicked.getQuestId()) && isPending()"> -->
+		<ng-container *ngIf="isParticipating(this.questClicked.getQuestId()) && isPending()">
 			<button type="submit" class="btn btn-danger mr-auto" (click)="abandonQuest()">Abandon Quest</button>
 			<button type="submit" class="btn btn-success" (click)="submitQuest(comment)">Submit Quest</button>
 		</ng-container>
@@ -78,7 +79,8 @@
 			<button type="submit" class="btn btn-success" (click)="acceptQuest()">Accept the Quest</button>
 		</ng-container>
 		<!-- shows resubmit and show scores button if user already submitted quest-->
-		<ng-container *ngIf="isParticipating(this.questClicked.getQuestId()) && isQuestTaken(this.questClicked.getQuestId())">
+		<!-- <ng-container *ngIf="isParticipating(this.questClicked.getQuestId()) && isQuestTaken(this.questClicked.getQuestId()) && !isPending()"> -->
+		<ng-container *ngIf="isParticipating(this.questClicked.getQuestId()) && !isPending()">
 			<button type="submit" class="btn btn-danger mr-auto" (click)="abandonQuest()">Resubmit</button>
 			<button type="submit" class="btn btn-success" (click)="openLeaderBoardModal()">Show Scores</button>
 		</ng-container>

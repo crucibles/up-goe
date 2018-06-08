@@ -98,8 +98,6 @@ export class SectionService {
 
 	setCurrentUserSections(userSections) {
 		this.currentUserSections = userSections;
-		console.log("SET CURRENT SECTIONSSSSs");
-		console.log(this.currentUserSections);
 	}
 
 	/**
@@ -118,7 +116,6 @@ export class SectionService {
 		schedule
 	) {
 		const url = this.createCourseSectionUrl;
-		console.log("HERE1");
 		return this.http.post<User>(url, {
 			courseName,
 			courseDescription,
@@ -131,7 +128,6 @@ export class SectionService {
 			schedule
 		}).pipe(
 			tap(data => {
-				console.log(data);
 				// Returns data from api.js to sign-up.component.ts.
 				return data;
 			}),
@@ -162,7 +158,6 @@ export class SectionService {
 
 		return this.http.post(url, body).pipe(
 			tap(data => {
-				console.log(data);
 				return data;
 			}),
 			catchError(this.handleError<any>(`requesting failed for =${body}`))
@@ -187,7 +182,6 @@ export class SectionService {
 
 		return this.http.post(url, body).pipe(
 			tap(data => {
-				console.log(data);
 				return data;
 			}),
 			catchError(this.handleError<any>(`requesting failed for =${body}`))
@@ -314,7 +308,7 @@ export class SectionService {
 		const url = this.secUrl;
 		let params = new HttpParams().set('id', section_id);
 
-		return this.http.get<Course>(url, {
+		return this.http.get<any>(url, {
 			params: params
 		}).pipe(
 			map(sections => sections[0]),
@@ -489,8 +483,6 @@ export class SectionService {
 				tap(sections => {
 					let courseSections: any = sections;
 
-					console.log("EDITING");
-					console.log(sections);
 					this.currentUserSections = courseSections.map(courseSection => courseSection.section);
 					// added this for referencing
 					localStorage.setItem("currentInstructorSections", JSON.stringify(sections));
@@ -566,10 +558,8 @@ export class SectionService {
 		let enrolledSections = [];
 
 		if (this.currentUserSections) {
-			console.log(this.currentUserSections);
 			this.currentUserSections.map((section) => {
-				console.log(section);
-				let students = section.section? section.section.students: section.students;
+				let students = section.section ? section.section.students : section.students;
 				if (this.multiFilter(students, filter).length) {
 					enrolledSections.push(section);
 				}
@@ -607,8 +597,6 @@ export class SectionService {
 		this.currentUserSections.map((section) => {
 
 			if (this.multiFilter(section.section.students, filter).length) {
-				console.log(section);
-				console.log(section.section._id)
 				enrolledSections.push(section.section._id);
 			}
 
@@ -635,15 +623,11 @@ export class SectionService {
 		if (this.currentUserSections) {
 
 			this.currentUserSections.map((x) => {
-				console.log(x);
-				let quests = x.section? x.section.quests: x.quests;
+				let quests = x.section ? x.section.quests : x.quests;
 				quests.map((y) => {
-					console.log(y);
 					if (y.quest_participants) {
 						y.quest_participants.map((z) => {
-							console.log(z);
 							if (z = this.userService.getCurrentUser().getUserId()) {
-								console.warn("matched");
 								sjq[counter] = y.quest_id;
 								counter++;
 							}
@@ -664,8 +648,6 @@ export class SectionService {
 	 * @param string it contains the typed class name or code
 	 */
 	searchSection(string: any): Observable<any> {
-		console.log("hi");
-		console.warn("hello");
 		const searchUrl = this.secUrl;
 
 		let params = new HttpParams().set('class', string);
@@ -723,7 +705,7 @@ export class SectionService {
 	multiFilter(array, filters) {
 		const filterKeys = Object.keys(filters);
 		// filters all elements passing the criteria
-		if(array){
+		if (array) {
 			return array.filter((item) => {
 				// dynamically validate all filter criteria
 				return filterKeys.every(key => !!~filters[key].indexOf(item[key]));
@@ -736,8 +718,6 @@ export class SectionService {
 
 	getSortedSections(sections: any[], criteria: SectionSearchCriteria) {
 		return sections.sort((a, b) => {
-			console.log(a);
-			console.log(b);
 			let firstValue = criteria.sortDirection === 'desc' ? 1 : -1;
 			let secondValue = criteria.sortDirection === 'desc' ? -1 : 1;
 
@@ -756,17 +736,13 @@ export class SectionService {
 				val1 = a["section"][query];
 				val2 = b["section"][query];
 			}
-			console.log(val1);
-			console.log(val2);
-			val1 = val1.toLowerCase()
-			val2 = val2.toLowerCase();
-			console.log(val1);
-			console.log(val2);
-			
+			val1 = val1 ? val1.toLowerCase() : val1;
+			val2 = val2 ? val2.toLowerCase() : val2;
+
 			if (val1 > val2) {
 				return firstValue;
 			}
-			else if(val1 < val2){
+			else if (val1 < val2) {
 				return secondValue;
 			} else {
 				return 0;

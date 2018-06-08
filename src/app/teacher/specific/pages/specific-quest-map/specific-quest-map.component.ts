@@ -119,12 +119,10 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 		private userService: UserService
 
 	) {
-		console.log("QUEST MAP");
 		this.currentUser = this.userService.getCurrentUser();
 	}
 
 	ngOnInit() {
-		console.log("Quest map");
 		this.isCreateModalReady = false;
 		this.setDefault();
 		this.getCurrentUser();
@@ -133,7 +131,6 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 	}
 
 	ngAfterViewInit() {
-		console.log("after view")
 		this.loadQuestMap();
 	}
 
@@ -143,14 +140,11 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 	 */
 	getCurrentSection() {
 		this.currentSection = this.sectionService.getCurrentSection();
-		console.log(this.currentSection);
 	}
 
 	getCurrentUser() {
 		//AHJ: unimplemented... or not sure. Di ko sure kung tama na ning pagkuha sa current user
 		this.currentUser = new User(this.userService.getCurrentUser());
-		console.log("currUser");
-		console.log(this.currentUser);
 	}
 
 	/**
@@ -209,7 +203,6 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 				isChecked: false
 			})
 		});
-		console.log(this.formBuilder.array(arr))
 		return this.formBuilder.array(arr);
 	}
 
@@ -220,14 +213,9 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 	 * @author Sumandang, AJ Ruth
 	 */
 	loadQuestMap() {
-		console.log(this.currentSection);
 		this.questService.getSectionQuests(this.currentSection.getSectionId()).subscribe(quests => {
-			console.log("QUEST LOADED");
-			console.log(quests);
 			this.quests = quests.map(quest => new Quest(quest));
 			this.questService.getSectionQuestMap(this.currentSection.getSectionId()).subscribe(questmap => {
-				console.log("QUESTMAP LOADEd");
-				console.log(questmap);
 				this.questMap = new QuestMap(questmap, this.quests, true);
 				this.setQuestMap();
 			});
@@ -243,7 +231,6 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 	openQuest(quest: any) { //'quest: any' in here means the quest has not been converted to Quest type
 		//AHJ: Unimplemented
 		//WARNING!! Remove QUESTS in specific-qm.html when this is implemented
-		console.log(quest);
 		this.questClicked = new Quest(quest);
 		if (this.questClicked) {
 			this.bsModalRef = this.modalService.show(this.questTemplate);
@@ -257,15 +244,6 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 		this.pageService.isProfilePage(false);
 	}
 
-	// pointClicked(event: Event) {
-	// 	console.log("clicked!");
-	// 	let activePoint = this.chart.getElementAtEvent(event);
-	// 	var selectedPoint = activePoint[0];
-	// 	selectedPoint.custom = selectedPoint.custom || {};
-	// 	selectedPoint.custom.backgroundColor = 'rgba(128,128,128,1)';
-	// 	selectedPoint.custom.radius = 7;
-	// }
-
 	resetQuest() {
 		this.createQuestForm.reset();
 	}
@@ -275,13 +253,10 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 	* @param data string where the quests and its respective coordinates will be located
     */
 	setQuestMap() {
-		console.log("SET QUESTMAP");
 		this.chartColors = this.pageService.lineChartColors;
 		this.chartWidth = 650;
 		this.chartHeight = 300;
 
-		console.log("this.questMap.getQuestMapDataSet()");
-		console.log(this.questMap.getQuestMapDataSet());
 
 		var QM = {
 			datasets: this.questMap.getQuestMapDataSet()
@@ -332,7 +307,6 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 			data: QM,
 			options: options
 		});
-		console.log(this.chart);
 	}
 
 	
@@ -361,7 +335,6 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 		if (points.length != 0) {
 			this.x = points[0]._model.x / (this.chartWidth / this.xTick);
 			this.y = (this.chartHeight - points[0]._model.y) / (this.chartHeight / this.yTick);
-			console.log(this.questMap.getQuestIdOf(this.x, this.y));
 			if ((this.x % 5 != 0 || this.y % 5 !== 0) || this.questMap.getQuestIdOf(this.x, this.y) == "") {
 				this.openCreateQuestModal();
 			} else {
@@ -371,11 +344,7 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 					this.openQuest(quests[0]);
 				}
 			}
-			console.log(this.x);
-			console.log(this.y);
 		}
-		console.log(this.chart.getDatasetAtEvent($event));
-		console.log(this.chart.getElementAtEvent($event));
 	}
 
 	openCreateQuestModal(isFromHTML?: boolean) {
@@ -390,10 +359,6 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 	}
 
 	createQuest() {
-		console.log(this.questTitle.value);
-		console.log(this.questDescription.value);
-		console.log(this.questRetakable.value);
-		console.log(this.questEndDate.value)
 		let questBadgesArr = [];
 
 		this.createQuestForm.value.questBadges.forEach(badge => {
@@ -401,8 +366,6 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 				questBadgesArr.push(badge.badge);
 			}
 		})
-		console.log(questBadgesArr);
-		console.log(this.createQuestForm);
 		let newQuest: Quest = new Quest();
 		//newQuest.setQuest()
 		this.questService.createQuest(
@@ -419,10 +382,7 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 			"",
 			""
 		).subscribe(quest => {
-			console.log("RECEIVED quest");
-			console.log(quest);
 			quest = new Quest(quest);
-			console.log(quest);
 			this.quests.push(quest);
 			this.addNewQuestLine(quest);
 			this.bsModalRef.hide();
@@ -431,9 +391,6 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 	}
 
 	addNewQuestLine(quest) {
-		console.log("addnewquest");
-		console.log(this.x);
-		console.log(this.y);
 		//AHJ: unimplemented; add to database so questmap is refreshed
 
 		// if the clicked point is a '+' sign
@@ -443,13 +400,10 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 			if (newQuestCoordinates.length > 0) {
 				this.questService.addQuestMapCoordinates(this.currentSection.getSectionId(), this.questMap.getQuestMapId(), newQuestCoordinates).subscribe(questmap => {
 					this.questService.getSectionQuestMap(this.currentSection.getSectionId()).subscribe(questmap => {
-						console.log("QUESTMAP LOADEd");
-						console.log(questmap);
 						this.questMap = new QuestMap(questmap, this.quests, true);
 						this.chart.config.data.datasets = this.questMap.getQuestMapDataSet();
 						this.chart.update();
 					});
-					console.log(questmap);
 				});
 			}
 
@@ -460,19 +414,14 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 
 			if(this.isFromHTML){
 				this.questMap.editQuestMapCoordinateAt(basisX, basisY, quest._id);
-				console.log("this.questMap.getQuestMapDataSet()");
-				console.log(this.questMap.getQuestMapDataSet());
 			}
 
 			this.questService.editQuestMapCoordinateAt(this.currentSection.getSectionId(), this.questMap.getQuestMapId(), quest._id, basisX, basisY).subscribe(() => {
 				this.questService.getSectionQuestMap(this.currentSection.getSectionId()).subscribe(questmap => {
-					console.log("QUESTMAP LOADEd");
-					console.log(questmap);
 					this.questMap = new QuestMap(questmap, this.quests, true);
 					this.chart.config.data.datasets = this.questMap.getQuestMapDataSet();
 					this.chart.update();
 				});
-				console.log("done editing qm coord!");
 			})
 		}
 	}

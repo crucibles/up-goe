@@ -71,10 +71,8 @@ export class SpecificNewsComponent implements OnInit {
 	ngOnInit() {
 		this.setDefault();
 		this.route.paramMap.subscribe(params => {
-			console.warn(params);
 			this.section_id = params.get('sectionId');
 			this.getUser();
-			console.log(this.currentUser);
 			this.getAllCommentPosts();
 			let subscription = this.commentObservable.subscribe(value => {
 				this.appendComments(value);

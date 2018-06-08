@@ -112,8 +112,6 @@ export class GenSelcourseComponent implements OnInit {
 						sortDirection: "asc"
 					}
 				);
-				console.log("<<<<<<<LOOK HERE");
-				console.log(this.sections);
 				this.schedules = this.sections.map(x => {
 					return x.section.schedule;
 				})
@@ -129,9 +127,7 @@ export class GenSelcourseComponent implements OnInit {
 			this.isSearching = false;
 		} else {
 			this.isSearching = true;
-			console.log(this.course_search);
 			this.sectionService.searchSection(this.course_search).subscribe((sections) => {
-				console.warn(sections);
 				this.course_found = sections;
 			})
 		}

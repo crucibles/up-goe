@@ -73,11 +73,6 @@ export class ExperienceService {
 
     setStudentQuestGrade(section_id, user_id, quest_id, grade){
         let url = this.experienceUrl;
-        console.log("SERVICEsetgrade");
-        console.log(section_id);
-        console.log(user_id);
-        console.log(quest_id);
-        console.log(grade);
 		return this.http.post<Experience>(url, {
 			method: "setStudentQuestGrade",
 			section_id: section_id,
@@ -92,6 +87,21 @@ export class ExperienceService {
 				}),
 				catchError(this.handleError<Experience>(`setStudentQuestGrade =${quest_id}`))
 			);
+    }
+
+    getCurrentExperience(quest_id: string, user_id: string, section_id: string) {
+        let url = "api/currentExperience";
+        return this.http.post<any>(url, {
+            quest_id,
+            user_id,
+            section_id
+        }).pipe(
+            tap(data => {
+                if (data) return data;
+                else return false;
+            }),
+            catchError(this.handleError<any>(`acquiring current experience`))
+        );
     }
 
     /**

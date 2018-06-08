@@ -33,7 +33,8 @@ import {
 	SectionService,
 	UserService,
 	QuestService,
-	LeaderboardService
+	LeaderboardService,
+    ExperienceService
 } from 'shared/services';
 
 import {
@@ -41,6 +42,10 @@ import {
 } from 'shared/services/alert.service';
 
 import Chart = require('chart.js');
+
+import { 
+	ToastsManager 
+} from 'ng2-toastr';
 
 @Component({
 	selector: 'app-specific-quest-map',
@@ -70,6 +75,7 @@ export class SpecificQuestMapComponent implements OnInit {
 
 	// quest; deletable
 	isQuestTakn: boolean = false;
+	pending: boolean = true;
 
 	currentUser: User;
 
@@ -90,7 +96,9 @@ export class SpecificQuestMapComponent implements OnInit {
 		private userService: UserService,
 		private alertService: AlertService,
 		private questService: QuestService,
-		private leaderboardService: LeaderboardService
+		private leaderboardService: LeaderboardService,
+		private experienceService: ExperienceService,
+		private toaster: ToastsManager
 	) {
 		this.currentUser = this.userService.getCurrentUser();
 		this.currentSection = new Section(this.sectionService.getCurrentSection());
@@ -101,6 +109,10 @@ export class SpecificQuestMapComponent implements OnInit {
 		this.getCurrentUser();
 		this.getCurrentSection();
 		this.loadQuestMap();
+	}
+
+	isPending() {
+		return this.pending;
 	}
 
 	getQuestScores() {
@@ -119,43 +131,40 @@ export class SpecificQuestMapComponent implements OnInit {
 	}
 
 	loadQuestMap() {
-		// this.questService.getUserJoinedQuests(this.currentUser.getUserId())
-		// 	.subscribe(quests => {
-		// 		console.log(quests);
-		// 		this.quests = quests.map(quest => new Quest(quest));
-		// 		//AHJ: unimplemented; getter for quest map data (remove comment marker belowif available)
-		// 		//this.questService.getQuestMap(this.currentSection.getCourseId()).subscribe(data => {
-		// 		this.questMap = new QuestMap(MOCKQUESTMAP, this.quests);
-		// 		this.setQuestMap();
-		// 		//});
-		// 	});
+
 		this.questService.getSectionQuests(this.currentSection.getSectionId()).subscribe(quests => {
-			console.log("QUEST LOADED");
-			console.log(quests);
 			this.quests = quests.map(quest => new Quest(quest));
 			this.questService.getSectionQuestMap(this.currentSection.getSectionId()).subscribe(questmap => {
-				console.log("QUESTMAP LOADEd");
-				console.log(questmap);
 				this.questMap = new QuestMap(questmap, this.quests);
 				this.setQuestMap();
 			});
 		});
+		
 	}
 
 	openQuest(quest: any) { //'quest: any' in here means the quest has not been converted to Quest type
 		//AHJ: Unimplemented
 		//WARNING!! Remove QUESTS in specific-qm.html when this is implemented
-		console.log(quest);
 		this.questClicked = new Quest(quest);
-		console.log(this.questClicked);
 		if (this.questClicked) {
 			this.questModalRef = this.modalService.show(this.questTemplate);
 			this.getQuestScores();
+
+			this.experienceService.getCurrentExperience(
+				this.questClicked.getQuestId(),
+				this.currentUser.getUserId(),
+				this.currentSection.getSectionId()
+			).subscribe(res => {
+				if(res == "true") {
+					this.pending = false;
+				} else if (res == "false") {
+					this.pending = true;
+				}
+			});
 		}
 	}
 
 	openLeaderBoardModal() {
-		console.log("opened");
 		this.lbModalRef = this.modalService.show(this.leaderboardTemplate);
 	}
 
@@ -242,11 +251,7 @@ export class SpecificQuestMapComponent implements OnInit {
 					this.openQuest(quests[0]);
 				}
 			}
-			console.log(x);
-			console.log(y);
 		}
-		console.log(this.chart.getDatasetAtEvent($event));
-		console.log(this.chart.getElementAtEvent($event));
 	}
 
 	/**
@@ -269,8 +274,6 @@ export class SpecificQuestMapComponent implements OnInit {
 	getCurrentUser() {
 		//AHJ: unimplemented... or not sure. Di ko sure kung tama na ning pagkuha sa current user
 		this.currentUser = new User(this.userService.getCurrentUser());
-		console.log("currUser");
-		console.log(this.currentUser);
 	}
 
 	acceptQuest() {
@@ -280,18 +283,11 @@ export class SpecificQuestMapComponent implements OnInit {
 		let section_id = this.currentSection.getSectionId();
 
 		this.questService.joinQuest(user_id, quest_id, section_id).subscribe((result) => {
-			console.log("JOINED QUEST!!!");
-			console.log(result);
-			// this.questService.getUserJoinedQuests(user_id).subscribe(x => {
-			// 	console.log("x");
-			// 	console.log(x);
-			// })
+
 			this.sectionService.getUserSections(this.currentUser.getUserId(), this.currentSection.getSectionId()).subscribe(
 				sections => {
-					console.log(sections);
 					this.sectionService.setCurrentSection(sections[0].section);
 					this.currentSection = new Section(this.sectionService.getCurrentSection());
-					console.log(this.currentSection);
 				}
 			)
 		});
@@ -300,22 +296,29 @@ export class SpecificQuestMapComponent implements OnInit {
 
 	submitQuest(comment) {
 		//AHJ: unimplemented; remove variable below if submitQuest properly implemented
-		console.log(this.commentBox);
-		console.log(comment);
+		this.toaster.success(
+			"Your quest have been submitted. Wait until it is graded.",
+			"Quest Submission Success!"
+		);
 		let user_id = this.userService.getCurrentUser().getUserId();
 		let quest_id = this.questClicked.getQuestId();
 		let section_id = this.currentSection.getSectionId();
 		
 		this.questService.submitQuest("hello", this.commentBox, user_id, quest_id, section_id).subscribe((result) => {
 			this.isQuestTakn = true;
+			this.pending = true;
 			this.questService.getUserJoinedQuests(user_id).subscribe(x => {
-				console.log(x);
 			})
 		});
+		this.questModalRef.hide();
 	}
 
 	abandonQuest() {
 		console.warn("hello");
+		this.toaster.warning(
+			"You have abandoned a quest.",
+			"Quest Abandoned!"
+		);
 		let user_id = this.userService.getCurrentUser().getUserId();
 		let quest_id = this.questClicked.getQuestId();
 		let section_id = this.currentSection.getSectionId();
@@ -325,6 +328,7 @@ export class SpecificQuestMapComponent implements OnInit {
 				console.log(x);
 			})
 		});
+		this.questModalRef.hide();
 	}
 
 	isParticipating(quest_id: string): boolean {

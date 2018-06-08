@@ -100,25 +100,19 @@ export class GenProfileComponent implements OnInit {
     }
 
     ngOnInit() {
-        console.log("GENPROFLEENTER");
         this.pageService.isProfilePage(true);
         this.isChartReady = false;
         this.getUser();
         this.userService.updateUserConditions(this.userService.getCurrentUser().getUserId()).subscribe((x) => {
-            console.log("done updating");
-            console.log("result" + x);
 
             this.userService.getUser(this.userService.getCurrentUser().getUserId())
                 .subscribe((user) => {
                     this.userService.setCurrentUser(user);
-                    console.log("CHECK IF WITH COURSE");
-                    console.log(this.sectionService.getCurrentUserSections());
                     this.courseSections = this.sectionService.getCurrentUserSections();
                     this.setPerformanceGraphData();
                 });
 
             this.badgeService.checkIfWillEarnABadge().subscribe((badge) => {
-                console.log(badge);
                 this.badgeService.getCurrentStudentSystemBadges().subscribe((x) => {
                     let y = [];
                     y.push(x);
@@ -146,7 +140,6 @@ export class GenProfileComponent implements OnInit {
     getUser(): void {
         //ced make curUser in userService or use localStorage
         this.user = this.userService.getCurrentUser();
-        console.log("getuser");
     }
 
     /* Below are the helper functions */
@@ -188,18 +181,14 @@ export class GenProfileComponent implements OnInit {
     setPerformanceGraphData() {
         let dataGrade: number[] = [];
         let max: number = MAXXP ? MAXXP : 10;
-        console.log("this.currentSections");
-        console.log(this.courseSections);
         this.courseSections.forEach(courseSection => {
             this.experienceService.getSectionGrades(new Section(courseSection.section).getSectionId(), this.user.getUserId())
                 .subscribe(sectionSubmissions => {
                     let courseSec = courseSection;
-                    console.log("-------------------" + courseSec.course_name + "-----------------------");
                     if (sectionSubmissions.length > 0) {
                         let submissions = sectionSubmissions.map(submission => new Experience(submission))[0];
 
                         let grades = submissions.getWeeklyAccumulativeGrades();
-                        console.log(grades);
                         grades.forEach(grade => {
                             // get the decimal percentage
                             let percentage: number = (grade / MAXXP) * 100;
@@ -209,7 +198,6 @@ export class GenProfileComponent implements OnInit {
                         });
 
                         let section = new Section(courseSec.section);
-                        console.log(courseSec);
                         
                         this.lineChartColors = this.pageService.lineChartColors;
                         let rand: number = this.lineChartData && this.lineChartData.length? this.lineChartData.length % this.lineChartColors.length: 0;
@@ -232,11 +220,9 @@ export class GenProfileComponent implements OnInit {
                         } else {
                             let chartData = this.lineChartData;
                             chartData.push(dataLine);
-                            console.log(chartData);
                             this.lineChartData = chartData;
                             this.chart.update();
                         }
-                        console.log("--------END-----------" + courseSec.course_name + "----------END-------------");
                     }
                 });
         });
@@ -249,7 +235,6 @@ export class GenProfileComponent implements OnInit {
      * @param e 
      */
     public chartClicked(e: any): void {
-        console.log(e);
     }
 
     /**
@@ -259,6 +244,5 @@ export class GenProfileComponent implements OnInit {
      * @param e 
      */
     public chartHovered(e: any): void {
-        console.log(e);
     }
 }

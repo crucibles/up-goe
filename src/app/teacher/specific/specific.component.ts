@@ -34,7 +34,6 @@ export class SpecificComponent implements OnInit {
 
   ngOnInit() {
     this.route.firstChild.paramMap.subscribe((params: ParamMap) => {
-      console.log("SECTION SETTING");
       this.sectionId = params.get("sectionId");
       this.sectionService.setCurrentSectionId(this.sectionId);
     });
@@ -44,7 +43,6 @@ export class SpecificComponent implements OnInit {
 
       // setting the current section the student is navigating
       this.sectionService.setCurrentSection(new Section(searched[0].section));
-      console.log("SECTION SET");
       // setting the current course section the student is navigating
       this.sectionService.setCurrentCourseSection(searched[0]);
 

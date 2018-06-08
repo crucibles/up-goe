@@ -77,12 +77,10 @@ export class LogInComponent implements OnInit {
             .subscribe(
                 user => {
                     if (user) {
-                        console.log(user);
                         user = new User(user);
                         this.toastr.success("You are succesfully logged in!", "Welcome " + user.getUserFirstName());
                         this.router.navigateByUrl(this.returnUrl? this.returnUrl: user.getUserType()+'/general/select-course');
                     } else {
-                        console.log("User does not exists!");
                         this.warning = true;
                         this.isLoggingIn = false;
                     }

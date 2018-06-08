@@ -18,7 +18,7 @@
 		</li>
 
 		<!-- User infomation -->
-		<form class="form-horizontal" [formGroup]="sectionForm" (ngSubmit)="submitCourseSection()">
+		<form class="form-horizontal" [formGroup]="sectionForm">
 			<!-- User personal information -->
 			<li> Course Name: </li>
 			<li>
@@ -74,12 +74,12 @@
 				<!-- Edit button -->
 				<li style="text-align: right">
 					<!-- submit button (if done editing)-->
-					<button class="btn btn-primary" (click)=isDayChecked()>
+					<button class="btn btn-primary" (click)=sectionForm.reset()>
 						Reset
 					</button>
 
 					<!-- edit button (if user wants to edit their information) -->
-					<button type="submit" class="btn btn-primary" [disabled]="!sectionForm.valid || !isDayChecked()">
+					<button type="submit" class="btn btn-primary" [disabled]="!sectionForm.valid || !isDayChecked()" (click)="submitCourseSection()">
 						Submit
 					</button>
 				</li>

@@ -162,7 +162,6 @@ export class PageService {
 	}
 
 	public openTeacherSectionPage(sectionId: string) {
-		console.log(sectionId);
 		this.router.navigate(['/teacher/specific/specific-news', sectionId]);
 	}
 

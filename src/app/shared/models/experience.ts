@@ -53,9 +53,6 @@ export class Experience {
      */
     getQuestSubmission(quest_id): any {
         let questSubmission: any[] = this.quests_taken.filter(quest => quest.quest_id == quest_id);
-        console.log("GETQUEST");
-        console.log(quest_id);
-        console.log(questSubmission);
         return questSubmission.length > 0 ? questSubmission[0] : null;
     }
 
@@ -97,8 +94,16 @@ export class Experience {
         return questSubmission.length > 0 && questSubmission[0].is_graded ? questSubmission[0].is_graded : false;
     }
 
+    setIsGraded(quest_id) {
+        this.quests_taken = this.quests_taken.map(quest => {
+            if(quest.quest_id == quest_id) {
+                quest.is_graded = true;
+            }
+            return quest;
+        });
+    }
+
     getWeeklyAccumulativeGrades(): number[] {
-        console.log("--getWeeklyAccumulativeGrades--");
         let weekGrade: any[] = this.groupByWeek();
         let totalWeekGrades: any[] = [];
         let latestWeek = 0;
@@ -109,23 +114,13 @@ export class Experience {
                     week: questGrade.week,
                     grades: questGrade.grade
                 }
-                console.log("weekGrade");
-                console.log(weekGrade);
                 totalWeekGrades.push(weekGrade);
             } else {
                 let i = totalWeekGrades.findIndex(weekGrade => weekGrade.week == questGrade.week);
                 totalWeekGrades[i].grades += questGrade.grade;
-                console.log("updatedweekGrade");
-                console.log(totalWeekGrades[i]);
             }
         });
-        console.log("totalWeekGrades");
-        console.log(totalWeekGrades);
-        console.log("latestWeek");
-        console.log(latestWeek);
         let accumulativeWeekGrades: any[] = this.getAccumulativeGrades(totalWeekGrades, latestWeek);
-        console.log("FINALWEEK");
-        console.log(totalWeekGrades);
         return accumulativeWeekGrades;
     }
 
@@ -136,8 +131,6 @@ export class Experience {
             let index = weeklyGrades.findIndex(weekGrade => i == weekGrade.week);
             let weekGrade = index < 0? 0: weeklyGrades[index].grades;
             accumulativeGrades.push(accumulativeGrades[i - 1] + weekGrade);
-            console.log(accumulativeGrades[i - 1] + " + " + weekGrade + " = ");
-            console.log(accumulativeGrades);
         }
         return accumulativeGrades;
     }
@@ -145,8 +138,6 @@ export class Experience {
     private groupByWeek() {
         let week: any[] = [];
         let smallestIndex = -1;
-        console.log("<groupbyweekfunc");
-        console.log(this.quests_taken);
         this.quests_taken = this.quests_taken.filter(quest => quest.date_submitted != "");
         this.quests_taken.forEach(quest => {
             let date = new Date(quest.date_submitted);
@@ -161,11 +152,6 @@ export class Experience {
             })
         });
         smallestIndex--; 
-        console.log("smallestIndex");
-        console.log(smallestIndex);
-        
-        console.log("oldweek");
-        console.log(week);
         week = week.map(week => {
             let newWeek = week.week - smallestIndex;
             return {
@@ -174,9 +160,6 @@ export class Experience {
             }
         });
         
-        console.log("newweek");
-        console.log(week);
-        console.log(">groupbyweekfuncend");
         return week;
     }
 }

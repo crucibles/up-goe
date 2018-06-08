@@ -175,11 +175,9 @@ export class CommentPostService {
    * @returns commentpost array of the enrolled sections of the user
    */
   getUserPosts(sections: any): Observable<CommentPost[]> {
-    console.log(sections);
 
     let enrolled = this.sectionService.getUserEnrolledSections();
 
-    console.log(enrolled);
     const url = this.postUrl;
     let params = new HttpParams()
       .set('sections', sections);

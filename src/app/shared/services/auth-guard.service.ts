@@ -40,17 +40,12 @@ export class AuthGuardService implements CanActivate, CanLoad {
     ) { }
 
     canLoad(route: Route): boolean | Observable<boolean> | Promise<boolean> {
-        console.log(route);
         return false;
     }
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-        console.log(route.routeConfig.path);
-        console.warn(route);
-        console.log(state);
 
         if (this.auth.isLoggedIn() && (route.routeConfig.path == "log-in" || route.routeConfig.path == "sign-up" || route.routeConfig.path == "")) {
-            console.warn("You are already logged in.");
             this.toastr.success("" + this.userService.getCurrentUser().getUserFirstName(), "Welcome back");
             if (this.getUserType() == "student") {
 
@@ -87,7 +82,6 @@ export class AuthGuardService implements CanActivate, CanLoad {
             return false;
 
         } else {
-            console.log("just continue");
             return true;
         }
     }
