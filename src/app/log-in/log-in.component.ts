@@ -30,9 +30,6 @@ import {
 } from 'shared/models';
 
 // Application imports
-import {
-    BadgeModal
-} from 'shared/pages/badge-modal/badge-modal';
 
 import {
     UserService
@@ -44,8 +41,6 @@ import {
     styleUrls: ['./log-in.component.css']
 })
 export class LogInComponent implements OnInit {
-    @ViewChild('badgeModal') badgeModal: BadgeModal;
-
     public signupForm: FormGroup;
 
     private isLoggingIn: boolean = false;
@@ -86,7 +81,6 @@ export class LogInComponent implements OnInit {
                         user = new User(user);
                         this.toastr.success("You are succesfully logged in!", "Welcome " + user.getUserFirstName());
                         this.router.navigateByUrl(this.returnUrl? this.returnUrl: user.getUserType()+'/general/select-course');
-                        this.badgeModal.open();
                     } else {
                         console.log("User does not exists!");
                         this.warning = true;

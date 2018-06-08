@@ -76,11 +76,12 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 	 */
 	y: any;
 
+	isFromHTML: boolean = false;
+
 
 	//modal
 	@ViewChild('questTemplate') questTemplate: TemplateRef<any>;
 	@ViewChild('createQuestTemplate') createQuestTemplate: TemplateRef<any>;
-	@ViewChild('chartCanvas') chartCanvas: ElementRef;
 	private isCreateModalReady: boolean = false;
 	private bsModalRef: BsModalRef;
 	private createQuestForm: FormGroup;
@@ -331,7 +332,10 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 			data: QM,
 			options: options
 		});
+		console.log(this.chart);
 	}
+
+	
 
 	/**
 	 * https://stackoverflow.com/questions/38112802/how-to-save-a-text-to-file-and-read-it-again-but-save-as-binary-in-javascript
@@ -378,6 +382,9 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 		if(isFromHTML){
 			this.x = 5; 
 			this.y = 25;
+			this.isFromHTML = true;
+		} else {
+			this.isFromHTML = false;
 		}
 		this.bsModalRef = this.modalService.show(this.createQuestTemplate);
 	}
@@ -416,8 +423,10 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 			console.log(quest);
 			quest = new Quest(quest);
 			console.log(quest);
+			this.quests.push(quest);
 			this.addNewQuestLine(quest);
-			this.bsModalRef.hide()
+			this.bsModalRef.hide();
+			this.resetQuest();
 		});
 	}
 
@@ -427,6 +436,7 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 		console.log(this.y);
 		//AHJ: unimplemented; add to database so questmap is refreshed
 
+		// if the clicked point is a '+' sign
 		if (this.x % 5 != 0 || this.y % 5 != 0) {
 			let newQuestCoordinates: any[] = this.questMap.addNewQuestLine(this.x, this.y, quest);
 
@@ -436,21 +446,31 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 						console.log("QUESTMAP LOADEd");
 						console.log(questmap);
 						this.questMap = new QuestMap(questmap, this.quests, true);
-						this.setQuestMap();
+						this.chart.config.data.datasets = this.questMap.getQuestMapDataSet();
+						this.chart.update();
 					});
 					console.log(questmap);
 				});
 			}
+
+		// if clicked point is a quest point
 		} else {
 			let basisX = this.roundOff(this.x);
 			let basisY = this.roundOff(this.y);
+
+			if(this.isFromHTML){
+				this.questMap.editQuestMapCoordinateAt(basisX, basisY, quest._id);
+				console.log("this.questMap.getQuestMapDataSet()");
+				console.log(this.questMap.getQuestMapDataSet());
+			}
 
 			this.questService.editQuestMapCoordinateAt(this.currentSection.getSectionId(), this.questMap.getQuestMapId(), quest._id, basisX, basisY).subscribe(() => {
 				this.questService.getSectionQuestMap(this.currentSection.getSectionId()).subscribe(questmap => {
 					console.log("QUESTMAP LOADEd");
 					console.log(questmap);
 					this.questMap = new QuestMap(questmap, this.quests, true);
-					this.setQuestMap();
+					this.chart.config.data.datasets = this.questMap.getQuestMapDataSet();
+					this.chart.update();
 				});
 				console.log("done editing qm coord!");
 			})

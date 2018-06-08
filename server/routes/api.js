@@ -779,76 +779,103 @@ router.get('/posts', (req, res) => {
     var counter = 0;
     var index = 0;
 
-    connection((db) => {
-        const myDB = db.db('up-goe-db');
+    if (req.query.method && req.query.method == "getSectionPosts") {
+        getSectionPosts(req, res);
+    } else {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
 
-        if (req.query.sections) {
-            let sections = req.query.sections.split(",");
-            console.log(sections);
+            if (req.query.sections) {
+                let sections = req.query.sections.split(",");
+                console.log(sections);
+                myDB.collection('posts')
+                    .find()
+                    .toArray()
+                    .then((posts) => {
+
+                        if (posts) {
+
+                            forEach(posts, processPosts, afterAll);
+
+                            function processPosts(post, callback) {
+
+                                myDB.collection('posts')
+                                    .find({
+                                        section_id: sections[counter]
+                                    })
+                                    .toArray()
+                                    .then((post) => {
+                                        console.log(post.length);
+                                        Promise.all(post[0].section_id).then(() => {
+                                            myObjArr.push(post[index]);
+                                            counter++;
+                                            index++;
+                                        })
+                                        callback(null);
+                                    });
+
+                            }
+
+                            function afterAll(err) {
+                                console.log(myObjArr);
+                                response.data = myObjArr;
+                                res.json(myObjArr);
+                            }
+
+                        } else {
+                            res.json(false);
+                        }
+
+
+                    })
+                    .catch((err) => {
+                        sendError(err, res);
+                    })
+
+            } else {
+                myDB.collection('posts')
+                    .find()
+                    .toArray()
+                    .then((x) => {
+
+                        if (x) {
+                            res.json(x);
+                        } else {
+                            res.json(false);
+                        }
+
+                    })
+            }
+
+
+
+
+        });
+
+    }
+
+    function getSectionPosts(req, res) {
+        console.log("------getSectionPosts-------");
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+
+            console.log(req.query);
+            console.log(req.query.section_id);
+
             myDB.collection('posts')
-                .find()
+                .find({
+                    section_id: req.query.section_id
+                })
                 .toArray()
                 .then((posts) => {
-
-                    if (posts) {
-
-                        forEach(posts, processPosts, afterAll);
-
-                        function processPosts(post, callback) {
-
-                            myDB.collection('posts')
-                                .find({
-                                    section_id: sections[counter]
-                                })
-                                .toArray()
-                                .then((post) => {
-                                    console.log(post.length);
-                                    Promise.all(post[0].section_id).then(() => {
-                                        myObjArr.push(post[index]);
-                                        counter++;
-                                        index++;
-                                    })
-                                    callback(null);
-                                });
-
-                        }
-
-                        function afterAll(err) {
-                            console.log(myObjArr);
-                            response.data = myObjArr;
-                            res.json(myObjArr);
-                        }
-
-                    } else {
-                        res.json(false);
-                    }
-
-
+                    console.log("SUCESS GETTING POST");
+                    res.json(posts);
                 })
-                .catch((err) => {
+                .catch(err => {
                     sendError(err, res);
-                })
-
-        } else {
-            myDB.collection('posts')
-                .find()
-                .toArray()
-                .then((x) => {
-
-                    if (x) {
-                        res.json(x);
-                    } else {
-                        res.json(false);
-                    }
-
-                })
-        }
-
-
-
-
-    });
-
+                });
+        });
+    }
 });
 
 /**
@@ -1749,10 +1776,10 @@ router.post('/updateUser', (req, res) => {
 
                             Promise.all(user.user_conditions.log_in_total).then((date) => {
 
-                                h = date.map((d) => {
+                                h = date.filter((d) => {
                                     console.log(new Date(d).toLocaleDateString());
                                     console.log(x.toLocaleDateString());
-                                    if (new Date(d).toLocaleDateString().trim() == x.toLocaleDateString().trim()) {
+                                    if (new Date(d).toLocaleDateString() == x.toLocaleDateString()) {
                                         return new Date(d).toLocaleDateString();
                                     } else {
                                         return false;

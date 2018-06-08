@@ -22,7 +22,8 @@ import {
 import {
 	SectionService,
 	UserService,
-	PageService
+	PageService,
+	SortService
 } from 'shared/services';
 
 @Component({
@@ -47,6 +48,7 @@ export class GenSelcourseComponent implements OnInit {
 	constructor(
 		private pageService: PageService,
 		private sectionService: SectionService,
+		private sortService: SortService,
 		private userService: UserService,
 		private router: Router
 	) {
@@ -103,6 +105,13 @@ export class GenSelcourseComponent implements OnInit {
 		this.sectionService.getInstructorSections(user_id)
 			.subscribe(sections => {
 				this.sections = sections;
+				this.sections = this.sectionService.getSortedSections(
+					this.sections,
+					{
+						sortColumn: "courseName",
+						sortDirection: "asc"
+					}
+				);
 				console.log("<<<<<<<LOOK HERE");
 				console.log(this.sections);
 				this.schedules = this.sections.map(x => {
@@ -126,6 +135,10 @@ export class GenSelcourseComponent implements OnInit {
 				this.course_found = sections;
 			})
 		}
+	}
+
+	onSorted($event) {
+		this.sections = this.sectionService.getSortedSections(this.sections, $event);
 	}
 
 	openSectionPage(section_id: string) {

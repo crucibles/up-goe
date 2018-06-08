@@ -394,13 +394,13 @@ export class SectionService {
 
 		const url = this.secUrl;
 		let params: HttpParams;
-		if(isAll){
+		if (isAll) {
 			params = new HttpParams()
-			.set('students', section_id)
-			.set('all', isAll.toString())
+				.set('students', section_id)
+				.set('all', isAll.toString())
 		} else {
 			params = new HttpParams()
-			.set('students', section_id);
+				.set('students', section_id);
 		}
 
 		return this.http.get<any>(
@@ -520,13 +520,13 @@ export class SectionService {
 	 * The expected values of array is the section's information and the attached course_name
 	 */
 	getUserSections(user_id, section_id?: string): Observable<any[]> {
-		
+
 		const url = this.secUrl;
 
 		let params = new HttpParams().set('id', user_id);
-		if(section_id){
+		if (section_id) {
 			params = new HttpParams().set('id', user_id)
-			.set('section_id', section_id);
+				.set('section_id', section_id);
 		}
 
 		return this.http.get<any>(
@@ -734,4 +734,49 @@ export class SectionService {
 		}
 	}
 
+	getSortedSections(sections: any[], criteria: SectionSearchCriteria) {
+		return sections.sort((a, b) => {
+			console.log(a);
+			console.log(b);
+			let firstValue = criteria.sortDirection === 'desc' ? 1 : -1;
+			let secondValue = criteria.sortDirection === 'desc' ? -1 : 1;
+
+			let val1: string = "";
+			let val2: string = "";
+			if (criteria.sortColumn == "courseName") {
+				val1 = a["course_name"];
+				val2 = b["course_name"];
+			} else {
+				let query = "";
+				if (criteria.sortColumn == "sectionName") {
+					query = "section_name";
+				} else {
+					query = "instructor";
+				}
+				val1 = a["section"][query];
+				val2 = b["section"][query];
+			}
+			console.log(val1);
+			console.log(val2);
+			val1 = val1.toLowerCase()
+			val2 = val2.toLowerCase();
+			console.log(val1);
+			console.log(val2);
+			
+			if (val1 > val2) {
+				return firstValue;
+			}
+			else if(val1 < val2){
+				return secondValue;
+			} else {
+				return 0;
+			}
+		});
+	}
+
+}
+
+export class SectionSearchCriteria {
+	sortColumn: string;
+	sortDirection: string;
 }

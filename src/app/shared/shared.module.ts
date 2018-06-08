@@ -37,7 +37,9 @@ import {
 //Application Imports
 import {
   BadgeModal,
-  PageNotFoundComponent
+  PageNotFoundComponent,
+  SortableColumnComponent,
+  SortableTableDirective
 } from 'shared/pages';
 
 
@@ -65,9 +67,13 @@ import {
     ReactiveFormsModule,
     TimepickerModule,
     TooltipModule,
-    BadgeModal
+    BadgeModal,
+    SortableColumnComponent,
+    SortableTableDirective
   ],
   declarations: [
+    SortableColumnComponent,
+    SortableTableDirective,
     PageNotFoundComponent,
     BadgeModal
   ]

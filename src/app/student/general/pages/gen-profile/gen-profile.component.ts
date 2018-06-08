@@ -26,6 +26,7 @@ import {
     SectionService,
     UserService
 } from 'shared/services';
+import Chart = require('chart.js');
 
 /* AHJ: Remove once the services are implemented properly */
 
@@ -64,6 +65,7 @@ const MAXXP: number = 10000;
 })
 
 export class GenProfileComponent implements OnInit {
+    chart: Chart;
     //basic info
     user: User;
     courseSections: any[] = [];
@@ -98,11 +100,10 @@ export class GenProfileComponent implements OnInit {
     }
 
     ngOnInit() {
+        console.log("GENPROFLEENTER");
         this.pageService.isProfilePage(true);
         this.isChartReady = false;
         this.getUser();
-        //this.getGrades();
-        this.setPerformanceGraph();
         this.userService.updateUserConditions(this.userService.getCurrentUser().getUserId()).subscribe((x) => {
             console.log("done updating");
             console.log("result" + x);
@@ -111,7 +112,7 @@ export class GenProfileComponent implements OnInit {
                 .subscribe((user) => {
                     this.userService.setCurrentUser(user);
                     console.log("CHECK IF WITH COURSE");
-                    console.log( this.sectionService.getCurrentUserSections());
+                    console.log(this.sectionService.getCurrentUserSections());
                     this.courseSections = this.sectionService.getCurrentUserSections();
                     this.setPerformanceGraphData();
                 });
@@ -144,42 +145,8 @@ export class GenProfileComponent implements OnInit {
      */
     getUser(): void {
         //ced make curUser in userService or use localStorage
-        this.user = this.userService.getCurrentUser()
-    }
-
-    /**
-     * Display the user's grades in the performance graph
-     * @description Obtains the current user's array of weekly grades (or experience points) in an accumulative manner (e.g [1, 20, 200...]),
-     * computes its relative percentage based on the section's max experience points and sets the performance graph's value with this 
-     * computed array of percentage.
-     */
-    getGrades(): void {
-        let grades = TOTXP ? TOTXP : [];
-        let max: number = MAXXP ? MAXXP : 10;
-
-        //AHJ: unimplemented
-        //replace SECTIONS with this.getUserSectionExp(user_id) [section.service] function if the function is working
-        SECTIONS.forEach(section => {
-            let dataGrade: number[] = [];
-
-            //convert the user's section weekly accumulative exp into dataset readable by performance graph
-            section.week_total_exp.forEach(grade => {
-                // get the decimal percentage
-                let percentage: number = (grade / section.max_exp) * 100;
-
-                // round the decimal up to two decimal points
-                dataGrade.push(Math.round((percentage + 0.00001) * 100) / 100);
-            });
-
-            let className = section.course_name + " - " + section.section_name;
-            let dataLine: any = {
-                data: dataGrade,
-                label: className
-            };
-
-            this.lineChartData.push(dataLine);
-            console.log(this.lineChartData);
-        })
+        this.user = this.userService.getCurrentUser();
+        console.log("getuser");
     }
 
     /* Below are the helper functions */
@@ -188,14 +155,31 @@ export class GenProfileComponent implements OnInit {
     * Sets the performance graph's design in the profile page
     */
     setPerformanceGraph() {
-        this.lineChartColors = this.pageService.lineChartColors;
         this.lineChartLabels = ['Week 0', 'Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7', 'Week 8', 'Week 9', 'Week 10', 'Week 11', 'Week 12', 'Week 13', 'Week 14', 'Week 15', 'Week 16'];
         this.lineChartOptions = {
             responsive: true,
             scales: {
                 yAxes: [{ id: 'y-axis-1', type: 'linear', position: 'left', ticks: { min: 0, max: 100 } }]
-            }
+            },
+            legend: {
+                display: true
+            },
+
         };
+
+        var data = {
+            labels: this.lineChartLabels,
+            datasets: this.lineChartData
+        }
+
+        var HTMLchart = document.getElementById("performance-graph");
+        var ctx = (<HTMLCanvasElement>HTMLchart).getContext("2d");
+
+        this.chart = new Chart(ctx, {
+            type: 'line',
+            data: data,
+            options: this.lineChartOptions
+        });
     }
 
     /**
@@ -207,37 +191,54 @@ export class GenProfileComponent implements OnInit {
         console.log("this.currentSections");
         console.log(this.courseSections);
         this.courseSections.forEach(courseSection => {
-            let section = new Section(courseSection.section);
-            this.experienceService.getSectionGrades(section.getSectionId(), this.user.getUserId())
-            .subscribe(sectionSubmissions => {
-                if(sectionSubmissions.length > 0){
-                    let submissions = sectionSubmissions.map(submission => new Experience(submission))[0];
-    
-                    let grades = submissions.getWeeklyAccumulativeGrades();
-                    console.log(grades);
-                    grades.forEach(grade => {
-                        // get the decimal percentage
-                        let percentage: number = (grade / MAXXP) * 100;
-            
-                        // round the decimal up to two decimal points
-                        dataGrade.push(Math.round((percentage + 0.00001) * 100) / 100);
-                    });
-            
-                    let dataLine: any = {
-                        data: dataGrade,
-                        label: courseSection.course_name + " - " +  section.getSectionName()
-                    };
-                    
-                    if(this.lineChartData.length == 0){
-                        this.lineChartData.push(dataLine);
-                    } else {
-                        let chartData = this.lineChartData;
-                        chartData.push(dataLine);
-                        this.lineChartData = chartData;
+            this.experienceService.getSectionGrades(new Section(courseSection.section).getSectionId(), this.user.getUserId())
+                .subscribe(sectionSubmissions => {
+                    let courseSec = courseSection;
+                    console.log("-------------------" + courseSec.course_name + "-----------------------");
+                    if (sectionSubmissions.length > 0) {
+                        let submissions = sectionSubmissions.map(submission => new Experience(submission))[0];
+
+                        let grades = submissions.getWeeklyAccumulativeGrades();
+                        console.log(grades);
+                        grades.forEach(grade => {
+                            // get the decimal percentage
+                            let percentage: number = (grade / MAXXP) * 100;
+
+                            // round the decimal up to two decimal points
+                            dataGrade.push(Math.round((percentage + 0.00001) * 100) / 100);
+                        });
+
+                        let section = new Section(courseSec.section);
+                        console.log(courseSec);
+                        
+                        this.lineChartColors = this.pageService.lineChartColors;
+                        let rand: number = this.lineChartData && this.lineChartData.length? this.lineChartData.length % this.lineChartColors.length: 0;
+                        let color = this.lineChartColors[rand];
+                        let dataLine: any = {
+                            data: dataGrade,
+                            label: courseSec.course_name + " - " + section.getSectionName(),
+                            backgroundColor: color.backgroundColor,
+                            borderColor: color.borderColor,
+                            pointBackgroundColor: color.pointBackgroundColor,
+                            pointBorderColor: color.pointBorderColor,
+                            pointHoverBackgroundColor: color.pointHoverBackgroundColor,
+                            pointHoverBorderColor: color.pointHoverBorderColor
+                        };
+                        
+                        if (!this.chart || this.lineChartData.length == 0) {
+                            this.lineChartData.push(dataLine);
+                            this.isChartReady = true;
+                            this.setPerformanceGraph();
+                        } else {
+                            let chartData = this.lineChartData;
+                            chartData.push(dataLine);
+                            console.log(chartData);
+                            this.lineChartData = chartData;
+                            this.chart.update();
+                        }
+                        console.log("--------END-----------" + courseSec.course_name + "----------END-------------");
                     }
-                    this.isChartReady = true;
-                }
-            });
+                });
         });
     }
 

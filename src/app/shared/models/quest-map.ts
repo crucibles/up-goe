@@ -204,6 +204,15 @@ export class QuestMap {
 		return num * 5;
 	}
 
+	editQuestMapCoordinateAt(x, y, questId){
+		this.questCoordinates = this.questCoordinates.map(coordinate => {
+			if(coordinate.x == x && coordinate.y == y){
+				coordinate.questId = questId;
+			}
+			return coordinate;
+		});
+	}
+
 	addNewQuestLine(x, y, quest): any[] {
 		let newQuestCoordinates: any[] = [];
 		let basisX = this.roundOff(x);
