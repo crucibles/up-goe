@@ -349,6 +349,32 @@ router.post('/createQuest', (req, res) => {
     });
 });
 
+router.post('/currentExperience', (req, res) => {
+    connection((db) => {
+        const myDB = db.db('up-goe-db');
+        myDB.collection('experiences')
+            .findOne({
+                user_id: req.body.user_id,
+                section_id: req.body.section_id
+            })
+            .then(exp => {
+                if(exp) {
+                    exp.quests_taken.forEach(quest => {
+                        if(quest.quest_id == req.body.quest_id) {
+                            if(quest.is_graded) res.json("true");
+                            else res.json("false");
+                        }
+                    });
+                } else {
+                    res.json(false);
+                }
+            })
+            .catch(err => {
+                sendError(err, res);
+            });
+    });
+});
+
 /**
  * @description portal for requests regarding experiences. api/users
  * @author Sumandang, AJ Ruth H.
@@ -1795,12 +1821,10 @@ router.post('/updateUser', (req, res) => {
 /**
  * @description portal for requests regarding Badges. api/badges
  * @author Cedric Yao Alvaro
+ * @author Donevir Hynson - modified 6 June 2018
  */
 router.post('/badges', (req, res) => {
-    console.log("METHOD!!!!!!!!!!!!!!!!!");
-    console.log(req.method);
-
-    if (req.body.badgeData) {
+    if(req.body.badgeData) {
         connection((db) => {
             const myDB = db.db('up-goe-db');
             myDB.collection('badges')
@@ -1821,10 +1845,7 @@ router.post('/badges', (req, res) => {
                                     myDB.collection('badges')
                                         .findOne({ badge_name: req.body.badgeData.badge_name })
                                         .then(badge => {
-                                            console.log('-------------------------');
-                                            console.log(badge);
-                                            console.log(req.body.sectionId);
-                                            if (badge) {
+                                            if(badge) {
                                                 myDB.collection('sections')
                                                     .updateOne({ _id: ObjectID(req.body.sectionId) }, {
                                                         $push: {
@@ -1838,11 +1859,6 @@ router.post('/badges', (req, res) => {
                                         });
                                 }
                             });
-
-
-
-
-
                     }
                 })
                 .catch((err) => {
@@ -1851,7 +1867,6 @@ router.post('/badges', (req, res) => {
         });
         res.json(true);
     } else {
-
         connection((db) => {
             const myDB = db.db('up-goe-db');
             myDB.collection('badges')
@@ -1860,24 +1875,14 @@ router.post('/badges', (req, res) => {
                 .then((badges) => {
 
                     if (badges) {
-
                         Promise.all(badges).then((badge) => {
-                            console.log(req.body);
-                            console.log("===================");
-                            console.log(badge);
-
                             let earnedbadge = badge.filter((b) => {
-                                console.log("STreaks");
-                                console.log(b.badge_conditions.log_in_streak);
-                                console.log(req.body.conditions.log_in_streak);
                                 if (b.badge_conditions.log_in_streak <= req.body.conditions.log_in_streak) {
                                     return b;
                                 }
-
                             });
 
                             if (earnedbadge.length > 0) {
-
                                 Promise.all(earnedbadge).then((eb) => {
                                     console.log(eb[0]._id);
                                     connection((db) => {
@@ -1890,7 +1895,6 @@ router.post('/badges', (req, res) => {
                                                         "badge_attainers": req.body.user_id
                                                     }
                                                 }
-
                                             )
                                             .then(badge => {
                                                 console.log("badge updated");
@@ -1900,33 +1904,20 @@ router.post('/badges', (req, res) => {
                                                 sendError(err, res);
                                             });
                                     });
-
                                 });
-
                             } else {
-
                                 res.json(false);
-
                             }
-
-
-
                         });
-
                     } else {
                         res.json(false);
                     }
-
-
-
                 })
                 .catch((err) => {
                     sendError(err, res);
                 });
         });
-
     }
-
 });
 
 router.get('/badges', (req, res) => {
@@ -2126,7 +2117,11 @@ router.post('/questLeaderboard', (req, res) => {
         myDB.collection('experiences')
             .find({
                 section_id: req.body.currSection,
-                is_graded: true
+                quests_taken: {
+                    $elemMatch: {
+                        is_graded: true 
+                    }
+                }
             })
             .toArray()
             .then((experiences) => {
@@ -2140,7 +2135,7 @@ router.post('/questLeaderboard', (req, res) => {
                                 studentExp.push({
                                     studentId: exp.user_id,
                                     score: quest.quest_grade,
-                                    dateCompleted: quest.quest_date_completed
+                                    dateCompleted: quest.date_submitted
                                 });
                             }
                         });
@@ -2164,6 +2159,9 @@ router.post('/questLeaderboard', (req, res) => {
                                         }
                                     });
                                 });
+                                console.log('\n\nXP')
+                                console.log(studentExp);
+                                console.log('\n\n')
                                 response.data = studentExp;
                                 res.json(studentExp);
                             } else {

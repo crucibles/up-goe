@@ -75,7 +75,9 @@ import {
 	ToastOptions
 } from 'ng2-toastr/ng2-toastr';
 
-
+import { 
+	AlertModule 
+} from 'ngx-bootstrap';
 
 @NgModule({
 	declarations: [
@@ -89,7 +91,8 @@ import {
 		BrowserModule,
 		SharedModule,
 		BrowserAnimationsModule,
-		ToastModule.forRoot()
+		ToastModule.forRoot(),
+		AlertModule.forRoot()
 	],
 	providers: [
 		BadgeService,

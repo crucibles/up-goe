@@ -1,4 +1,5 @@
 <ng-container *ngIf="quests">
+    <h2>{{sectionService.getCurrentCourse().getCourseName()}} - {{currentSection.getSectionName()}}</h2>
     <select #questSelect (click)="getQuestGrades(questSelect.value)">
         <option>Select quest...</option>
         <option *ngFor="let quest of quests" [value]="quest.getQuestId()">
@@ -9,7 +10,7 @@
         <thead>
             <tr>
                 <th scope="col">Student #</th>
-                <th scope="col">Grades</th>
+                <th scope="col">Grades (Max XP: {{this.getQuestMaxXp(questSelect.value)}})</th>
                 <th scope="col">Date Submitted</th>
                 <th scope="col">Submission</th>
             </tr>
@@ -23,11 +24,16 @@
                 </tr>
             </ng-container>
             <ng-container *ngIf="submissions">
-                <tr *ngFor="let submission of submissions">
-                    <td>{{submission.getUserId()}}</td>
+                <tr *ngFor="let submission of submissions; let i = index">
+                    <td>{{this.toStudentName(submission.getUserId())}}</td>
                     <td>
-                        <input #inputGrade type="text" [value]="submission.getQuestSubmissionGrade(questSelect.value)" />
-                        <button type="submit" (click)="setStudentGrade(submission.getUserId(), questSelect.value, inputGrade.value)">Submit</button>
+                        <!-- <form class="form-horizontal"> -->
+                            <input #inputGrade type="number" [value]="submission.getQuestSubmissionGrade(questSelect.value)" [disabled]="!isGraded[i]"/>
+                            <button *ngIf="isGraded[i]" 
+                                    type="submit" 
+                                    (click)="setStudentGrade(submission.getUserId(), questSelect.value, inputGrade.value)">Submit
+                            </button>
+                        <!-- </form> -->
                     </td>
                     <td>{{this.pageService.formatDateTime(submission.getQuestSubmissionDate(questSelect.value))}}</td>
                     <td>{{submission.getQuestSubmissionComment(questSelect.value)}}</td>
@@ -41,3 +47,4 @@
     Loading....
     <img class="loading-icon" src="/assets/images/loading.gif" />
 </ng-container>
+<!-- *ngIf="isSubmitted(submission, questSelect.value)" -->
