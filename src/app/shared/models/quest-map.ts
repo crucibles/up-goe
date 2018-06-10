@@ -3,7 +3,7 @@ import { Quest } from "shared/models";
 /**
  * A class that represents questmaps.
  */
-export class QuestMap {
+export class QuestMap {h
 
 	private _id: String;
 	private datasets;
@@ -12,10 +12,10 @@ export class QuestMap {
 	private mainquestY: number;
 	private questCoordinates: any[];
 
-	constructor(data, quests: Quest[], hasPlusPoints?: boolean) {
+	constructor(data, quests: Quest[], isTeacher?: boolean) {
 		this._id = data._id;
 		this.mainquestY = 25;
-		this.setQuestMapDataSet(data, quests, hasPlusPoints);
+		this.setQuestMapDataSet(data, quests, isTeacher);
 	}
 
 	getQuestMapDataSet() {
@@ -26,7 +26,7 @@ export class QuestMap {
 		return this._id;
 	}
 
-	setQuestMapDataSet(data: any, quests: Quest[], hasPlusPoints) {
+	setQuestMapDataSet(data: any, quests: Quest[], isTeacher) {
 		let questMapDetails = this.getQuestMapDetails(data.quest_coordinates);
 
 		let exclude: any[] = questMapDetails.exclude;
@@ -72,7 +72,7 @@ export class QuestMap {
 
 				var scatterPoints: any[] = [];
 
-				if (hasPlusPoints) {
+				if (isTeacher) {
 					scatterPoints = this.addQuestPlus(questPosition.x, questPosition.y, minX, maxX, mainquestY, exclude);
 					if (scatterPoints.length != 0) {
 						for (let scatterPoint of scatterPoints) {
@@ -174,9 +174,18 @@ export class QuestMap {
 
 			// add to chart if there is no point existing at this point
 			if (!this.hasExistingPointAt(x1, y1)) {
+				let label = "Add Quest";
+				let tempX = x;
+				let tempY = y;
+				if (direction == "N" || direction == "S") {
+					tempY = direction === "N" ? y + 5 : y - 5;
+				} else {
+					tempX = x + 2;
+				}
+				label = this.hasExistingPointAt(tempX, tempY)? "Connect": label;
 				let scatterPoint: any = {
 					type: "scatter",
-					label: "Add Quest",
+					label: label,
 					data: [{
 						x: x1,
 						y: y1

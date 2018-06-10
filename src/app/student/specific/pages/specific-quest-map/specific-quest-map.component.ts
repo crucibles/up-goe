@@ -33,7 +33,8 @@ import {
 	SectionService,
 	UserService,
 	QuestService,
-	LeaderboardService
+	LeaderboardService,
+	ExperienceService
 } from 'shared/services';
 
 import {
@@ -83,6 +84,7 @@ export class SpecificQuestMapComponent implements OnInit {
 	private questTitle;
 
 	constructor(
+		private experienceService: ExperienceService,
 		private modalService: BsModalService,
 		private pageService: PageService,
 		private route: ActivatedRoute,
@@ -119,25 +121,21 @@ export class SpecificQuestMapComponent implements OnInit {
 	}
 
 	loadQuestMap() {
-		// this.questService.getUserJoinedQuests(this.currentUser.getUserId())
-		// 	.subscribe(quests => {
-		// 		console.log(quests);
-		// 		this.quests = quests.map(quest => new Quest(quest));
-		// 		//AHJ: unimplemented; getter for quest map data (remove comment marker belowif available)
-		// 		//this.questService.getQuestMap(this.currentSection.getCourseId()).subscribe(data => {
-		// 		this.questMap = new QuestMap(MOCKQUESTMAP, this.quests);
-		// 		this.setQuestMap();
-		// 		//});
-		// 	});
 		this.questService.getSectionQuests(this.currentSection.getSectionId()).subscribe(quests => {
 			console.log("QUEST LOADED");
 			console.log(quests);
 			this.quests = quests.map(quest => new Quest(quest));
-			this.questService.getSectionQuestMap(this.currentSection.getSectionId()).subscribe(questmap => {
-				console.log("QUESTMAP LOADEd");
-				console.log(questmap);
-				this.questMap = new QuestMap(questmap, this.quests);
-				this.setQuestMap();
+			this.experienceService.getSectionGrades(this.currentSection.getSectionId(), this.currentUser.getUserId())
+			.subscribe(EXP => {
+				if(EXP && EXP.length > 0){
+					h,
+				}
+				this.questService.getSectionQuestMap(this.currentSection.getSectionId()).subscribe(questmap => {
+					console.log("QUESTMAP LOADEd");
+					console.log(questmap);
+					this.questMap = new QuestMap(questmap, this.quests);
+					this.setQuestMap();
+				});
 			});
 		});
 	}

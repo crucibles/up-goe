@@ -1,7 +1,9 @@
 //Core Imports
 import {
 	Component,
-	OnInit
+	OnInit,
+	ViewChild,
+	TemplateRef
 } from '@angular/core';
 
 import {
@@ -29,6 +31,8 @@ import {
 	PageService,
 	SectionService
 } from 'shared/services';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap';
+import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 
 @Component({
 	selector: 'app-specific-news',
@@ -40,6 +44,11 @@ import {
 
 export class SpecificNewsComponent implements OnInit {
 	section_id: string;
+
+	// create post info
+	@ViewChild('createPost') createPostModal: TemplateRef<any>;
+	bsModalRef: BsModalRef;
+	createPostForm: FormGroup;
 
 	commentPosts: CommentPost[];
 	comments: CommentPost[][] = [];
@@ -62,6 +71,8 @@ export class SpecificNewsComponent implements OnInit {
 
 	constructor(
 		private commentPostService: CommentPostService,
+		private formBuilder: FormBuilder,
+		private modalService: BsModalService,
 		private pageService: PageService,
 		private route: ActivatedRoute,
 		private userService: UserService,
@@ -79,6 +90,7 @@ export class SpecificNewsComponent implements OnInit {
 			let subscription = this.commentObservable.subscribe(value => {
 				this.appendComments(value);
 			});
+			this.initializeForm();
 		});
 	}
 
@@ -90,6 +102,31 @@ export class SpecificNewsComponent implements OnInit {
 	getUser() {
 		//return this function once working okay
 		this.currentUser = new User(JSON.parse(localStorage.getItem("currentUser")));
+	}
+
+	createNewPost(){
+		if(this.createPostForm.invalid){
+			//AHJ: unimplemented; how to toaster
+			return;
+		}
+
+		//setting commentpost
+		let newPost = new CommentPost();
+		let postContent = this.createPostForm.get('postContent').value;
+		let commentable = this.createPostForm.get('commentable').value;
+		newPost.setCommentPost(
+			this.section_id, 
+			this.currentUser.getUserId(), 
+			postContent,
+			[], 
+			new Date(Date.now()),
+			commentable,
+			true
+		);
+
+		this.commentPostService.addCommentPost(newPost).subscribe(x => {
+			console.log(x);
+		})
 	}
 
 	/**
@@ -174,6 +211,17 @@ export class SpecificNewsComponent implements OnInit {
 					this.comments[comment_info.parent_index].push(newComment);
 				});
 			});
+	}
+
+	initializeForm(){
+		this.createPostForm = this.formBuilder.group({
+			commentable: new FormControl("Y", Validators.required),
+			postContent: new FormControl("", Validators.required)
+		});
+	}
+
+	openCreatePostModal(){
+		this.bsModalRef = this.modalService.show(this.createPostModal);
 	}
 
 	/**
