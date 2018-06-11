@@ -1,11 +1,11 @@
 // Core imports
-import { 
-  Component, 
-  OnInit 
+import {
+  Component,
+  OnInit
 } from '@angular/core';
 
-import { 
-  ActivatedRoute 
+import {
+  ActivatedRoute
 } from '@angular/router';
 
 @Component({
@@ -17,12 +17,10 @@ export class PageNotFoundComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute
-  ) { 
-    console.log(route);
+  ) {
   }
 
   ngOnInit() {
-    console.log(this.route);
   }
 
 }

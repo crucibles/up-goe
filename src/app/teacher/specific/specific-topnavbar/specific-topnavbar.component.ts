@@ -37,7 +37,6 @@ export class SpecificTopnavbarComponent implements OnInit {
    * Logs out the current user
    */
   logOut() {
-    console.log("logout");
     this.userService.logOut();
   }
 

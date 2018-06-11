@@ -1,46 +1,67 @@
 <ng-container *ngIf="quests">
     <h2>{{sectionService.getCurrentCourse().getCourseName()}} - {{currentSection.getSectionName()}}</h2>
     <select #questSelect (click)="getQuestGrades(questSelect.value)">
-        <option>Select quest...</option>
+        <option value="summary">Summary</option>
         <option *ngFor="let quest of quests" [value]="quest.getQuestId()">
             {{quest.getQuestTitle()}}
         </option>
     </select>
-    <table id="hor-zebra" summary="Course List">
-        <thead>
-            <tr>
-                <th scope="col">Student #</th>
-                <th scope="col">Grades (Max XP: {{this.getQuestMaxXp(questSelect.value)}})</th>
-                <th scope="col">Date Submitted</th>
-                <th scope="col">Submission</th>
-            </tr>
-        </thead>
-        <tbody>
-            <ng-container *ngIf="!submissions || submissions.length == 0">
+    <ng-container *ngIf="studentGrades && questSelect.value=='summary'">
+        <table id="hor-zebra" summary="Course List">
+            <thead>
                 <tr>
-                    <td colspan="4" style="text-align: center">
-                        No submissions on this quest yet.
-                    </td>
+                    <th scope="col">Student #</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Total EXP</th>
                 </tr>
-            </ng-container>
-            <ng-container *ngIf="submissions">
-                <tr *ngFor="let submission of submissions; let i = index">
-                    <td>{{this.toStudentName(submission.getUserId())}}</td>
-                    <td>
-                        <!-- <form class="form-horizontal"> -->
-                            <input #inputGrade type="number" [value]="submission.getQuestSubmissionGrade(questSelect.value)" [disabled]="!isGraded[i]"/>
-                            <button *ngIf="isGraded[i]" 
-                                    type="submit" 
-                                    (click)="setStudentGrade(submission.getUserId(), questSelect.value, inputGrade.value)">Submit
+            </thead>
+            <tbody>
+                <tr *ngFor="let student of studentGrades">
+                    <td>{{student.student.getUserSchoolId()}}</td>
+                    <td>{{student.student.getUserFullName()}}</td>
+                    <td>{{student.grade}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </ng-container>
+
+    <ng-container *ngIf="questSelect.value != 'summary'">
+        <table id="hor-zebra" summary="Course List">
+            <thead>
+                <tr>
+                    <th scope="col">Student #</th>
+                    <th scope="col">Grades (Max XP: {{this.getQuestMaxXp(questSelect.value)}})</th>
+                    <th scope="col">Date Submitted</th>
+                    <th scope="col">Submission</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngIf="!submissions || submissions.length == 0">
+                    <tr>
+                        <td colspan="4" style="text-align: center">
+                            No submissions on this quest yet.
+                        </td>
+                    </tr>
+                </ng-container>
+                <ng-container *ngIf="submissions">
+                    <tr *ngFor="let submission of submissions; let i = index">
+                        <td>{{this.toStudentName(submission.getUserId())}}</td>
+                        <td>
+                            <!-- <form class="form-horizontal"> -->
+                            <input #inputGrade type="number" [value]="submission.getQuestSubmissionGrade(questSelect.value)" [disabled]="!isGraded[i]"
+                            />
+                            <button *ngIf="isGraded[i]" type="submit" (click)="setStudentGrade(submission.getUserId(), questSelect.value, inputGrade.value)">Submit
                             </button>
-                        <!-- </form> -->
-                    </td>
-                    <td>{{this.pageService.formatDateTime(submission.getQuestSubmissionDate(questSelect.value))}}</td>
-                    <td>{{submission.getQuestSubmissionComment(questSelect.value)}}</td>
-                </tr>
-            </ng-container>
-        </tbody>
-    </table>
+                            <!-- </form> -->
+                        </td>
+                        <td>{{this.pageService.formatDateTime(submission.getQuestSubmissionDate(questSelect.value))}}</td>
+                        <td>{{submission.getQuestSubmissionComment(questSelect.value)}}</td>
+
+                    </tr>
+                </ng-container>
+            </tbody>
+        </table>
+    </ng-container>
 </ng-container>
 
 <ng-container *ngIf="!quests">

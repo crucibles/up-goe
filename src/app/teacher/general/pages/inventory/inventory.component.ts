@@ -162,11 +162,9 @@ export class InventoryComponent implements OnInit {
 
 	createBadge() {
 		this.badgeService.createBadge(this.setBadge(), this.badgeForm.value.badgeSection).subscribe(data => {
-			if(data) {
-				console.log('Your badge was successfuly created.');
-			} else {
+			if(!data) {
 				console.log('Your badge failed to be created.');
-			}
+			} 
 		});
 
 		this.bsModalRef.hide();

@@ -257,8 +257,6 @@ export class SpecificMyCourseComponent implements OnInit {
 			//with getCourse(section_id). Discussion is found in function getCourseSection(section_id) in section.service.ts
 			this.currentSection = new Section(this.sectionService.getCurrentSection());
 			this.currentCourse = new Course(this.sectionService.getCurrentCourse());
-			console.log(this.currentCourse);
-			console.warn(this.currentSection);
 			this.classmates = [];
 			/*console.log(STUDENTS);
 			STUDENTS.forEach(student => {
@@ -312,8 +310,6 @@ export class SpecificMyCourseComponent implements OnInit {
 	openClassmateProfile(studentTemplate: TemplateRef<any>, classmate: User) {
 		this.classmateClicked = classmate;
 		if (this.classmateClicked) {
-			console.log("here!");
-			console.log(this.classmateClicked);
 			this.bsModalRef = this.modalService.show(studentTemplate);
 			this.getClassmateBadges(classmate);
 		}
@@ -332,6 +328,5 @@ export class SpecificMyCourseComponent implements OnInit {
 				});
 			});
 		});
-		console.log(this.badgesDisplay);
 	}
 }

@@ -140,7 +140,6 @@ export class CreateCourseComponent implements OnInit {
 	}
 
 	clickMenuButton() {
-		console.log(this.isShowSideTab);
 		this.isShowSideTab = !this.isShowSideTab;
 	}
 
@@ -176,7 +175,6 @@ export class CreateCourseComponent implements OnInit {
 			[],
 			schedule
 		).subscribe(marj => {
-			console.log("MARJMARJORIE!");
 			this.pageService.isCourseCreated(true);
 		});
 		//this.sectionService.createSection(section);

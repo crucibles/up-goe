@@ -73,11 +73,6 @@ export class ExperienceService {
 
     setStudentQuestGrade(section_id, user_id, quest_id, grade){
         let url = this.experienceUrl;
-        console.log("SERVICEsetgrade");
-        console.log(section_id);
-        console.log(user_id);
-        console.log(quest_id);
-        console.log(grade);
 		return this.http.post<Experience>(url, {
 			method: "setStudentQuestGrade",
 			section_id: section_id,
@@ -102,7 +97,6 @@ export class ExperienceService {
             section_id
         }).pipe(
             tap(data => {
-                console.log(data);
                 if (data) return data;
                 else return false;
             }),

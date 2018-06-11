@@ -107,9 +107,6 @@ export class BadgeService {
 
             return this.http.post(url, body).pipe(
                 tap(badges => {
-                    console.warn(body);
-                    console.log("herea are the badges");
-                    console.log(badges);
                     return badges;
                 }),
                 catchError(this.handleError<any>(`logIn user_email=${conditions}`))
@@ -135,15 +132,12 @@ export class BadgeService {
      * @param badge New badge to be added to the database
      */
     createBadge(badge: Badge, sectionId?: string) {
-        console.log('this your badge');
-        console.log(badge);
         const url = this.badgeUrl;
         let body = {
             badgeData: badge,
             sectionId: sectionId
         };
 
-        console.log(body);
         return this.http.post<any>(url, body).pipe(
             tap(data => {
                 if (data) return data
@@ -230,7 +224,7 @@ export class BadgeService {
         let params = new HttpParams()
             .set('section_id', section_id)
             .set('method', 'getSectionBadges');
-        console.log("getsectionbadges");
+            
         return this.http.get<any[]>(url, {
             params: params
         }).pipe(

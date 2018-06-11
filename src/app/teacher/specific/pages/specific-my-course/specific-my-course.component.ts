@@ -85,17 +85,13 @@ export class SpecificMyCourseComponent implements OnInit {
 		//with getCourse(section_id). Discussion is found in function getCourseSection(section_id) in section.service.ts
 		this.currentSection = new Section(this.sectionService.getCurrentSection());
 		this.currentCourse = new Course(this.sectionService.getCurrentCourse());
-		console.log(this.currentCourse);
-		console.warn(this.currentSection);
 		this.classmates = [];
 		
 		this.sectionService.getSectionStudents(this.currentSection.getSectionId(), true).subscribe((students) => {
-			console.warn(students);
 			if(students){
 				students.forEach(student => {
 					if (student.length > 1) {
 						this.userService.getUser(student).subscribe((user) => {
-							console.warn(user);
 							this.classmates.push(new User(user));
 						})
 					}
@@ -109,7 +105,6 @@ export class SpecificMyCourseComponent implements OnInit {
 		this.sectionService.approveUserToSection(userId, this.currentSection.getSectionId()).subscribe(
 			approve => {
 				this.currentSection.setStudentStatus(userId, "E");
-				console.log("approved");
 			}
 		)
 	}
@@ -143,8 +138,6 @@ export class SpecificMyCourseComponent implements OnInit {
 	openClassmateProfile(studentTemplate: TemplateRef<any>, classmate: User) {
 		this.classmateClicked = classmate;
 		if (this.classmateClicked) {
-			console.log("here!");
-			console.log(this.classmateClicked);
 			this.bsModalRef = this.modalService.show(studentTemplate);
 			this.getClassmateBadges();
 		}
@@ -156,6 +149,5 @@ export class SpecificMyCourseComponent implements OnInit {
 		this.badgeService.getSectionBadges(this.sectionService.getCurrentSection().getSectionId()).subscribe(badges => {
 			this.badgesDisplay = badges.map(badge => new Badge(badge));
 		});
-		console.log(this.badgesDisplay);
 	}
 }

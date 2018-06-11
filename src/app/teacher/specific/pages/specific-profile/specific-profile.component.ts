@@ -148,7 +148,6 @@ export class SpecificProfileComponent implements OnInit {
      * @param e 
      */
     public chartClicked(e: any): void {
-        console.log(e);
     }
 
     /**
@@ -158,6 +157,5 @@ export class SpecificProfileComponent implements OnInit {
      * @param e 
      */
     public chartHovered(e: any): void {
-        console.log(e);
     }
 }

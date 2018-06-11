@@ -135,7 +135,6 @@ export class QuestService {
 		quest_prerequisite
 	): Observable<Quest> {
 		const url = "api/createQuest";
-		console.log("CREATING..");
 
 		return this.http.post<Quest>(url, {
 			section_id,
@@ -215,7 +214,6 @@ export class QuestService {
 	 */
 	getQuest(quest_id: string): Observable<Quest> {
 		const url = `${this.questUrl}/?quest_id=${quest_id}`;
-		console.log("entered quest!!!");
 		return this.http.get<Quest>(url).pipe(
 			map(quests => quests[0]), // returns a {0|1} element array
 			tap(h => {

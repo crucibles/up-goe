@@ -10,13 +10,14 @@
 	</div>
 
 	<!--Course/Search-Result List Table (also contains search result list)-->
-	<table id="hor-zebra" summary="Course List">
+	<table id="hor-zebra" summary="Course List" sortable-table (sorted)="onSorted($event)">
 		<thead>
 			<tr>
-				<th scope="col">Course Name</th>
-				<th scope="col">Section</th>
+				<th scope="col" sortable-column="courseName" sort-direction="asc">Course Name</th>
+				<th scope="col" sortable-column="sectionName">Section</th>
 				<th scope="col">Day</th>
 				<th scope="col">Time</th>
+				<th scope="col" *ngIf="isSearching && course_found && course_found.length != 0">Options</th>
 			</tr>
 		</thead>
 		<tbody>
