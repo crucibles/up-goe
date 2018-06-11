@@ -121,7 +121,6 @@ export class SpecificQuestMapComponent implements OnInit {
 		this.leaderboardService.getQuestScores(currentSection, currentQuest)
 			.subscribe((user) => {
 				if (user) {
-					console.log(user);
 					this.leaderboardRecords = user;
 				} else {
 					console.log('Failed to acquire quest scores.');
@@ -132,35 +131,21 @@ export class SpecificQuestMapComponent implements OnInit {
 	}
 
 	loadQuestMap() {
-		// this.questService.getUserJoinedQuests(this.currentUser.getUserId())
-		// 	.subscribe(quests => {
-		// 		console.log(quests);
-		// 		this.quests = quests.map(quest => new Quest(quest));
-		// 		//AHJ: unimplemented; getter for quest map data (remove comment marker belowif available)
-		// 		//this.questService.getQuestMap(this.currentSection.getCourseId()).subscribe(data => {
-		// 		this.questMap = new QuestMap(MOCKQUESTMAP, this.quests);
-		// 		this.setQuestMap();
-		// 		//});
-		// 	});
+
 		this.questService.getSectionQuests(this.currentSection.getSectionId()).subscribe(quests => {
-			console.log("QUEST LOADED");
-			console.log(quests);
 			this.quests = quests.map(quest => new Quest(quest));
 			this.questService.getSectionQuestMap(this.currentSection.getSectionId()).subscribe(questmap => {
-				console.log("QUESTMAP LOADEd");
-				console.log(questmap);
 				this.questMap = new QuestMap(questmap, this.quests);
 				this.setQuestMap();
 			});
 		});
+		
 	}
 
 	openQuest(quest: any) { //'quest: any' in here means the quest has not been converted to Quest type
 		//AHJ: Unimplemented
 		//WARNING!! Remove QUESTS in specific-qm.html when this is implemented
-		console.log(quest);
 		this.questClicked = new Quest(quest);
-		console.log(this.questClicked);
 		if (this.questClicked) {
 			this.questModalRef = this.modalService.show(this.questTemplate);
 			this.getQuestScores();
@@ -180,7 +165,6 @@ export class SpecificQuestMapComponent implements OnInit {
 	}
 
 	openLeaderBoardModal() {
-		console.log("opened");
 		this.lbModalRef = this.modalService.show(this.leaderboardTemplate);
 	}
 
@@ -267,11 +251,7 @@ export class SpecificQuestMapComponent implements OnInit {
 					this.openQuest(quests[0]);
 				}
 			}
-			console.log(x);
-			console.log(y);
 		}
-		console.log(this.chart.getDatasetAtEvent($event));
-		console.log(this.chart.getElementAtEvent($event));
 	}
 
 	/**
@@ -294,8 +274,6 @@ export class SpecificQuestMapComponent implements OnInit {
 	getCurrentUser() {
 		//AHJ: unimplemented... or not sure. Di ko sure kung tama na ning pagkuha sa current user
 		this.currentUser = new User(this.userService.getCurrentUser());
-		console.log("currUser");
-		console.log(this.currentUser);
 	}
 
 	acceptQuest() {
@@ -305,18 +283,11 @@ export class SpecificQuestMapComponent implements OnInit {
 		let section_id = this.currentSection.getSectionId();
 
 		this.questService.joinQuest(user_id, quest_id, section_id).subscribe((result) => {
-			console.log("JOINED QUEST!!!");
-			console.log(result);
-			// this.questService.getUserJoinedQuests(user_id).subscribe(x => {
-			// 	console.log("x");
-			// 	console.log(x);
-			// })
+
 			this.sectionService.getUserSections(this.currentUser.getUserId(), this.currentSection.getSectionId()).subscribe(
 				sections => {
-					console.log(sections);
 					this.sectionService.setCurrentSection(sections[0].section);
 					this.currentSection = new Section(this.sectionService.getCurrentSection());
-					console.log(this.currentSection);
 				}
 			)
 		});
@@ -329,8 +300,6 @@ export class SpecificQuestMapComponent implements OnInit {
 			"Your quest have been submitted. Wait until it is graded.",
 			"Quest Submission Success!"
 		);
-		console.log(this.commentBox);
-		console.log(comment);
 		let user_id = this.userService.getCurrentUser().getUserId();
 		let quest_id = this.questClicked.getQuestId();
 		let section_id = this.currentSection.getSectionId();
@@ -339,7 +308,6 @@ export class SpecificQuestMapComponent implements OnInit {
 			this.isQuestTakn = true;
 			this.pending = true;
 			this.questService.getUserJoinedQuests(user_id).subscribe(x => {
-				console.log(x);
 			})
 		});
 		this.questModalRef.hide();

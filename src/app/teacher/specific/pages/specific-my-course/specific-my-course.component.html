@@ -2,6 +2,7 @@
 <ng-container *ngIf="currentCourse && currentSection">
 	<div class="course-section">
 		<h3 class="heading">{{currentCourse.getCourseName()}}</h3>
+		<h6 class="heading">Instructor: {{currentSection.getInstructor()}}</h6>
 		<h6 class="table-label">My Students</h6>
 		<!-- Table for classmate -->
 		<table id="table-classmate" summary="Classmate List">

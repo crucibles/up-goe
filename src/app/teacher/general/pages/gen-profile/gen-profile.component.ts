@@ -69,13 +69,9 @@ export class GenProfileComponent implements OnInit {
 	}
 
 	editProfile() {
-		console.log("EDITPPROFILE");
 		if (this.userForm.invalid) {
 			return;
 		}
-		console.log("EDITPPROFILEentered");
-		console.log("editprofile");
-		console.log(this.userForm);
 
 		if (this.userForm.get('contactNo').dirty) {
 			let currentUserId = this.currentUser.getUserId();
@@ -84,13 +80,11 @@ export class GenProfileComponent implements OnInit {
 			this.userService.changeProfileData(currentUserId, userContactNo)
 				.subscribe(isAdded => { // No returned value yet...
 					if (isAdded) {
-						console.log('Profile succesfully edited..');
 						this.initializeForm();
 					} else {
 						console.log('Profile failed to be edited.');
 					}
 				});
-			console.log('Profile succesfully edited.');
 			this.currentUser.setUserContactno(userContactNo);
 			this.userForm.disable();
 			this.isEditing = false;
@@ -98,7 +92,6 @@ export class GenProfileComponent implements OnInit {
 	}
 
 	startEditing() {
-		console.log("STARTEDITING");
 		this.isEditing = true;
 		this.userForm.get('contactNo').enable();
 	}

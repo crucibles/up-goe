@@ -74,10 +74,8 @@ export class SpecificCharacterComponent implements OnInit {
 		this.windowWidth = window.innerWidth;
 		if (this.windowWidth <= 800) {
 			this.isShowEqCon = false;
-			console.log("less than or equal: " + this.windowWidth);
 		} else {
 			this.isShowEqCon = true;
-			console.log("greater: " + this.windowWidth);
 		}
 	}
 

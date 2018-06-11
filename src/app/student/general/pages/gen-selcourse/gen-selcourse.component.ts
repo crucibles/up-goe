@@ -1,7 +1,8 @@
 //Core Imports
 import {
 	Component,
-	OnInit
+	OnInit,
+	ViewChild
 } from '@angular/core';
 
 import {
@@ -34,7 +35,15 @@ import {
 import {
 	ToastsManager
 } from 'ng2-toastr/src/toast-manager';
-import { AsyncAction } from 'rxjs/scheduler/AsyncAction';
+
+import {
+	AsyncAction
+} from 'rxjs/scheduler/AsyncAction';
+
+import {
+	BadgeModal
+} from 'shared/pages/badge-modal/badge-modal';
+
 
 @Component({
 	selector: 'app-gen-selcourse',
@@ -42,7 +51,8 @@ import { AsyncAction } from 'rxjs/scheduler/AsyncAction';
 	styleUrls: ['./gen-selcourse.component.css']
 })
 export class GenSelcourseComponent implements OnInit {
-	
+	@ViewChild('badgeModal') badgeModal: BadgeModal;
+
 	sections: Section[];
 	courseSections: any[];
 	table: any;
@@ -70,7 +80,6 @@ export class GenSelcourseComponent implements OnInit {
 	ngOnInit() {
 		let url = this.router.routerState.snapshot.url.split("/");
 		//add toaster or warning to student what happened why redirected here
-		console.log(url[2]);
 		if (url[2] == "specific") {
 			this.pageService.isProfilePage(false);
 			this.router.navigate(['student/general/select-course']);
@@ -87,7 +96,7 @@ export class GenSelcourseComponent implements OnInit {
 			section => instructorId == section.sectionData.getInstructor()
 		) : AsyncAction;
 
-		return instructor[0].instructorName;
+		return instructor && instructor.length > 0? instructor[0].instructorName: "";
 	}
 
 	getInstructors() {
@@ -95,7 +104,7 @@ export class GenSelcourseComponent implements OnInit {
 		let tempInstructors: string[] = [];
 
 		this.sections.forEach(section => {
-			if(tempInstructors == null) {
+			if (tempInstructors == null) {
 				tempInstructors.push(section.getInstructor());
 				this.tempSections.push({
 					sectionData: new Section(section),
@@ -124,9 +133,15 @@ export class GenSelcourseComponent implements OnInit {
 		let currentUser = JSON.parse(localStorage.getItem("currentUser"));
 		this.userService.getUser(currentUser._id)
 			.subscribe(user => {
-				console.warn(user);
 				this.user = new User(user);
 				this.getUserSections(this.user.getUserId());
+				if (!this.user.isLoggedInToday()) {
+					this.userService.updateUserConditions(this.user.getUserId()).subscribe(x => {
+						this.badgeModal.open();
+						this.user.setLoggedInToday();
+						this.userService.setCurrentUser(this.user);
+					});
+				}
 			});
 	}
 
@@ -161,6 +176,13 @@ export class GenSelcourseComponent implements OnInit {
 				console.warn(sections);
 				this.courseSections = sections;
 				this.sections = sections.map(section => new Section(section.section));
+				this.sections = this.sectionService.getSortedSections(
+					this.sections,
+					{
+						sortColumn: "courseName",
+						sortDirection: "asc"
+					}
+				);
 				this.sectionService.setCurrentUserSections(sections);
 				this.getInstructors();
 			});
@@ -176,14 +198,12 @@ export class GenSelcourseComponent implements OnInit {
 			this.isSearching = false;
 
 		} else if (this.course_search.length == 24) {
-			console.log("id");
 			this.isSearching = true;
 			this.sectionService.searchSection(this.course_search).subscribe((sections) => {
 				this.course_found = sections;
 			})
 
 		} else if (this.course_search.length > 0) {
-			console.log(">0");
 			this.sectionService.searchSection(this.course_search).subscribe((sections) => {
 				console.warn(sections);
 				this.isSearching = true;
@@ -213,5 +233,7 @@ export class GenSelcourseComponent implements OnInit {
 		});
 	}
 
-
+	onSorted($event) {
+		this.courseSections = this.sectionService.getSortedSections(this.courseSections, $event);
+	}
 }

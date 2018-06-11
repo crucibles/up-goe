@@ -42,7 +42,8 @@ import {
 	PageService,
 	QuestService,
 	SectionService,
-	UserService
+	UserService,
+	ExperienceService
 } from 'shared/services';
 import { IfObservable } from 'rxjs/observable/IfObservable';
 import { Observable } from 'rxjs/Observable';
@@ -105,12 +106,12 @@ export class GenSidetabComponent implements OnInit {
 		private questService: QuestService,
 		private sectionService: SectionService,
 		private userService: UserService,
-		private router: Router
+		private router: Router,
+		private experienceService: ExperienceService
 	) {
 		this.image = imageDir + "not-found.jpg";
 		this.setUser();
 		this.initializeForm();
-		console.log("SIDETABK");
 		this.uploader = new FileUploader({ url: URL, itemAlias: 'file' });
 	}
 
@@ -121,8 +122,6 @@ export class GenSidetabComponent implements OnInit {
 		//overide the onCompleteItem property of the uploader so we are 
 		//able to deal with the server response.
 		this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
-			console.log("ImageUpload:uploaded:", item, status, response);
-			console.log(response);
 			this.submitQuest(this.questClicked.getQuestId(), response);
 		};
 
@@ -144,13 +143,11 @@ export class GenSidetabComponent implements OnInit {
 			this.userService.changeProfileData(currentUserId, userContactNo)
 				.subscribe(isAdded => { // No returned value yet...
 					if (isAdded) {
-						console.log('Profile succesfully edited.');
 						this.initializeForm();
 					} else {
 						console.log('Profile failed to be edited.');
 					}
 				});
-			console.log('Profile succesfully edited.');
 			this.currentUser.setUserContactno(userContactNo);
 		}
 	}
@@ -215,10 +212,12 @@ export class GenSidetabComponent implements OnInit {
 			.subscribe(quests => {
 				console.warn(quests);
 				quests.forEach(quest => {
-					console.log(quest.questData);
 					this.quests.push(new Quest(quest.questData));
 					this.questCourses.push(quest.course + '-' + quest.section);
 				});
+
+				
+
 				console.warn(this.quests);
 				this.timeDisplays();
 			});
@@ -244,7 +243,6 @@ export class GenSidetabComponent implements OnInit {
 	openQuest(template: TemplateRef<any>, quest: any) { //'quest: any' in here means the quest has not been converted to Quest type
 		//AHJ: Unimplemented
 		//WARNING!! Remove QUESTS in specific-qm.html when this is implemented
-		console.log(quest);
 		this.questClicked = quest;
 		console.warn(this.questClicked);
 		if (this.questClicked) {
@@ -258,7 +256,6 @@ export class GenSidetabComponent implements OnInit {
 
 			this.questService.uploadFileForSubmitQuest(x.files[0]).subscribe(res => {
 				// do stuff here
-				console.log(res);
 			})
 			// let formData = new FormData();
 			// formData.append('file', x, 'hehe');
@@ -273,7 +270,6 @@ export class GenSidetabComponent implements OnInit {
 	submitQuest(questId: String, fileName: String) {
 		let user_id = this.userService.getCurrentUser().getUserId();
 		//AHJ: unimplemented
-		console.log("'" + this.questClicked.getQuestTitle() + "' submitted!");
 		this.bsModalRef.hide();
 
 		this.questService.submitQuest(fileName, "", user_id, questId, "").subscribe(res => {
@@ -282,7 +278,6 @@ export class GenSidetabComponent implements OnInit {
 	}
 
 	abandonQuest(questId: String) {
-		console.log("'" + this.questClicked.getQuestTitle() + "' abandoned :(");
 		//AHJ: unimplemented
 		this.bsModalRef.hide();
 	}

@@ -6,8 +6,7 @@
   <!--Line Graph for performance-->
   <div class="row">
     <div style="display: block" *ngIf="isChartReady">
-      <canvas baseChart width="650" height="300" [datasets]="lineChartData" [labels]="lineChartLabels" [options]="lineChartOptions"
-        [colors]="lineChartColors" [legend]="true" [chartType]="'line'" (chartHover)="chartHovered($event)" (chartClick)="chartClicked($event)"></canvas>
+      <canvas id="performance-graph" baseChart width="650" height="300" (chartHover)="chartHovered($event)" (chartClick)="chartClicked($event)"></canvas>
     </div>
   </div>
 

@@ -153,8 +153,13 @@ export class CommentPostService {
   getSectionPosts(section_id: string): Observable<CommentPost[]> {
     const url = this.postUrl;
 
-    //const url = `${this.postUrl}/?section_id=${section_id}`;
-    return this.http.get<CommentPost[]>(url).pipe(
+    let params = new HttpParams()
+      .set('section_id', section_id)
+      .set('method', "getSectionPosts");
+
+    return this.http.get<CommentPost[]>(url, {
+      params: params
+    }).pipe(
       tap(h => {
         const outcome = h ? 'fetched section ' + section_id : 'did not find section ' + section_id;
         console.log(outcome);
@@ -170,11 +175,9 @@ export class CommentPostService {
    * @returns commentpost array of the enrolled sections of the user
    */
   getUserPosts(sections: any): Observable<CommentPost[]> {
-    console.log(sections);
 
     let enrolled = this.sectionService.getUserEnrolledSections();
 
-    console.log(enrolled);
     const url = this.postUrl;
     let params = new HttpParams()
       .set('sections', sections);
