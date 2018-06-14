@@ -9,11 +9,35 @@ body {
     width:100%;
 }
 
-.container {
+/* Floating Add Button*/
+.floating-button{
+	position:fixed;
+	width:53px;
+	height:53px;
+	bottom:40px;
+	right:40px;
+	background-color: #1E90FF;
+	border-radius:10px;
+	text-align:center;
+    box-shadow: 2px 2px 3px #999;
+    -webkit-transition: right 0.5s; /* Safari */
+    transition: right 0.5s;
+}
+
+.floating-button:hover {
+    cursor: pointer;
+}
+
+.plus-sign{
+    margin-top:19px;
+    color:#FFF;
+}
+
+.class-posts {
     margin-top:10px;
 }
 
-.action-box {
+.class-posts .action-box {
   border-top:1px dotted #bbb;
 }
 
@@ -122,6 +146,10 @@ margin-right: 7px;
 }
 /*------------------*/
 
+.create-post .panel-shadow {
+    box-shadow: rgba(0, 0, 0, 0.3) 2px 3px 7px;
+}
+
 .panel-shadow {
     box-shadow: rgba(0, 0, 0, 0.3) 7px 7px 7px;
 }
@@ -138,9 +166,13 @@ margin-right: 7px;
   border-color: #ddd;
 }
 
-.post .post-heading {
+.class-posts .post .post-heading {
   height: 95px;
   padding: 20px 15px;
+}
+
+.create-post .post .post-heading {
+  padding: 20px 15px 0 15px;
 }
 .post .post-heading .avatar {
   width: 60px;
@@ -165,9 +197,14 @@ margin-right: 7px;
   width: 100%;
   height: auto;
 }
-.post .post-description {
+.class-posts .post .post-description {
   padding: 15px;
 }
+
+.create-post .post .post-description {
+  padding: 0 15px 10px 15px;
+}
+
 .post .post-description p {
   font-size: 14px;
 }

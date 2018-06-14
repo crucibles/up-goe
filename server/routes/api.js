@@ -12,7 +12,7 @@ const xoauth2 = require('xoauth2');
 const cookie = require('ng2-cookies');
 const fs = require('fs');
 const mongoose = require("mongoose");
-// var DIR = './uploads/';
+const path = require("path");
 const multer = require('multer');
 var requestTime;
 
@@ -23,10 +23,10 @@ router.use(function timeLog(req, res, next) {
 
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, './uploads/')
+        cb(null, './uploads/');
     },
     filename: function (req, file, cb) {
-        cb(null, file.fieldname + '-' + requestTime + ".jpg")
+        cb(null, requestTime + "." + file.originalname);
     }
 });
 
@@ -488,23 +488,17 @@ router.post('/upload', (req, res) => {
         // No error occured.
         path = req.file.path;
         // return res.send(path.substring(8, path.length));
-        return res.send(req.file);
+        return res.json({ originalName: req.file.originalname, uploadName: req.file.filename });
     })
 
 });
 
-router.get('/download', (req, res) => {
-    // let file = "./uploads/" + req.query.file;
-    let file = "./uploads/" + req.query.file;
-    // fs.readFile(file, function (err, data) {
-    //     res.contentType('application/pdf');
-    //     res.send(data);
-    // })
-
-    // res.contentType('application/pdf');
-    // res.download(file);
-
-})
+router.post('/download', (req, res) => {
+    console.log("hello=================");
+    console.log(req.body);
+    filepath = path.join(__dirname, '../../uploads') + '/' + req.body.fileName;
+    res.sendFile(filepath);
+});
 
 
 
@@ -723,13 +717,17 @@ router.get('/posts', (req, res) => {
     var counter = 0;
     var index = 0;
 
+    console.log("============================");
     if (req.query.method && req.query.method == "getSectionPosts") {
         getSectionPosts(req, res);
     } else {
         connection((db) => {
             const myDB = db.db('up-goe-db');
-
+            console.log("============================");
+            console.log(req.query.sections);
+            console.log("============================");
             if (req.query.sections) {
+                console.log("============================");
                 let sections = req.query.sections.split(",");
                 myDB.collection('posts')
                     .find()
@@ -774,23 +772,8 @@ router.get('/posts', (req, res) => {
                     })
 
             } else {
-                myDB.collection('posts')
-                    .find()
-                    .toArray()
-                    .then((x) => {
-
-                        if (x) {
-                            res.json(x);
-                        } else {
-                            res.json(false);
-                        }
-
-                    })
+                res.json(false);
             }
-
-
-
-
         });
 
     }
@@ -809,6 +792,102 @@ router.get('/posts', (req, res) => {
                 })
                 .catch(err => {
                     sendError(err, res);
+                });
+        });
+    }
+});
+
+/**
+ * @description portal for requests regarding posts. api/posts
+ * @author Sumandang, AJ Ruth H.
+ */
+router.post('/posts', (req, res) => {
+    console.log("-------------ENTER POST POSTS---------------");
+    console.log(req.body);
+    if (req.body.method && req.body.method == "addCommentPost") {
+        addCommentPost(req, res);
+    } else if (req.body.method && req.body.method == "attachComment") {
+        attachComment(req, res);
+    }
+
+    function addCommentPost(req, res) {
+        console.log("-------------addCommentPost---------------");
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            let newPostObj = {
+                section_id: req.body.section_id,
+                user_id: req.body.user_id,
+                post_content: req.body.post_content,
+                post_comments: req.body.post_comments,
+                post_date: req.body.post_date,
+                commentable: req.body.commentable,
+                is_post: req.body.is_post
+            };
+
+            myDB.collection('posts')
+                .insertOne(newPostObj, function (err, result) {
+                    if (err) {
+                        console.log("err");
+                        console.log(err);
+                        response.message = err;
+                        throw err;
+                    }
+                    response.data = newPostObj;
+                    res.json(result);
+                    console.log("-------------END addCommentPost END---------------");
+                });
+        });
+    }
+
+    function attachComment(req, res) {
+        console.log("-------------attachComment---------------");
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            let newPostObj = {
+                section_id: req.body.section_id,
+                user_id: req.body.user_id,
+                post_content: req.body.post_content,
+                post_comments: req.body.post_comments,
+                post_date: req.body.post_date,
+                commentable: req.body.commentable,
+                is_post: req.body.is_post
+            };
+
+            //inserting new commentpost into the DB
+            myDB.collection('posts')
+                .insertOne(newPostObj, function (err, result) {
+                    if (err) {
+                        console.log("err");
+                        console.log(err);
+                        response.message = err;
+                        throw err;
+                    }
+                    let mainPostId = req.body.main_post_id;
+                    let commentPostId = result.insertedId + '';
+
+                    response.data = result;
+
+                    myDB.collection('posts')
+                        .updateOne(
+                            { _id: ObjectID(mainPostId) },
+                            {
+                                $push: {
+                                    post_comments: commentPostId
+                                }
+                            }
+                        ).then(result => {
+
+                            if (result) {
+                                res.json(true);
+                            } else {
+                                res.json(false);
+                            }
+
+                        })
+                        .catch((err) => {
+                            sendError(err, res);
+                        })
+                    console.log("-------------END attachComment END---------------");
                 });
         });
     }
@@ -898,7 +977,7 @@ router.post('/sections', (req, res) => {
             is_graded: false,
             file: req.body.data,
             comment: req.body.comment,
-            date_submitted: Date(req.body.time)
+            date_submitted: new Date(req.body.time).toLocaleString()
         }
 
 
@@ -914,7 +993,6 @@ router.post('/sections', (req, res) => {
                     {
                         $set: {
                             "quests_taken.$[elem]": submitObj,
-
                         }
                     },
                     {
@@ -1292,6 +1370,7 @@ router.get('/sections', (req, res) => {
     }
 
     function searchSectionByName(req, res) {
+        console.log("classByname");
         connection((db) => {
             const myDB = db.db('up-goe-db');
 
@@ -1299,7 +1378,7 @@ router.get('/sections', (req, res) => {
                 .find()
                 .toArray()
                 .then((sections) => {
-
+                    console.log("sec");
                     if (sections) {
 
                         myDB.collection('courses')
@@ -1308,28 +1387,27 @@ router.get('/sections', (req, res) => {
                             })
                             .toArray()
                             .then((course) => {
+                                console.log(course);
+
                                 // course found.
                                 if (course.length > 0) {
 
-                                    sections.forEach(section => {
-
-                                        if (section.course_id == course[0]._id) {
-
-                                            myObjArr.push({
-                                                section: section,
-                                                course_name: course[0].course_name
-                                            });
-
-                                        }
-
+                                    sections.filter((s) => {
+                                        course.filter((c) => {
+                                            if(c._id == s.course_id){
+                                                myObjArr.push({
+                                                    section: s,
+                                                    course_name: c.course_name
+                                                });
+                                            }
+                                        })
+                                    });                                    
+                                    
+                                    Promise.all(myObjArr).then(x => {
+                                        res.json(myObjArr);
                                     })
-
-
                                 }
 
-                                Promise.all(myObjArr).then(x => {
-                                    res.json(myObjArr);
-                                })
 
 
 
@@ -1518,7 +1596,8 @@ router.post('/signup', (req, res) => {
             user_contact_no: req.body.contactNumber,
             user_photo: null,
             user_security_question: req.body.securityQuestion,
-            user_security_answer: req.body.securityAnswer
+            user_security_answer: req.body.securityAnswer,
+            user_conditions: req.body.userConditions
         };
 
         myDB.collection('users')

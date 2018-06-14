@@ -1,44 +1,61 @@
+<!-- Grades page (if all quests are loaded)-->
 <ng-container *ngIf="quests">
+    
     <h2>{{sectionService.getCurrentCourse().getCourseName()}} - {{currentSection.getSectionName()}}</h2>
+
     <select #questSelect (click)="getQuestGrades(questSelect.value)">
         <option value="summary">Summary</option>
         <option *ngFor="let quest of quests" [value]="quest.getQuestId()">
             {{quest.getQuestTitle()}}
         </option>
     </select>
+
+    <!--Summary table (Class record)-->
     <ng-container *ngIf="studentGrades && questSelect.value=='summary'">
         <table id="hor-zebra" summary="Course List">
             <thead>
                 <tr>
                     <th scope="col">Student #</th>
                     <th scope="col">Name</th>
-                    <th scope="col">Total EXP</th>
+                    <th scope="col">Grades</th>
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let student of studentGrades">
-                    <td>{{student.student.getUserSchoolId()}}</td>
-                    <td>{{student.student.getUserFullName()}}</td>
-                    <td>{{student.grade}}</td>
-                </tr>
+                <ng-container *ngIf="!studentGrades || studentGrades.length == 0">
+                    <tr>
+                        <td colspan="3" style="text-align: center">
+                            You have no students for this section yet.
+                        </td>
+                    </tr>
+                </ng-container>
+                <ng-container *ngIf="submissions">
+                    <tr *ngFor="let student of studentGrades">
+                        <td>{{student.student.getUserSchoolId()}}</td>
+                        <td>{{student.student.getUserFullName()}}</td>
+                        <td>{{student.grade}}</td>
+                    </tr>
+                </ng-container>
             </tbody>
         </table>
     </ng-container>
+    <!--End of summary table (Class record)-->
 
+    <!--Quest table (table of a particular quest submission)-->
     <ng-container *ngIf="questSelect.value != 'summary'">
         <table id="hor-zebra" summary="Course List">
             <thead>
                 <tr>
-                    <th scope="col">Student #</th>
+                    <th scope="col">Name</th>
                     <th scope="col">Grades (Max XP: {{this.getQuestMaxXp(questSelect.value)}})</th>
                     <th scope="col">Date Submitted</th>
-                    <th scope="col">Submission</th>
+                    <th scope="col">Comment</th>
+                    <th scope="col" colspan="2">File Uploaded</th>
                 </tr>
             </thead>
             <tbody>
                 <ng-container *ngIf="!submissions || submissions.length == 0">
                     <tr>
-                        <td colspan="4" style="text-align: center">
+                        <td colspan="5" style="text-align: center">
                             No submissions on this quest yet.
                         </td>
                     </tr>
@@ -48,26 +65,27 @@
                         <td>{{this.toStudentName(submission.getUserId())}}</td>
                         <td>
                             <!-- <form class="form-horizontal"> -->
-                            <input #inputGrade 
-                                    type="number" 
-                                    [value]="submission.getQuestSubmissionGrade(questSelect.value)" 
-                                    [disabled]="!isGraded[i]"/>
-
-                            <button *ngIf="isGraded[i]" 
-                                    type="submit" 
-                                    (click)="setStudentGrade(submission.getUserId(), questSelect.value, inputGrade.value, i)">Submit
+                            <input #inputGrade type="number" [value]="submission.getQuestSubmissionGrade(questSelect.value)" [disabled]="!isGraded[i]"
+                            />
+                            <button *ngIf="isGraded[i]" type="submit" (click)="setStudentGrade(submission.getUserId(), questSelect.value, inputGrade.value)">Submit
                             </button>
                             <!-- </form> -->
                         </td>
                         <td>{{this.pageService.formatDateTime(submission.getQuestSubmissionDate(questSelect.value))}}</td>
                         <td>{{submission.getQuestSubmissionComment(questSelect.value)}}</td>
-
+                        <td>{{submission.getQuestSubmission(questSelect.value)}}</td>
+                        <td>
+                            <button type="submit" class="btn btn-success" (click)="downloadFile(submission.getQuestSubmission(questSelect.value))">Download</button>
+                        </td>
                     </tr>
                 </ng-container>
             </tbody>
         </table>
     </ng-container>
+    <!-- End of quest table (table of a particular quest submission) -->
+
 </ng-container>
+<!-- End of grades page (if all quests are loaded)-->
 
 <ng-container *ngIf="!quests">
     Loading....

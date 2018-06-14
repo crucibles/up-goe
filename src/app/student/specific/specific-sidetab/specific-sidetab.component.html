@@ -17,6 +17,11 @@
 				Quest(s):
 			</li>
 
+
+			<ng-container *ngIf="!quests">
+				This is where your activities will be listed in this course, when you get one.
+			</ng-container>
+
 			<!-- display all quest for all sections -->
 			<li *ngFor="let quest of quests; let i = index">
 				<!-- the quest progress bar and some basic information -->
@@ -83,6 +88,9 @@
 				</a>
 
 			</li>
+			<li></li>
+			<li></li>
+			<li></li>
 		</ng-container>
 		<!-- end of shown quest (for pages other than profile page) -->
 

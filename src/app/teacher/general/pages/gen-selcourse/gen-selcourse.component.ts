@@ -105,16 +105,18 @@ export class GenSelcourseComponent implements OnInit {
 		this.sectionService.getInstructorSections(user_id)
 			.subscribe(sections => {
 				this.sections = sections;
-				this.sections = this.sectionService.getSortedSections(
-					this.sections,
-					{
-						sortColumn: "courseName",
-						sortDirection: "asc"
-					}
-				);
-				this.schedules = this.sections.map(x => {
-					return x.section.schedule;
-				});
+				if(this.sections && this.sections.length > 0){
+					this.sections = this.sectionService.getSortedSections(
+						this.sections,
+						{
+							sortColumn: "courseName",
+							sortDirection: "asc"
+						}
+					);
+					this.schedules = this.sections.map(x => {
+						return x.section.schedule;
+					});
+				}
 			});
 	}
 

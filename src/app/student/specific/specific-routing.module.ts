@@ -45,39 +45,48 @@ const specificRoutes: Routes = [
       {
         path: 'specific-profile/',
         loadChildren: 'student/general/general.module#GeneralModule',
-        component: GenSelcourseComponent
+        component: GenSelcourseComponent,
+        canActivate: [AuthGuardService] 
       },
       {
         path: 'specific-news/',
-        component: GenSelcourseComponent
+        component: GenSelcourseComponent,
+        canActivate: [AuthGuardService] 
       },
       {
         path: 'specific-my-course/',
-        component: GenSelcourseComponent
+        component: GenSelcourseComponent,
+        canActivate: [AuthGuardService] 
       },
       {
         path: 'specific-quest-map/',
-        component: GenSelcourseComponent
+        component: GenSelcourseComponent,
+        canActivate: [AuthGuardService] 
       },
       {
         path: 'specific-character/:sectionId',
-        component: SpecificCharacterComponent
+        component: SpecificCharacterComponent,
+        canActivate: [AuthGuardService] 
       },
       {
         path: 'specific-news/:sectionId',
-        component: SpecificNewsComponent
+        component: SpecificNewsComponent,
+        canActivate: [AuthGuardService] 
       },
       {
         path: 'specific-my-course/:sectionId',
-        component: SpecificMyCourseComponent
+        component: SpecificMyCourseComponent,
+        canActivate: [AuthGuardService] 
       },
       {
         path: 'specific-profile/:sectionId',
-        component: SpecificProfileComponent
+        component: SpecificProfileComponent,
+        canActivate: [AuthGuardService] 
       },
       {
         path: 'specific-quest-map/:sectionId',
-        component: SpecificQuestMapComponent
+        component: SpecificQuestMapComponent,
+        canActivate: [AuthGuardService] 
       },
       {
         path: '**',

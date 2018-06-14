@@ -1,134 +1,99 @@
-<!--General Top Navigation Bar-->
+<!-- floating add button - the displayed button for hiding/showing button-->
+<label for="addButton" class="floating-button" (click)="openCreatePostModal()">
+	<i class="fa fa-plus plus-sign"></i>
+</label>
 
-<body>
-  <!--Side Tab-->
+<div *ngIf="!commentPosts">
+	Loading...
+	<img class="loading-icon" src="/assets/images/loading.gif" />
+</div>
 
-  <div class="side-body">
-    <div class="container">
-      <div *ngIf="commentPosts" class="row">
-        <div class="col-sm-offset-1 col-sm-8" *ngFor="let post of commentPosts; let i = index">
-          <ng-container *ngIf="posters[i]">
-            <div class="panel panel-white post panel-shadow">
-              <div class="post-heading">
-                <div class="pull-left image">
-                  <img [src]="posters[i].getUserPhoto()" class="img-circle avatar" alt="user profile image">
-                </div>
-                <div class="pull-left meta">
-                  <div class="title h5">
-                    <a href="#">
-                      <b>{{this.posters[i].getUserFullName()}}</b>
-                    </a>
-                    made a post.
-                  </div>
-                  <h6 class="text-muted time">{{this.displayTimeDate(post.getPostDate())}}</h6>
-                </div>
-              </div>
-              <div class="post-description">
-                <p>{{post.getPostContent()}}</p>
-                <br class="clear" />
-                <div class="action-box" style="padding-top: 20px" *ngIf="post.post_comments && post.post_comments.length != 0">
-                  <div id="app" class="comments">
-                    <article *ngFor="let comment_id of post.post_comments; let j = index">
-                      <ng-container *ngIf="comments[i][j]">
-                        <img id="profile-photo" [src]="commenters[i][j].getUserPhoto()" />
-                        <h4>
-                          <a href="#">{{this.commenters? this.commenters[i][j].getUserFullName(): ""}}</a>
-                          <h6 class="text-muted time">{{displayTimeDate(this.comments[i][j].getPostDate())}}</h6>
-                          <p>{{this.comments[i][j].getPostContent()}}</p>
-                        </h4>
-                      </ng-container>
-                    </article>
-                  </div>
-                  <!--<div id="app" class="comments">
-                  <article>
-                    <img id="profile-photo" src="https://en.gravatar.com/userimage/18343163/3fd908393aedf6423ec12cacec9a1f50.jpg?size=200" />
-                    <h4>
-                      <a href="#">chrisburton</a>
-                    </h4>
-                    <h6 class="text-muted time">1 minute ago</h6>
-                    <p>Thank you for visiting all the way from New York. This is just a test to determine if the Twitter API
-                      is working as it should. You should see your profile image and your username at the very top that links
-                      to your account. You should also see that I wrote in a thank you introduction with your location.</p>
-                  </article>
+<div *ngIf="commentPosts && commentPosts.length == 0">
+	You have no post for this section yet.
+	<br> Click
+	<span class="clickable" (click)="openCreatePostModal()">here</span>
+	or the '+' sign at the bottom-right to create your first post!
+</div>
 
-                  <article>
-                    <img id="profile-photo" src="https://d17oy1vhnax1f7.cloudfront.net/items/0W2c1j2B0S0v3X0Z4407/Screen%20Shot%202017-01-28%20at%201.01.44%20AM.png"
-                    />
-                    <h4>
-                      <a href="#">AnnaWintour</a>
-                    </h4>
-                    <h6 class="text-muted time">1 minute ago</h6>
-                    <p>
-                      <span class="reply">@chrisburton</span> +1. Really interesting reply.
-                    </p>
-                  </article>
 
-                  <article>
-                    <img id="profile-photo" src="https://25.media.tumblr.com/avatar_c5eeb4b2e95b_128.png" />
-                    <h4>
-                      <a href="#">wooster</a>
-                    </h4>
-                    <time>2 weeks ago</time>
-                    <p>Thank you for visiting all the way from an unknown location. This is just a test to determine if the
-                      Twitter API is working as it should. You should see your profile image and your username at the very
-                      top that links to your account. You should also see that I wrote in a thank you introduction with your
-                      location.
-                    </p>
-                  </article>
 
-                  <article>
-                    <img id="profile-photo" src="https://randomuser.me/api/portraits/men/32.jpg" />
-                    <h4>
-                      <a href="#">randomuser3</a>
-                    </h4>
-                    <time>1 week ago</time>
-                    <p>Thank you for visiting all the way from NYC. This is just a test to determine if the Twitter API is working
-                      as it should. You should see your profile image and your username at the very top that links to your
-                      account. You should also see that I wrote in a thank you introduction with your location.</p>
-                  </article>
-                </div>-->
-                </div>
-                <div class="action-box" style="padding-top: 20px">
-                  <div *ngIf="!post.getCommentable()">
-                    You cannot comment to this post.
-                  </div>
-                  <div *ngIf="post.getCommentable()" class="widget-area no-padding blank">
-                    <div class="status-upload">
-                      <div>
-                        <textarea [(ngModel)]="commentContent[i]" placeholder="Reply to this post..."></textarea>
-                        <ul>
-                          <li>
-                            <a title="" tooltip="'Audio'" data-placement="bottom" data-original-title="Audio">
-                              <i class="fa fa-music"></i>
-                            </a>
-                          </li>
-                          <li>
-                            <a title="" tooltip="'Video'" data-placement="bottom" data-original-title="Video">
-                              <i class="fa fa-video-camera"></i>
-                            </a>
-                          </li>
-                          <li>
-                            <a title="" tooltip="'Sound Record'" data-placement="bottom" data-original-title="Sound Record">
-                              <i class="fa fa-microphone"></i>
-                            </a>
-                          </li>
-                          <li>
-                            <a title="" tooltip="'Picture'" data-placement="bottom" data-original-title="Picture">
-                              <i class="fa fa-picture-o"></i>
-                            </a>
-                          </li>
-                        </ul>
-                        <button [disabled]="!commentContent || commentContent.length == 0" type="submit" class="btn btn-success green" (click)=submitComment(i)>
-                          <i class="fa fa-share"></i> Submit</button>
-                      </div>
-                    </div>
-                    <!-- Status Upload  -->
-                  </div>
-                  <!-- Widget Area -->
-                </div>
-                <br class="clear" />
+<div class="class-posts">
+	<div *ngIf="commentPosts" class="row">
+		<div class="col-sm-offset-1 col-sm-8" *ngFor="let post of commentPosts; let i = index">
+			<ng-container *ngIf="posters[i]">
+				<div class="panel panel-white post panel-shadow">
+					<div class="post-heading">
+						<div class="pull-left image">
+							<img [src]="posters[i].getUserPhoto()" class="img-circle avatar" alt="user profile image">
+						</div>
+						<div class="pull-left meta">
+							<div class="title h5">
+								<a href="#">
+									<b>{{this.posters[i].getUserFullName()}}</b>
+								</a>
+								made a post.
+							</div>
+							<h6 class="text-muted time">{{this.displayTimeDate(post.getPostDate())}}</h6>
+						</div>
+					</div>
+					<div class="post-description">
+						<div>{{post.getPostContent()}}</div>
+						<br class="clear" />
+						<div class="action-box" style="padding-top: 20px" *ngIf="post.post_comments && post.post_comments.length != 0">
+							<div id="app" class="comments">
+								<article *ngFor="let comment_id of post.post_comments; let j = index">
+									<ng-container *ngIf="comments[i][j]">
+										<img id="profile-photo" [src]="commenters[i][j].getUserPhoto()" />
+										<h4>
+											<a href="#">{{this.commenters? this.commenters[i][j].getUserFullName(): ""}}</a>
+											<h6 class="text-muted time">{{displayTimeDate(this.comments[i][j].getPostDate())}}</h6>
+											<div>{{this.comments[i][j].getPostContent()}}</div>
+										</h4>
+									</ng-container>
+								</article>
+							</div>
+						</div>
+						<div class="action-box" style="padding-top: 20px">
+							<div *ngIf="!post.getCommentable()">
+								You cannot comment to this post.
+							</div>
+							<div *ngIf="post.getCommentable()" class="widget-area no-padding blank">
+								<div class="status-upload">
+									<div>
+										<textarea [(ngModel)]="commentContent[i]" placeholder="Reply to this post..."></textarea>
+										<ul>
+											<li>
+												<a title="" tooltip="'Audio'" data-placement="bottom" data-original-title="Audio">
+													<i class="fa fa-music"></i>
+												</a>
+											</li>
+											<li>
+												<a title="" tooltip="'Video'" data-placement="bottom" data-original-title="Video">
+													<i class="fa fa-video-camera"></i>
+												</a>
+											</li>
+											<li>
+												<a title="" tooltip="'Sound Record'" data-placement="bottom" data-original-title="Sound Record">
+													<i class="fa fa-microphone"></i>
+												</a>
+											</li>
+											<li>
+												<a title="" tooltip="'Picture'" data-placement="bottom" data-original-title="Picture">
+													<i class="fa fa-picture-o"></i>
+												</a>
+											</li>
+										</ul>
+										<button [disabled]="!commentContent || commentContent.length == 0" type="submit" class="btn btn-success green" (click)=submitComment(i)>
+											<i class="fa fa-share"></i> Submit</button>
+									</div>
+								</div>
+								<!-- Status Upload  -->
+							</div>
+							<!-- Widget Area -->
+						</div>
+						<br class="clear" />
 
-                <!--<div class="stats">
+						<!--<div class="stats">
                 <a href="#" class="btn btn-default stat-item">
                   <i class="fa fa-thumbs-up icon"></i>2
                 </a>
@@ -137,13 +102,68 @@
                 </a>
               </div>-->
 
-              </div>
-            </div>
-          </ng-container>
-        </div>
+					</div>
+				</div>
+			</ng-container>
+		</div>
+	</div>
+</div>
 
 
-      </div>
-    </div>
-  </div>
-</body>
+<ng-template #createPost>
+	<form [formGroup]="createPostForm">
+		<div class="create-post">
+			<div class="panel panel-white post panel-shadow">
+				<div class="post-heading">
+					Create a Post
+					<br> Commentable:
+					<label>
+						<input type="radio" formControlName="commentable" value="true"> Yes
+					</label>
+					<label>
+						<input type="radio" formControlName="commentable" value="false"> No
+					</label>
+				</div>
+				<div class="post-description">
+					<br class="clear" />
+					<div class="action-box">
+						<div class="widget-area no-padding blank">
+							<div class="status-upload">
+								<div>
+									<textarea formControlName="postContent" placeholder="Place your post content here..."></textarea>
+									<ul>
+										<li>
+											<a title="" tooltip="'Audio'" data-placement="bottom" data-original-title="Audio">
+												<i class="fa fa-music"></i>
+											</a>
+										</li>
+										<li>
+											<a title="" tooltip="'Video'" data-placement="bottom" data-original-title="Video">
+												<i class="fa fa-video-camera"></i>
+											</a>
+										</li>
+										<li>
+											<a title="" tooltip="'Sound Record'" data-placement="bottom" data-original-title="Sound Record">
+												<i class="fa fa-microphone"></i>
+											</a>
+										</li>
+										<li>
+											<a title="" tooltip="'Picture'" data-placement="bottom" data-original-title="Picture">
+												<i class="fa fa-picture-o"></i>
+											</a>
+										</li>
+									</ul>
+									<button [disabled]="createPostForm.invalid" type="submit" class="btn btn-success green" (click)="createNewPost()">
+										<i class="fa fa-share"></i> Submit</button>
+								</div>
+							</div>
+							<!-- Status Upload  -->
+						</div>
+						<!-- Widget Area -->
+					</div>
+					<br class="clear" />
+				</div>
+			</div>
+		</div>
+	</form>
+</ng-template>

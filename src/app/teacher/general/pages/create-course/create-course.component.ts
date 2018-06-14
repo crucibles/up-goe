@@ -23,6 +23,7 @@ import {
 	UserService,
 	SectionService
 } from 'shared/services';
+import { ToastsManager } from 'ng2-toastr';
 
 @Component({
 	selector: 'create-course',
@@ -55,7 +56,8 @@ export class CreateCourseComponent implements OnInit {
 		private formBuilder: FormBuilder,
 		private pageService: PageService,
 		private sectionService: SectionService,
-		private userService: UserService
+		private userService: UserService,
+		private toastr: ToastsManager
 	) {
 		this.getUser();
 		this.createScheduleArray();
@@ -176,6 +178,7 @@ export class CreateCourseComponent implements OnInit {
 			schedule
 		).subscribe(marj => {
 			this.pageService.isCourseCreated(true);
+			this.toastr.success(this.sectionForm.value.courseName, "Created Course success!");
 		});
 		this.isShowSideTab = !this.isShowSideTab;
 		//this.sectionService.createSection(section);

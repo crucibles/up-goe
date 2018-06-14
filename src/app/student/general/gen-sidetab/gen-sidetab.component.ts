@@ -43,13 +43,17 @@ import {
 	QuestService,
 	SectionService,
 	UserService,
-	ExperienceService
+	ExperienceService,
+	FileService
 } from 'shared/services';
 import { IfObservable } from 'rxjs/observable/IfObservable';
 import { Observable } from 'rxjs/Observable';
 
 //import the file uploader plugin
-import { FileUploader } from 'ng2-file-upload/ng2-file-upload';
+import { FileSelectDirective, FileUploader } from 'ng2-file-upload/ng2-file-upload';
+import { ToastsManager } from 'ng2-toastr';
+import { saveAs } from 'file-saver';
+
 const URL = 'http://localhost:3000/api/upload';
 
 @Component({
@@ -107,7 +111,9 @@ export class GenSidetabComponent implements OnInit {
 		private sectionService: SectionService,
 		private userService: UserService,
 		private router: Router,
-		private experienceService: ExperienceService
+		private experienceService: ExperienceService,
+		private toastr: ToastsManager,
+		private fileService: FileService
 	) {
 		this.image = imageDir + "not-found.jpg";
 		this.setUser();
@@ -116,15 +122,15 @@ export class GenSidetabComponent implements OnInit {
 	}
 
 	ngOnInit() {
-
 		//override the onAfterAddingfile property of the uploader so it doesn't authenticate with //credentials.
 		this.uploader.onAfterAddingFile = (file) => { file.withCredentials = false; };
 		//overide the onCompleteItem property of the uploader so we are 
 		//able to deal with the server response.
 		this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
-			this.submitQuest(this.questClicked.getQuestId(), response);
+			this.toastr.success("Well done!", "Upload success!");
+			this.submitQuest(this.questClicked.getQuestId(), JSON.parse(response));
 		};
-
+		
 		this.checkSize();
 		this.setDefault();
 		if (this.isProfile) {
@@ -216,7 +222,7 @@ export class GenSidetabComponent implements OnInit {
 					this.questCourses.push(quest.course + '-' + quest.section);
 				});
 
-				
+
 
 				console.warn(this.quests);
 				this.timeDisplays();
@@ -250,31 +256,27 @@ export class GenSidetabComponent implements OnInit {
 		}
 	}
 
-	upload(x) {
-		console.warn(x);
-		if (x.files && x.files[0]) {
-
-			this.questService.uploadFileForSubmitQuest(x.files[0]).subscribe(res => {
-				// do stuff here
-			})
-			// let formData = new FormData();
-			// formData.append('file', x, 'hehe');
-			// console.warn(formData);
-			// this.questService.uploadFileForSubmitQuest(formData).subscribe(res => {
-			// 	// do stuff here
-			// 	console.log(res);
-			// })
-		}
-	}
-
-	submitQuest(questId: String, fileName: String) {
+	submitQuest(questId: String, res: any) {
+		console.log(res);
 		let user_id = this.userService.getCurrentUser().getUserId();
 		//AHJ: unimplemented
 		this.bsModalRef.hide();
 
-		this.questService.submitQuest(fileName, "", user_id, questId, "").subscribe(res => {
+		this.questService.submitQuest(res, "", user_id, questId, "").subscribe(res => {
 			console.warn(res);
 		});
+	}
+
+	// test download function
+	download() {
+		let fn = "1528927109966.2011hw1sol.pdf";
+
+		this.fileService.download(fn)
+		.subscribe(
+			data => saveAs(data, fn),
+			error => console.log(error)
+		);
+
 	}
 
 	abandonQuest(questId: String) {

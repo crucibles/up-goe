@@ -92,6 +92,10 @@ export class CommentPost {
     return this.is_post;
   }
 
+  getSectionId(){
+    return this.section_id;
+  }
+
   setCommentPostId(_id) {
     this._id = _id;
   }
@@ -118,6 +122,10 @@ export class CommentPost {
 
   setIsPost(is_post) {
     this.is_post = is_post;
+  }
+
+  setSectionId(section_id){
+    this.section_id = section_id;
   }
 
 

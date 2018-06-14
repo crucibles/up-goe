@@ -1,148 +1,170 @@
 //Core Imports
 import {
-  HttpClient,
-  HttpHeaders,
-  HttpParams
+	HttpClient,
+	HttpHeaders,
+	HttpParams
 } from '@angular/common/http';
 
 import {
-  Injectable
+	Injectable
 } from '@angular/core';
 
 //Third-Party Imports
 import {
-  Observable
+	Observable
 } from 'rxjs/Observable';
 
 import {
-  of
+	of
 } from 'rxjs/observable/of';
 
 import {
-  catchError,
-  map,
-  tap
+	catchError,
+	map,
+	tap
 } from 'rxjs/operators';
 
 //Application Imports
 import {
-  CommentPost,
-  Student
+	CommentPost,
+	Student
 } from 'shared/models'
 
 import {
-  SectionService
+	SectionService
 } from './section.service';
 
 const httpOptions = {
-  headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+	headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };
 
 @Injectable()
 export class CommentPostService {
 
-  constructor(
-    private http: HttpClient,
-    private sectionService: SectionService
-  ) { }
+	constructor(
+		private http: HttpClient,
+		private sectionService: SectionService
+	) { }
 
-  /**
-   * Used for editing/adding/accessing commentposts from server
-   */
-  private postUrl = "api/posts";
+	/**
+	 * Used for editing/adding/accessing commentposts from server
+	 */
+	private postUrl = "api/posts";
 
-  /**
-   * Used for obtaining all posts from all sections where the student is enrolled in 
-   */
-  private sectionPostUrl = "api/sections/posts";
+	/**
+	 * Used for obtaining all posts from all sections where the student is enrolled in 
+	 */
+	private sectionPostUrl = "api/sections/posts";
 
-  /**
-   * Adds the received commentpost in the database
-   * @param comment The commentpost to be added to the database
-   */
-  addCommentPost(comment: CommentPost): Observable<CommentPost> {
-    const url = this.postUrl;
+	/**
+	 * Adds the received commentpost in the database
+	 * @param comment The commentpost to be added to the database
+	 */
+	addCommentPost(comment: CommentPost): Observable<CommentPost> {
+		const url = this.postUrl;
 
-    return this.http.post<CommentPost>(this.postUrl, comment, httpOptions).pipe(
-      tap((commentPost: CommentPost) =>
-        console.log("comment " + comment.getPostContent() + " is added")),
-      catchError(this.handleError<CommentPost>('addComment'))
-    );
-  }
+		let body = {
+			method: "addCommentPost",
+			section_id: comment.getSectionId(),
+			user_id: comment.getUserId(),
+			post_content: comment.getPostContent(),
+			post_comments: comment.getPostComments(),
+			post_date: comment.getPostDate(),
+			commentable: comment.getCommentable(),
+			is_post: comment.getIsPost()
+		};
 
-  /**
-     * Submits the received comment to a parent commentpost in the database and add new comment as commentpost to the database
-     * @description Submits the received commentpost by adding it as a comment to a parent commentpost 
-     * in the database which is done by merely adding the comment's id to the post_comment attribute of 
-     * the parent commentpost, thus, editing the 'comments' attribute of parent commentpost. The function also
-     * adds the received 'comment' parameter to the database 
-     * @param main_post_id Id of the parent post where the comment will be added
-     * @param comment The comment to be added to the parent post
-     * 
-     * @returns {CommentPost} comment - the newly added comment along with the newly-made id 
-     */
-  attachComment(comment: CommentPost, mainPost: CommentPost): Observable<CommentPost> {
-    // Should we also put error checking to know if main post is commentable or not... 
-    //however, this could be done in the Component side... so error checking here kay madouble lang... 
-    //in case, wla naquery ug tarung ang main post tapos wla niya na block ang comments
-    const url = this.postUrl;
+		return this.http.post<CommentPost>(this.postUrl, body).pipe(
+			tap((commentPost: CommentPost) =>
+				console.log("comment " + comment.getPostContent() + " is added")),
+			catchError(this.handleError<CommentPost>('addComment'))
+		);
+	}
 
-    mainPost.getPostComments().push(comment.getPostCommentId());
-    return this.http.put<CommentPost>(this.postUrl, mainPost, httpOptions).pipe(
-      tap(_ => {
-        console.log(`updated post id=${mainPost.getPostCommentId()}`);
-      }),
-      catchError(this.handleError<CommentPost>('submitComment'))
-    );
-  }
+	/**
+	   * Submits the received comment to a parent commentpost in the database and add new comment as commentpost to the database
+	   * @description Submits the received commentpost by adding it as a comment to a parent commentpost 
+	   * in the database which is done by merely adding the comment's id to the post_comment attribute of 
+	   * the parent commentpost, thus, editing the 'comments' attribute of parent commentpost. The function also
+	   * adds the received 'comment' parameter to the database 
+	   * @param comment The comment to be added to the parent post
+	   * @param mainPostId Id of the parent post where the comment will be added
+	   * 
+	   * @returns {CommentPost} comment - the newly added comment along with the newly-made id 
+	   */
+	attachComment(comment: CommentPost, mainPostId: String): Observable<CommentPost> {
+		// Should we also put error checking to know if main post is commentable or not... 
+		//however, this could be done in the Component side... so error checking here kay madouble lang... 
+		//in case, wla naquery ug tarung ang main post tapos wla niya na block ang comments
+		const url = this.postUrl;
 
-  /**
-   * Edits existing commentpost in the database 
-   * @description Edit old information of existing commentpost of id contained in the commentpost parameter with the 
-   * new commentpost received in the parameter
-   * @param commentPost New information to replace the existing comment in the database
-   * - comment._id - id of the commentpost in order to identify which commentpost to edit
-   */
-  editCommentPost(commentPost: CommentPost) {
-    const url = this.postUrl;
-  }
+		let body = {
+			method: "attachComment",
+			section_id: comment.getSectionId(),
+			user_id: comment.getUserId(),
+			post_content: comment.getPostContent(),
+			post_comments: comment.getPostComments(),
+			post_date: comment.getPostDate(),
+			commentable: comment.getCommentable(),
+			is_post: comment.getIsPost(),
+			main_post_id: mainPostId
+		};
 
-  /**
-   * Deletes comment from post 
-   * @description Deletes comment from its parent post's comments and removes the commentpost from the database
-   * @param commentId id of the commentpost in order to identify which commentpost to delete
-   */
-  deleteComment(commentPost: CommentPost) {
-    const url = this.postUrl;
-  }
+		return this.http.post<CommentPost>(this.postUrl, body).pipe(
+			tap(_ => {
+				console.log(`updated post id=${mainPostId}`);
+			}),
+			catchError(this.handleError<CommentPost>('addComment'))
+		);
+	}
 
-  /**
-   * Deletes existing commentpost in the database
-   * @param commentId id of the commentpost in order to identify which commentpost to delete
-   */
-  deleteCommentPost(commentId: string) {
-    const url = this.postUrl;
-  }
+	/**
+	 * Edits existing commentpost in the database 
+	 * @description Edit old information of existing commentpost of id contained in the commentpost parameter with the 
+	 * new commentpost received in the parameter
+	 * @param commentPost New information to replace the existing comment in the database
+	 * - comment._id - id of the commentpost in order to identify which commentpost to edit
+	 */
+	editCommentPost(commentPost: CommentPost) {
+		const url = this.postUrl;
+	}
 
-  /**
-   * Obtains the posts from a section based on section's id.
-   * @param section_id section id of the section whose posts are to be retrieved
-   * 
-   * @returns commentpost array of the chosen section
-   */
-  getCommentPost(postId: number): Observable<CommentPost> {
-    const url = this.postUrl;
+	/**
+	 * Deletes comment from post 
+	 * @description Deletes comment from its parent post's comments and removes the commentpost from the database
+	 * @param commentId id of the commentpost in order to identify which commentpost to delete
+	 */
+	deleteComment(commentPost: CommentPost) {
+		const url = this.postUrl;
+	}
 
-    //const url = `${this.postUrl}/?id=${postId}`;
-    return this.http.get<CommentPost>(url).pipe(
-      map(posts => posts[0]), // returns a {0|1} element array
-      /*tap(h => {
-        const outcome = h ? 'fetched post #' + postId : 'did not find post #' + postId;
-        console.log(outcome);
-      }),*/
-      catchError(this.handleError<CommentPost>(`getCommentPost id=${postId}`))
-    );
-  }
+	/**
+	 * Deletes existing commentpost in the database
+	 * @param commentId id of the commentpost in order to identify which commentpost to delete
+	 */
+	deleteCommentPost(commentId: string) {
+		const url = this.postUrl;
+	}
+
+	/**
+	 * Obtains the posts from a section based on section's id.
+	 * @param section_id section id of the section whose posts are to be retrieved
+	 * 
+	 * @returns commentpost array of the chosen section
+	 */
+	getCommentPost(postId: number): Observable<CommentPost> {
+		const url = this.postUrl;
+
+		//const url = `${this.postUrl}/?id=${postId}`;
+		return this.http.get<CommentPost>(url).pipe(
+			map(posts => posts[0]), // returns a {0|1} element array
+			/*tap(h => {
+			  const outcome = h ? 'fetched post #' + postId : 'did not find post #' + postId;
+			  console.log(outcome);
+			}),*/
+			catchError(this.handleError<CommentPost>(`getCommentPost id=${postId}`))
+		);
+	}
 
   /**
    * Obtains the posts from a section based on section's id.

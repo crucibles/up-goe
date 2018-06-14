@@ -680,8 +680,8 @@ export class SectionService {
 
 	getSortedSections(sections: any[], criteria: SectionSearchCriteria) {
 		return sections.sort((a, b) => {
-			let firstValue = criteria.sortDirection === 'desc' ? 1 : -1;
-			let secondValue = criteria.sortDirection === 'desc' ? -1 : 1;
+			let firstValue = criteria.sortDirection === 'desc' ? -1 : 1;
+			let secondValue = criteria.sortDirection === 'desc' ? 1 : -1;
 
 			let val1: string = "";
 			let val2: string = "";
