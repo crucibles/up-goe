@@ -88,10 +88,6 @@ export class SectionService {
 		this.currentUserSections = JSON.parse(localStorage.getItem('currentUserSections'));
 	}
 
-	/**
-	 * Adds received newly created course to the database
-	 * @param course - new course to be added to the database
-	 */
 	getCurrentUserSections() {
 		return this.currentUserSections;
 	}
@@ -162,7 +158,6 @@ export class SectionService {
 			}),
 			catchError(this.handleError<any>(`requesting failed for =${body}`))
 		);
-
 	}
 
 	/**
@@ -172,7 +167,6 @@ export class SectionService {
 	 */
 	approveUserToSection(user_id: string, section_id: string) {
 		const url = this.secUrl;
-
 
 		let body = {
 			user_id: user_id,
@@ -186,7 +180,6 @@ export class SectionService {
 			}),
 			catchError(this.handleError<any>(`requesting failed for =${body}`))
 		);
-
 	}
 
 	/**
@@ -245,10 +238,6 @@ export class SectionService {
 	endSection(section) {
 		// murag graduation ang peg... di ko sure... feeling nko murag syag create section pro wipe out lng ang other information
 	}
-
-	/**
-	  const url = this.secUrl;
-	}
   
 	/**
 	* Returns the course information based by course id
@@ -258,14 +247,12 @@ export class SectionService {
 	*/
 	getCourse(course_id): Observable<Course> {
 		const url = this.courseUrl;
-
 		let params = new HttpParams().set('id', course_id);
 
 		return this.http.get<Course>(url, {
 			params: params
 		}).pipe(
 			tap(h => {
-				console.warn(h);
 				const outcome = h ?
 					'fetched course ' + course_id : 'did not find course ' + course_id;
 			}),
@@ -279,7 +266,6 @@ export class SectionService {
 	 */
 	setCurrentCourse(cs: Course) {
 		this.currentCourse = cs;
-		console.warn(this.currentCourseSection);
 	}
 
 	/**
@@ -335,7 +321,6 @@ export class SectionService {
 	 */
 	setCurrentCourseSection(cs: any) {
 		this.currentCourseSection = cs;
-		console.warn(this.currentCourseSection);
 	}
 
 	/**
@@ -347,15 +332,12 @@ export class SectionService {
 		return this.currentCourseSection;
 	}
 
-
-
 	/**
 	 * @author Cedric Y. Alvaro
 	 * @description Sets the current section the user is navigating
 	 */
 	setCurrentSection(section: Section) {
 		this.currentSection = section;
-		console.warn(this.currentSection);
 	}
 
 	/**
@@ -375,7 +357,6 @@ export class SectionService {
 		return this.currentCourse;
 	}
 
-
 	/**
    * Returns students of the section based on section id
    * @description Returns the information of section's enrolled student as provided in the User class.
@@ -385,7 +366,6 @@ export class SectionService {
    * 
    */
 	getSectionStudents(section_id, isAll?: boolean) {
-
 		const url = this.secUrl;
 		let params: HttpParams;
 		if (isAll) {
@@ -403,7 +383,6 @@ export class SectionService {
 			})
 			.pipe(
 				tap(students => {
-					console.warn(students);
 					const outcome = students ?
 						'fetched students of section ' + section_id : 'did not find students of section ' + section_id;
 				}),
@@ -472,7 +451,6 @@ export class SectionService {
 	 */
 	getInstructorSections(user_id) {
 		const url = this.secUrl;
-
 		let params = new HttpParams().set('instructor', user_id);
 
 		return this.http.get<Section[]>(
@@ -487,7 +465,6 @@ export class SectionService {
 					// added this for referencing
 					localStorage.setItem("currentInstructorSections", JSON.stringify(sections));
 
-					console.warn(this.currentUserSections);
 					const outcome = sections ?
 						'fetched sections of user ' + user_id : 'did not find sections of user ' + user_id;
 					return sections;
@@ -512,7 +489,6 @@ export class SectionService {
 	 * The expected values of array is the section's information and the attached course_name
 	 */
 	getUserSections(user_id, section_id?: string): Observable<any[]> {
-
 		const url = this.secUrl;
 
 		let params = new HttpParams().set('id', user_id);
@@ -527,7 +503,6 @@ export class SectionService {
 			})
 			.pipe(
 				tap(sections => {
-					console.warn(sections);
 					this.currentUserSections = sections;
 					localStorage.setItem("currentUserSections", JSON.stringify(sections));
 					const outcome = sections ?
@@ -563,14 +538,10 @@ export class SectionService {
 				if (this.multiFilter(students, filter).length) {
 					enrolledSections.push(section);
 				}
-
 			});
-
 		}
 
-		console.warn(enrolledSections);
 		return enrolledSections;
-
 	}
 
 	/**
@@ -595,16 +566,12 @@ export class SectionService {
 		let enrolledSections = [];
 
 		this.currentUserSections.map((section) => {
-
 			if (this.multiFilter(section.section.students, filter).length) {
 				enrolledSections.push(section.section._id);
 			}
-
 		});
 
-		console.warn(enrolledSections);
 		return enrolledSections;
-
 	}
 
 	/**
@@ -617,7 +584,6 @@ export class SectionService {
 	 * 
 	 */
 	getAllSectionJoinedQuests() {
-		console.warn(this.userService.getCurrentUser().getUserId());
 		let sjq = [];
 		let counter = 0;
 		if (this.currentUserSections) {
@@ -635,9 +601,8 @@ export class SectionService {
 					}
 				})
 			});
-
 		}
-		console.warn(sjq);
+
 		return sjq;
 	}
 
@@ -649,7 +614,6 @@ export class SectionService {
 	 */
 	searchSection(string: any): Observable<any> {
 		const searchUrl = this.secUrl;
-
 		let params = new HttpParams().set('class', string);
 
 		return this.http.get<Observable<any>>(
@@ -658,7 +622,6 @@ export class SectionService {
 			})
 			.pipe(
 				tap(data => {
-					console.log(data);
 					const outcome = data ?
 						'searched sections ' + string : 'did not find section ' + string;
 				}),
@@ -711,7 +674,6 @@ export class SectionService {
 				return filterKeys.every(key => !!~filters[key].indexOf(item[key]));
 			});
 		} else {
-			console.warn(array);
 			return [];
 		}
 	}

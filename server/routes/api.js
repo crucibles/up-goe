@@ -366,6 +366,28 @@ router.post('/experiences', (req, res) => {
     var holder = "";
     if (req.body.method == "setStudentQuestGrade") {
         setStudentQuestGrade(req, res);
+    } else if(req.body.user_id) {
+        getUserExpRecord(req, res);
+    }
+
+    function getUserExpRecord(req, res) {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('experiences')
+                .findOne({
+                    user_id: req.body.user_id,
+                    section_id: req.body.section_id
+                })
+                .then(user => {
+                    console.log('\n\nThis is your user');
+                    console.log(user);
+                    if(user) res.json(user);
+                    else res.json(false);
+                })
+                .catch(err => {
+                    sendError(err, res);
+                });
+        });
     }
 
     function setStudentQuestGrade(req, res) {
@@ -381,6 +403,9 @@ router.post('/experiences', (req, res) => {
                         $set: {
                             "quests_taken.$[elem].quest_grade": req.body.grade,
                             "quests_taken.$[elem].is_graded": true
+                        },
+                        $push: {
+                            total_xp: req.body.grade
                         }
                     },
                     {
@@ -390,46 +415,52 @@ router.post('/experiences', (req, res) => {
                     }
                 )
                 .then(grade => {
-
                     connection((db) => {
                         const myDB = db.db('up-goe-db');
                         myDB.collection('quests')
                             .find(ObjectID(req.body.quest_id))
                             .toArray()
                             .then((quests) => {
-                                if (quests[0] && quests[0].quest_badge) {
+                                if (quests[0] && quests[0].quest_badge != "") {
                                     holder = quests[0].quest_badge;
-                                    myDB.collection('sections')
-                                        .updateOne(
-                                            {
-                                                _id: ObjectID(req.body.section_id)
-                                            },
-                                            {
-                                                $addToSet: {
-                                                    "students.$[elem].badges": quests[0].quest_badge,
+                                    connection((db) => {
+                                        const myDB = db.db('up-goe-db');
+                                        myDB.collection('sections')
+                                            .updateOne(
+                                                {
+                                                    _id: ObjectID(req.body.section_id)
+                                                },
+                                                {
+                                                    $addToSet: {
+                                                        "students.$[elem].badges": quests[0].quest_badge,
 
-                                                }
-                                            },
-                                            {
-                                                arrayFilters: [{ "elem.user_id": req.body.user_id }]
-                                            }
-                                        )
-                                        .then(x => {
-                                            holder = holder.toString().trim();
-                                            myDB.collection('badges')
-                                                .updateOne(
-                                                    {
-                                                        _id: ObjectID(holder)
-                                                    },
-                                                    {
-                                                        $addToSet: {
-                                                            "badge_attainers": req.body.user_id,
-                                                        }
                                                     }
-                                                );
-                                            res.json(true);
-                                        })
-
+                                                },
+                                                {
+                                                    arrayFilters: [{ "elem.user_id": req.body.user_id }]
+                                                }
+                                            )
+                                            .then(x => {
+                                                holder = holder.toString().trim();
+                                                console.log('\n\nThis is the holder');
+                                                console.log(holder);
+                                                connection((db) => {
+                                                    const myDB = db.db('up-goe-db');
+                                                    myDB.collection('badges')
+                                                        .updateOne(
+                                                            {
+                                                                _id: ObjectID(holder)
+                                                            },
+                                                            {
+                                                                $addToSet: {
+                                                                    "badge_attainers": req.body.user_id,
+                                                                }
+                                                            }
+                                                        );
+                                                });
+                                                res.json(true);
+                                            })
+                                    });
                                 } else {
                                     res.json(false);
                                 }
@@ -438,7 +469,6 @@ router.post('/experiences', (req, res) => {
                                 sendError(err, res);
                             });
                     });
-
                 })
                 .catch(err => {
                     sendError(err, res);
@@ -791,27 +821,19 @@ router.get('/posts', (req, res) => {
  * 1. Student requestin to enroll in a section
  */
 router.post('/sections', (req, res) => {
-
-
     if (req.body.quest_id) {
-
         if (req.body.abandon) {
             abandonQuest(req, res);
         } else {
-
             if (req.body.data) {
                 //upload here
                 submitQuest(req, res);
             } else {
                 joinQuest(req, res);
             }
-
         }
-
     } else {
-
         enrollAndRequest(req, res);
-
     }
 
 
@@ -1086,15 +1108,19 @@ router.get('/sections', (req, res) => {
                 .then((sections) => {
 
                     if (sections) {
-                        let enrolled = sections.students.map((x) => {
-                            if (x.status == 'E' || req.query.all) {
-                                return x.user_id;
-                            } else {
-                                return "";
-                            }
-                        })
-                        response.data = enrolled;
-                        res.send(enrolled);
+                        if(sections.students) {
+                            let enrolled = sections.students.map((x) => {
+                                if (x.status == 'E' || req.query.all) {
+                                    return x.user_id;
+                                } else {
+                                    return "";
+                                }
+                            })
+                            response.data = enrolled;
+                            res.send(enrolled);
+                        } else {
+                            res.json(false);
+                        }
 
                     } else {
                         res.json(false);

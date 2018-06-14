@@ -177,6 +177,7 @@ export class CreateCourseComponent implements OnInit {
 		).subscribe(marj => {
 			this.pageService.isCourseCreated(true);
 		});
+		this.isShowSideTab = !this.isShowSideTab;
 		//this.sectionService.createSection(section);
 	}
 
