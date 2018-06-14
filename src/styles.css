@@ -18,6 +18,10 @@
     cursor: pointer;
 }
 
+.post-container {
+    padding-bottom: 25px;
+}
+
 .loading-icon {
     height: 20px;
 }

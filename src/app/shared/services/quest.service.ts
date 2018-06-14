@@ -384,9 +384,9 @@ export class QuestService {
 			user_id: user_id,
 			section_id: section_id,
 			quest_id: quest_id,
-			data: data? data.uploadName: "",
+			data: data.uploadName? data.uploadName: "",
 			comment: comment,
-			time: data? Number(data.uploadName.substring(0, data.uploadName.indexOf('.'))): Date.now()
+			time: data && data.uploadName? Number(data.uploadName.substring(0, data.uploadName.indexOf('.'))): Date.now()
 		}
 
 		console.warn(body.data);

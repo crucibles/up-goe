@@ -281,7 +281,8 @@ export class SpecificQuestMapComponent implements OnInit {
 	setDefault() {
 		this.pageService.isProfilePage(false);
 		this.currentUser = this.userService.getCurrentUser();
-		this.currentSection = this.sectionService.getCurrentSection();
+		this.currentSection = new Section(this.sectionService.getCurrentSection());
+		console.log(this.currentSection);
 	}
 
 	/**
@@ -328,10 +329,12 @@ export class SpecificQuestMapComponent implements OnInit {
 		this.questService.submitQuest(res, this.commentBox, user_id, quest_id, section_id).subscribe((result) => {
 			this.isQuestTakn = true;
 			this.pending = true;
+			this.commentBox = "";
 			this.questService.getUserJoinedQuests(user_id).subscribe(x => {
 			})
+			console.log("hide!");
+			this.questModalRef.hide();
 		});
-		this.questModalRef.hide();
 	}
 
 	abandonQuest() {
