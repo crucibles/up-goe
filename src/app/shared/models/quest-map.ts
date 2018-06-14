@@ -3,7 +3,7 @@ import { Quest } from "shared/models";
 /**
  * A class that represents questmaps.
  */
-export class QuestMap {h
+export class QuestMap {
 
 	private _id: String;
 	private datasets;
