@@ -180,6 +180,7 @@ export class CreateCourseComponent implements OnInit {
 			this.pageService.isCourseCreated(true);
 			this.toastr.success(this.sectionForm.value.courseName, "Created Course success!");
 		});
+		this.isShowSideTab = !this.isShowSideTab;
 		//this.sectionService.createSection(section);
 	}
 

@@ -105,17 +105,18 @@ export class GenSelcourseComponent implements OnInit {
 		this.sectionService.getInstructorSections(user_id)
 			.subscribe(sections => {
 				this.sections = sections;
-				this.sections = this.sectionService.getSortedSections(
-					this.sections,
-					{
-						sortColumn: "courseName",
-						sortDirection: "asc"
-					}
-				);
-				this.schedules = this.sections.map(x => {
-					return x.section.schedule;
-				})
-				console.warn(this.schedules);
+				if(this.sections && this.sections.length > 0){
+					this.sections = this.sectionService.getSortedSections(
+						this.sections,
+						{
+							sortColumn: "courseName",
+							sortDirection: "asc"
+						}
+					);
+					this.schedules = this.sections.map(x => {
+						return x.section.schedule;
+					});
+				}
 			});
 	}
 
@@ -129,7 +130,7 @@ export class GenSelcourseComponent implements OnInit {
 			this.isSearching = true;
 			this.sectionService.searchSection(this.course_search).subscribe((sections) => {
 				this.course_found = sections;
-			})
+			});
 		}
 	}
 
@@ -137,10 +138,9 @@ export class GenSelcourseComponent implements OnInit {
 		this.sections = this.sectionService.getSortedSections(this.sections, $event);
 	}
 
-	openSectionPage(section_id: string) {
+	openSectionPage(section_id: string, section: Section) {
 		//AHJ: unimplemented; dapat dili na kaayo hardcode? Pwede gud ni pero murag hugaw
+		this.sectionService.setCurrentSection(section);
 		this.pageService.openTeacherSectionPage(section_id);
 	}
-
-
 }

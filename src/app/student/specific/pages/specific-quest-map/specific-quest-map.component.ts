@@ -89,6 +89,7 @@ export class SpecificQuestMapComponent implements OnInit {
 	private questTitle;
 
 	constructor(
+		private experienceService: ExperienceService,
 		private modalService: BsModalService,
 		private pageService: PageService,
 		private route: ActivatedRoute,
@@ -97,7 +98,6 @@ export class SpecificQuestMapComponent implements OnInit {
 		private alertService: AlertService,
 		private questService: QuestService,
 		private leaderboardService: LeaderboardService,
-		private experienceService: ExperienceService,
 		private toaster: ToastsManager
 	) {
 		this.currentUser = this.userService.getCurrentUser();
@@ -131,12 +131,19 @@ export class SpecificQuestMapComponent implements OnInit {
 	}
 
 	loadQuestMap() {
-
 		this.questService.getSectionQuests(this.currentSection.getSectionId()).subscribe(quests => {
 			this.quests = quests.map(quest => new Quest(quest));
-			this.questService.getSectionQuestMap(this.currentSection.getSectionId()).subscribe(questmap => {
-				this.questMap = new QuestMap(questmap, this.quests);
-				this.setQuestMap();
+			this.experienceService.getSectionGrades(this.currentSection.getSectionId(), this.currentUser.getUserId())
+			.subscribe(EXP => {
+				if(EXP && EXP.length > 0){
+					
+				}
+				this.questService.getSectionQuestMap(this.currentSection.getSectionId()).subscribe(questmap => {
+					console.log("QUESTMAP LOADEd");
+					console.log(questmap);
+					this.questMap = new QuestMap(questmap, this.quests);
+					this.setQuestMap();
+				});
 			});
 		});
 		

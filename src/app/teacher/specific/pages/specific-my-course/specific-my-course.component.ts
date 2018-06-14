@@ -119,7 +119,11 @@ export class SpecificMyCourseComponent implements OnInit {
 		//AHJ: unimplemented; since getting current section badge is unavailable... BADGES variable is being used instead
 
 		this.badgeService.getSectionBadges(this.sectionService.getCurrentSection().getSectionId()).subscribe(badges => {
-			this.sectionBadges = badges.map(badge => new Badge(badge));
+			if(badges) {
+				this.sectionBadges = badges.map(badge => new Badge(badge));
+			} else {
+				console.warn('no badges acquired');
+			}
 		});
 	}
 
@@ -133,6 +137,7 @@ export class SpecificMyCourseComponent implements OnInit {
 	 */
 	getStudentStatus(user_id: string): string {
 		let status: string = this.currentSection.getStudentStatus(user_id, true);
+		status = status == "Requesting"? "Approve": status;
 		return status;
 	}
 

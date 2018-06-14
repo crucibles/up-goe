@@ -37,11 +37,11 @@ export class Experience {
         return this.quests_taken;
     }
 
-    getTotalExperience(): number{
+    getTotalExperience(): number {
         let totalEXP = 0;
         if(this.quests_taken.length > 0){
             this.quests_taken.forEach(quest => {
-                totalEXP = quest.quest_grade? totalEXP + quest.quest_grade: totalEXP; 
+                totalEXP = quest.quest_grade && quest.is_graded ? totalEXP + Number(quest.quest_grade) : totalEXP; 
             });
         }
         return totalEXP;
