@@ -130,6 +130,7 @@ export class SpecificMyCourseComponent implements OnInit {
 	 */
 	getStudentStatus(user_id: string): string {
 		let status: string = this.currentSection.getStudentStatus(user_id, true);
+		status = status == "Requesting"? "Approve": status;
 		return status;
 	}
 

@@ -815,6 +815,102 @@ router.get('/posts', (req, res) => {
 });
 
 /**
+ * @description portal for requests regarding posts. api/posts
+ * @author Sumandang, AJ Ruth H.
+ */
+router.post('/posts', (req, res) => {
+    console.log("-------------ENTER POST POSTS---------------");
+    console.log(req.body);
+    if (req.body.method && req.body.method == "addCommentPost") {
+        addCommentPost(req, res);
+    } else if (req.body.method && req.body.method == "attachComment") {
+        attachComment(req, res);
+    }
+
+    function addCommentPost(req, res) {
+        console.log("-------------addCommentPost---------------");
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            let newPostObj = {
+                section_id: req.body.section_id,
+                user_id: req.body.user_id,
+                post_content: req.body.post_content,
+                post_comments: req.body.post_comments,
+                post_date: req.body.post_date,
+                commentable: req.body.commentable,
+                is_post: req.body.is_post
+            };
+
+            myDB.collection('posts')
+                .insertOne(newPostObj, function (err, result) {
+                    if (err) {
+                        console.log("err");
+                        console.log(err);
+                        response.message = err;
+                        throw err;
+                    }
+                    response.data = newPostObj;
+                    res.json(result);
+                    console.log("-------------END addCommentPost END---------------");
+                });
+        });
+    }
+
+    function attachComment(req, res) {
+        console.log("-------------attachComment---------------");
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            let newPostObj = {
+                section_id: req.body.section_id,
+                user_id: req.body.user_id,
+                post_content: req.body.post_content,
+                post_comments: req.body.post_comments,
+                post_date: req.body.post_date,
+                commentable: req.body.commentable,
+                is_post: req.body.is_post
+            };
+
+            //inserting new commentpost into the DB
+            myDB.collection('posts')
+                .insertOne(newPostObj, function (err, result) {
+                    if (err) {
+                        console.log("err");
+                        console.log(err);
+                        response.message = err;
+                        throw err;
+                    }
+                    let mainPostId = req.body.main_post_id;
+                    let commentPostId = result.insertedId + '';
+
+                    response.data = result;
+
+                    myDB.collection('posts')
+                        .updateOne(
+                            { _id: ObjectID(mainPostId) },
+                            {
+                                $push: {
+                                    post_comments: commentPostId
+                                }
+                            }
+                        ).then(result => {
+
+                            if (result) {
+                                res.json(true);
+                            } else {
+                                res.json(false);
+                            }
+
+                        })
+                        .catch((err) => {
+                            sendError(err, res);
+                        })
+                    console.log("-------------END attachComment END---------------");
+                });
+        });
+    }
+});
+
+/**
  * @description portal for post requests that regards to sections "api/sections"
  * @author Cedric Yao Alvaro
  * 

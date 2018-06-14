@@ -110,7 +110,7 @@ export class GradesComponent implements OnInit {
                             console.log(students);
                             students.forEach(student => {
                                 //obtain student tot EXP
-                                // if (student && student.length > 1) {
+                                if (student && student.length > 1) {
                                     this.userService.getUser(student).subscribe((user) => {
                                         this.experienceService.getUserExpRecord(new User(user).getUserId(), sectionId).subscribe(res => {
                                             if(res) {
@@ -122,7 +122,7 @@ export class GradesComponent implements OnInit {
                                             }
                                         });
                                     });
-                                // }
+                                }
                             });
                         }
                     });

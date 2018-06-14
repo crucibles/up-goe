@@ -17,10 +17,10 @@ export class SortService {
     getSorted(array: any[], criteria: SearchCriteria) {
         return array.sort((a, b) => {
             if (criteria.sortDirection === 'desc') {
-                return 1;
+                return -1;
             }
             else {
-                return -1;
+                return 1;
             }
         });
     }
