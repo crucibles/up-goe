@@ -56,31 +56,35 @@ export class GenNewsComponent implements OnInit {
     getAllCommentPost() {
         this.commentPostService.getUserPosts(this.sectionService.getCurrentUserEnrolledSectionIds()).subscribe(commentPosts => {
 
-            this.commentPosts = commentPosts.filter(function (x) {
-                let y = new CommentPost(x);
-                if (y.getIsPost() == true) {
-                    return y;
-                }
-            });
+            if (commentPosts) {
 
-            // sorts the commentpost by date (from recent 'on top' to oldest)
-            this.commentPosts.sort((b, a) => {
-                let x = new CommentPost(a);
-                let y = new CommentPost(b);
-                return this.getTime(x.getPostDate()) - this.getTime(y.getPostDate());
-            });
-
-            //gets the poster of each commentpost
-            this.commentPosts.forEach((post, index) => {
-                let posts = new CommentPost(post);
-                this.userService.getUser(posts.getUserId()).subscribe(user => {
-                    let nextUser = new User(user);
-                    this.posters[index] = nextUser;
-                    this.allPostersLoaded[index] = Promise.resolve(true);
+                this.commentPosts = commentPosts.filter(function (x) {
+                    let y = new CommentPost(x);
+                    if (y.getIsPost() == true) {
+                        return y;
+                    }
                 });
-            });
-            
-            
+
+                // sorts the commentpost by date (from recent 'on top' to oldest)
+                this.commentPosts.sort((b, a) => {
+                    let x = new CommentPost(a);
+                    let y = new CommentPost(b);
+                    return this.getTime(x.getPostDate()) - this.getTime(y.getPostDate());
+                });
+
+                //gets the poster of each commentpost
+                this.commentPosts.forEach((post, index) => {
+                    let posts = new CommentPost(post);
+                    this.userService.getUser(posts.getUserId()).subscribe(user => {
+                        let nextUser = new User(user);
+                        this.posters[index] = nextUser;
+                        this.allPostersLoaded[index] = Promise.resolve(true);
+                    });
+                });
+
+            }
+
+
 
         })
     }

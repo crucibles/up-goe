@@ -372,21 +372,20 @@ export class QuestService {
 	 * @description Submits the user's submission and removes user from the quest participant's list 
 	 * by calling endQuest() 
 	 * 
-	 * @param idk 
+	 * @param data: is composed of the upload name and original name of the file. 
 	 * 
 	 * @see endQuest
 	 */
-	submitQuest(data: String, comment: string, user_id, quest_id, section_id) {
+	submitQuest(data: any, comment: string, user_id, quest_id, section_id) {
 		const url = this.sectionUrl;
 
 		let body = {
 			user_id: user_id,
 			section_id: section_id,
 			quest_id: quest_id,
-			data: data,
+			data: data.uploadName,
 			comment: comment,
-			time: data.substring(5, data.length),
-			
+			time: Number(data.uploadName.substring(0, data.uploadName.indexOf('.')))
 		}
 
 		console.warn(body.data);

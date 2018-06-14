@@ -162,6 +162,9 @@ export class PageService {
 	}
 
 	public openTeacherSectionPage(sectionId: string) {
+		this.sectionService.searchSection(sectionId).subscribe(res => {
+			this.sectionService.setCurrentSection(new Section(res));
+		});
 		this.router.navigate(['/teacher/specific/specific-news', sectionId]);
 	}
 

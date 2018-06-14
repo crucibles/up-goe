@@ -62,11 +62,13 @@ const routes: Routes = [
   },
   {
     path: 'student/specific',
-    loadChildren: 'student/specific/specific.module#SpecificModule'
+    loadChildren: 'student/specific/specific.module#SpecificModule',
+    canActivate: [AuthGuardService] 
   },
   {
     path: 'teacher/specific',
-    loadChildren: './teacher/specific/specific.module#SpecificModule'
+    loadChildren: './teacher/specific/specific.module#SpecificModule',
+    canActivate: [AuthGuardService] 
   },
   {
     path: '**',

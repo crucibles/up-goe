@@ -45,35 +45,43 @@ const specificRoutes: Routes = [
     children: [
       {
         path: 'specific-news/',
-        component: SpecificNewsComponent
+        component: SpecificNewsComponent,
+        canActivate: [AuthGuardService]
       },
       {
         path: 'specific-my-course/',
-        component: SpecificMyCourseComponent
+        component: SpecificMyCourseComponent,
+        canActivate: [AuthGuardService] 
       },
       {
         path: 'specific-character/:sectionId',
-        component: SpecificCharacterComponent
+        component: SpecificCharacterComponent,
+        canActivate: [AuthGuardService] 
       },
       {
         path: 'specific-news/:sectionId',
-        component: SpecificNewsComponent
+        component: SpecificNewsComponent,
+        canActivate: [AuthGuardService] 
       },
       {
         path: 'specific-my-course/:sectionId',
-        component: SpecificMyCourseComponent
+        component: SpecificMyCourseComponent,
+        canActivate: [AuthGuardService] 
       },
       {
         path: 'specific-profile/:sectionId',
-        component: SpecificProfileComponent
+        component: SpecificProfileComponent,
+        canActivate: [AuthGuardService] 
       },
       {
         path: 'specific-quest-map/:sectionId',
-        component: SpecificQuestMapComponent
+        component: SpecificQuestMapComponent,
+        canActivate: [AuthGuardService] 
       },
       {
         path: 'grades/:sectionId',
-        component: GradesComponent
+        component: GradesComponent,
+        canActivate: [AuthGuardService] 
       },
       {
         path: '**',

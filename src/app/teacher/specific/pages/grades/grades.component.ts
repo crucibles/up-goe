@@ -16,7 +16,8 @@ import {
     PageService,
     QuestService,
     SectionService,
-    UserService
+    UserService,
+    FileService
 } from 'shared/services';
 
 import { 
@@ -35,6 +36,10 @@ import {
 import { 
     ToastsManager 
 } from 'ng2-toastr';
+
+import {
+    saveAs
+} from 'file-saver';
 
 @Component({
     selector: 'app-grades',
@@ -65,7 +70,8 @@ export class GradesComponent implements OnInit {
         private sectionService: SectionService,
         private userService: UserService,
         private toaster: ToastsManager,
-        private router: Router
+        private router: Router,
+        private fileService: FileService
     ) { 
     }
 
@@ -136,6 +142,14 @@ export class GradesComponent implements OnInit {
         ) : AsyncAction;
 
         return studentName[0].studentName;
+    }
+
+    downloadFile(fileName: any) {
+        this.fileService.download(fileName).subscribe(res => {
+            alert("Downloading now!");
+			saveAs(res, fileName),
+			error => console.log(error)
+        });
     }
 
     getQuestGrades(quest_id: string){

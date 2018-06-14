@@ -67,8 +67,24 @@ export class SignUpComponent implements OnInit {
         let password = this.signupForm.value.password;
         let type = this.signupForm.value.type;
         let contactNumber = this.signupForm.value.contactNumber;
-        let securityQuestion = this.signupForm.value.securityQuestion; 
+        let securityQuestion = this.signupForm.value.securityQuestion;
         let securityAnswer = this.signupForm.value.securityAnswer;
+        let userConditions = {
+            hp: "",
+            xp: 0,
+            ailment: "",
+            status: "",
+            log_in_streak: 0,
+            log_in_total: [],
+            items: [],
+            items_used: [],
+            items_owned: [],
+            head: "",
+            left_leg: "",
+            right_leg: "",
+            left_arm: "",
+            right_arm: "",
+        }
 
         this.userService.register(
             schoolId,
@@ -81,15 +97,17 @@ export class SignUpComponent implements OnInit {
             type,
             contactNumber,
             securityQuestion,
-            securityAnswer
+            securityAnswer,
+            userConditions
         ).subscribe(newUser => {
             if (newUser) {
                 // Successful registration of user and redirects to login page.
                 this.router.navigate(['/log-in']);
+                this.toastr.success("Try logging in!", "Account created!");
             } else {
                 // Unsuccessful registration of new user because of email already existing.
                 // Sets signal to prompt warning message of already existing email.
-                this.toastr.error("Email already existed", "Failed to register");
+                this.toastr.warning("Email already existed", "Failed to register");
                 this.duplicate = email;
             }
         });
@@ -98,8 +116,9 @@ export class SignUpComponent implements OnInit {
     // Acquires the security questions from the database.
     getSecurityQuestions() {
         this.userService.getSecurityQuestions().subscribe(questions => {
-            for(var x=0;x<(questions[0].question.length);x++)
+            for (var x = 0; x < (questions[0].question.length); x++) {
                 this.questions.push(questions[0].question[x]);
+            }
         });
     }
 
@@ -112,7 +131,7 @@ export class SignUpComponent implements OnInit {
     userLogin() {
         this.router.navigate(['/log-in']);
     }
-    
+
     get schoolId() {
         return this.signupForm.get('schoolId') as FormControl;
     }

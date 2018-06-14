@@ -3,6 +3,14 @@
 <body>
   <!--Side Tab-->
 
+
+  <ng-container *ngIf="!commentPosts || commentPosts.length == 0">
+    <h6>Welcome! This is the specific News Feed page. 
+      <br>
+      <br>You can post here for announcements and uploads.
+      <br>Currently you have no posts.</h6>
+  </ng-container>
+
   <div class="side-body">
     <div class="container">
       <div *ngIf="commentPosts" class="row">
