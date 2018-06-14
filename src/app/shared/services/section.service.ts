@@ -314,7 +314,7 @@ export class SectionService {
 		const url = this.secUrl;
 		let params = new HttpParams().set('id', section_id);
 
-		return this.http.get<Course>(url, {
+		return this.http.get<any>(url, {
 			params: params
 		}).pipe(
 			map(sections => sections[0]),
@@ -492,7 +492,8 @@ export class SectionService {
 					console.log("EDITING");
 					console.log(sections);
 					this.currentUserSections = courseSections.map(courseSection => courseSection.section);
-					localStorage.setItem("currentUserSections", JSON.stringify(sections));
+					// added this for referencing
+					localStorage.setItem("currentInstructorSections", JSON.stringify(sections));
 
 					console.warn(this.currentUserSections);
 					const outcome = sections ?
@@ -568,7 +569,8 @@ export class SectionService {
 			console.log(this.currentUserSections);
 			this.currentUserSections.map((section) => {
 				console.log(section);
-				if (this.multiFilter(section.section.students, filter).length) {
+				let students = section.section? section.section.students: section.students;
+				if (this.multiFilter(students, filter).length) {
 					enrolledSections.push(section);
 				}
 
@@ -634,7 +636,8 @@ export class SectionService {
 
 			this.currentUserSections.map((x) => {
 				console.log(x);
-				x.section.quests.map((y) => {
+				let quests = x.section? x.section.quests: x.quests;
+				quests.map((y) => {
 					console.log(y);
 					if (y.quest_participants) {
 						y.quest_participants.map((z) => {
@@ -720,10 +723,15 @@ export class SectionService {
 	multiFilter(array, filters) {
 		const filterKeys = Object.keys(filters);
 		// filters all elements passing the criteria
-		return array.filter((item) => {
-			// dynamically validate all filter criteria
-			return filterKeys.every(key => !!~filters[key].indexOf(item[key]));
-		});
+		if(array){
+			return array.filter((item) => {
+				// dynamically validate all filter criteria
+				return filterKeys.every(key => !!~filters[key].indexOf(item[key]));
+			});
+		} else {
+			console.warn(array);
+			return [];
+		}
 	}
 
 	getSortedSections(sections: any[], criteria: SectionSearchCriteria) {

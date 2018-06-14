@@ -53,9 +53,9 @@ export class Experience {
      */
     getQuestSubmission(quest_id): any {
         let questSubmission: any[] = this.quests_taken.filter(quest => quest.quest_id == quest_id);
-        console.log("GETQUEST");
-        console.log(quest_id);
-        console.log(questSubmission);
+        // console.log("GETQUEST");
+        // console.log(quest_id);
+        // console.log(questSubmission);
         return questSubmission.length > 0 ? questSubmission[0] : null;
     }
 
@@ -95,6 +95,15 @@ export class Experience {
     isStudentQuestGraded(quest_id): any {
         let questSubmission: any[] = this.quests_taken.filter(quest => quest.quest_id == quest_id);
         return questSubmission.length > 0 && questSubmission[0].is_graded ? questSubmission[0].is_graded : false;
+    }
+
+    setIsGraded(quest_id) {
+        this.quests_taken = this.quests_taken.map(quest => {
+            if(quest.quest_id == quest_id) {
+                quest.is_graded = true;
+            }
+            return quest;
+        });
     }
 
     getWeeklyAccumulativeGrades(): number[] {

@@ -77,6 +77,10 @@ import {
 } from 'ng2-toastr/ng2-toastr';
 import { SortableColumnComponent, SortableTableDirective } from 'shared/pages';
 
+import { 
+	AlertModule 
+} from 'ngx-bootstrap';
+
 @NgModule({
 	declarations: [
 		AppComponent,
@@ -89,7 +93,8 @@ import { SortableColumnComponent, SortableTableDirective } from 'shared/pages';
 		BrowserModule,
 		SharedModule,
 		BrowserAnimationsModule,
-		ToastModule.forRoot()
+		ToastModule.forRoot(),
+		AlertModule.forRoot()
 	],
 	providers: [
 		BadgeService,

@@ -94,6 +94,22 @@ export class ExperienceService {
 			);
     }
 
+    getCurrentExperience(quest_id: string, user_id: string, section_id: string) {
+        let url = "api/currentExperience";
+        return this.http.post<any>(url, {
+            quest_id,
+            user_id,
+            section_id
+        }).pipe(
+            tap(data => {
+                console.log(data);
+                if (data) return data;
+                else return false;
+            }),
+            catchError(this.handleError<any>(`acquiring current experience`))
+        );
+    }
+
     /**
 	 * Handle Http operation that failed.
 	 * Let the app continue.

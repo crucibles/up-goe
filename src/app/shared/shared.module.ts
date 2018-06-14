@@ -31,7 +31,8 @@ import {
   PopoverModule,
   ProgressbarModule,
   TooltipModule,
-  TimepickerModule
+  TimepickerModule,
+  AlertModule
 } from 'ngx-bootstrap';
 
 //Application Imports
@@ -41,6 +42,8 @@ import {
   SortableColumnComponent,
   SortableTableDirective
 } from 'shared/pages';
+
+
 
 @NgModule({
   imports: [
@@ -52,6 +55,7 @@ import {
     ProgressbarModule.forRoot(),
     TimepickerModule.forRoot(),
     TooltipModule.forRoot(),
+    AlertModule.forRoot()
   ],
   exports: [
     CollapseModule,

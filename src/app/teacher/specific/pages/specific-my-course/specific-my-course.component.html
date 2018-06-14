@@ -2,7 +2,6 @@
 <ng-container *ngIf="currentCourse && currentSection">
 	<div class="course-section">
 		<h3 class="heading">{{currentCourse.getCourseName()}}</h3>
-		<h6 class="heading">Instructor: {{currentSection.getInstructor()}}</h6>
 		<h6 class="table-label">My Students</h6>
 		<!-- Table for classmate -->
 		<table id="table-classmate" summary="Classmate List">
@@ -32,7 +31,7 @@
 						</td>
 						<td>{{classmate.getUserFormattedBirthdate()}}</td>
 						<td>{{classmate.getUserEmail()}}</td>
-						<td [class.clickable]="this.getStudentStatus(classmate.getUserId()) == 'Requesting'" (click)="approveStudent(classmate.getUserId())" >
+						<td [class.clickable]="this.getStudentStatus(classmate.getUserId()) == 'Approve'" (click)="approveStudent(classmate.getUserId())" >
 							{{this.getStudentStatus(classmate.getUserId())}}
 						</td>
 					</tr>
@@ -57,19 +56,19 @@
 </ng-container>
 <!--Whole My Course Page End-->
 
-
-
 <!--If either the course & section has not been loading yet-->
 <ng-container *ngIf="!currentCourse || !currentSection">
 	Loading...
 </ng-container>
+
+
 
 <!-- Modal Template for Students-->
 <ng-template #studentTemplate>
 
 	<!--Modal Header-->
 	<div class="modal-header">
-		<h4 class="modal-title">Classmate's Profile</h4>
+		<h4 class="modal-title">Student's Profile</h4>
 		<button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
 			<span aria-hidden="true">&times;</span>
 		</button>

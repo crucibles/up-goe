@@ -68,3 +68,9 @@
 #hor-zebra .odd {
     background: #e8edff;
 }
+
+.badge-img{
+    margin: 10px 2px;
+    height: 80px;
+    width: 80px;
+}

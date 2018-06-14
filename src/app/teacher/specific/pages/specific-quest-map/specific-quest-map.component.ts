@@ -159,9 +159,11 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 	 * @author Sumandang, AJ Ruth H.
 	 */
 	createBadgeArray() {
+		console.warn("createing badge array");
 		let badges: Badge[] = [];
 		this.badgeService.getSectionBadges(this.currentSection.getSectionId()).subscribe(
 			badges => {
+				console.warn(badges);
 				badges = badges.map(badge => new Badge(badge));
 				this.questBadges = badges.map(function week(badge) {
 					let obj = {
@@ -393,9 +395,10 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 		console.log(this.questRetakable.value);
 		console.log(this.questEndDate.value)
 		let questBadgesArr = [];
-		this.questBadges.forEach(badge => {
+
+		this.createQuestForm.value.questBadges.forEach(badge => {
 			if (badge.isChecked) {
-				questBadgesArr.push(badge.badgeId);
+				questBadgesArr.push(badge.badge);
 			}
 		})
 		console.log(questBadgesArr);

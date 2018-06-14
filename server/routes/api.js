@@ -10,6 +10,30 @@ const async = require('async');
 const nodemailer = require('nodemailer');
 const xoauth2 = require('xoauth2');
 const cookie = require('ng2-cookies');
+const fs = require('fs');
+const mongoose = require("mongoose");
+// var DIR = './uploads/';
+const multer = require('multer');
+var requestTime;
+
+router.use(function timeLog(req, res, next) {
+    console.log('Time: ', Date.now());
+    requestTime = Date.now();
+    next();
+});
+
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './uploads/')
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.fieldname + '-' + requestTime + ".jpg")
+    }
+});
+
+var upload = multer({ storage: storage }).single('file');
+// var upload = multer({ dest: DIR }).single('photo');
+
 
 /**
  * Note: queries are string, body can be object because of bodyParsers;
@@ -63,10 +87,7 @@ let response = {
     message: null
 };
 
-router.use(function timeLog(req, res, next) {
-    console.log('Time: ', Date.now());
-    next();
-});
+
 
 /**
  * @description portal for requests regarding courses. api/courses
@@ -328,6 +349,32 @@ router.post('/createQuest', (req, res) => {
     });
 });
 
+router.post('/currentExperience', (req, res) => {
+    connection((db) => {
+        const myDB = db.db('up-goe-db');
+        myDB.collection('experiences')
+            .findOne({
+                user_id: req.body.user_id,
+                section_id: req.body.section_id
+            })
+            .then(exp => {
+                if (exp) {
+                    exp.quests_taken.forEach(quest => {
+                        if (quest.quest_id == req.body.quest_id) {
+                            if (quest.is_graded) res.json("true");
+                            else res.json("false");
+                        }
+                    });
+                } else {
+                    res.json(false);
+                }
+            })
+            .catch(err => {
+                sendError(err, res);
+            });
+    });
+});
+
 /**
  * @description portal for requests regarding experiences. api/users
  * @author Sumandang, AJ Ruth H.
@@ -373,6 +420,7 @@ router.get('/experiences', (req, res) => {
  * @author AJ Ruth Sumandang
  */
 router.post('/experiences', (req, res) => {
+    var holder = "";
     if (req.body.method == "setStudentQuestGrade") {
         console.log("beforesetenter")
         setStudentQuestGrade(req, res);
@@ -402,9 +450,57 @@ router.post('/experiences', (req, res) => {
                     }
                 )
                 .then(grade => {
-                    console.log("grade");
-                    console.log(grade);
-                    res.json(true);
+
+                    connection((db) => {
+                        const myDB = db.db('up-goe-db');
+                        myDB.collection('quests')
+                            .find(ObjectID(req.body.quest_id))
+                            .toArray()
+                            .then((quests) => {
+                                console.log(quests);
+                                if (quests[0] && quests[0].quest_badge) {
+                                    holder = quests[0].quest_badge;
+                                    myDB.collection('sections')
+                                        .updateOne(
+                                            {
+                                                _id: ObjectID(req.body.section_id)
+                                            },
+                                            {
+                                                $addToSet: {
+                                                    "students.$[elem].badges": quests[0].quest_badge,
+
+                                                }
+                                            },
+                                            {
+                                                arrayFilters: [{ "elem.user_id": req.body.user_id }]
+                                            }
+                                        )
+                                        .then(x => {
+                                            console.log("adding badge to section student finally" + holder);
+                                            holder = holder.toString().trim();
+                                            myDB.collection('badges')
+                                                .updateOne(
+                                                    {
+                                                        _id: ObjectID(holder)
+                                                    },
+                                                    {
+                                                        $addToSet: {
+                                                            "badge_attainers": req.body.user_id,
+                                                        }
+                                                    }
+                                                );
+                                            res.json(true);
+                                        })
+
+                                } else {
+                                    res.json(false);
+                                }
+                            })
+                            .catch((err) => {
+                                sendError(err, res);
+                            });
+                    });
+
                 })
                 .catch(err => {
                     console.log("ERROR");
@@ -413,6 +509,43 @@ router.post('/experiences', (req, res) => {
         })
     }
 });
+
+router.post('/upload', (req, res) => {
+    var path = '';
+    console.warn("hey");
+    console.log(req.body);
+
+    upload(req, res, function (err) {
+        if (err) {
+            // An error occurred when uploading
+            console.log(err);
+            return res.status(422).send("an Error occured")
+        }
+        // No error occured.
+        path = req.file.path;
+        // return res.send(path.substring(8, path.length));
+        return res.send(req.file);
+    })
+
+});
+
+router.get('/download', (req, res) => {
+    console.log("downloading================================================================");
+    // let file = "./uploads/" + req.query.file;
+    let file = "./uploads/" + req.query.file;
+    console.log(file);
+    // fs.readFile(file, function (err, data) {
+    //     res.contentType('application/pdf');
+    //     res.send(data);
+    // })
+
+    // res.contentType('application/pdf');
+    // res.download(file);
+
+    console.log("downloading..");
+})
+
+
 
 /**
  * @description portal for requests regarding users. api/login
@@ -772,6 +905,102 @@ router.get('/posts', (req, res) => {
 });
 
 /**
+ * @description portal for requests regarding posts. api/posts
+ * @author Sumandang, AJ Ruth H.
+ */
+router.post('/posts', (req, res) => {
+    console.log("-------------ENTER POST POSTS---------------");
+    console.log(req.body);
+    if (req.body.method && req.body.method == "addCommentPost") {
+        addCommentPost(req, res);
+    } else if (req.body.method && req.body.method == "attachComment") {
+        attachComment(req, res);
+    }
+
+    function addCommentPost(req, res) {
+        console.log("-------------addCommentPost---------------");
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            let newPostObj = {
+                section_id: req.body.section_id,
+                user_id: req.body.user_id,
+                post_content: req.body.post_content,
+                post_comments: req.body.post_comments,
+                post_date: req.body.post_date,
+                commentable: req.body.commentable,
+                is_post: req.body.is_post
+            };
+
+            myDB.collection('posts')
+                .insertOne(newPostObj, function (err, result) {
+                    if (err) {
+                        console.log("err");
+                        console.log(err);
+                        response.message = err;
+                        throw err;
+                    }
+                    response.data = newPostObj;
+                    res.json(result);
+                    console.log("-------------END addCommentPost END---------------");
+                });
+        });
+    }
+
+    function attachComment(req, res) {
+        console.log("-------------attachComment---------------");
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            let newPostObj = {
+                section_id: req.body.section_id,
+                user_id: req.body.user_id,
+                post_content: req.body.post_content,
+                post_comments: req.body.post_comments,
+                post_date: req.body.post_date,
+                commentable: req.body.commentable,
+                is_post: req.body.is_post
+            };
+
+            //inserting new commentpost into the DB
+            myDB.collection('posts')
+                .insertOne(newPostObj, function (err, result) {
+                    if (err) {
+                        console.log("err");
+                        console.log(err);
+                        response.message = err;
+                        throw err;
+                    }
+                    let mainPostId = req.body.main_post_id;
+                    let commentPostId = result.insertedId + '';
+
+                    response.data = result;
+
+                    myDB.collection('posts')
+                        .updateOne(
+                            { _id: ObjectID(mainPostId) },
+                            {
+                                $push: {
+                                    post_comments: commentPostId
+                                }
+                            }
+                        ).then(result => {
+
+                            if (result) {
+                                res.json(true);
+                            } else {
+                                res.json(false);
+                            }
+
+                        })
+                        .catch((err) => {
+                            sendError(err, res);
+                        })
+                    console.log("-------------END attachComment END---------------");
+                });
+        });
+    }
+});
+
+/**
  * @description portal for post requests that regards to sections "api/sections"
  * @author Cedric Yao Alvaro
  * 
@@ -866,8 +1095,10 @@ router.post('/sections', (req, res) => {
             is_graded: false,
             file: req.body.data,
             comment: req.body.comment,
-            date_submitted: new Date(Date.now())
+            date_submitted: Date(req.body.time)
         }
+
+        console.log(submitObj);
 
         connection((db) => {
             const myDB = db.db('up-goe-db');
@@ -982,7 +1213,8 @@ router.post('/sections', (req, res) => {
                             $push: {
                                 students: {
                                     user_id: req.body.user_id,
-                                    status: "R"
+                                    status: "R",
+                                    badges: []
                                 }
                             }
                         }
@@ -1066,9 +1298,7 @@ router.get('/sections', (req, res) => {
     if (req.query.instructor) {
         console.log("enter search for section1");
         getSectionsofInstructor(req, res);
-    }
-
-    if (req.query.id) {
+    } else if (req.query.id) {
         console.log("/sections");
         console.log("req.query");
         console.log(req.query);
@@ -1711,15 +1941,12 @@ router.post('/updateUser', (req, res) => {
 
 });
 
-
 /**
  * @description portal for requests regarding Badges. api/badges
  * @author Cedric Yao Alvaro
+ * @author Donevir Hynson - modified 6 June 2018
  */
 router.post('/badges', (req, res) => {
-    console.log("METHOD!!!!!!!!!!!!!!!!!");
-    console.log(req.method);
-
     if (req.body.badgeData) {
         connection((db) => {
             const myDB = db.db('up-goe-db');
@@ -1741,9 +1968,6 @@ router.post('/badges', (req, res) => {
                                     myDB.collection('badges')
                                         .findOne({ badge_name: req.body.badgeData.badge_name })
                                         .then(badge => {
-                                            console.log('-------------------------');
-                                            console.log(badge);
-                                            console.log(req.body.sectionId);
                                             if (badge) {
                                                 myDB.collection('sections')
                                                     .updateOne({ _id: ObjectID(req.body.sectionId) }, {
@@ -1758,11 +1982,6 @@ router.post('/badges', (req, res) => {
                                         });
                                 }
                             });
-
-
-
-
-
                     }
                 })
                 .catch((err) => {
@@ -1771,7 +1990,6 @@ router.post('/badges', (req, res) => {
         });
         res.json(true);
     } else {
-
         connection((db) => {
             const myDB = db.db('up-goe-db');
             myDB.collection('badges')
@@ -1780,24 +1998,14 @@ router.post('/badges', (req, res) => {
                 .then((badges) => {
 
                     if (badges) {
-
                         Promise.all(badges).then((badge) => {
-                            console.log(req.body);
-                            console.log("===================");
-                            console.log(badge);
-
                             let earnedbadge = badge.filter((b) => {
-                                console.log("STreaks");
-                                console.log(b.badge_conditions.log_in_streak);
-                                console.log(req.body.conditions.log_in_streak);
                                 if (b.badge_conditions.log_in_streak <= req.body.conditions.log_in_streak) {
                                     return b;
                                 }
-
                             });
 
                             if (earnedbadge.length > 0) {
-
                                 Promise.all(earnedbadge).then((eb) => {
                                     console.log(eb[0]._id);
                                     connection((db) => {
@@ -1810,7 +2018,6 @@ router.post('/badges', (req, res) => {
                                                         "badge_attainers": req.body.user_id
                                                     }
                                                 }
-
                                             )
                                             .then(badge => {
                                                 console.log("badge updated");
@@ -1820,43 +2027,57 @@ router.post('/badges', (req, res) => {
                                                 sendError(err, res);
                                             });
                                     });
-
                                 });
-
                             } else {
-
                                 res.json(false);
-
                             }
-
-
-
                         });
-
                     } else {
                         res.json(false);
                     }
-
-
-
                 })
                 .catch((err) => {
                     sendError(err, res);
                 });
         });
-
     }
-
-
-
-
-
 });
 
 router.get('/badges', (req, res) => {
     console.log("IM IN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    if (req.query.method == "ALL") {
 
-    if (req.query.method && req.query.method == "getSectionBadges") {
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('badges')
+                .find()
+                .toArray()
+                .then((badges) => {
+                    if (badges) {
+                        res.json(badges);
+                    } else {
+                        res.json(false);
+                    }
+                })
+        });
+
+    } else if (req.query.badge_id) {
+
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('badges')
+                .find({ _id: ObjectID(req.query.badge_id) })
+                .toArray()
+                .then((badges) => {
+                    if (badges) {
+                        res.json(badges);
+                    } else {
+                        res.json(false);
+                    }
+                })
+        });
+
+    } else if (req.query.method && req.query.method == "getSectionBadges") {
         getSectionBadges(req, res);
     } else {
         connection((db) => {
@@ -2019,7 +2240,11 @@ router.post('/questLeaderboard', (req, res) => {
         myDB.collection('experiences')
             .find({
                 section_id: req.body.currSection,
-                is_graded: true
+                quests_taken: {
+                    $elemMatch: {
+                        is_graded: true
+                    }
+                }
             })
             .toArray()
             .then((experiences) => {
@@ -2033,7 +2258,7 @@ router.post('/questLeaderboard', (req, res) => {
                                 studentExp.push({
                                     studentId: exp.user_id,
                                     score: quest.quest_grade,
-                                    dateCompleted: quest.quest_date_completed
+                                    dateCompleted: quest.date_submitted
                                 });
                             }
                         });
@@ -2057,6 +2282,9 @@ router.post('/questLeaderboard', (req, res) => {
                                         }
                                     });
                                 });
+                                console.log('\n\nXP')
+                                console.log(studentExp);
+                                console.log('\n\n')
                                 response.data = studentExp;
                                 res.json(studentExp);
                             } else {
