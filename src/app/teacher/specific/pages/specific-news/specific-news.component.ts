@@ -158,17 +158,18 @@ export class SpecificNewsComponent implements OnInit {
 					this.commenters[index] = [];
 					this.comments[index] = [];
 					this.posters = [];
+					console.log(post);
 					this.userService.getUser(post.getUserId()).subscribe(user => {
 						console.warn(user);
 						let newUser = new User(user);
 						this.posters[index] = newUser;
-					});
-					post.getPostComments().forEach(postId => {
-						let newComment = newComments.find(comment => comment.getPostCommentId() == postId);
-						this.commentObserver.next({ parent_index: index, comment: newComment});
-					});
-					this.comments[index] = this.comments[index].sort((a, b) => {
-						return this.getTime(b.getPostDate()) - this.getTime(a.getPostDate());
+						post.getPostComments().forEach(postId => {
+							let newComment = newComments.find(comment => comment.getPostCommentId() == postId);
+							if(newComment){
+								console.log(newComment);
+								this.commentObserver.next({ parent_index: index, comment: newComment});
+							}
+						});
 					});
 				});
 				// console.warn(this.posters);
@@ -219,9 +220,12 @@ export class SpecificNewsComponent implements OnInit {
 		let newComment = new CommentPost(comment_info.comment);
 		this.userService.getUser(newComment.getUserId()).subscribe(user => {
 			let newUser = new User(user);
-			console.log(newUser);
+
 			this.commenters[comment_info.parent_index].push(newUser);
 			this.comments[comment_info.parent_index].push(newComment);
+			this.comments[comment_info.parent_index] = this.comments[comment_info.parent_index].sort((a, b) => {
+				return this.getTime(b.getPostDate()) - this.getTime(a.getPostDate());
+			});
 		});
 
 	}
