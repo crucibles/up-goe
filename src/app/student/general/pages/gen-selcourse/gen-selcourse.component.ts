@@ -96,8 +96,6 @@ export class GenSelcourseComponent implements OnInit {
 			section => instructorId == section.sectionData.getInstructor()
 		) : AsyncAction;
 
-		console.log(instructor);
-
 		return instructor && instructor.length > 0 ? instructor[0].instructorName: "";
 	}
 

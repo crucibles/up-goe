@@ -45,7 +45,6 @@
         <table id="hor-zebra" summary="Course List">
             <thead>
                 <tr>
-                    <th scope="col">Student #</th>
                     <th scope="col">Name</th>
                     <th scope="col">Grades (Max XP: {{this.getQuestMaxXp(questSelect.value)}})</th>
                     <th scope="col">Date Submitted</th>
@@ -62,7 +61,6 @@
                 </ng-container>
                 <ng-container *ngIf="submissions">
                     <tr *ngFor="let submission of submissions; let i = index">
-                        <td>{{submission.getUserSchoolId()}}</td>
                         <td>{{this.toStudentName(submission.getUserId())}}</td>
                         <td>
                             <!-- <form class="form-horizontal"> -->
