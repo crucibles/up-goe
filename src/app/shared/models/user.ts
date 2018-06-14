@@ -163,7 +163,6 @@ export class User {
 
     // if image does not exist or if user has not set an image
     if (!this.user_photo || this.user_photo.length == 0) {
-      console.warn("binary to picture");
       image = imageDir + "avatar";
     } else {
       image = imageDir + this.user_photo;

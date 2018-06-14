@@ -1,9 +1,8 @@
-<div *ngIf="!commentPosts">
-  Loading...
-  <img class="loading-icon" src="/assets/images/loading.gif" />
-</div>
-
 <body>
+  <div *ngIf="!commentPosts">
+    Loading...
+    <img class="loading-icon" src="/assets/images/loading.gif" />
+  </div>
   <div class="side-body">
     <div class="container">
       <div *ngIf="commentPosts" class="row">
@@ -43,54 +42,6 @@
                       </ng-container>
                     </article>
                   </div>
-                  <!--<div id="app" class="comments">
-                  <article>
-                    <img id="profile-photo" src="https://en.gravatar.com/userimage/18343163/3fd908393aedf6423ec12cacec9a1f50.jpg?size=200" />
-                    <h4>
-                      <a href="#">chrisburton</a>
-                    </h4>
-                    <h6 class="text-muted time">1 minute ago</h6>
-                    <p>Thank you for visiting all the way from New York. This is just a test to determine if the Twitter API
-                      is working as it should. You should see your profile image and your username at the very top that links
-                      to your account. You should also see that I wrote in a thank you introduction with your location.</p>
-                  </article>
-
-                  <article>
-                    <img id="profile-photo" src="https://d17oy1vhnax1f7.cloudfront.net/items/0W2c1j2B0S0v3X0Z4407/Screen%20Shot%202017-01-28%20at%201.01.44%20AM.png"
-                    />
-                    <h4>
-                      <a href="#">AnnaWintour</a>
-                    </h4>
-                    <h6 class="text-muted time">1 minute ago</h6>
-                    <p>
-                      <span class="reply">@chrisburton</span> +1. Really interesting reply.
-                    </p>
-                  </article>
-
-                  <article>
-                    <img id="profile-photo" src="https://25.media.tumblr.com/avatar_c5eeb4b2e95b_128.png" />
-                    <h4>
-                      <a href="#">wooster</a>
-                    </h4>
-                    <time>2 weeks ago</time>
-                    <p>Thank you for visiting all the way from an unknown location. This is just a test to determine if the
-                      Twitter API is working as it should. You should see your profile image and your username at the very
-                      top that links to your account. You should also see that I wrote in a thank you introduction with your
-                      location.
-                    </p>
-                  </article>
-
-                  <article>
-                    <img id="profile-photo" src="https://randomuser.me/api/portraits/men/32.jpg" />
-                    <h4>
-                      <a href="#">randomuser3</a>
-                    </h4>
-                    <time>1 week ago</time>
-                    <p>Thank you for visiting all the way from NYC. This is just a test to determine if the Twitter API is working
-                      as it should. You should see your profile image and your username at the very top that links to your
-                      account. You should also see that I wrote in a thank you introduction with your location.</p>
-                  </article>
-                </div>-->
                 </div>
                 <div class="action-box" style="padding-top: 20px">
                   <div *ngIf="!post.getCommentable()">
@@ -122,7 +73,7 @@
                             </a>
                           </li>
                         </ul>
-                        <button [disabled]="!commentContent || commentContent.length == 0" type="submit" class="btn btn-success green" (click)=submitComment(i)>
+                        <button [disabled]="!commentContent || commentContent.length == 0" type="submit" class="btn btn-success green" (click)="submitComment(i)">
                           <i class="fa fa-share"></i> Submit</button>
                       </div>
                     </div>

@@ -104,8 +104,8 @@ export class SpecificNewsComponent implements OnInit {
 		this.currentUser = new User(JSON.parse(localStorage.getItem("currentUser")));
 	}
 
-	createNewPost(){
-		if(this.createPostForm.invalid){
+	createNewPost() {
+		if (this.createPostForm.invalid) {
 			//AHJ: unimplemented; how to toaster
 			return;
 		}
@@ -115,10 +115,10 @@ export class SpecificNewsComponent implements OnInit {
 		let postContent = this.createPostForm.get('postContent').value;
 		let commentable = this.createPostForm.get('commentable').value;
 		newPost.setCommentPost(
-			this.section_id, 
-			this.currentUser.getUserId(), 
+			this.section_id,
+			this.currentUser.getUserId(),
 			postContent,
-			[], 
+			[],
 			new Date(Date.now()),
 			commentable,
 			true
@@ -126,7 +126,7 @@ export class SpecificNewsComponent implements OnInit {
 
 		this.commentPostService.addCommentPost(newPost).subscribe(x => {
 			console.log(x);
-		})
+		});
 	}
 
 	/**
@@ -147,24 +147,34 @@ export class SpecificNewsComponent implements OnInit {
 				//stores only main/parent commentposts to 'commentPosts' variable
 				this.commentPosts = commentPosts.filter(post => post.getIsPost() == true);
 
+				//stores comments from the array of section posts
+				let newComments = commentPosts.filter(post => post.getIsPost() == false);
+
 				//sorts commentPosts chronologically from recent to oldest
-				this.commentPosts.sort((a, b) => {
+				this.commentPosts = this.commentPosts.sort((a, b) => {
 					return this.getTime(b.getPostDate()) - this.getTime(a.getPostDate());
 				});
 
 				//obtain users/posters of each commentposts and stores it to 'posters' variable
 				this.commentPosts.forEach((post, index) => {
 					this.commenters[index] = [];
-					this.comments[index]= [];
+					this.comments[index] = [];
 					this.posters = [];
 					this.userService.getUser(post.getUserId()).subscribe(user => {
 						console.warn(user);
 						let newUser = new User(user);
 						this.posters[index] = newUser;
 					});
+					post.getPostComments().forEach(postId => {
+						let newComment = newComments.find(comment => comment.getPostCommentId() == postId);
+						this.commentObserver.next({ parent_index: index, comment: newComment});
+					});
+					this.comments[index] = this.comments[index].sort((a, b) => {
+						return this.getTime(b.getPostDate()) - this.getTime(a.getPostDate());
+					});
 				});
-				console.warn(this.posters);
-				this.getAllComments();
+				// console.warn(this.posters);
+				// this.getAllComments();
 			}
 		});
 	}
@@ -184,6 +194,9 @@ export class SpecificNewsComponent implements OnInit {
 				return this.getTime(a.getPostDate()) - this.getTime(b.getPostDate());
 			});
 		}
+
+		console.log(this.commentPosts);
+		console.log(this.comments);
 	}
 
 	/**
@@ -199,28 +212,32 @@ export class SpecificNewsComponent implements OnInit {
 	 */
 	appendComments(comment_info: any) {
 		//obtains the comment with id of comment_info.comment_id
-		this.commentPostService.getCommentPost(comment_info.comment_id)
-			.subscribe(comment => {
-				//obtain user/commenter of the commentpost and stores it to 'commenters' variable
-				let newComment = new CommentPost(comment);
-				
-				this.userService.getUser(newComment.getUserId()).subscribe(user => {
-					let newUser = new User(user);
+		// this.commentPostService.getCommentPost(comment_info.comment_id)
+		// 	.subscribe(comment => {
+		// 		//obtain user/commenter of the commentpost and stores it to 'commenters' variable
+		// 		let newComment = new CommentPost(comment);
 
-					this.commenters[comment_info.parent_index].push(newUser);
-					this.comments[comment_info.parent_index].push(newComment);
-				});
-			});
+		// 	});
+		let newComment = new CommentPost(comment_info.comment);
+		this.userService.getUser(newComment.getUserId()).subscribe(user => {
+			let newUser = new User(user);
+			console.log(newUser);
+			this.commenters[comment_info.parent_index].push(newUser);
+			this.comments[comment_info.parent_index].push(newComment);
+		});
+
 	}
 
-	initializeForm(){
+	initializeForm() {
 		this.createPostForm = this.formBuilder.group({
 			commentable: new FormControl("Y", Validators.required),
 			postContent: new FormControl("", Validators.required)
 		});
 	}
 
-	openCreatePostModal(){
+
+
+	openCreatePostModal() {
 		this.bsModalRef = this.modalService.show(this.createPostModal);
 	}
 
@@ -232,25 +249,17 @@ export class SpecificNewsComponent implements OnInit {
 		//creates a CommentPost instance of the new comment
 		let newComment: CommentPost = new CommentPost();
 		newComment.setCommentPost(this.section_id, this.currentUser.getUserId(), this.commentContent[parentPostIndex], "", new Date(), true, false);
-
+		console.log(newComment);
 		//add comment to the database
-		//AHJ: unimplemented; remove this.commentPostService.addCommentPost once attachComment function adds comment to database
-
 		//Note to self: must change appendComment to accomodate comment instead of comment_id for fewer querying
-		this.commentPostService.addCommentPost(newComment).subscribe(comment => {
-
-			newComment = new CommentPost(comment);
-			this.commentPostService.attachComment(newComment, this.commentPosts[parentPostIndex]).subscribe(() => {
-				//appends the comments (by calling appendComment() through commentObserver.next())
-				this.commentObserver.next(
-					{
-						parent_index: parentPostIndex,
-						comment_id: newComment.getPostCommentId()
-					}
-				);
-				//update checking
-				this.commentPostService.getSectionPosts("5a3807410d1126321c11e5ee").subscribe();
-			});
+		this.commentPostService.attachComment(newComment, this.commentPosts[parentPostIndex].getPostCommentId()).subscribe(() => {
+			//appends the comments (by calling appendComment() through commentObserver.next())
+			this.commentObserver.next(
+				{
+					parent_index: parentPostIndex,
+					comment: newComment
+				}
+			);
 		});
 
 		this.commentContent[parentPostIndex] = ""; //resets the comment
