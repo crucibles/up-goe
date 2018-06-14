@@ -14,8 +14,8 @@
             <br> Currently you have no announcements.</h6>
         </ng-container>
 
-        <div class="col-sm-offset-1 col-sm-8" *ngFor="let post of commentPosts; let i = index">
-          <div class="panel panel-white post panel-shadow" (click)="openSectionPage(post.section_id)">
+        <div class="col-sm-offset-1 col-sm-8 post-container" *ngFor="let post of commentPosts; let i = index">
+          <div class="panel panel-white post panel-shadow" (click)="openSectionPage(post.getSectionId())">
             <div class="post-heading" *ngIf="allPostersLoaded[i] | async">
               <div class="pull-left image">
                 <img src="{{this.posters[i].getUserPhoto()}}" class="img-circle avatar" alt="user profile image">
@@ -27,11 +27,17 @@
                   </a>
                   made a post.
                 </div>
-                <h6 class="text-muted time">{{this.displayTimeDate(post.post_date)}}</h6>
+                <h6 class="text-muted time">{{this.displayTimeDate(post.getPostDate())}}</h6>
               </div>
             </div>
             <div class="post-description">
-              <p>{{post.post_content}}</p>
+              <p>{{post.getPostContent()}}</p>
+              <div *ngIf="post.getPostData()">
+                <button (click)="download(post.getPostData())" type="button" class="btn btn-success">
+                  <i class="fa fa-download"></i>
+                </button>
+                {{post.getPostData()}}
+              </div>
               <br class="clear" />
               <div class="action-box" style="padding-top: 20px">
                 <a>Click on this post to show comments or reply to this post...</a>

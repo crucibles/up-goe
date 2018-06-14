@@ -22,6 +22,7 @@ export class CommentPost {
   private post_date: Date;
   private commentable: boolean;
   private is_post: boolean;
+  private data: string;
 
   constructor(
     commentPost?: any
@@ -35,6 +36,7 @@ export class CommentPost {
       this.post_date = commentPost.post_date? new Date(commentPost.post_date): new Date();
       this.commentable = commentPost.commentable? commentPost.commentable: true;
       this.is_post = commentPost.is_post? commentPost.is_post: false;
+      this.data = commentPost.data? commentPost.data: "";
     } else {
       this.section_id = "";
       this.user_id = "";
@@ -43,6 +45,7 @@ export class CommentPost {
       this.post_date = new Date();
       this.commentable = true;
       this.is_post = false;
+      this.data = "";
     }
   }
 
@@ -54,6 +57,7 @@ export class CommentPost {
     post_date,
     commentable,
     is_post,
+    data
   ) {
     this.section_id = section_id;
     this.user_id = user_id;
@@ -62,10 +66,15 @@ export class CommentPost {
     this.post_date = post_date;
     this.commentable = commentable;
     this.is_post = is_post;
+    this.data = data;
   }
 
   getPostCommentId() {
     return this._id;
+  }
+
+  getPostData() {
+    return this.data;
   }
 
   getUserId() {

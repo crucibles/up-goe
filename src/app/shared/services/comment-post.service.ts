@@ -71,7 +71,8 @@ export class CommentPostService {
 			post_comments: comment.getPostComments(),
 			post_date: comment.getPostDate(),
 			commentable: comment.getCommentable(),
-			is_post: comment.getIsPost()
+			is_post: comment.getIsPost(),
+			data: comment.getPostData()
 		};
 
 		return this.http.post<CommentPost>(this.postUrl, body).pipe(
@@ -197,13 +198,12 @@ export class CommentPostService {
    * @returns commentpost array of the enrolled sections of the user
    */
   getUserPosts(sections: any): Observable<CommentPost[]> {
-
-    let enrolled = this.sectionService.getUserEnrolledSections();
-
     const url = this.postUrl;
+		
     let params = new HttpParams()
-      .set('sections', sections);
-
+			.set('sections', sections);
+			
+		console.log(sections);
 
     return this.http.get<CommentPost[]>(url, {
       params: params

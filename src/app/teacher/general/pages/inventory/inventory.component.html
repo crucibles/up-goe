@@ -76,7 +76,7 @@
 				<div class="col-md-3">
 					Item Image
 					<label for="custom-btn-upload" class="btn btn-warning btn-upload">Upload</label>
-					<input type="file" id="custom-btn-upload" accept="image/*" formControlName="itemImage" (change)="itemImageEvent($event)">
+					<input type="file" id="custom-btn-upload" accept="image/*" formControlName="itemImage" (change)="itemImageEvent($event)" ng2FileSelect [uploader]="uploader">
 				</div>
 				<div class="col-md-3 image-right">
 					<img class="item-img" [src]="itemImgUrl" />
@@ -145,7 +145,7 @@
 				<div class="col-md-3">
 					Badge Image
 					<label for="custom-btn-upload" class="btn btn-warning btn-upload">Upload</label>
-					<input type="file" name="appImage" id="custom-btn-upload" formControlName="badgeImage" (change)="badgeImageEvent($event)">
+					<input type="file" name="appImage" id="custom-btn-upload" formControlName="badgeImage" (change)="badgeImageEvent($event)" ng2FileSelect [uploader]="uploader">
 				</div>
 				<div class="col-md-3 image-right">
 					<img class="item-img" [src]="badgeImgUrl" />
@@ -203,7 +203,7 @@
 		<!-- Quest Modal Buttons -->
 		<div class="modal-footer">
 			<!-- shows submit & abandon buttons if user is a participant -->
-			<button type="submit" class="btn btn-success mr-auto" (click)="createBadge()">Create</button>
+			<button type="submit" class="btn btn-success mr-auto" (click)="uploader.queue.length>0?uploader.uploadAll(): createBadge(null)">Create</button>
 			<button class="btn btn-danger" (click)="badgeForm.reset();bsModalRef.hide()">Cancel</button>
 		</div>
 	</form>

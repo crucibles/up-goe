@@ -151,15 +151,6 @@ export class SpecificMyCourseComponent implements OnInit {
 		this.classmateClicked = classmate;
 		if (this.classmateClicked) {
 			this.bsModalRef = this.modalService.show(studentTemplate);
-			this.getClassmateBadges();
 		}
-	}
-
-	getClassmateBadges() {
-		//AHJ: unimplemented; idk unsay method gamiton pra maobtain ang badges sa isa ka student however I just create an array of dummy
-		//badges to display
-		this.badgeService.getSectionBadges(this.sectionService.getCurrentSection().getSectionId()).subscribe(badges => {
-			this.badgesDisplay = badges.map(badge => new Badge(badge));
-		});
 	}
 }

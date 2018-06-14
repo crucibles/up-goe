@@ -18,8 +18,13 @@ import {
     CommentPostService,
     PageService,
     UserService,
-    SectionService
+    SectionService,
+    FileService
 } from 'shared/services';
+
+import {
+	saveAs
+} from 'file-saver';
 
 @Component({
     selector: 'app-gen-news',
@@ -39,7 +44,8 @@ export class GenNewsComponent implements OnInit {
         private pageService: PageService,
         private userService: UserService,
         private sectionService: SectionService,
-        private router: Router
+        private router: Router,
+        private fileService: FileService
     ) {
         this.pageService.isProfilePage(false);
     }
@@ -54,7 +60,9 @@ export class GenNewsComponent implements OnInit {
 	 * @returns array of commentposts
 	 */
     getAllCommentPost() {
-        this.commentPostService.getUserPosts(this.sectionService.getCurrentUserEnrolledSectionIds()).subscribe(commentPosts => {
+        let es = this.sectionService.getCurrentUserEnrolledSectionIds();
+        console.log(es);
+        this.commentPostService.getUserPosts(es).subscribe(commentPosts => {
 
             if (commentPosts) {
 
@@ -82,12 +90,21 @@ export class GenNewsComponent implements OnInit {
                     });
                 });
 
+                this.commentPosts = this.commentPosts.map(cp => new CommentPost(cp));
+
             }
 
 
 
-        })
+        });
     }
+
+	download(fn: any) {
+		this.fileService.download(fn).subscribe(res => {
+			saveAs(res, fn);
+			err => console.warn(err);
+		})
+	}
 
 
 

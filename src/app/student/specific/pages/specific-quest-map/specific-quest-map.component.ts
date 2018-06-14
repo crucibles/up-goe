@@ -46,6 +46,7 @@ import Chart = require('chart.js');
 import { 
 	ToastsManager 
 } from 'ng2-toastr';
+import { FileUploader } from 'ng2-file-upload/ng2-file-upload';
 
 @Component({
 	selector: 'app-specific-quest-map',
@@ -60,6 +61,8 @@ export class SpecificQuestMapComponent implements OnInit {
 	chartData: Array<any> = [];
 	// Stored here is the security questions in the sign up form.
 	private quests: Quest[] = new Array();
+	private url = 'api/upload';
+	public uploader: FileUploader = new FileUploader({ url: this.url, itemAlias: 'file' });
 
 	// quest map chart
 	xTick: number;
@@ -102,9 +105,20 @@ export class SpecificQuestMapComponent implements OnInit {
 	) {
 		this.currentUser = this.userService.getCurrentUser();
 		this.currentSection = new Section(this.sectionService.getCurrentSection());
+		this.uploader = new FileUploader({ url: this.url, itemAlias: 'file' });
+
 	}
 
 	ngOnInit() {
+		//override the onAfterAddingfile property of the uploader so it doesn't authenticate with //credentials.
+		this.uploader.onAfterAddingFile = (file) => { file.withCredentials = false; };
+		//overide the onCompleteItem property of the uploader so we are 
+		//able to deal with the server response.
+		this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
+			this.toaster.success("Well done!", "Upload success!");
+			this.submitQuest(JSON.parse(response));
+		};
+
 		this.setDefault();
 		this.getCurrentUser();
 		this.getCurrentSection();
@@ -267,7 +281,8 @@ export class SpecificQuestMapComponent implements OnInit {
 	setDefault() {
 		this.pageService.isProfilePage(false);
 		this.currentUser = this.userService.getCurrentUser();
-		this.currentSection = this.sectionService.getCurrentSection();
+		this.currentSection = new Section(this.sectionService.getCurrentSection());
+		console.log(this.currentSection);
 	}
 
 	/**
@@ -301,7 +316,7 @@ export class SpecificQuestMapComponent implements OnInit {
 
 	}
 
-	submitQuest(comment) {
+	submitQuest(res: any) {
 		//AHJ: unimplemented; remove variable below if submitQuest properly implemented
 		this.toaster.success(
 			"Your quest have been submitted. Wait until it is graded.",
@@ -311,13 +326,15 @@ export class SpecificQuestMapComponent implements OnInit {
 		let quest_id = this.questClicked.getQuestId();
 		let section_id = this.currentSection.getSectionId();
 		
-		this.questService.submitQuest("hello", this.commentBox, user_id, quest_id, section_id).subscribe((result) => {
+		this.questService.submitQuest(res, this.commentBox, user_id, quest_id, section_id).subscribe((result) => {
 			this.isQuestTakn = true;
 			this.pending = true;
+			this.commentBox = "";
 			this.questService.getUserJoinedQuests(user_id).subscribe(x => {
 			})
+			console.log("hide!");
+			this.questModalRef.hide();
 		});
-		this.questModalRef.hide();
 	}
 
 	abandonQuest() {
