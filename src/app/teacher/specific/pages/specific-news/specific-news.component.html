@@ -38,6 +38,10 @@
 					</div>
 					<div class="post-description">
 						<div>{{post.getPostContent()}}</div>
+						<div *ngIf="post.getPostData()">
+							<button (click)="download(post.getPostData())" type="button" class="btn btn-success"><i class="fa fa-download"></i></button>
+							{{post.getPostData()}}
+						</div>
 						<br class="clear" />
 						<div class="action-box" style="padding-top: 20px" *ngIf="post.post_comments && post.post_comments.length != 0">
 							<div id="app" class="comments">
@@ -62,12 +66,12 @@
 									<div>
 										<textarea [(ngModel)]="commentContent[i]" placeholder="Reply to this post..."></textarea>
 										<ul>
-											<li>
-												<a title="" tooltip="'Audio'" data-placement="bottom" data-original-title="Audio">
-													<i class="fa fa-music"></i>
+											<!-- <li>
+												<a title="" tooltip="'File'" data-placement="bottom" data-original-title="File">
+													<i class="fa fa-paperclip"></i>
 												</a>
-											</li>
-											<li>
+											</li> -->
+											<!-- <li>
 												<a title="" tooltip="'Video'" data-placement="bottom" data-original-title="Video">
 													<i class="fa fa-video-camera"></i>
 												</a>
@@ -81,7 +85,7 @@
 												<a title="" tooltip="'Picture'" data-placement="bottom" data-original-title="Picture">
 													<i class="fa fa-picture-o"></i>
 												</a>
-											</li>
+											</li> -->
 										</ul>
 										<button [disabled]="!commentContent || commentContent.length == 0" type="submit" class="btn btn-success green" (click)=submitComment(i)>
 											<i class="fa fa-share"></i> Submit</button>
@@ -133,11 +137,18 @@
 									<textarea formControlName="postContent" placeholder="Place your post content here..."></textarea>
 									<ul>
 										<li>
-											<a title="" tooltip="'Audio'" data-placement="bottom" data-original-title="Audio">
-												<i class="fa fa-music"></i>
-											</a>
+											<label for="file" title="" tooltip="'File'" data-placement="bottom" data-original-title="File">
+												<i class="fa fa-paperclip"></i>
+											</label>
+											<!-- File input for the file-upload plugin, with special ng2-file-upload directive called ng2FileSelect -->
+											<input id="file" type="file" name="photo" multiple ng2FileSelect [uploader]="uploader" />
 										</li>
-										<li>
+										<li *ngIf="uploader.queue.length > 0">
+											<label>
+												{{uploader.queue[0].file.name}}
+											</label>
+										</li>
+										<!-- <li>
 											<a title="" tooltip="'Video'" data-placement="bottom" data-original-title="Video">
 												<i class="fa fa-video-camera"></i>
 											</a>
@@ -151,9 +162,9 @@
 											<a title="" tooltip="'Picture'" data-placement="bottom" data-original-title="Picture">
 												<i class="fa fa-picture-o"></i>
 											</a>
-										</li>
+										</li> -->
 									</ul>
-									<button [disabled]="createPostForm.invalid" type="submit" class="btn btn-success green" (click)="createNewPost()">
+									<button [disabled]="createPostForm.invalid && uploader.queue.length == 0" type="submit" class="btn btn-success green" (click)="uploader.queue.length>0?uploader.uploadAll(): createNewPost()">
 										<i class="fa fa-share"></i> Submit</button>
 								</div>
 							</div>

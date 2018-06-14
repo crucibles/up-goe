@@ -1,5 +1,3 @@
-import { Binary } from "@angular/compiler";
-
 /**
  * A class to represent badges
  * @class
@@ -26,7 +24,7 @@ export class Badge {
     ) {
         if (badge) {
             this._id = badge._id;
-            this.badge_name = badge.badge_name? badge.badge_name: "";
+            this.badge_name = badge.badge_name ? badge.badge_name : "";
             this.badge_photo = badge.badge_photo ? badge.badge_photo : "";
             this.badge_description = badge.badge_description ? badge.badge_description : "";
             this.badge_conditions = badge.badge_conditions ? new Conditions(badge.badge_conditions) : new Conditions();
@@ -50,7 +48,7 @@ export class Badge {
         is_system_badge,
         badge_attainers
     ) {
-        this.badge_name = badge_name? badge_name : "";
+        this.badge_name = badge_name ? badge_name : "";
         this.badge_photo = badge_photo ? badge_photo : "";
         this.badge_description = badge_description ? badge_description : "";
         this.badge_conditions = badge_conditions ? badge_conditions : new Conditions();
@@ -74,7 +72,6 @@ export class Badge {
     // }
     getBadgePhoto(): string {
         let image: string = "";
-
         // if image does not exist or if user has not set an image
         if (!this.badge_photo || this.badge_photo.length == 0) {
             image = this.imageDir + "not-found.jpg";
@@ -105,7 +102,7 @@ export class Badge {
         this._id = _id;
     }
 
-    setBadgeName(badge_name: string){
+    setBadgeName(badge_name: string) {
         this.badge_name = badge_name;
     }
 
@@ -179,7 +176,7 @@ export class Conditions {
         }
     }
 
-    addToLoggedInTotal(){
+    addToLoggedInTotal() {
         let date = new Date(Date.now());
         this.log_in_streak++;
         this.log_in_total.push(date);

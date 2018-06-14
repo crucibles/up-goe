@@ -39,7 +39,6 @@ import {
   SharedModule
 } from 'shared/shared.module';
 
-import { FileSelectDirective } from 'ng2-file-upload';
 
 @NgModule({
   imports: [
@@ -54,8 +53,7 @@ import { FileSelectDirective } from 'ng2-file-upload';
     GenNewsComponent,
     GenProfileComponent,
     GenTopnavbarComponent,
-    GenSelcourseComponent,
-		FileSelectDirective
+    GenSelcourseComponent
   ],
   bootstrap: [
     GeneralComponent
