@@ -197,13 +197,12 @@ export class CommentPostService {
    * @returns commentpost array of the enrolled sections of the user
    */
   getUserPosts(sections: any): Observable<CommentPost[]> {
-
-    let enrolled = this.sectionService.getUserEnrolledSections();
-
     const url = this.postUrl;
+		
     let params = new HttpParams()
-      .set('sections', sections);
-
+			.set('sections', sections);
+			
+		console.log(sections);
 
     return this.http.get<CommentPost[]>(url, {
       params: params

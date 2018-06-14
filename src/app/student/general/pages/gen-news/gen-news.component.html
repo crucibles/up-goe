@@ -14,7 +14,7 @@
             <br> Currently you have no announcements.</h6>
         </ng-container>
 
-        <div class="col-sm-offset-1 col-sm-8" *ngFor="let post of commentPosts; let i = index">
+        <div class="col-sm-offset-1 col-sm-8 post-container" *ngFor="let post of commentPosts; let i = index">
           <div class="panel panel-white post panel-shadow" (click)="openSectionPage(post.section_id)">
             <div class="post-heading" *ngIf="allPostersLoaded[i] | async">
               <div class="pull-left image">

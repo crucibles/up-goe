@@ -736,7 +736,7 @@ router.get('/posts', (req, res) => {
 
                         if (posts) {
 
-                            forEach(posts, processPosts, afterAll);
+                            async.forEach(posts, processPosts, afterAll);
 
                             function processPosts(post, callback) {
 
@@ -904,7 +904,7 @@ router.post('/sections', (req, res) => {
         if (req.body.abandon) {
             abandonQuest(req, res);
         } else {
-            if (req.body.data) {
+            if (req.body.method && req.body.method == "submitQuest") {
                 //upload here
                 submitQuest(req, res);
             } else {
@@ -969,8 +969,6 @@ router.post('/sections', (req, res) => {
 
     function submitQuest(req, res) {
 
-
-
         var submitObj = {
             quest_id: req.body.quest_id,
             quest_grade: 0,
@@ -983,6 +981,10 @@ router.post('/sections', (req, res) => {
 
         connection((db) => {
             const myDB = db.db('up-goe-db');
+            console.log("--------------------------------asdsadad-------------marj");
+            console.log(req.body);
+            console.log(req.body.quest_id);
+            console.log(req.body.user_id);
 
             myDB.collection('experiences')
                 .updateOne(
