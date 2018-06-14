@@ -72,7 +72,6 @@ export class GenProfileComponent implements OnInit {
 
     badges: Badge[];
     // lineChart
-    isChartReady: boolean = false;
     lineChartColors: Array<any>;
     lineChartData: Array<any> = [];
     lineChartLabels: Array<any> = ['Week 0', 'Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7', 'Week 8', 'Week 9', 'Week 10', 'Week 11', 'Week 12', 'Week 13', 'Week 14', 'Week 15', 'Week 16'];
@@ -101,7 +100,6 @@ export class GenProfileComponent implements OnInit {
 
     ngOnInit() {
         this.pageService.isProfilePage(true);
-        this.isChartReady = false;
         this.getUser();
         this.userService.updateUserConditions(this.userService.getCurrentUser().getUserId()).subscribe((x) => {
 
@@ -179,25 +177,24 @@ export class GenProfileComponent implements OnInit {
     * Sets the performance graph's displayed data in the profile page
     */
     setPerformanceGraphData() {
-        let dataGrade: number[] = [];
         let max: number = MAXXP ? MAXXP : 10;
         this.courseSections.forEach(courseSection => {
             this.experienceService.getSectionGrades(new Section(courseSection.section).getSectionId(), this.user.getUserId())
-                .subscribe(sectionSubmissions => {
-                    let courseSec = courseSection;
-                    if (sectionSubmissions.length > 0) {
-                        let submissions = sectionSubmissions.map(submission => new Experience(submission))[0];
-
+            .subscribe(sectionSubmissions => {
+                let courseSec = courseSection;
+                if (sectionSubmissions.length > 0) {
+                    let submissions = sectionSubmissions.map(submission => new Experience(submission))[0];
+                    let section = new Section(courseSec.section);
+                    let dataGrade: number[] = [];
+                    
                         let grades = submissions.getWeeklyAccumulativeGrades();
                         grades.forEach(grade => {
                             // get the decimal percentage
                             let percentage: number = (grade / MAXXP) * 100;
-
+                            
                             // round the decimal up to two decimal points
                             dataGrade.push(Math.round((percentage + 0.00001) * 100) / 100);
                         });
-
-                        let section = new Section(courseSec.section);
                         
                         this.lineChartColors = this.pageService.lineChartColors;
                         let rand: number = this.lineChartData && this.lineChartData.length? this.lineChartData.length % this.lineChartColors.length: 0;
@@ -212,15 +209,14 @@ export class GenProfileComponent implements OnInit {
                             pointHoverBackgroundColor: color.pointHoverBackgroundColor,
                             pointHoverBorderColor: color.pointHoverBorderColor
                         };
-                        
+
+
                         if (!this.chart || this.lineChartData.length == 0) {
                             this.lineChartData.push(dataLine);
-                            this.isChartReady = true;
                             this.setPerformanceGraph();
                         } else {
-                            let chartData = this.lineChartData;
-                            chartData.push(dataLine);
-                            this.lineChartData = chartData;
+                            this.lineChartData.push(dataLine);
+                            this.chart.config.data.datasets = this.lineChartData;
                             this.chart.update();
                         }
                     }

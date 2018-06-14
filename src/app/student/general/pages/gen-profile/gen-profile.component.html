@@ -11,24 +11,10 @@
   </ng-container>
   <!--Line Graph for performance-->
   <div class="row">
-    <div style="display: block" *ngIf="isChartReady">
+    <div style="display: block">
       <canvas id="performance-graph" baseChart width="650" height="300" (chartHover)="chartHovered($event)" (chartClick)="chartClicked($event)"></canvas>
     </div>
   </div>
-
-  <!--Table for the performance-->
-  <!--<div class="row">
-    <div style="margin-bottom: 10px">
-      <table class="table table-responsive table-condensed">
-        <tr>
-          <th *ngFor="let label of lineChartLabels">{{label}}</th>
-        </tr>
-        <tr *ngFor="let d of lineChartData">
-          <td *ngFor="let label of lineChartLabels; let j=index">{{d && d.data[j]}}</td>
-        </tr>
-      </table>
-    </div>
-  </div>-->
 
 </section>
 
