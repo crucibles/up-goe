@@ -96,7 +96,7 @@ export class GenSelcourseComponent implements OnInit {
 			section => instructorId == section.sectionData.getInstructor()
 		) : AsyncAction;
 
-		return instructor && instructor.length > 0? instructor[0].instructorName: "";
+		return instructor && instructor.length > 0 ? instructor[0].instructorName: "";
 	}
 
 	getInstructors() {
@@ -123,6 +123,10 @@ export class GenSelcourseComponent implements OnInit {
 			this.userService.getUser(section.sectionData.getInstructor()).subscribe(res => {
 				section.instructorName = (new User(res).getUserFullName());
 			});
+		});
+
+		this.tempSections.forEach(section => {
+			console.log(section.instructorName);
 		});
 	}
 
