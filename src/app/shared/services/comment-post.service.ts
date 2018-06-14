@@ -166,76 +166,74 @@ export class CommentPostService {
 		);
 	}
 
-	/**
-	 * Obtains the posts from a section based on section's id.
-	 * @param section_id section id of the section whose posts are to be retrieved
-	 * 
-	 * @returns {CommentPost[]} commentpost array of the chosen section
-	 */
-	getSectionPosts(section_id: string): Observable<CommentPost[]> {
-		const url = this.postUrl;
+  /**
+   * Obtains the posts from a section based on section's id.
+   * @param section_id section id of the section whose posts are to be retrieved
+   * 
+   * @returns {CommentPost[]} commentpost array of the chosen section
+   */
+  getSectionPosts(section_id: string): Observable<CommentPost[]> {
+    const url = this.postUrl;
 
-		let params = new HttpParams()
-			.set('section_id', section_id)
-			.set('method', "getSectionPosts");
+    let params = new HttpParams()
+      .set('section_id', section_id)
+      .set('method', "getSectionPosts");
 
-		return this.http.get<CommentPost[]>(url, {
-			params: params
-		}).pipe(
-			tap(h => {
-				const outcome = h ? 'fetched section ' + section_id : 'did not find section ' + section_id;
-				console.log(outcome);
-			}),
-			catchError(this.handleError<CommentPost[]>(`getSectionPosts section_id=${section_id}`))
-		);
-	}
+    return this.http.get<CommentPost[]>(url, {
+      params: params
+    }).pipe(
+      tap(h => {
+        const outcome = h ? 'fetched section ' + section_id : 'did not find section ' + section_id;
+        console.log(outcome);
+      }),
+      catchError(this.handleError<CommentPost[]>(`getSectionPosts section_id=${section_id}`))
+    );
+  }
 
-	/**
-	 * Obtains all posts from all sections the user is enrolled in
-	 * @param sections info needed about the user sections
-	 * 
-	 * @returns commentpost array of the enrolled sections of the user
-	 */
-	getUserPosts(sections: any): Observable<CommentPost[]> {
-		console.log(sections);
+  /**
+   * Obtains all posts from all sections the user is enrolled in
+   * @param sections info needed about the user sections
+   * 
+   * @returns commentpost array of the enrolled sections of the user
+   */
+  getUserPosts(sections: any): Observable<CommentPost[]> {
 
-		let enrolled = this.sectionService.getUserEnrolledSections();
+    let enrolled = this.sectionService.getUserEnrolledSections();
 
-		console.log(enrolled);
-		const url = this.postUrl;
-		let params = new HttpParams()
-			.set('sections', sections);
+    const url = this.postUrl;
+    let params = new HttpParams()
+      .set('sections', sections);
 
 
-		return this.http.get<CommentPost[]>(url, {
-			params: params
-		}).pipe(
-			tap(posts => {
-				const outcome = posts ? 'fetched commentposts ' + sections : 'did not find commentposts ' + sections;
-				console.log(outcome);
-			}),
-			catchError(this.handleError<CommentPost[]>(`getSectionPosts section_id=${sections}`))
-		);
-	}
+    return this.http.get<CommentPost[]>(url, {
+      params: params
+    }).pipe(
+      tap(posts => {
+        const outcome = posts ? 'fetched commentposts ' + sections : 'did not find commentposts ' + sections;
+        console.log(outcome);
+      }),
+      catchError(this.handleError<CommentPost[]>(`getSectionPosts section_id=${sections}`))
+    );
+  }
 
-	/**
-	 * Handle Http operation that failed.
-	 * Let the app continue.
-	 * @param operation name of the operation that failed
-	 * @param result optional value to return as the observable result
-	 */
-	private handleError<T>(operation = 'operation', result?: T) {
-		return (error: any): Observable<T> => {
+  /**
+   * Handle Http operation that failed.
+   * Let the app continue.
+   * @param operation name of the operation that failed
+   * @param result optional value to return as the observable result
+   */
+  private handleError<T>(operation = 'operation', result?: T) {
+    return (error: any): Observable<T> => {
 
-			// TODO: send the error to remote logging infrastructure
-			console.error(error); // log to console instead
+      // TODO: send the error to remote logging infrastructure
+      console.error(error); // log to console instead
 
-			// TODO: better job of transforming error for user consumption
-			console.log(`${operation} failed: ${error.message}`);
+      // TODO: better job of transforming error for user consumption
+      console.log(`${operation} failed: ${error.message}`);
 
-			// Let the app keep running by returning an empty result.
-			return of(result as T);
-		};
-	}
+      // Let the app keep running by returning an empty result.
+      return of(result as T);
+    };
+  }
 
 }

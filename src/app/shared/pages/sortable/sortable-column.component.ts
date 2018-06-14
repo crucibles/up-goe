@@ -8,8 +8,9 @@ import { SortService } from 'shared/services';
 })
 export class SortableColumnComponent implements OnInit, OnDestroy {
 
-    constructor(private sortService: SortService) {
-        console.log("constructed");
+    constructor(
+        private sortService: SortService
+    ) {
     }
 
     @Input('sortable-column')
@@ -22,16 +23,13 @@ export class SortableColumnComponent implements OnInit, OnDestroy {
 
     @HostListener('click')
     sort() {
-        console.log("CLCIK");
         this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
         this.sortService.columnSorted({ sortColumn: this.columnName, sortDirection: this.sortDirection });
     }
 
     ngOnInit() {
-        console.log("ENTEREd SORT");
         // subscribe to sort changes so we can react when other columns are sorted
         this.columnSortedSubscription = this.sortService.columnSorted$.subscribe(event => {
-            console.log("INSIDE SORT");
             // reset this column's sort direction to hide the sort icons
             if (this.columnName != event.sortColumn) {
                 this.sortDirection = '';

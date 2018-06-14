@@ -31,9 +31,6 @@ export class Section {
             this.students = section.students? section.students.map(student => new Student(student)) : [];
             this.instructor = section.instructor ? section.instructor : "";
             this.quests = section.quests ? section.quests.map(quest => new SectionQuest(quest)) : [];
-            if(!section.quests){
-                console.log("EMPTY");
-            }
             this.items = section.items ? section.items : [];
             this.badges = section.badges ? section.badges : [];
             this.schedule = section.schedule? section.schedule: [];
@@ -269,8 +266,6 @@ export class SectionQuest {
     constructor(
         sectionQuest?: any
     ) {
-        console.log("sectionQuest");
-        console.log(sectionQuest);
         if(sectionQuest){
             this.quest_id = sectionQuest.quest_id ? sectionQuest.quest_id: "";
             this.quest_participants = sectionQuest.quest_participants ? sectionQuest.quest_participants: [];

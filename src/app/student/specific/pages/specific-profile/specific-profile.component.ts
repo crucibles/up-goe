@@ -103,7 +103,6 @@ export class SpecificProfileComponent implements OnInit {
                 this.userSubmission = submissions.map(submission => new Experience(submission))[0];
 
                 let grades = this.userSubmission.getWeeklyAccumulativeGrades();
-                console.log(grades);
                 grades.forEach(grade => {
                     // get the decimal percentage
                     let percentage: number = (grade / MAXXP) * 100;
@@ -146,7 +145,6 @@ export class SpecificProfileComponent implements OnInit {
      * @param e 
      */
     public chartClicked(e: any): void {
-        console.log(e);
     }
 
     /**
@@ -156,6 +154,5 @@ export class SpecificProfileComponent implements OnInit {
      * @param e 
      */
     public chartHovered(e: any): void {
-        console.log(e);
     }
 }

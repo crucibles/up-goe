@@ -85,12 +85,10 @@ export class SignUpComponent implements OnInit {
         ).subscribe(newUser => {
             if (newUser) {
                 // Successful registration of user and redirects to login page.
-                console.log("A new user is registered!");
                 this.router.navigate(['/log-in']);
             } else {
                 // Unsuccessful registration of new user because of email already existing.
                 // Sets signal to prompt warning message of already existing email.
-                console.log("New user failed to register!");
                 this.toastr.error("Email already existed", "Failed to register");
                 this.duplicate = email;
             }

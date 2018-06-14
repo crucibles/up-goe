@@ -17,7 +17,7 @@
 			<tr>
 				<th scope="col" sortable-column="courseName" sort-direction="asc">Course Name</th>
 				<th scope="col" sortable-column="sectionName">Section</th>
-				<th scope="col" sortable-column="instructor">Instructor</th>
+				<th scope="col">Instructor</th>
 				<th scope="col">Status</th>
 				<th scope="col">Day</th>
 				<th scope="col">Time</th>
@@ -40,7 +40,7 @@
 						</td>
 						<td *ngIf="this.getStatusOfSection(this.section.section.students) != 'Enrolled'">{{section.course_name}}</td>
 						<td>{{section.section.section_name}}</td>
-						<td>{{section.section.instructor}}</td>
+						<td>{{this.toInstructor(section.section.instructor)}}</td>
 						<td>{{getStatusOfSection(this.section.section.students)}}</td>
 						<td>
 							<div *ngFor="let schedule of section.section.schedule">

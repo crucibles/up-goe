@@ -80,7 +80,6 @@ export class GenSelcourseComponent implements OnInit {
 	ngOnInit() {
 		let url = this.router.routerState.snapshot.url.split("/");
 		//add toaster or warning to student what happened why redirected here
-		console.log(url[2]);
 		if (url[2] == "specific") {
 			this.pageService.isProfilePage(false);
 			this.router.navigate(['student/general/select-course']);
@@ -99,7 +98,7 @@ export class GenSelcourseComponent implements OnInit {
 
 		console.log(instructor);
 
-		return instructor && instructor[0] && instructor[0].instructorName? instructor[0].instructorName: "";
+		return instructor && instructor.length > 0 ? instructor[0].instructorName: "";
 	}
 
 	getInstructors() {
@@ -127,6 +126,10 @@ export class GenSelcourseComponent implements OnInit {
 				section.instructorName = (new User(res).getUserFullName());
 			});
 		});
+
+		this.tempSections.forEach(section => {
+			console.log(section.instructorName);
+		});
 	}
 
 	/**
@@ -136,16 +139,10 @@ export class GenSelcourseComponent implements OnInit {
 		let currentUser = JSON.parse(localStorage.getItem("currentUser"));
 		this.userService.getUser(currentUser._id)
 			.subscribe(user => {
-				console.warn(user);
 				this.user = new User(user);
 				this.getUserSections(this.user.getUserId());
 				if (!this.user.isLoggedInToday()) {
-					console.log("this.user");
-					console.log(this.user);
 					this.userService.updateUserConditions(this.user.getUserId()).subscribe(x => {
-						console.log("done updating");
-						console.log("result" + x);
-						console.log(this.user);
 						this.badgeModal.open();
 						this.user.setLoggedInToday();
 						this.userService.setCurrentUser(this.user);
@@ -207,14 +204,12 @@ export class GenSelcourseComponent implements OnInit {
 			this.isSearching = false;
 
 		} else if (this.course_search.length == 24) {
-			console.log("id");
 			this.isSearching = true;
 			this.sectionService.searchSection(this.course_search).subscribe((sections) => {
 				this.course_found = sections;
 			})
 
 		} else if (this.course_search.length > 0) {
-			console.log(">0");
 			this.sectionService.searchSection(this.course_search).subscribe((sections) => {
 				console.warn(sections);
 				this.isSearching = true;

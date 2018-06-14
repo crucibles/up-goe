@@ -5,7 +5,8 @@ import {
 } from '@angular/core';
 
 import { 
-    ActivatedRoute, Router 
+    ActivatedRoute, 
+    Router 
 } from '@angular/router';
 
 
@@ -65,8 +66,7 @@ export class GradesComponent implements OnInit {
         private userService: UserService,
         private toaster: ToastsManager,
         private router: Router
-    ) { 
-    }
+    ) {}
 
     ngOnInit() {
         this.isGraded = [];
@@ -100,31 +100,33 @@ export class GradesComponent implements OnInit {
 
             //obtain section experiences
             this.experienceService.getSectionGrades(this.currentSection.getSectionId()).subscribe(experiences => {
-                this.sectionGrades = experiences.map(submission => new Experience(submission));
+                if(experiences) {
+                    this.sectionGrades = experiences.map(submission => new Experience(submission));
 
-                //obtain section's students
-                let sectionId = this.currentSection.getSectionId();
-                this.sectionService.getSectionStudents(sectionId).subscribe((students) => {
-                    console.warn(students);
-                    students.forEach(student => {
-                        //obtain student tot EXP
-                        if (student && student.length > 1) {
-                            this.userService.getUser(student).subscribe((user) => {
-                                console.warn(user);
-                                let student = new User(user);
-                                let studentEXP: Experience = this.submissions.find(
-                                    submission => submission.getUserId() == student.getUserId()
-                                );
-
-                                let grades = studentEXP? studentEXP.getTotalExperience(): 0;
-                                this.studentGrades.push({
-                                    student: new User(user),
-                                    grade: grades
-                                });
-                            })
+                    //obtain section's students
+                    let sectionId = this.currentSection.getSectionId();
+                    this.sectionService.getSectionStudents(sectionId).subscribe((students) => {
+                        if(students) {
+                            console.log(students);
+                            students.forEach(student => {
+                                //obtain student tot EXP
+                                if (student && student.length > 1) {
+                                    this.userService.getUser(student).subscribe((user) => {
+                                        this.experienceService.getUserExpRecord(new User(user).getUserId(), sectionId).subscribe(res => {
+                                            if(res) {
+                                                console.log(res);
+                                                this.studentGrades.push({
+                                                    student: new User(user),
+                                                    grade: new Experience(res).getTotalExperience()
+                                                });
+                                            }
+                                        });
+                                    });
+                                }
+                            });
                         }
-                    })
-                });
+                    });
+                }
             });
         });
     }
@@ -144,20 +146,16 @@ export class GradesComponent implements OnInit {
                 studentId: submission.getUserId(),
                 studentName: ""
             });
-            return submission.getQuestSubmission(quest_id) != null && submission.getQuestSubmissionDate(quest_id) != ""
+            return submission.getQuestSubmission(quest_id) != null && submission.getQuestSubmissionDate(quest_id) != "";
         });
 
         this.submissions.forEach(exp => {
             exp.getQuestsTaken().forEach(quest => {
-                console.log(exp);
-                console.warn(quest);
                 if(quest.quest_id == quest_id) {
                     this.isGraded.push(!quest.is_graded);
                 }
             });
         });
-
-        console.log(this.isGraded);
 
         let tempStudents: any = [];
         let copyQuestStudents: any = [];
@@ -179,7 +177,7 @@ export class GradesComponent implements OnInit {
         });
     }
 
-    setStudentGrade(userId, questId, inputGrade) {
+    setStudentGrade(userId, questId, inputGrade, gradedIndex) {
         if(inputGrade == "") {
             this.toaster.error(
                 "You must input a grade to be submitted!",
@@ -192,20 +190,23 @@ export class GradesComponent implements OnInit {
                         "Successfully submitted the grade of " + this.toStudentName(userId),
                         "Grade Submission Success!"
                     );
-                    this.experienceService.setStudentQuestGrade(this.currentSection.getSectionId(), userId, questId, inputGrade).subscribe(
-                        grade => {
-                            console.log("FINISH subscription grade");
-                            console.log(grade);
-                            this.isGraded = [];
-                            // this.getQuest();
-                            // this.getQuestGrades(questId);
+                    this.experienceService.setStudentQuestGrade(this.currentSection.getSectionId(), userId, questId, inputGrade)
+                        .subscribe(grade => {
+                            this.isGraded[gradedIndex] = !this.isGraded[gradedIndex];
                             this.submissions = this.submissions.map(quest => {
                                 if(quest.getUserId() == userId) {
                                     quest.setIsGraded(questId);
                                 }
                                 return quest;
                             });
-                            this.router.navigateByUrl('teacher/specific/grades/' + this.currentSection.getSectionId());
+
+                            this.experienceService.getUserExpRecord(userId, this.currentSection.getSectionId()).subscribe(res => {
+                                if(res) {
+                                    this.studentGrades.find(student => {
+                                        return student.student.getUserId() == userId;
+                                    }).grade = new Experience(res).getTotalExperience();
+                                }
+                            });
                         }
                     )
                 } else {
@@ -228,7 +229,6 @@ export class GradesComponent implements OnInit {
     }
 
     isSubmitted(quests_taken: any[], quest_id: string) {
-        console.log(quests_taken);
         quests_taken.forEach(quest => {
             if(quest_id == quest.quest_id) {
                 // this.isGraded = quest.is_graded;
@@ -240,7 +240,7 @@ export class GradesComponent implements OnInit {
 
     getQuestMaxXp(quest_id: string) {
         let quest = this.quests.find(quest => quest.getQuestId() == quest_id);
-        return quest?quest.getQuestXp():0;
+        return quest ? quest.getQuestXp() : 0;
     }
 
     setMaxXp(quest: Quest) {

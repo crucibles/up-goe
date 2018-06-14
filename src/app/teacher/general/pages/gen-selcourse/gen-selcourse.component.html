@@ -49,8 +49,8 @@
 			<ng-container *ngIf="!isSearching">
 				<!--Shows if user has no enrolled course-->
 				<tr *ngIf="!sections || sections.length == 0">
-					<td colspan="3" style="text-align: center">You have no course enrolled yet!
-						<br>Input your class code now.
+					<td colspan="3" style="text-align: center">You have no course created yet!
+						<br>Create a course now.
 					</td>
 				</tr>
 				<!--AHJ: Fix zebra form-->
@@ -58,7 +58,7 @@
 					<tr *ngFor="let section of sections; let i = index;" [class.odd]="i%2 == 0">
 						<ng-container>
 							<td>
-								<a class="clickable" (click)=openSectionPage(section.section._id)>{{section.course_name}}</a>
+								<a class="clickable" (click)="openSectionPage(section.section._id, section.section)">{{section.course_name}}</a>
 							</td>
 							<td>{{section.section.section_name}}</td>
 							<td>

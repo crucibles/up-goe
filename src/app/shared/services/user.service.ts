@@ -71,7 +71,6 @@ export class UserService {
     }
 
     setCurrentUser(user: User) {
-        console.log(user);
         this.cookieService.delete('currentUser');
         localStorage.removeItem('currentUser');
         this.currentUser = new User(user);
@@ -132,7 +131,6 @@ export class UserService {
         const url = this.userUpdateUrl;
         return this.http.post(url, { user_id: user_id }).pipe(
             tap(data => {
-                console.log(data);
                 return data;
             })
         );

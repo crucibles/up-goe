@@ -40,13 +40,7 @@ export class QuestMap {h
 		this.questCoordinates = [];
 
 		for (let questPosition of questPositions) {
-			console.log("HERE<<<<<<<<<<<<<<<<<<<<<<<<");
-			console.log(questPosition.questId);
-			console.log(quests.map(quest => quest.getQuestId()));
-			console.log("HERE<<<<<<<<<<<<<<<<<<<<<<<<");
 			let quest = quests.filter(quest => quest.getQuestId() == questPosition.questId);
-			console.log("RESULT form filter:");
-			console.log(quest);
 			var title = quest.length == 0 ? "<No title>" : quest[0].getQuestTitle();
 			if (questPosition.type === "scatter") {
 				dataset = {
@@ -142,24 +136,18 @@ export class QuestMap {h
 		);
 		let directions = ["N", "S", "E"];
 		for (let direction of directions) {
-			console.log(x);
-			console.log(y);
-			console.log(direction);
 			// The following if-conditions are the cases that disallows '+' symbols to be added
 
 			// if current point is a main quest, current x is not the latest main quest, and direction is towards east
 			if (y == mainquestY && (x < maxX && direction == "E")) {
-				console.log("excluded1");
 				continue;
 
 				// if point to be added is not a main quest and direction is either north or south
 			} else if ((y > mainquestY && direction === "S") || (y < mainquestY && direction === "N")) {
-				console.log("excluded2");
 				continue;
 
 				// explicitly disallowed '+' point (for cases such as north/south new points from main point)
 			} else if (excludedPoints.filter(data => data.x == x && data.y == y && data.direction == direction).length != 0) {
-				console.log("excluded3");
 				continue;
 			}
 
@@ -200,7 +188,6 @@ export class QuestMap {h
 			}
 		}
 
-		console.log(scatterPoints);
 		return scatterPoints;
 	}
 
@@ -227,8 +214,6 @@ export class QuestMap {h
 		let basisX = this.roundOff(x);
 		let basisY = this.roundOff(y);
 
-		console.log(basisX);
-		console.log(basisY);
 
 		let isNorth: boolean = y - basisY > 0 ? true : false;
 		let isEast: boolean = x - basisX > 0 ? true : false;

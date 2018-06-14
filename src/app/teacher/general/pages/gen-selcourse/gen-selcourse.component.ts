@@ -112,12 +112,9 @@ export class GenSelcourseComponent implements OnInit {
 						sortDirection: "asc"
 					}
 				);
-				console.log("<<<<<<<LOOK HERE");
-				console.log(this.sections);
 				this.schedules = this.sections.map(x => {
 					return x.section.schedule;
-				})
-				console.warn(this.schedules);
+				});
 			});
 	}
 
@@ -129,11 +126,9 @@ export class GenSelcourseComponent implements OnInit {
 			this.isSearching = false;
 		} else {
 			this.isSearching = true;
-			console.log(this.course_search);
 			this.sectionService.searchSection(this.course_search).subscribe((sections) => {
-				console.warn(sections);
 				this.course_found = sections;
-			})
+			});
 		}
 	}
 
@@ -141,10 +136,9 @@ export class GenSelcourseComponent implements OnInit {
 		this.sections = this.sectionService.getSortedSections(this.sections, $event);
 	}
 
-	openSectionPage(section_id: string) {
+	openSectionPage(section_id: string, section: Section) {
 		//AHJ: unimplemented; dapat dili na kaayo hardcode? Pwede gud ni pero murag hugaw
+		this.sectionService.setCurrentSection(section);
 		this.pageService.openTeacherSectionPage(section_id);
 	}
-
-
 }

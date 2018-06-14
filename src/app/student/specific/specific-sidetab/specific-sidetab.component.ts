@@ -140,13 +140,11 @@ export class SpecificSidetabComponent implements OnInit {
 			this.userService.changeProfileData(currentUserId, userContactNo)
 				.subscribe(isAdded => { // No returned value yet...
 					if (isAdded) {
-						console.log('Profile succesfully edited.');
 						this.initializeForm();
 					} else {
 						console.log('Profile failed to be edited.');
 					}
 				});
-			console.log('Profile succesfully edited.');
 			this.currentUser.setUserContactno(userContactNo);
 		}
 	}
@@ -209,7 +207,6 @@ export class SpecificSidetabComponent implements OnInit {
 	 */
 	openQuest(template: TemplateRef<any>, quest: any) { //'quest: any' in here means the quest has not been converted to Quest type
 
-		console.log(quest);
 		this.questClicked = quest;
 		if (this.questClicked) {
 			this.bsModalRef = this.modalService.show(template);
@@ -221,7 +218,6 @@ export class SpecificSidetabComponent implements OnInit {
 	 * @param questId id of the quest to be abandoned
 	 */
 	abandonQuest(questId: String) {
-		console.log(questId + " abandoned!");
 		this.bsModalRef.hide();
 	}
 
@@ -230,7 +226,6 @@ export class SpecificSidetabComponent implements OnInit {
 	 * @param questId id of the quest to be submitted
 	 */
 	submitQuest(questId: String) {
-		console.log(questId + " submitted!");
 		this.bsModalRef.hide();
 	}
 

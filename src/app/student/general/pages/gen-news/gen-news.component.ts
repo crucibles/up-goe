@@ -54,11 +54,7 @@ export class GenNewsComponent implements OnInit {
 	 * @returns array of commentposts
 	 */
     getAllCommentPost() {
-        console.log(this.sectionService.getCurrentUserSections());
-        console.log(this.sectionService.getCurrentUserSections());  
         this.commentPostService.getUserPosts(this.sectionService.getCurrentUserEnrolledSectionIds()).subscribe(commentPosts => {
-
-            console.log(commentPosts);
 
             this.commentPosts = commentPosts.filter(function (x) {
                 let y = new CommentPost(x);

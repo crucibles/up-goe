@@ -39,7 +39,6 @@ export class GenTopnavbarComponent implements OnInit {
    * Logs out the current user
    */
   logOut() {
-    console.log("logout");
     this.userService.logOut();
   }
 
