@@ -198,13 +198,11 @@ margin-right: 7px;
   font-size: 14px;
   font-weight: bold;
   display: inline;
-  margin-top: 0;
   margin-right: 10px;
 }
 .post .post-footer .comments-list .comment .comment-heading .time {
   font-size: 12px;
   color: #aaa;
-  margin-top: 0;
   display: inline;
 }
 .post .post-footer .comments-list .comment .comment-body {

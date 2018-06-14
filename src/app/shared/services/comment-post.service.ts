@@ -71,7 +71,8 @@ export class CommentPostService {
 			post_comments: comment.getPostComments(),
 			post_date: comment.getPostDate(),
 			commentable: comment.getCommentable(),
-			is_post: comment.getIsPost()
+			is_post: comment.getIsPost(),
+			data: comment.getPostData()
 		};
 
 		return this.http.post<CommentPost>(this.postUrl, body).pipe(

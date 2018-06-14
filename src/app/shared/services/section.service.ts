@@ -559,8 +559,7 @@ export class SectionService {
 
 		let filter = {
 			user_id: [currentUserId],
-			status: ["E"],
-			user_type: "student"
+			status: ["E"]
 		}
 
 		let enrolledSections = [];

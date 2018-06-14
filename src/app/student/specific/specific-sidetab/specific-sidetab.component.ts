@@ -30,39 +30,10 @@ import {
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { SpecificComponent } from 'student/specific/specific.component';
+import { FileUploader } from 'ng2-file-upload/ng2-file-upload';
+import { ToastsManager } from 'ng2-toastr';
 
 const imageDir: string = "/assets/images/";
-
-const QUESTS: any[] = [
-	{
-		_id: "2",
-		quest_title: "Let me gooo",
-		quest_description: "Please let me goooo",
-		quest_retakable: false,
-		quest_badge: "",
-		quest_item: [],
-		quest_xp: 10,
-		quest_hp: 10,
-		quest_start_time_date: new Date("01/25/2018"),
-		quest_end_time_date: new Date("01/29/2018"),
-		quest_party: false,
-		quest_prerequisite: []
-	},
-	{
-		_id: "2",
-		quest_title: "Let me gooo too",
-		quest_description: "Please let me goooo too",
-		quest_retakable: false,
-		quest_badge: "",
-		quest_item: [],
-		quest_xp: 10,
-		quest_hp: 10,
-		quest_start_time_date: new Date("10/10/2016"),
-		quest_end_time_date: new Date("10/10/2018"),
-		quest_party: false,
-		quest_prerequisite: []
-	}
-];
 
 @Component({
 	selector: 'specific-sidetab',
@@ -77,6 +48,10 @@ const QUESTS: any[] = [
 export class SpecificSidetabComponent implements OnInit {
 	@Input('sectionId') section_id: string;
 
+	private url = 'api/upload';
+	public uploader: FileUploader = new FileUploader({ url: this.url, itemAlias: 'file' });
+
+	commentBox: string = "";
 	currentUser: User;
 	user;
 
@@ -113,12 +88,23 @@ export class SpecificSidetabComponent implements OnInit {
 		private questService: QuestService,
 		private userService: UserService,
 		private route: ActivatedRoute,
-		private sectionService: SectionService
+		private sectionService: SectionService,
+		private toastr: ToastsManager
 	) {
 		this.image = imageDir + "not-found.jpg";
+		this.uploader = new FileUploader({ url: this.url, itemAlias: 'file' });
 	}
 
 	ngOnInit() {
+		//override the onAfterAddingfile property of the uploader so it doesn't authenticate with //credentials.
+		this.uploader.onAfterAddingFile = (file) => { file.withCredentials = false; };
+		//overide the onCompleteItem property of the uploader so we are 
+		//able to deal with the server response.
+		this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
+			this.toastr.success("Well done!", "Upload success!");
+			this.submitQuest(this.questClicked.getQuestId(), JSON.parse(response));
+		};
+
 		this.setUser();
 		this.pageService.isProfile.subscribe(isProfile => {
 			this.isProfile = isProfile;
@@ -218,6 +204,19 @@ export class SpecificSidetabComponent implements OnInit {
 	 * @param questId id of the quest to be abandoned
 	 */
 	abandonQuest(questId: String) {
+		console.warn("hello");
+		this.toastr.warning(
+			"You have abandoned a quest.",
+			"Quest Abandoned!"
+		);
+		let user_id = this.userService.getCurrentUser().getUserId();
+		let quest_id = this.questClicked.getQuestId();
+
+		this.questService.abandonQuest(user_id, quest_id, "").subscribe((result) => {
+			this.questService.getUserJoinedQuests(user_id).subscribe(x => {
+				console.log(x);
+			})
+		});
 		this.bsModalRef.hide();
 	}
 
@@ -225,8 +224,15 @@ export class SpecificSidetabComponent implements OnInit {
 	 * Submits currently clicked quest
 	 * @param questId id of the quest to be submitted
 	 */
-	submitQuest(questId: String) {
-		this.bsModalRef.hide();
+	submitQuest(questId: String, res: any) {
+		console.log(res);
+		let user_id = this.userService.getCurrentUser().getUserId();
+		//AHJ: unimplemented
+		
+		this.questService.submitQuest(res, this.commentBox, user_id, questId, "").subscribe(res => {
+			console.warn(res);
+			this.bsModalRef.hide();
+		});
 	}
 
 	/**

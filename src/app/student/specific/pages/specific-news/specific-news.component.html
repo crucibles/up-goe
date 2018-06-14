@@ -33,6 +33,14 @@
               </div>
               <div class="post-description">
                 <p>{{post.getPostContent()}}</p>
+
+                <div *ngIf="post.getPostData()">
+                  <button (click)="download(post.getPostData())" type="button" class="btn btn-success">
+                    <i class="fa fa-download"></i>
+                  </button>
+                  {{post.getPostData()}}
+                </div>
+
                 <br class="clear" />
 
                 <!-- Comments area-->
@@ -61,11 +69,11 @@
                         <textarea [(ngModel)]="commentContent[i]" placeholder="Reply to this post..."></textarea>
                         <ul>
                           <li>
-                            <a title="" tooltip="'Audio'" data-placement="bottom" data-original-title="Audio">
-                              <i class="fa fa-music"></i>
+                            <a title="" tooltip="'File'" data-placement="bottom" data-original-title="File">
+                              <i class="fa fa-paperclip"></i>
                             </a>
                           </li>
-                          <li>
+                          <!-- <li>
                             <a title="" tooltip="'Video'" data-placement="bottom" data-original-title="Video">
                               <i class="fa fa-video-camera"></i>
                             </a>
@@ -79,7 +87,7 @@
                             <a title="" tooltip="'Picture'" data-placement="bottom" data-original-title="Picture">
                               <i class="fa fa-picture-o"></i>
                             </a>
-                          </li>
+                          </li> -->
                         </ul>
                         <button [disabled]="!commentContent || commentContent.length == 0" type="submit" class="btn btn-success green" (click)="submitComment(i)">
                           <i class="fa fa-share"></i> Submit</button>

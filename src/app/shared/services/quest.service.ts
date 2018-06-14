@@ -380,12 +380,13 @@ export class QuestService {
 		const url = this.sectionUrl;
 
 		let body = {
+			method: "submitQuest",
 			user_id: user_id,
 			section_id: section_id,
 			quest_id: quest_id,
-			data: data.uploadName,
+			data: data? data.uploadName: "",
 			comment: comment,
-			time: Number(data.uploadName.substring(0, data.uploadName.indexOf('.')))
+			time: data? Number(data.uploadName.substring(0, data.uploadName.indexOf('.'))): Date.now()
 		}
 
 		console.warn(body.data);

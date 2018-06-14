@@ -92,6 +92,9 @@
 									<br>
 								</div>
 							</div>
+							<div>
+								<textarea [(ngModel)]="commentBox" style="width: 100%" placeholder="Place your comment here."></textarea>
+							</div>
 						</div>
 
 						<!-- Quest Modal Buttons -->
@@ -112,7 +115,8 @@
 								</div>
 							</div>
 
-							<button *ngIf="uploader?.queue?.length > 0" type="button" class="btn btn-success btn-s" (click)="uploader.uploadAll()" [disabled]="!uploader.getNotUploadedItems().length">
+							<button type="button" class="btn btn-success btn-s" (click)="uploader.queue.length>0?uploader.uploadAll(): submitQuest(this.questClicked.getQuestId(), null)"
+							 [disabled]="!uploader.getNotUploadedItems().length && this.commentBox == '' ">
 								Submit Quest
 							</button>
 						</div>

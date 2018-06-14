@@ -29,10 +29,14 @@ import {
 	CommentPostService,
 	UserService,
 	PageService,
-	SectionService
+	SectionService,
+	FileService
 } from 'shared/services';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
+import { FileUploader } from 'ng2-file-upload/ng2-file-upload';
+import { saveAs } from 'file-saver';
+import { ToastsManager } from 'ng2-toastr';
 
 @Component({
 	selector: 'app-specific-news',
@@ -47,6 +51,8 @@ export class SpecificNewsComponent implements OnInit {
 
 	// create post info
 	@ViewChild('createPost') createPostModal: TemplateRef<any>;
+	private url = 'api/upload';
+	public uploader: FileUploader = new FileUploader({ url: this.url, itemAlias: 'file' });
 	bsModalRef: BsModalRef;
 	createPostForm: FormGroup;
 
@@ -68,6 +74,8 @@ export class SpecificNewsComponent implements OnInit {
 		this.commentObserver = observer
 	);
 
+	fileName: string = "";
+
 
 	constructor(
 		private commentPostService: CommentPostService,
@@ -76,10 +84,24 @@ export class SpecificNewsComponent implements OnInit {
 		private pageService: PageService,
 		private route: ActivatedRoute,
 		private userService: UserService,
-		private sectionService: SectionService
-	) { }
+		private toastr: ToastsManager,
+		private fileService: FileService
+	) {
+		this.uploader = new FileUploader({ url: this.url, itemAlias: 'file' });
+	}
 
 	ngOnInit() {
+
+		//override the onAfterAddingfile property of the uploader so it doesn't authenticate with //credentials.
+		this.uploader.onAfterAddingFile = (file) => { file.withCredentials = false; };
+		//overide the onCompleteItem property of the uploader so we are 
+		//able to deal with the server response.
+		this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
+			this.toastr.success("Well done!", "Upload success!");
+			this.fileName = JSON.parse(response).uploadName;
+			this.createNewPost();
+		};
+
 		this.setDefault();
 		this.route.paramMap.subscribe(params => {
 			this.section_id = params.get('sectionId');
@@ -107,7 +129,7 @@ export class SpecificNewsComponent implements OnInit {
 			//AHJ: unimplemented; how to toaster
 			return;
 		}
-
+		console.warn(this.fileName);
 		//setting commentpost
 		let newPost = new CommentPost();
 		let postContent = this.createPostForm.get('postContent').value;
@@ -119,7 +141,8 @@ export class SpecificNewsComponent implements OnInit {
 			[],
 			new Date(Date.now()),
 			commentable,
-			true
+			true,
+			this.fileName
 		);
 
 		this.commentPostService.addCommentPost(newPost).subscribe(x => {
@@ -165,9 +188,9 @@ export class SpecificNewsComponent implements OnInit {
 						this.posters[index] = newUser;
 						post.getPostComments().forEach(postId => {
 							let newComment = newComments.find(comment => comment.getPostCommentId() == postId);
-							if(newComment){
+							if (newComment) {
 								console.log(newComment);
-								this.commentObserver.next({ parent_index: index, comment: newComment});
+								this.commentObserver.next({ parent_index: index, comment: newComment });
 							}
 						});
 					});
@@ -243,6 +266,13 @@ export class SpecificNewsComponent implements OnInit {
 		this.bsModalRef = this.modalService.show(this.createPostModal);
 	}
 
+	download(fn: any) {
+		this.fileService.download(fn).subscribe(res => {
+			saveAs(res, fn);
+			err => console.warn(err);
+		})
+	}
+
 	/**
 	 * Submits the added comment to a main post
 	 * @param parentPostIndex the index of the parent's post where the comment is to be submitted
@@ -250,7 +280,7 @@ export class SpecificNewsComponent implements OnInit {
 	submitComment(parentPostIndex: number) {
 		//creates a CommentPost instance of the new comment
 		let newComment: CommentPost = new CommentPost();
-		newComment.setCommentPost(this.section_id, this.currentUser.getUserId(), this.commentContent[parentPostIndex], "", new Date(), true, false);
+		newComment.setCommentPost(this.section_id, this.currentUser.getUserId(), this.commentContent[parentPostIndex], "", new Date(), true, false, "");
 		console.log(newComment);
 		//add comment to the database
 		//Note to self: must change appendComment to accomodate comment instead of comment_id for fewer querying

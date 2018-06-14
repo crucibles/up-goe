@@ -366,7 +366,7 @@ router.post('/experiences', (req, res) => {
     var holder = "";
     if (req.body.method == "setStudentQuestGrade") {
         setStudentQuestGrade(req, res);
-    } else if(req.body.user_id) {
+    } else if (req.body.user_id) {
         getUserExpRecord(req, res);
     }
 
@@ -381,7 +381,7 @@ router.post('/experiences', (req, res) => {
                 .then(user => {
                     console.log('\n\nThis is your user');
                     console.log(user);
-                    if(user) res.json(user);
+                    if (user) res.json(user);
                     else res.json(false);
                 })
                 .catch(err => {
@@ -490,6 +490,14 @@ router.post('/upload', (req, res) => {
         // return res.send(path.substring(8, path.length));
         return res.json({ originalName: req.file.originalname, uploadName: req.file.filename });
     })
+
+});
+
+router.get('/badgeImg', (req, res) => {
+    var path = '';
+
+    filepath = path.join(__dirname, '../../uploads') + '/' + req.query.imgName;
+    res.sendFile(filepath);
 
 });
 
@@ -821,7 +829,8 @@ router.post('/posts', (req, res) => {
                 post_comments: req.body.post_comments,
                 post_date: req.body.post_date,
                 commentable: req.body.commentable,
-                is_post: req.body.is_post
+                is_post: req.body.is_post,
+                data: req.body.data
             };
 
             myDB.collection('posts')
@@ -904,7 +913,7 @@ router.post('/sections', (req, res) => {
         if (req.body.abandon) {
             abandonQuest(req, res);
         } else {
-            if (req.body.data) {
+            if (req.body.method && req.body.method == "submitQuest") {
                 //upload here
                 submitQuest(req, res);
             } else {
@@ -1186,7 +1195,7 @@ router.get('/sections', (req, res) => {
                 .then((sections) => {
 
                     if (sections) {
-                        if(sections.students) {
+                        if (sections.students) {
                             let enrolled = sections.students.map((x) => {
                                 if (x.status == 'E' || req.query.all) {
                                     return x.user_id;
@@ -1394,15 +1403,15 @@ router.get('/sections', (req, res) => {
 
                                     sections.filter((s) => {
                                         course.filter((c) => {
-                                            if(c._id == s.course_id){
+                                            if (c._id == s.course_id) {
                                                 myObjArr.push({
                                                     section: s,
                                                     course_name: c.course_name
                                                 });
                                             }
                                         })
-                                    });                                    
-                                    
+                                    });
+
                                     Promise.all(myObjArr).then(x => {
                                         res.json(myObjArr);
                                     })
