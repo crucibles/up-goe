@@ -165,7 +165,8 @@ export class UserService {
         type: string,
         contactNumber: string,
         securityQuestion: string,
-        securityAnswer: string
+        securityAnswer: string,
+        userConditions: any
     ): Observable<User> {
         // The sign up api URL.
         const url = this.signupUrl;
@@ -181,7 +182,8 @@ export class UserService {
             type,
             contactNumber,
             securityQuestion,
-            securityAnswer
+            securityAnswer,
+            userConditions
         }).pipe(
             tap(data => {
                 // Returns data from api.js to sign-up.component.ts.

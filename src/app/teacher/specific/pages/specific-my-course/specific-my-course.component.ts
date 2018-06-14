@@ -65,6 +65,12 @@ export class SpecificMyCourseComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
+		this.route.paramMap.subscribe(params => {
+			let section_id = params.get('sectionId');
+			this.sectionService.searchSection(section_id).subscribe(res => {
+				this.sectionService.setCurrentSection(new Section(res));
+			});
+		})
 		this.setDefault();
 		this.getCurrentCourseSection();
 	}
@@ -86,9 +92,9 @@ export class SpecificMyCourseComponent implements OnInit {
 		this.currentSection = new Section(this.sectionService.getCurrentSection());
 		this.currentCourse = new Course(this.sectionService.getCurrentCourse());
 		this.classmates = [];
-		
+
 		this.sectionService.getSectionStudents(this.currentSection.getSectionId(), true).subscribe((students) => {
-			if(students){
+			if (students) {
 				students.forEach(student => {
 					if (student.length > 1) {
 						this.userService.getUser(student).subscribe((user) => {
@@ -101,7 +107,7 @@ export class SpecificMyCourseComponent implements OnInit {
 		this.getSectionBadges();
 	}
 
-	approveStudent(userId: string){
+	approveStudent(userId: string) {
 		this.sectionService.approveUserToSection(userId, this.currentSection.getSectionId()).subscribe(
 			approve => {
 				this.currentSection.setStudentStatus(userId, "E");
@@ -111,6 +117,7 @@ export class SpecificMyCourseComponent implements OnInit {
 
 	getSectionBadges() {
 		//AHJ: unimplemented; since getting current section badge is unavailable... BADGES variable is being used instead
+
 		this.badgeService.getSectionBadges(this.sectionService.getCurrentSection().getSectionId()).subscribe(badges => {
 			if(badges) {
 				this.sectionBadges = badges.map(badge => new Badge(badge));

@@ -23,6 +23,8 @@ import {
   InventoryComponent
 } from 'teacher/general/pages';
 
+import { AuthGuardService } from 'shared/services/auth-guard.service';
+
 const generalRoutes: Routes = [
 
   {
@@ -31,15 +33,18 @@ const generalRoutes: Routes = [
     children: [
       {
         path: 'select-course',
-        component: GenSelcourseComponent
+        component: GenSelcourseComponent,
+        canActivate: [AuthGuardService] 
       },
       {
         path: 'general-profile',
-        component: GenProfileComponent
+        component: GenProfileComponent,
+        canActivate: [AuthGuardService] 
       },
       {
         path: 'inventory',
-        component: InventoryComponent
+        component: InventoryComponent,
+        canActivate: [AuthGuardService] 
       },
       {
         path: '**',

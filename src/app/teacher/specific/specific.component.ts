@@ -37,7 +37,7 @@ export class SpecificComponent implements OnInit {
       this.sectionId = params.get("sectionId");
       this.sectionService.setCurrentSectionId(this.sectionId);
     });
-    
+
     // searches the section to be initialized
     this.sectionService.searchSection(this.sectionId).subscribe((searched) => {
 

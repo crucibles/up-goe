@@ -3,6 +3,14 @@
     Loading...
     <img class="loading-icon" src="/assets/images/loading.gif" />
   </div>
+
+  <ng-container *ngIf="!commentPosts || commentPosts.length == 0">
+    <h6>This is the specific News Feed page. Welcome!
+      <br>
+      <br>Your teacher's posts for this specific course will be posted here.
+      <br> Currently there are no posts.</h6>
+  </ng-container>
+
   <div class="side-body">
     <div class="container">
       <div *ngIf="commentPosts" class="row">

@@ -3,6 +3,12 @@
 
   <h3>My Performance</h3>
 
+  <ng-container *ngIf="!courseSections || courseSections.length == 0">
+    <h6>This is where all your performance in each course will be shown.
+      <br>
+      <br>
+    </h6>Currently you have no enrolled courses or graded tasks.
+  </ng-container>
   <!--Line Graph for performance-->
   <div class="row">
     <div style="display: block" *ngIf="isChartReady">
@@ -37,6 +43,6 @@
   </ng-container>
   <!--Informs user if he or she has no badges yet-->
   <ng-container *ngIf="!badges || badges.length == 0">
-    You have no badges yet.
+    <h6>You have no badges yet.</h6>
   </ng-container>
 </section>
