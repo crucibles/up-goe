@@ -62,7 +62,6 @@ export class SpecificProfileComponent implements OnInit {
     constructor(
         private experienceService: ExperienceService,
         private pageService: PageService,
-        private route: ActivatedRoute,
         private sectionService: SectionService,
         private userService: UserService,
         private badgeService: BadgeService
