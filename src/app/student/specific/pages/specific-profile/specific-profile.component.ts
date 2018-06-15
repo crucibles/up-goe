@@ -12,14 +12,16 @@ import {
 import {
     Section,
     User,
-    Experience
+    Experience,
+    Badge
 } from 'shared/models';
 
 import {
     ExperienceService,
     PageService,
     SectionService,
-    UserService
+    UserService,
+    BadgeService
 } from 'shared/services';
 
 const MAXXP: number = 5000;
@@ -36,6 +38,9 @@ export class SpecificProfileComponent implements OnInit {
 
     //performance graph data
     userSubmission: Experience;
+
+    badges: Badge[];
+
 
     // lineChart
     isChartReady: boolean = false;
@@ -57,9 +62,9 @@ export class SpecificProfileComponent implements OnInit {
     constructor(
         private experienceService: ExperienceService,
         private pageService: PageService,
-        private route: ActivatedRoute,
         private sectionService: SectionService,
-        private userService: UserService
+        private userService: UserService,
+        private badgeService: BadgeService
     ) {
     }
 
@@ -67,8 +72,22 @@ export class SpecificProfileComponent implements OnInit {
         this.setDefault();
         this.getGrades();
         this.setPerformanceGraph();
+        this.initBadges();
     }
 
+    initBadges() {
+        this.badges = [];
+        this.badgeService.getSectionBadges(this.sectionService.getCurrentSection().getSectionId()).subscribe(bs => {
+            bs.map(badge => {
+                let x = new Badge(badge);
+                x.getBadgeAttainers().filter(user => {
+                    if (this.currentUser.getUserId() == user) {
+                        this.badges.push(x);
+                    }
+                });
+            });
+        });
+    }
 
     getCurrentSection() {
         this.currentSection = this.sectionService.getCurrentSection();
@@ -98,28 +117,28 @@ export class SpecificProfileComponent implements OnInit {
         let max: number = MAXXP ? MAXXP : 10;
 
         this.experienceService.getSectionGrades(this.currentSection.getSectionId(), this.currentUser.getUserId())
-        .subscribe(submissions => {
-            if(submissions.length > 0){
-                this.userSubmission = submissions.map(submission => new Experience(submission))[0];
+            .subscribe(submissions => {
+                if (submissions.length > 0) {
+                    this.userSubmission = submissions.map(submission => new Experience(submission))[0];
 
-                let grades = this.userSubmission.getWeeklyAccumulativeGrades();
-                grades.forEach(grade => {
-                    // get the decimal percentage
-                    let percentage: number = (grade / MAXXP) * 100;
-        
-                    // round the decimal up to two decimal points
-                    dataGrade.push(Math.round((percentage + 0.00001) * 100) / 100);
-                });
-        
-                let dataLine: any = {
-                    data: dataGrade,
-                    label: this.sectionService.getCurrentCourse().getCourseName() + " - " + this.currentSection.getSectionName()
-                };
+                    let grades = this.userSubmission.getWeeklyAccumulativeGrades();
+                    grades.forEach(grade => {
+                        // get the decimal percentage
+                        let percentage: number = (grade / MAXXP) * 100;
 
-                this.lineChartData.push(dataLine);
-                this.isChartReady = true;
-            }
-        });
+                        // round the decimal up to two decimal points
+                        dataGrade.push(Math.round((percentage + 0.00001) * 100) / 100);
+                    });
+
+                    let dataLine: any = {
+                        data: dataGrade,
+                        label: this.sectionService.getCurrentCourse().getCourseName() + " - " + this.currentSection.getSectionName()
+                    };
+
+                    this.lineChartData.push(dataLine);
+                    this.isChartReady = true;
+                }
+            });
     }
 
     /* Below are the helper functions */

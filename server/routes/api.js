@@ -8,10 +8,6 @@ const MongoClient = require('mongodb').MongoClient;
 const ObjectID = require('mongodb').ObjectID;
 const async = require('async');
 const nodemailer = require('nodemailer');
-const xoauth2 = require('xoauth2');
-const cookie = require('ng2-cookies');
-const fs = require('fs');
-const mongoose = require("mongoose");
 const path = require("path");
 const multer = require('multer');
 var requestTime;
@@ -379,8 +375,6 @@ router.post('/experiences', (req, res) => {
                     section_id: req.body.section_id
                 })
                 .then(user => {
-                    console.log('\n\nThis is your user');
-                    console.log(user);
                     if (user) res.json(user);
                     else res.json(false);
                 })
@@ -442,8 +436,6 @@ router.post('/experiences', (req, res) => {
                                             )
                                             .then(x => {
                                                 holder = holder.toString().trim();
-                                                console.log('\n\nThis is the holder');
-                                                console.log(holder);
                                                 connection((db) => {
                                                     const myDB = db.db('up-goe-db');
                                                     myDB.collection('badges')
@@ -502,8 +494,6 @@ router.get('/badgeImg', (req, res) => {
 });
 
 router.post('/download', (req, res) => {
-    console.log("hello=================");
-    console.log(req.body);
     filepath = path.join(__dirname, '../../uploads') + '/' + req.body.fileName;
     res.sendFile(filepath);
 });
@@ -725,17 +715,12 @@ router.get('/posts', (req, res) => {
     var counter = 0;
     var index = 0;
 
-    console.log("============================");
     if (req.query.method && req.query.method == "getSectionPosts") {
         getSectionPosts(req, res);
     } else {
         connection((db) => {
             const myDB = db.db('up-goe-db');
-            console.log("============================");
-            console.log(req.query.sections);
-            console.log("============================");
             if (req.query.sections) {
-                console.log("============================");
                 let sections = req.query.sections.split(",");
                 myDB.collection('posts')
                     .find()
@@ -810,8 +795,6 @@ router.get('/posts', (req, res) => {
  * @author Sumandang, AJ Ruth H.
  */
 router.post('/posts', (req, res) => {
-    console.log("-------------ENTER POST POSTS---------------");
-    console.log(req.body);
     if (req.body.method && req.body.method == "addCommentPost") {
         addCommentPost(req, res);
     } else if (req.body.method && req.body.method == "attachComment") {
@@ -819,7 +802,6 @@ router.post('/posts', (req, res) => {
     }
 
     function addCommentPost(req, res) {
-        console.log("-------------addCommentPost---------------");
         connection((db) => {
             const myDB = db.db('up-goe-db');
             let newPostObj = {
@@ -836,20 +818,16 @@ router.post('/posts', (req, res) => {
             myDB.collection('posts')
                 .insertOne(newPostObj, function (err, result) {
                     if (err) {
-                        console.log("err");
-                        console.log(err);
                         response.message = err;
                         throw err;
                     }
                     response.data = newPostObj;
                     res.json(result);
-                    console.log("-------------END addCommentPost END---------------");
                 });
         });
     }
 
     function attachComment(req, res) {
-        console.log("-------------attachComment---------------");
         connection((db) => {
             const myDB = db.db('up-goe-db');
             let newPostObj = {
@@ -866,8 +844,6 @@ router.post('/posts', (req, res) => {
             myDB.collection('posts')
                 .insertOne(newPostObj, function (err, result) {
                     if (err) {
-                        console.log("err");
-                        console.log(err);
                         response.message = err;
                         throw err;
                     }
@@ -896,7 +872,6 @@ router.post('/posts', (req, res) => {
                         .catch((err) => {
                             sendError(err, res);
                         })
-                    console.log("-------------END attachComment END---------------");
                 });
         });
     }
@@ -990,10 +965,6 @@ router.post('/sections', (req, res) => {
 
         connection((db) => {
             const myDB = db.db('up-goe-db');
-            console.log("--------------------------------asdsadad-------------marj");
-            console.log(req.body);
-            console.log(req.body.quest_id);
-            console.log(req.body.user_id);
 
             myDB.collection('experiences')
                 .updateOne(
@@ -1381,7 +1352,6 @@ router.get('/sections', (req, res) => {
     }
 
     function searchSectionByName(req, res) {
-        console.log("classByname");
         connection((db) => {
             const myDB = db.db('up-goe-db');
 
@@ -1389,7 +1359,6 @@ router.get('/sections', (req, res) => {
                 .find()
                 .toArray()
                 .then((sections) => {
-                    console.log("sec");
                     if (sections) {
 
                         myDB.collection('courses')
@@ -1398,7 +1367,6 @@ router.get('/sections', (req, res) => {
                             })
                             .toArray()
                             .then((course) => {
-                                console.log(course);
 
                                 // course found.
                                 if (course.length > 0) {
@@ -2036,10 +2004,7 @@ router.post('/userReqPass', (req, res) => {
                     // Sends the email.
                     transporter.sendMail(mailOptions, function (err, res) {
                         if (err) {
-                            console.log(err);
                             throw (err);
-                        } else {
-                            console.log('Email sent');
                         }
                     });
                     response.data = user.user_email;
@@ -2110,7 +2075,6 @@ router.post('/questLeaderboard', (req, res) => {
                                 response.data = studentExp;
                                 res.json(studentExp);
                             } else {
-                                console.log('There are no users in the database');
                                 response.data = users;
                                 res.json(false);
                             }
@@ -2119,7 +2083,6 @@ router.post('/questLeaderboard', (req, res) => {
                             sendError(err, res);
                         });
                 } else {
-                    console.log('There are no XP records in the database');
                     response.data = experiences;
                     res.json(false);
                 }

@@ -18,7 +18,7 @@ import {
 
 //Application Imports
 import {
-	User, Quest, SectionQuest, Course, Section
+	User, Quest
 } from 'shared/models';
 
 import {
@@ -28,8 +28,7 @@ import {
 	SectionService
 } from 'shared/services';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
-import { ActivatedRoute, ParamMap } from '@angular/router';
-import { SpecificComponent } from 'student/specific/specific.component';
+import { ActivatedRoute } from '@angular/router';
 import { FileUploader } from 'ng2-file-upload/ng2-file-upload';
 import { ToastsManager } from 'ng2-toastr';
 
@@ -87,7 +86,6 @@ export class SpecificSidetabComponent implements OnInit {
 		private pageService: PageService,
 		private questService: QuestService,
 		private userService: UserService,
-		private route: ActivatedRoute,
 		private sectionService: SectionService,
 		private toastr: ToastsManager
 	) {
