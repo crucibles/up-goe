@@ -9,12 +9,14 @@ export class QuestMap {
 	private datasets;
 	private minX: number;
 	private maxX: number;
+	private max_exp: number;
 	private mainquestY: number;
 	private questCoordinates: any[];
 
 	constructor(data, quests: Quest[], isTeacher?: boolean) {
 		this._id = data._id;
 		this.mainquestY = 25;
+		this.max_exp = data && data.max_exp ? data.max_exp : 0;
 		this.setQuestMapDataSet(data, quests, isTeacher);
 	}
 
@@ -22,8 +24,16 @@ export class QuestMap {
 		return this.datasets;
 	}
 
+	getMaxEXP(): number {
+		return this.max_exp;
+	}
+
 	getQuestMapId() {
 		return this._id;
+	}
+
+	setMaxEXP(maxEXP: number) {
+		this.max_exp = maxEXP;
 	}
 
 	setQuestMapDataSet(data: any, quests: Quest[], isTeacher) {
@@ -76,6 +86,7 @@ export class QuestMap {
 				}
 
 			} else if (questPosition.type === "line") {
+				let borderWidth: number = questPosition.y == mainquestY && questPosition.y1 == mainquestY ? 5 : 2.5;
 				dataset = {
 					type: 'line',
 					label: '',
@@ -88,7 +99,7 @@ export class QuestMap {
 					}],
 					fill: false,
 					radius: 0,
-					borderWidth: 4,
+					borderWidth: borderWidth,
 					borderColor: "#000"
 				}
 			}
@@ -151,9 +162,10 @@ export class QuestMap {
 				continue;
 			}
 
-			// determines the new '+' point's location
+			// stores the new '+' point's location (x1 & y1)
 			let x1: number = x;
 			let y1: number = y;
+
 			if (direction == "N" || direction == "S") {
 				y1 = direction === "N" ? y + 2 : y - 2;
 			} else {
@@ -161,16 +173,22 @@ export class QuestMap {
 			}
 
 			// add to chart if there is no point existing at this point
+			// (particularly the '+' point will be placed)
 			if (!this.hasExistingPointAt(x1, y1)) {
 				let label = "Add Quest";
+
+				//determines where the quest point will be 
 				let tempX = x;
 				let tempY = y;
+
+				//calculates where the quest point will be
 				if (direction == "N" || direction == "S") {
 					tempY = direction === "N" ? y + 5 : y - 5;
 				} else {
-					tempX = x + 2;
+					tempX = x + 5;
 				}
-				label = this.hasExistingPointAt(tempX, tempY)? "Connect": label;
+
+				label = this.hasExistingPointAt(tempX, tempY) ? "Connect" : label;
 				let scatterPoint: any = {
 					type: "scatter",
 					label: label,
@@ -200,9 +218,9 @@ export class QuestMap {
 		return num * 5;
 	}
 
-	editQuestMapCoordinateAt(x, y, questId){
+	editQuestMapCoordinateAt(x, y, questId) {
 		this.questCoordinates = this.questCoordinates.map(coordinate => {
-			if(coordinate.x == x && coordinate.y == y){
+			if (coordinate.x == x && coordinate.y == y) {
 				coordinate.questId = questId;
 			}
 			return coordinate;
@@ -256,7 +274,7 @@ export class QuestMap {
 		newQuestCoordinates.push(coord);
 
 		// if no quest exists on the newly created destination quest point
-		if (this.getQuestIdOf(x2, y2) == "") {
+		if (quest && this.getQuestIdOf(x2, y2) == "") {
 			coord = {
 				quest_id: quest._id,
 				type: "scatter",
@@ -267,6 +285,35 @@ export class QuestMap {
 		}
 
 		return newQuestCoordinates;
+	}
+
+	/**
+	 * Used for '+' signs.
+	 * Determines whether there is a direction towards where the '+' sign is directed.
+	 * @param x x-coordinate of the '+' sign
+	 * @param y y-coordinate of the '+' sign
+	 */
+	hasQuestPointAtDirection(x, y) {
+		let basisX = this.roundOff(x);
+		let basisY = this.roundOff(y);
+
+
+		let isNorth: boolean = y - basisY > 0 ? true : false;
+		let isEast: boolean = x - basisX > 0 ? true : false;
+
+		let x2 = basisX;
+		let y2 = basisY;
+
+		if (isEast) {
+			x2 += 5;
+		}
+
+		if (basisY - y != 0) {
+			let direction = isNorth ? "N" : "S";
+			y2 = isNorth ? y2 + 5 : y2 - 5;
+		}
+
+		return this.hasExistingPointAt(x2, y2);
 	}
 
 	private getQuestMapDetails(data: any[]): any {
