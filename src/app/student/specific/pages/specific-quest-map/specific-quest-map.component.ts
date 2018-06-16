@@ -295,12 +295,12 @@ export class SpecificQuestMapComponent implements OnInit {
 					this.currentSection = new Section(this.sectionService.getCurrentSection());
 				}
 			)
+			this.questModalRef.hide();
 		});
 
 	}
 
 	submitQuest(comment) {
-		//AHJ: unimplemented; remove variable below if submitQuest properly implemented
 		this.toaster.success(
 			"Your quest have been submitted. Wait until it is graded.",
 			"Quest Submission Success!"

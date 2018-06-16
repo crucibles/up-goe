@@ -65,19 +65,21 @@ const URL = 'http://localhost:3000/api/upload';
 	}
 })
 export class GenSidetabComponent implements OnInit {
+	indexClicked: number;
 	@Input('isProfile') isProfile: boolean = false;
 	@ViewChild('fileInput') fileInput;
-
-
+	
+	
 	public uploader: FileUploader = new FileUploader({ url: URL, itemAlias: 'file' });
 	//current user
 	currentUser: User;
 	image: string = "";
-
+	
 	//for pages other than profile page  
 	editForm: FormGroup;
 	quests: Quest[] = []; //user's quests
 	questCourses: string[] = [];
+	questSectionIds: any[] = [];
 	questClicked: Quest;
 	//for progress bar; 
 	defaultPBClass: string = 'progress-bar progress-bar-striped';
@@ -213,16 +215,14 @@ export class GenSidetabComponent implements OnInit {
 	 * @param user_id the id of the user that asks for the list of quests
 	 */
 	getQuests(user_id): void {
-		//AHJ: unimplemented; get quest by section; not sure... this may be okay as is 
 		this.questService.getUserJoinedQuests(user_id)
 			.subscribe(quests => {
 				console.warn(quests);
 				quests.forEach(quest => {
 					this.quests.push(new Quest(quest.questData));
 					this.questCourses.push(quest.course + '-' + quest.section);
+					this.questSectionIds.push(quest.section_id);
 				});
-
-
 
 				console.warn(this.quests);
 				this.timeDisplays();
@@ -246,10 +246,9 @@ export class GenSidetabComponent implements OnInit {
 		this.editForm.get("email").disable();
 	}
 
-	openQuest(template: TemplateRef<any>, quest: any) { //'quest: any' in here means the quest has not been converted to Quest type
-		//AHJ: Unimplemented
-		//WARNING!! Remove QUESTS in specific-qm.html when this is implemented
+	openQuest(template: TemplateRef<any>, quest: any, index: number) { //'quest: any' in here means the quest has not been converted to Quest type
 		this.questClicked = quest;
+		this.indexClicked = index;
 		console.warn(this.questClicked);
 		if (this.questClicked) {
 			this.bsModalRef = this.modalService.show(template);
@@ -279,8 +278,21 @@ export class GenSidetabComponent implements OnInit {
 
 	}
 
-	abandonQuest(questId: String) {
+	abandonQuest() {
 		//AHJ: unimplemented
+		this.toastr.warning(
+			"You have abandoned a quest.",
+			"Quest Abandoned!"
+		);
+		let user_id = this.userService.getCurrentUser().getUserId();
+		let quest_id = this.questClicked.getQuestId();
+		let section_id = this.questSectionIds[this.indexClicked];
+
+		this.questService.abandonQuest(user_id, quest_id, section_id).subscribe((result) => {
+			this.questService.getUserJoinedQuests(user_id).subscribe(x => {
+				console.log(x);
+			})
+		});
 		this.bsModalRef.hide();
 	}
 

@@ -30,6 +30,7 @@ import {
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { SpecificComponent } from 'student/specific/specific.component';
+import { ToastsManager } from 'ng2-toastr';
 
 const imageDir: string = "/assets/images/";
 
@@ -75,6 +76,7 @@ const QUESTS: any[] = [
 
 
 export class SpecificSidetabComponent implements OnInit {
+	currentSection: Section;
 	@Input('sectionId') section_id: string;
 
 	currentUser: User;
@@ -113,7 +115,8 @@ export class SpecificSidetabComponent implements OnInit {
 		private questService: QuestService,
 		private userService: UserService,
 		private route: ActivatedRoute,
-		private sectionService: SectionService
+		private sectionService: SectionService,
+		private toastr: ToastsManager
 	) {
 		this.image = imageDir + "not-found.jpg";
 	}
@@ -170,6 +173,7 @@ export class SpecificSidetabComponent implements OnInit {
 	setUser() {
 		//AHJ: current user is not yet obtained
 		this.currentUser = this.userService.getCurrentUser();
+		this.currentSection = this.sectionService.getCurrentSection();
 		this.image = this.currentUser.getUserPhoto();
 	}
 
@@ -218,6 +222,20 @@ export class SpecificSidetabComponent implements OnInit {
 	 * @param questId id of the quest to be abandoned
 	 */
 	abandonQuest(questId: String) {
+		console.warn("hello");
+		this.toastr.warning(
+			"You have abandoned a quest.",
+			"Quest Abandoned!"
+		);
+		let user_id = this.userService.getCurrentUser().getUserId();
+		let quest_id = this.questClicked.getQuestId();
+		let section_id = this.currentSection.getSectionId();
+
+		this.questService.abandonQuest(user_id, quest_id, section_id).subscribe((result) => {
+			this.questService.getUserJoinedQuests(user_id).subscribe(x => {
+				console.log(x);
+			})
+		});
 		this.bsModalRef.hide();
 	}
 

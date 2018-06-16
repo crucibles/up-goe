@@ -1584,52 +1584,52 @@ router.get('/sections/quests', (req, res) => {
                                         });
 
                                         let user_section_ids = [];
-                                        user_section_ids = AllUserQuests.map(quest => {return quest.section_id + ""});
-                                        
-                                        myDB.collection('experiences')
-                                        .find({
-                                            user_id: req.query.id,
-                                            section_id: {
-                                                $in: user_section_ids
-                                            }
-                                            })
-                                            .toArray()
-                                            .then(expArr => {
-                                                console.log("secitn.id");
-                                                console.log(user_section_ids);
-                                                console.log("req.query.id");
-                                                console.log(req.query.id);
-                                                console.log("EXP");
-                                                console.log(expArr);
-                                                expArr.forEach(exp => {
-                                                    exp.quests_taken = exp.quests_taken.filter(q => {
-                                                        if(q.date_submitted != ""){
-                                                            return q.quest_id;
-                                                        }
-                                                    });
+                                            user_section_ids = AllUserQuests.map(quest => {
+                                                return quest.section_id + ""
+                                            });
 
-                                                    console.log("<<<< quests not to be added");
-                                                    console.log(exp.quests_taken);
-                                                    console.log("quests not to be added>>>>>");
-                                                    
-                                                    AllUserQuests = AllUserQuests.filter(uq => {
-                                                        let isIncluded = true;
-                                                        exp.quests_taken.forEach(id => {
-                                                            if(id == uq.questData._id){
-                                                                isIncluded = false;
+                                            myDB.collection('experiences').find({
+                                                user_id: 
+                                                req.query.id,
+                                                section_id: {$in: user_section_ids}
+                                            }).toArray()
+                                                .then(expArr => {
+                                                    expArr.forEach(exp => 
+                                                        {
+                                                        exp.quests_taken = exp.quests_taken.filter(q => {
+                                                            if (q.date_submitted != "") 
+                                                            {
+                                                                return 
+                                                                q.quest_id;
                                                             }
-                                                        })
-                                                        
-                                                        if(isIncluded){
-                                                            return uq;
                                                         }
-                                                    })
+                                                    );
+
+                                                        AllUserQuests = AllUserQuests.filter(
+                                                            uq => {
+                                                            let isIncluded = true;
+                                                            exp.quests_taken.forEach(id => {
+                                                                if (id == uq.questData._id) {
+                                                                    isIncluded = false;
+                                                                }
+                                                            })
+
+                                                            if (isIncluded) {
+                                                                return uq;
+                                                            }
+                                                        }
+                                                    )
+
+
                                                     console.log("final quests");
                                                     console.log(AllUserQuests);
                                                 })
-                                                response.data = AllUserQuests;
-                                                res.json(AllUserQuests);
-                                            })
+                                                let auq = AllUserQuests;
+                                                response.data = auq;
+                                                res.json(auq);
+
+                                            }
+                                            )
                                             .catch((err) => {
                                                 sendError(err, res);
                                             });

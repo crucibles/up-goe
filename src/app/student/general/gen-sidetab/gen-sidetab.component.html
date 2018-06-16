@@ -33,7 +33,7 @@
 			<!-- display all quest for all sections -->
 			<li *ngFor="let quest of quests; let title of questCourses; let i = index">
 				<!-- the quest progress bar and some basic information -->
-				<a [tooltip]="questTemplate" placement="auto" container="body" (click)="openQuest(questClickedTemplate, quest)">
+				<a [tooltip]="questTemplate" placement="auto" container="body" (click)="openQuest(questClickedTemplate, quest, i)">
 					{{questCourses[i]}}
 					<br> {{quest.getQuestTitle()}}
 					<!-- {{quest.quest.getQuestTitle()}} -->
