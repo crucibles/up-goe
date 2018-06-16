@@ -35,6 +35,8 @@ import {
 	SectionService
 } from 'shared/services';
 import { ActivatedRoute } from '@angular/router';
+import { ToastsManager } from 'ng2-toastr';
+import { FileUploader } from 'ng2-file-upload/ng2-file-upload';
 
 const ITEMS: any[] = [
 	{
@@ -64,6 +66,9 @@ export class InventoryComponent implements OnInit {
 	private itemImgUrl: string = "/assets/images/not-found.jpg";
 	private badgeImgUrl: string = "/assets/images/not-found.jpg";
 	private badgeImgFile: File;
+	
+	private url = 'api/upload';
+	public uploader: FileUploader = new FileUploader({ url: this.url, itemAlias: 'file' });
 
 	currentUser: User;
 	items: Item[];
@@ -78,10 +83,22 @@ export class InventoryComponent implements OnInit {
 		private userService: UserService,
 		private sectionService: SectionService,
 		private badgeService: BadgeService,
-		private route: ActivatedRoute
-	) { }
+		private route: ActivatedRoute,
+		private toastr: ToastsManager
+	) { 
+		this.uploader = new FileUploader({ url: this.url, itemAlias: 'file' });
+	}
 
 	ngOnInit() {
+		//override the onAfterAddingfile property of the uploader so it doesn't authenticate with //credentials.
+		this.uploader.onAfterAddingFile = (file) => { file.withCredentials = false; };
+		//overide the onCompleteItem property of the uploader so we are 
+		//able to deal with the server response.
+		this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
+			this.toastr.success("Well done!", "Upload success!");
+			this.createBadge(JSON.parse(response));
+		};
+
 		this.getUser();
 		this.initializeForm();
 		this.getSections();
@@ -91,7 +108,8 @@ export class InventoryComponent implements OnInit {
 		});
 	}
 
-	createBadge() {
+	createBadge(res: any) {
+		this.badgeForm.value.badgeImage = res? res.uploadName: "";
 		this.badgeService.createBadge(this.setBadge(), this.badgeForm.value.badgeSection).subscribe(data => {
 			if(!data) {
 				console.log('Your badge failed to be created.');

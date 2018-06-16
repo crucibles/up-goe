@@ -21,6 +21,7 @@
     <div *ngFor="let badge of badges">
       <!-- AHJ: uncomment below and place proper source path to have the desired image and its size -->
       <!-- <img class="badge-img" [src]="badge.getBadgePhoto()" tooltip="{{badge.getBadgeDescription()}}" placement="top" /> -->
+      <img class="badge-img" [src]="badge.getBadgePhoto()" tooltip="{{badge.getBadgeDescription()}}" placement="top" />
     </div>
   </ng-container>
   <!--Informs user if he or she has no badges yet-->

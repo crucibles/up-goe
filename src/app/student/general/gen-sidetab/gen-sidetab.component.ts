@@ -54,8 +54,6 @@ import { FileSelectDirective, FileUploader } from 'ng2-file-upload/ng2-file-uplo
 import { ToastsManager } from 'ng2-toastr';
 import { saveAs } from 'file-saver';
 
-const URL = 'http://localhost:3000/api/upload';
-
 @Component({
 	selector: 'gen-sidetab',
 	templateUrl: './gen-sidetab.component.html',
@@ -68,9 +66,13 @@ export class GenSidetabComponent implements OnInit {
 	indexClicked: number;
 	@Input('isProfile') isProfile: boolean = false;
 	@ViewChild('fileInput') fileInput;
+
+
 	
-	
-	public uploader: FileUploader = new FileUploader({ url: URL, itemAlias: 'file' });
+	private url = 'api/upload';
+	public uploader: FileUploader = new FileUploader({ url: this.url, itemAlias: 'file' });
+
+	commentBox: string = "";
 	//current user
 	currentUser: User;
 	image: string = "";
@@ -118,9 +120,7 @@ export class GenSidetabComponent implements OnInit {
 		private fileService: FileService
 	) {
 		this.image = imageDir + "not-found.jpg";
-		this.setUser();
-		this.initializeForm();
-		this.uploader = new FileUploader({ url: URL, itemAlias: 'file' });
+		this.uploader = new FileUploader({ url: this.url, itemAlias: 'file' });
 	}
 
 	ngOnInit() {
@@ -132,7 +132,9 @@ export class GenSidetabComponent implements OnInit {
 			this.toastr.success("Well done!", "Upload success!");
 			this.submitQuest(this.questClicked.getQuestId(), JSON.parse(response));
 		};
-		
+
+		this.setUser();
+		this.initializeForm();
 		this.checkSize();
 		this.setDefault();
 		if (this.isProfile) {
@@ -259,23 +261,11 @@ export class GenSidetabComponent implements OnInit {
 		console.log(res);
 		let user_id = this.userService.getCurrentUser().getUserId();
 		//AHJ: unimplemented
-		this.bsModalRef.hide();
-
-		this.questService.submitQuest(res, "", user_id, questId, "").subscribe(res => {
+		
+		this.questService.submitQuest(res, this.commentBox, user_id, questId, "").subscribe(res => {
 			console.warn(res);
+			this.bsModalRef.hide();
 		});
-	}
-
-	// test download function
-	download() {
-		let fn = "1528927109966.2011hw1sol.pdf";
-
-		this.fileService.download(fn)
-		.subscribe(
-			data => saveAs(data, fn),
-			error => console.log(error)
-		);
-
 	}
 
 	abandonQuest() {

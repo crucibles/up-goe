@@ -76,13 +76,33 @@
 									<br>
 								</div>
 							</div>
+							<div>
+								<textarea [(ngModel)]="commentBox" style="width: 100%" placeholder="Place your comment here."></textarea>
+							</div>
 						</div>
 
 						<!-- Quest Modal Buttons -->
 						<div class="modal-footer">
 							<!-- shows submit & abandon buttons if user is a participant -->
-							<button type="submit" class="btn btn-success mr-auto" (click)="abandonQuest(this.questClicked.getQuestId())">Abandon Quest</button>
-							<button type="submit" class="btn btn-success" (click)="submitQuest(this.questClicked.getQuestId())">Submit Quest</button>
+							<button type="submit" class="btn btn-danger mr-auto" (click)="abandonQuest(this.questClicked.getQuestId())">Abandon Quest</button>
+						</div>
+						<!-- (ngSubmit)="func()" -->
+						<div class="modal-footer">
+							<!-- File input for the file-upload plugin, with special ng2-file-upload directive called ng2FileSelect -->
+							<input *ngIf="uploader?.queue?.length == 0" type="file" name="photo" multiple ng2FileSelect [uploader]="uploader" />
+							<!-- button to trigger the file upload when submitted -->
+							<div *ngIf="uploader?.queue?.length > 0">Files chosen:</div>
+							<div class="row" *ngFor="let item of uploader.queue">
+								<div class="col-sm-6">{{item.file.name}}</div>
+								<div class="col-sm-6">
+									<button type="button" class="btn btn-danger" (click)="item.remove()">X</button>
+								</div>
+							</div>
+
+							<button type="button" class="btn btn-success btn-s" (click)="uploader.queue.length>0?uploader.uploadAll(): submitQuest(this.questClicked.getQuestId(), null)"
+							 [disabled]="!uploader.getNotUploadedItems().length && this.commentBox == '' ">
+								Submit Quest
+							</button>
 						</div>
 					</ng-template>
 				</a>

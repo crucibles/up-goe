@@ -26,8 +26,13 @@ import {
 import {
 	CommentPostService,
 	UserService,
-	PageService
+	PageService,
+	FileService
 } from 'shared/services';
+
+import {
+	saveAs
+} from 'file-saver';
 
 @Component({
 	selector: 'app-specific-news',
@@ -63,7 +68,8 @@ export class SpecificNewsComponent implements OnInit {
 		private commentPostService: CommentPostService,
 		private pageService: PageService,
 		private route: ActivatedRoute,
-		private userService: UserService
+		private userService: UserService,
+		private fileService: FileService
 	) { }
 
 	ngOnInit() {
@@ -186,6 +192,14 @@ export class SpecificNewsComponent implements OnInit {
 		});
 	}
 
+	download(fn: any) {
+		this.fileService.download(fn).subscribe(res => {
+			saveAs(res, fn);
+			err => console.warn(err);
+		})
+	}
+
+
 	/**
 	 * Submits the added comment to a main post
 	 * @param parentPostIndex the index of the parent's post where the comment is to be submitted
@@ -193,7 +207,7 @@ export class SpecificNewsComponent implements OnInit {
 	submitComment(parentPostIndex: number) {
 		//creates a CommentPost instance of the new comment
 		let newComment: CommentPost = new CommentPost();
-		newComment.setCommentPost(this.section_id, this.currentUser.getUserId(), this.commentContent[parentPostIndex], "", new Date(), true, false);
+		newComment.setCommentPost(this.section_id, this.currentUser.getUserId(), this.commentContent[parentPostIndex], "", new Date(), true, false, "");
 		console.log(newComment);
 		//add comment to the database
 		//Note to self: must change appendComment to accomodate comment instead of comment_id for fewer querying

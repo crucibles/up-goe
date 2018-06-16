@@ -43,6 +43,7 @@ import {
   SortableTableDirective
 } from 'shared/pages';
 
+import { FileSelectDirective } from 'ng2-file-upload/ng2-file-upload';
 
 
 @NgModule({
@@ -71,13 +72,15 @@ import {
     TooltipModule,
     BadgeModal,
     SortableColumnComponent,
-    SortableTableDirective
+    SortableTableDirective,
+		FileSelectDirective
   ],
   declarations: [
     SortableColumnComponent,
     SortableTableDirective,
     PageNotFoundComponent,
-    BadgeModal
+    BadgeModal,
+		FileSelectDirective
   ]
 })
 export class SharedModule { }
