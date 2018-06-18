@@ -137,10 +137,17 @@ h3:after {
     padding-left: 0px;
 }
 
-
 .modal-body .row {
     padding-top: 5px;
     padding-bottom: 5px;
+}
+
+.quest-table tr td{
+    border: 1px solid #ddd;
+}
+
+.row-header{
+    font-weight: bold;
 }
 
 @media screen and (max-width: 768px) {

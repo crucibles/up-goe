@@ -11,7 +11,9 @@
 	Welcome to the Quest Map page, {{this.currentUser.getUserFirstName()}}! This is where you can create quests and form your
 	section's questmap.
 	<span *ngIf="questMap && questMap.getMaxEXP() == 0">
-		<br>Currently, you have not set the maximum EXP that your students can get. Set it so you can start creating your quest and questmap.<br>
+		<br>Currently, you have not set the maximum EXP that your students can get. Set it so you can start creating your quest and
+		questmap.
+		<br>
 	</span>
 	Edit your section's max EXP below.
 </div>
@@ -31,6 +33,24 @@
 		</div>
 	</div>
 </div>
+
+<table id="hor-zebra" *ngIf="quests && questMap" class="quest-table">
+	<thead></thead>
+	<tbody>
+		<tr>
+			<td class="row-header">Quest</td>
+			<td *ngFor="let quest of questMap.getQuestInformationArray()">
+				{{quest.questLabel}}
+			</td>
+		</tr>
+		<tr>
+			<td class="row-header">Max EXP</td>
+			<td *ngFor="let quest of questMap.getQuestInformationArray()">
+				{{quest.quest.getQuestXp()}}
+			</td>
+		</tr>
+	</tbody>
+</table>
 
 <div *ngIf="isCreateModalReady && quests && quests.length == 0">
 	You have no quest yet. Click

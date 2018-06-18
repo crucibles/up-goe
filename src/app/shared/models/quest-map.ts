@@ -1,4 +1,5 @@
-import { Quest } from "shared/models";
+import { Quest } from "shared/models/quest";
+
 
 /**
  * A class that represents questmaps.
@@ -12,13 +13,32 @@ export class QuestMap {
 	private max_exp: number;
 	private mainquestY: number;
 	private questCoordinates: any[];
+	private quests: Quest[];
 
 	constructor(data, quests: Quest[], isTeacher?: boolean) {
 		this._id = data._id;
 		this.mainquestY = 25;
+		this.quests = this.sortQuestsByDate(quests);
 		this.max_exp = data && data.max_exp ? data.max_exp : 0;
 		this.setQuestMapDataSet(data, quests, isTeacher);
 	}
+
+	private sortQuestsByDate(quests: Quest[]): Quest[]{
+		quests = quests.map(quest => new Quest(quest));
+		quests.sort((a, b)=> {
+			return this.getTime(a.getQuestStartTimeDate()) - this.getTime(b.getQuestStartTimeDate());
+		})
+		return quests;
+	}
+
+	/**
+	 * Returns time of the received date; useful for undefined checking 
+	 * @param date date whose time is to be retrieved
+	 */
+    private getTime(date?: Date) {
+        date = new Date(date);
+        return date != null ? date.getTime() : 0;
+    }
 
 	getQuestMapDataSet() {
 		return this.datasets;
@@ -36,6 +56,29 @@ export class QuestMap {
 		this.max_exp = maxEXP;
 	}
 
+	getQuestLabel(questId: string): string{
+		let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		let index = this.quests.findIndex(quest => quest.getQuestId() == questId);
+		let addtlIndex: string = "";
+		if(index > alphabet.length - 1){
+			addtlIndex = (index / alphabet.length) + "";
+			index = index % alphabet.length;
+		}
+
+		return index < 0? "?": alphabet.charAt(index) + addtlIndex;
+	}
+
+	getQuestInformationArray(){
+		let questArray: any[] = [];
+		this.quests.forEach((quest) => {
+			questArray.push({
+				quest: quest,
+				questLabel: this.getQuestLabel(quest.getQuestId())
+			})
+		})
+		return questArray;
+	}
+
 	setQuestMapDataSet(data: any, quests: Quest[], isTeacher) {
 		let questMapDetails = this.getQuestMapDetails(data.quest_coordinates);
 
@@ -51,18 +94,21 @@ export class QuestMap {
 
 		for (let questPosition of questPositions) {
 			let quest = quests.filter(quest => quest.getQuestId() == questPosition.questId);
+			let questLabel = quest.length == 0 ? "?" : this.getQuestLabel(quest[0].getQuestId());
 			var title = quest.length == 0 ? "<No title>" : quest[0].getQuestTitle();
 			if (questPosition.type === "scatter") {
 				dataset = {
 					type: "scatter",
-					label: title,
+					label: questLabel,
+					title: title,
 					data: [{
 						x: questPosition.x,
 						y: questPosition.y
 					}],
 					backgroundColor: "#000",
 					borderColor: "#000",
-					radius: 5,
+					pointHoverRadius: 9,
+					radius: 10,
 					showLine: false
 				};
 
@@ -125,7 +171,6 @@ export class QuestMap {
 		}
 
 		datasets.push(dataset);
-		console.warn(datasets);
 
 		this.datasets = datasets;
 	}
@@ -192,6 +237,7 @@ export class QuestMap {
 				let scatterPoint: any = {
 					type: "scatter",
 					label: label,
+					title: label + '1',
 					data: [{
 						x: x1,
 						y: y1

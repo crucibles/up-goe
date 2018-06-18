@@ -296,6 +296,19 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 		let options = {
 			onClick: this.chartClicked.bind(this),
 			legend: { display: false },
+			plugins: {
+				datalabels: {
+					display: true,
+					color: 'red',
+					font: {
+						weight: 'bold'
+					},
+					formatter: function(value, context) {
+						return context.chart.data.datasets[context.datasetIndex].label;
+					},
+					padding: 4
+				}
+			},
 			scales: {
 				xAxes: [{
 					display: false,
