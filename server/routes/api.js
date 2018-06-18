@@ -360,6 +360,7 @@ router.get('/experiences', (req, res) => {
  */
 router.post('/experiences', (req, res) => {
     var holder = "";
+    var isEarning = false;
     if (req.body.method == "setStudentQuestGrade") {
         setStudentQuestGrade(req, res);
     } else if (req.body.user_id) {
@@ -409,14 +410,19 @@ router.post('/experiences', (req, res) => {
                     }
                 )
                 .then(grade => {
+
                     connection((db) => {
                         const myDB = db.db('up-goe-db');
                         myDB.collection('quests')
                             .find(ObjectID(req.body.quest_id))
                             .toArray()
                             .then((quests) => {
+                                if(req.body.grade >= (quests[0].quest_xp * 0.8)){
+                                    isEarning = true;
+                                }
                                 if (quests[0] && quests[0].quest_badge != "") {
                                     holder = quests[0].quest_badge;
+
                                     connection((db) => {
                                         const myDB = db.db('up-goe-db');
                                         myDB.collection('sections')
@@ -436,20 +442,22 @@ router.post('/experiences', (req, res) => {
                                             )
                                             .then(x => {
                                                 holder = holder.toString().trim();
-                                                connection((db) => {
-                                                    const myDB = db.db('up-goe-db');
-                                                    myDB.collection('badges')
-                                                        .updateOne(
-                                                            {
-                                                                _id: ObjectID(holder)
-                                                            },
-                                                            {
-                                                                $addToSet: {
-                                                                    "badge_attainers": req.body.user_id,
+                                                if(isEarning){
+                                                    connection((db) => {
+                                                        const myDB = db.db('up-goe-db');
+                                                        myDB.collection('badges')
+                                                            .updateOne(
+                                                                {
+                                                                    _id: ObjectID(holder)
+                                                                },
+                                                                {
+                                                                    $addToSet: {
+                                                                        "badge_attainers": req.body.user_id,
+                                                                    }
                                                                 }
-                                                            }
-                                                        );
-                                                });
+                                                            );
+                                                    });
+                                                }
                                                 res.json(true);
                                             })
                                     });

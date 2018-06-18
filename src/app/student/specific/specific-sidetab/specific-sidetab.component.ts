@@ -27,8 +27,8 @@ import {
 	UserService,
 	SectionService
 } from 'shared/services';
+
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
-import { ActivatedRoute } from '@angular/router';
 import { FileUploader } from 'ng2-file-upload/ng2-file-upload';
 import { ToastsManager } from 'ng2-toastr';
 
