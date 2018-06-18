@@ -50,6 +50,8 @@
 				Rewards:
 				<br> + {{this.questClicked.getQuestXp()}} XP
 				<br> + {{this.questClicked.getQuestHp()}} HP
+				<br>
+				<ng-container *ngIf="this.questClicked.getQuestBadge().length > 0">Badge: {{this.badgeName}} (if achieved at least 80% when graded) </ng-container>
 			</div>
 			<div class="col-sm-6">
 				Started on:
@@ -77,7 +79,8 @@
 		<!-- <ng-container *ngIf="isParticipating(this.questClicked.getQuestId()) && !isQuestTaken(this.questClicked.getQuestId()) && isPending()"> -->
 		<ng-container *ngIf="isParticipating(this.questClicked.getQuestId()) && isPending()">
 			<!-- <button type="submit" class="btn btn-danger mr-auto" (click)="abandonQuest()">Abandon Quest</button> -->
-			<input class="mr-auto" *ngIf="uploader?.queue?.length == 0" type="file" name="photo" multiple ng2FileSelect [uploader]="uploader" />
+			<input class="mr-auto" *ngIf="uploader?.queue?.length == 0" type="file" name="photo" multiple ng2FileSelect [uploader]="uploader"
+			/>
 			<!-- button to trigger the file upload when submitted -->
 			<div *ngIf="uploader?.queue?.length > 0">Files chosen:</div>
 			<div class="row" *ngFor="let item of uploader.queue">

@@ -1881,8 +1881,8 @@ router.get('/badges', (req, res) => {
                 .find({ _id: ObjectID(req.query.badge_id) })
                 .toArray()
                 .then((badges) => {
-                    if (badges) {
-                        res.json(badges);
+                    if (badges && badges[0]) {
+                        res.json(badges[0]);
                     } else {
                         res.json(false);
                     }

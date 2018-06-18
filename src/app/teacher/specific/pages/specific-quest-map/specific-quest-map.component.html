@@ -5,7 +5,7 @@
 <div *ngIf="!quests">
 	Loading...
 	<img class="loading-icon" src="/assets/images/loading.gif" />
-  </div>
+</div>
 
 <!--Graph for quest map-->
 <div [class.hidden]="quests && quests.length == 0">
@@ -17,7 +17,8 @@
 </div>
 
 <div *ngIf="isCreateModalReady && quests && quests.length == 0">
-	You have no quest yet. Click <span class="clickable" (click)="openCreateQuestModal(true)">here</span> to create your first quest!
+	You have no quest yet. Click
+	<span class="clickable" (click)="openCreateQuestModal(true)">here</span> to create your first quest!
 </div>
 
 <ng-container *ngIf="isCreateModalReady">
@@ -29,7 +30,7 @@
 				<span aria-hidden="true">&times;</span>
 			</button>
 		</div>
-	
+
 		<!--Modal Body-->
 		<form class="create-quest-body" [formGroup]="createQuestForm">
 			<div class="modal-body">
@@ -151,6 +152,8 @@
 				Rewards:
 				<br> + {{this.questClicked.getQuestXp()}} XP
 				<br> + {{this.questClicked.getQuestHp()}} HP
+				<br>
+				<ng-container *ngIf="this.questClicked.getQuestBadge().length > 0">Badge: {{this.badgeName}} (if achieved at least 80% when graded) </ng-container>
 			</div>
 			<div class="col-sm-6">
 				Started on:

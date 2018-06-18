@@ -105,6 +105,8 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 	chartWidth: number;
 	chartHeight: number;
 
+	badgeName: any = "";
+
 
 	constructor(
 		private badgeService: BadgeService,
@@ -232,6 +234,7 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 		//AHJ: Unimplemented
 		//WARNING!! Remove QUESTS in specific-qm.html when this is implemented
 		this.questClicked = new Quest(quest);
+		this.getBadgeName(this.questClicked.getQuestBadge());
 		if (this.questClicked) {
 			this.bsModalRef = this.modalService.show(this.questTemplate);
 		}
@@ -388,6 +391,15 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 			this.bsModalRef.hide();
 			this.resetQuest();
 		});
+	}
+
+	getBadgeName(badge_id: any) {
+		if(badge_id){
+			this.badgeService.getBadge(badge_id).subscribe(res => {
+				this.badgeName = new Badge(res).getBadgeName();
+			});
+		}
+		this.badgeName = "";
 	}
 
 	addNewQuestLine(quest) {

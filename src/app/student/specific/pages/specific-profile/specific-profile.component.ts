@@ -4,10 +4,6 @@ import {
     OnInit
 } from '@angular/core';
 
-import {
-    ActivatedRoute
-} from '@angular/router';
-
 //Application Imports
 import {
     Section,

@@ -25,7 +25,8 @@ import {
 	Section,
 	SectionQuest,
 	User,
-	QuestMap
+	QuestMap,
+	Badge
 } from 'shared/models';
 
 import {
@@ -34,7 +35,8 @@ import {
 	UserService,
 	QuestService,
 	LeaderboardService,
-    ExperienceService
+    ExperienceService,
+	BadgeService
 } from 'shared/services';
 
 import {
@@ -90,6 +92,7 @@ export class SpecificQuestMapComponent implements OnInit {
 	private questClicked: Quest;
 	private leaderboardRecords;
 	private questTitle;
+	private badgeName: any = "";
 
 	constructor(
 		private experienceService: ExperienceService,
@@ -101,7 +104,8 @@ export class SpecificQuestMapComponent implements OnInit {
 		private alertService: AlertService,
 		private questService: QuestService,
 		private leaderboardService: LeaderboardService,
-		private toaster: ToastsManager
+		private toaster: ToastsManager,
+		private badgeService: BadgeService
 	) {
 		this.currentUser = this.userService.getCurrentUser();
 		this.currentSection = new Section(this.sectionService.getCurrentSection());
@@ -127,6 +131,15 @@ export class SpecificQuestMapComponent implements OnInit {
 
 	isPending() {
 		return this.pending;
+	}
+
+	getBadgeName(badge_id: any) {
+		if(badge_id){
+			this.badgeService.getBadge(badge_id).subscribe(res => {
+				this.badgeName = new Badge(res).getBadgeName();
+			});
+		}
+		this.badgeName = "";
 	}
 
 	getQuestScores() {
@@ -170,6 +183,7 @@ export class SpecificQuestMapComponent implements OnInit {
 		if (this.questClicked) {
 			this.questModalRef = this.modalService.show(this.questTemplate);
 			this.getQuestScores();
+			this.getBadgeName(this.questClicked.getQuestBadge());
 
 			this.experienceService.getCurrentExperience(
 				this.questClicked.getQuestId(),

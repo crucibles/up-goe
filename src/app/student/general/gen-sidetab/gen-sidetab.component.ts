@@ -34,7 +34,8 @@ import {
 	Quest,
 	Section,
 	User,
-	imageDir
+	imageDir,
+	Badge
 } from 'shared/models';
 
 import {
@@ -44,7 +45,8 @@ import {
 	SectionService,
 	UserService,
 	ExperienceService,
-	FileService
+	FileService,
+	BadgeService
 } from 'shared/services';
 import { IfObservable } from 'rxjs/observable/IfObservable';
 import { Observable } from 'rxjs/Observable';
@@ -95,6 +97,8 @@ export class GenSidetabComponent implements OnInit {
 	isShowSideTab: boolean = false;
 	windowWidth: number = window.innerWidth;
 
+	badgeName: any = "";
+
 	//if screen size changes it'll update
 	@HostListener('window:resize', ['$event'])
 	resize(event) {
@@ -113,7 +117,7 @@ export class GenSidetabComponent implements OnInit {
 		private router: Router,
 		private experienceService: ExperienceService,
 		private toastr: ToastsManager,
-		private fileService: FileService
+		private badgeService: BadgeService
 	) {
 		this.image = imageDir + "not-found.jpg";
 		this.uploader = new FileUploader({ url: this.url, itemAlias: 'file' });
@@ -139,6 +143,15 @@ export class GenSidetabComponent implements OnInit {
 			console.warn("refreshing quests");
 			this.getQuests(this.currentUser.getUserId());
 		}
+	}
+
+	getBadgeName(badge_id: any) {
+		if (badge_id) {
+			this.badgeService.getBadge(badge_id).subscribe(res => {
+				this.badgeName = new Badge(res).getBadgeName();
+			});
+		}
+		this.badgeName = "";
 	}
 
 	submit() {
@@ -250,7 +263,7 @@ export class GenSidetabComponent implements OnInit {
 		//AHJ: Unimplemented
 		//WARNING!! Remove QUESTS in specific-qm.html when this is implemented
 		this.questClicked = quest;
-		console.warn(this.questClicked);
+		this.getBadgeName(this.questClicked.getQuestBadge())
 		if (this.questClicked) {
 			this.bsModalRef = this.modalService.show(template);
 		}
@@ -260,7 +273,7 @@ export class GenSidetabComponent implements OnInit {
 		console.log(res);
 		let user_id = this.userService.getCurrentUser().getUserId();
 		//AHJ: unimplemented
-		
+
 		this.questService.submitQuest(res, this.commentBox, user_id, questId, "").subscribe(res => {
 			console.warn(res);
 			this.bsModalRef.hide();
