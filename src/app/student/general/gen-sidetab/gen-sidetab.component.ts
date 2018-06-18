@@ -23,9 +23,31 @@ import {
 
 //Third-Party Imports
 import {
-	BsModalService,
-	BsModalRef
+	saveAs
+} from 'file-saver';
+
+import {
+	FileSelectDirective,
+	FileUploader
+} from 'ng2-file-upload/ng2-file-upload';
+
+import {
+	ToastsManager
+} from 'ng2-toastr';
+
+import {
+	BsModalRef,
+	BsModalService
 } from 'ngx-bootstrap';
+
+import {
+	Observable
+} from 'rxjs/Observable';
+
+import {
+	IfObservable
+} from 'rxjs/observable/IfObservable';
+
 
 //Application Imports
 import {
@@ -39,20 +61,15 @@ import {
 
 import {
 	CommentPostService,
+	ExperienceService,
+	FileService,
 	PageService,
 	QuestService,
 	SectionService,
-	UserService,
-	ExperienceService,
-	FileService
+	UserService
 } from 'shared/services';
-import { IfObservable } from 'rxjs/observable/IfObservable';
-import { Observable } from 'rxjs/Observable';
 
 //import the file uploader plugin
-import { FileSelectDirective, FileUploader } from 'ng2-file-upload/ng2-file-upload';
-import { ToastsManager } from 'ng2-toastr';
-import { saveAs } from 'file-saver';
 
 @Component({
 	selector: 'gen-sidetab',
@@ -68,7 +85,7 @@ export class GenSidetabComponent implements OnInit {
 	@ViewChild('fileInput') fileInput;
 
 
-	
+
 	private url = 'api/upload';
 	public uploader: FileUploader = new FileUploader({ url: this.url, itemAlias: 'file' });
 
@@ -76,7 +93,7 @@ export class GenSidetabComponent implements OnInit {
 	//current user
 	currentUser: User;
 	image: string = "";
-	
+
 	//for pages other than profile page  
 	editForm: FormGroup;
 	quests: Quest[] = []; //user's quests
@@ -261,7 +278,7 @@ export class GenSidetabComponent implements OnInit {
 		console.log(res);
 		let user_id = this.userService.getCurrentUser().getUserId();
 		//AHJ: unimplemented
-		
+
 		this.questService.submitQuest(res, this.commentBox, user_id, questId, "").subscribe(res => {
 			console.warn(res);
 			this.bsModalRef.hide();
@@ -279,9 +296,9 @@ export class GenSidetabComponent implements OnInit {
 		let section_id = this.questSectionIds[this.indexClicked];
 
 		this.questService.abandonQuest(user_id, quest_id, section_id).subscribe((result) => {
-			this.questService.getUserJoinedQuests(user_id).subscribe(x => {
-				console.log(x);
-			})
+			// this.questService.getUserJoinedQuests(user_id).subscribe(x => {
+			// 	console.log(x);
+			// })
 		});
 		this.bsModalRef.hide();
 	}
