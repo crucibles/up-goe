@@ -118,7 +118,7 @@ export class Section {
     }
 
     getQuests() {
-        return this.quests;
+        return this.quests || this.quests == undefined? this.quests: [];
     }
 
     getItems() {

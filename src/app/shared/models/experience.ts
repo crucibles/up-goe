@@ -69,10 +69,23 @@ export class Experience {
      * Retrieves a student's grade for a particular quest
      * @param quest_id the id of the quest whose user submission is to be retrieved.
      */
+    isQuestGraded(quest_id): boolean {
+        let questSubmission: any[] = this.quests_taken.filter(quest => quest.quest_id == quest_id);
+        return questSubmission.length > 0 && questSubmission[0].is_graded ? questSubmission[0].is_graded : false;
+    }
+
+    /**
+     * Retrieves a student's grade for a particular quest
+     * @param quest_id the id of the quest whose user submission is to be retrieved.
+     */
     getQuestSubmissionDate(quest_id): any {
         let questSubmission: any[] = this.quests_taken.filter(quest => quest.quest_id == quest_id);
     
         return questSubmission.length > 0 && questSubmission[0].date_submitted ? questSubmission[0].date_submitted : "";
+    }
+
+    hasSubmittedQuest(quest_id): boolean{
+        return this.getQuestSubmissionDate(quest_id) != "";
     }
 
     /**

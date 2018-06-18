@@ -186,23 +186,24 @@ export class SpecificSidetabComponent implements OnInit {
 	 * @param user_id the id of the user that asks for the list of quests
 	 */
 	setQuests(user_id): void {
-		console.warn(this.sectionService.getCurrentSection().getQuests());
 		this.quests = [];
 		let counter = 0;
-		this.sectionService.getCurrentSection().getQuests().map((sq) => {
-			this.questService.getQuest(sq.getSectionQuestId()).subscribe((quest) => {
-
-				sq.getQuestParticipants().forEach(qp => {
-					if (qp == user_id) {
-						this.quests.push(new Quest(quest));
+		if(this.sectionService.getCurrentSection()){
+			this.sectionService.getCurrentSection().getQuests().map((sq) => {
+				this.questService.getQuest(sq.getSectionQuestId()).subscribe((quest) => {
+	
+					sq.getQuestParticipants().forEach(qp => {
+						if (qp == user_id) {
+							this.quests.push(new Quest(quest));
+						}
+					});
+					counter++;
+					if (this.sectionService.getCurrentSection().getQuests().length == counter) {
+						this.isDataLoaded = true;
 					}
 				});
-				counter++;
-				if (this.sectionService.getCurrentSection().getQuests().length == counter) {
-					this.isDataLoaded = true;
-				}
 			});
-		});
+		}
 	}
 
 	/**
@@ -233,9 +234,6 @@ export class SpecificSidetabComponent implements OnInit {
 		let section_id = this.currentSection.getSectionId();
 
 		this.questService.abandonQuest(user_id, quest_id, section_id).subscribe((result) => {
-			this.questService.getUserJoinedQuests(user_id).subscribe(x => {
-				console.log(x);
-			})
 		});
 		this.bsModalRef.hide();
 	}
