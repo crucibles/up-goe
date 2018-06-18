@@ -198,6 +198,7 @@ router.post('/createCourseSection', (req, res) => {
             const myDB = db.db('up-goe-db');
             let newQuestMapObj = {
                 section_id: resultId,
+                max_exp: 0,
                 quest_coordinates: [
                     {
                         quest_id: "",
@@ -376,6 +377,8 @@ router.post('/experiences', (req, res) => {
                     section_id: req.body.section_id
                 })
                 .then(user => {
+                    console.log('\n\nThis is your user');
+                    console.log(user);
                     if (user) res.json(user);
                     else res.json(false);
                 })
@@ -574,6 +577,8 @@ router.post('/questmaps', (req, res) => {
         addQuestMapCoordinates(req, res);
     } else if (req.body.method && req.body.method == "editQuestMapCoordinateAt") {
         editQuestMapCoordinateAt(req, res);
+    } else if (req.body.method && req.body.method == "setMaxEXP") {
+        setMaxEXP(req, res);
     }
 
     function addQuestMapCoordinates(req, res) {
@@ -667,6 +672,29 @@ router.post('/questmaps', (req, res) => {
                 });
         })
     };
+
+    function setMaxEXP(req, res) {
+        console.log("================set max exp====================");
+        connection((db) => {
+            const myDB = db.db('up-goe-db');
+            myDB.collection('questmaps')
+                .updateOne(
+                    { _id: ObjectID(req.body.quest_map_id) },
+                    {
+                        $set: {
+                            max_exp: req.body.max_exp
+                        }
+                    }
+                )
+                .then(section => {
+                    res.json(true);
+                    console.log("================set max exp success====================");
+                })
+                .catch(err => {
+                    sendError(err, res);
+                });
+        })
+    }
 });
 
 /**
@@ -1486,9 +1514,11 @@ router.get('/sections/quests', (req, res) => {
 
                     questsOnly.forEach(quests => {
                         quests.forEach(quest => {
-                            if (quest.quest_participants == req.query.id) {
-                                userQuests.push(quest.quest_id);
-                            }
+                            quest.quest_participants.forEach(participant => {
+                                if (participant == req.query.id) {
+                                    userQuests.push(quest.quest_id);
+                                }
+                            });
                         })
                     });
 
@@ -1506,9 +1536,12 @@ router.get('/sections/quests', (req, res) => {
                                 section.quests.forEach(quest => {
                                     userQuests.forEach(userQuest => {
                                         if (quest.quest_id == userQuest) {
+                                            console.log(section._id);
+                                            console.log("--------------");
                                             AllUserQuests.push({
                                                 course: section.course_id,
                                                 section: section.section_name,
+                                                section_id: section._id,
                                                 questData: quest.quest_id
                                             });
                                         }
@@ -1539,8 +1572,55 @@ router.get('/sections/quests', (req, res) => {
                                             });
                                         });
 
-                                        response.data = AllUserQuests;
-                                        res.json(AllUserQuests);
+                                        let user_section_ids = [];
+                                            user_section_ids = AllUserQuests.map(quest => {
+                                                return quest.section_id + ""
+                                            });
+
+                                            myDB.collection('experiences').find({
+                                                user_id: 
+                                                req.query.id,
+                                                section_id: {$in: user_section_ids}
+                                            }).toArray()
+                                                .then(expArr => {
+                                                    expArr.forEach(exp => 
+                                                        {
+                                                        exp.quests_taken = exp.quests_taken.filter(q => {
+                                                            if (q.date_submitted != '') 
+                                                            {
+                                                                return q.quest_id;
+                                                            }
+                                                        }
+                                                    );
+
+                                                    AllUserQuests = AllUserQuests.filter(
+                                                            uq => {
+                                                            let isIncluded = true;
+                                                            exp.quests_taken.forEach(id => {
+                                                                if (id.quest_id == (uq.questData._id + '')) {
+                                                                    isIncluded = false;
+                                                                }
+                                                            })
+
+                                                            if (isIncluded) {
+                                                                return uq;
+                                                            }
+                                                        }
+                                                    )
+
+
+                                                    console.log("final quests");
+                                                    console.log(AllUserQuests);
+                                                })
+                                                let auq = AllUserQuests;
+                                                response.data = auq;
+                                                res.json(auq);
+
+                                            }
+                                            )
+                                            .catch((err) => {
+                                                sendError(err, res);
+                                            });
                                     } else {
                                         response.data = courses;
                                         res.json(false);

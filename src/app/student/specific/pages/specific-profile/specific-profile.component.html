@@ -18,7 +18,7 @@
   <h3>My Badges</h3>
   <!--Shows badges if badges exist-->
   <ng-container *ngIf="badges && badges.length > 0">
-    <div *ngFor="let badge of badges">
+    <div *ngFor="let badge of badges" class="badges">
       <!-- AHJ: uncomment below and place proper source path to have the desired image and its size -->
       <!-- <img class="badge-img" [src]="badge.getBadgePhoto()" tooltip="{{badge.getBadgeDescription()}}" placement="top" /> -->
       <img class="badge-img" [src]="badge.getBadgePhoto()" tooltip="{{badge.getBadgeDescription()}}" placement="top" />

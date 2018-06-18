@@ -7,6 +7,30 @@
 	</div>
 </div>
 
+<table  id="hor-zebra" *ngIf="quests && questMap" class="quest-table">
+	<thead></thead>
+	<tbody>
+		<tr>
+			<td class="row-header">Quest</td>
+			<td *ngFor="let quest of questMap.getQuestInformationArray()">
+				{{quest.questLabel}}
+			</td>
+		</tr>
+		<tr>
+			<td class="row-header">Max EXP</td>
+			<td *ngFor="let quest of questMap.getQuestInformationArray()">
+				{{quest.quest.getQuestXp()}}
+			</td>
+		</tr>
+		<tr>
+			<td class="row-header">Max HP</td>
+			<td *ngFor="let quest of questMap.getQuestInformationArray()">
+				{{quest.quest.getQuestHp()}}
+			</td>
+		</tr>
+	</tbody>
+</table>
+
 <!-- if quests still loading-->
 <div *ngIf="!quests">
 	Loading...
@@ -27,6 +51,9 @@
 		</ng-container>
 	</div>
 </ng-container> -->
+
+
+
 
 <!-- Modal Template for Quests-->
 <ng-template #questTemplate>
@@ -61,23 +88,24 @@
 				<br>
 			</div>
 		</div>
-		<div *ngIf="isParticipating(this.questClicked.getQuestId()) && isPending()">
+		<div *ngIf="isParticipating(this.questClicked.getQuestId()) && !isSubmitted(this.questClicked.getQuestId())">
 			<textarea [(ngModel)]="commentBox" style="width: 100%" placeholder="Place your comment here."></textarea>
 		</div>
 	</div>
 
 	<!-- Quest Modal Buttons -->
 	<div class="modal-footer">
-		<ng-container *ngIf="isParticipating(this.questClicked.getQuestId()) && isPending()">
+		<ng-container *ngIf="isParticipating(this.questClicked.getQuestId()) && !isSubmitted(this.questClicked.getQuestId())">
 			<button type="submit" class="btn btn-danger mr-auto" (click)="abandonQuest()">Abandon Quest</button>
 		</ng-container>
 	</div>
 	<div class="modal-footer">
 		<!-- shows submit & abandon buttons if user is a participant -->
 		<!-- <ng-container *ngIf="isParticipating(this.questClicked.getQuestId()) && !isQuestTaken(this.questClicked.getQuestId()) && isPending()"> -->
-		<ng-container *ngIf="isParticipating(this.questClicked.getQuestId()) && isPending()">
+		<ng-container *ngIf="isParticipating(this.questClicked.getQuestId()) && !isSubmitted(this.questClicked.getQuestId())">
 			<!-- <button type="submit" class="btn btn-danger mr-auto" (click)="abandonQuest()">Abandon Quest</button> -->
-			<input class="mr-auto" *ngIf="uploader?.queue?.length == 0" type="file" name="photo" multiple ng2FileSelect [uploader]="uploader" />
+			<input class="mr-auto" *ngIf="uploader?.queue?.length == 0" type="file" name="photo" multiple ng2FileSelect [uploader]="uploader"
+			/>
 			<!-- button to trigger the file upload when submitted -->
 			<div *ngIf="uploader?.queue?.length > 0">Files chosen:</div>
 			<div class="row" *ngFor="let item of uploader.queue">
@@ -92,15 +120,19 @@
 			</button>
 			<!-- <button type="submit" class="btn btn-success" (click)="submitQuest(comment)">Submit Quest</button> -->
 		</ng-container>
+
+
+		<!-- shows resubmit and show scores button if user already submitted quest-->
+		<!-- <ng-container *ngIf="isParticipating(this.questClicked.getQuestId()) && isQuestTaken(this.questClicked.getQuestId()) && !isPending()"> -->
+		<ng-container *ngIf="isParticipating(this.questClicked.getQuestId())  && isSubmitted(this.questClicked.getQuestId())">
+			<button type="submit" class="btn btn-danger mr-auto" (click)="abandonQuest()">Resubmit</button>
+			<button type="submit" class="btn btn-success" (click)="openLeaderBoardModal()">Show Scores</button>
+		</ng-container>
+
+
 		<!-- shows accept button if user is not yet a participant -->
 		<ng-container *ngIf="!isParticipating(this.questClicked.getQuestId())">
 			<button type="submit" class="btn btn-success" (click)="acceptQuest()">Accept the Quest</button>
-		</ng-container>
-		<!-- shows resubmit and show scores button if user already submitted quest-->
-		<!-- <ng-container *ngIf="isParticipating(this.questClicked.getQuestId()) && isQuestTaken(this.questClicked.getQuestId()) && !isPending()"> -->
-		<ng-container *ngIf="isParticipating(this.questClicked.getQuestId()) && !isPending()">
-			<button type="submit" class="btn btn-danger mr-auto" (click)="abandonQuest()">Resubmit</button>
-			<button type="submit" class="btn btn-success" (click)="openLeaderBoardModal()">Show Scores</button>
 		</ng-container>
 	</div>
 </ng-template>
