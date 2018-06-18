@@ -236,8 +236,8 @@ export class QuestMap {
 				label = this.hasExistingPointAt(tempX, tempY) ? "Connect" : label;
 				let scatterPoint: any = {
 					type: "scatter",
-					label: label,
-					title: label + '1',
+					label: '',
+					title: label,
 					data: [{
 						x: x1,
 						y: y1

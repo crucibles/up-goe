@@ -13,6 +13,18 @@ import {
 } from '@angular/router';
 
 //Third-Party Imports
+import Chart = require('chart.js');
+
+import 'chartjs-plugin-datalabels';
+
+import {
+	FileUploader
+} from 'ng2-file-upload/ng2-file-upload';
+
+import {
+	ToastsManager
+} from 'ng2-toastr';
+
 import {
 	BsModalRef,
 	BsModalService,
@@ -41,15 +53,6 @@ import {
 import {
 	AlertService
 } from 'shared/services/alert.service';
-import Chart = require('chart.js');
-import 'chartjs-plugin-datalabels';
-
-
-import {
-	ToastsManager
-} from 'ng2-toastr';
-
-import { FileUploader } from 'ng2-file-upload/ng2-file-upload';
 
 @Component({
 	selector: 'app-specific-quest-map',
@@ -225,7 +228,7 @@ export class SpecificQuestMapComponent implements OnInit {
 					font: {
 						weight: 'bold'
 					},
-					formatter: function(value, context) {
+					formatter: function (value, context) {
 						return context.chart.data.datasets[context.datasetIndex].label;
 					},
 					padding: 4

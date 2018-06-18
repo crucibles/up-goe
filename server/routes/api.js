@@ -1514,9 +1514,11 @@ router.get('/sections/quests', (req, res) => {
 
                     questsOnly.forEach(quests => {
                         quests.forEach(quest => {
-                            if (quest.quest_participants == req.query.id) {
-                                userQuests.push(quest.quest_id);
-                            }
+                            quest.quest_participants.forEach(participant => {
+                                if (participant == req.query.id) {
+                                    userQuests.push(quest.quest_id);
+                                }
+                            });
                         })
                     });
 
@@ -1584,19 +1586,18 @@ router.get('/sections/quests', (req, res) => {
                                                     expArr.forEach(exp => 
                                                         {
                                                         exp.quests_taken = exp.quests_taken.filter(q => {
-                                                            if (q.date_submitted != "") 
+                                                            if (q.date_submitted != '') 
                                                             {
-                                                                return 
-                                                                q.quest_id;
+                                                                return q.quest_id;
                                                             }
                                                         }
                                                     );
 
-                                                        AllUserQuests = AllUserQuests.filter(
+                                                    AllUserQuests = AllUserQuests.filter(
                                                             uq => {
                                                             let isIncluded = true;
                                                             exp.quests_taken.forEach(id => {
-                                                                if (id == uq.questData._id) {
+                                                                if (id.quest_id == (uq.questData._id + '')) {
                                                                     isIncluded = false;
                                                                 }
                                                             })

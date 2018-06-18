@@ -28,11 +28,20 @@ import {
 
 //Third-Party Imports
 import {
+	Chart
+} from 'chart.js';
+
+import 'chartjs-plugin-datalabels';
+
+import {
+	ToastsManager
+} from 'ng2-toastr';
+
+import {
 	BsModalRef,
 	BsModalService,
 	ModalDirective
 } from 'ngx-bootstrap';
-
 //Application Imports
 import {
 	Quest,
@@ -44,10 +53,6 @@ import {
 } from 'shared/models';
 
 import {
-	Chart
-} from 'chart.js';
-
-import {
 	FileService,
 	PageService,
 	QuestService,
@@ -55,7 +60,6 @@ import {
 	UserService,
 	BadgeService
 } from 'shared/services';
-import { ToastsManager } from 'ng2-toastr';
 
 @Component({
 	selector: 'app-specific-quest-map',
@@ -260,7 +264,7 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 			);
 		} else {
 			this.questService.setMaxEXP(this.questMap.getQuestMapId(), maxEXP).subscribe((x) => {
-				if(x){
+				if (x) {
 					this.toastr.success(
 						"Successfully set the section max EXP to " + maxEXP,
 						"Grade Submission Success!"
@@ -303,7 +307,7 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 					font: {
 						weight: 'bold'
 					},
-					formatter: function(value, context) {
+					formatter: function (value, context) {
 						return context.chart.data.datasets[context.datasetIndex].label;
 					},
 					padding: 4
@@ -332,7 +336,7 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 				callbacks: {
 					title: function (tooltipItems, data) {
 						var tooltipItem = tooltipItems[0];
-						return data.datasets[tooltipItem.datasetIndex].label;
+						return data.datasets[tooltipItem.datasetIndex].title;
 					},
 					label: function (tooltipItem, data) {
 						return "";
@@ -377,7 +381,7 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 			this.y = (this.chartHeight - points[0]._model.y) / (this.chartHeight / this.yTick);
 			console.log(points);
 			if ((this.x % 5 != 0 || this.y % 5 !== 0) || this.questMap.getQuestIdOf(this.x, this.y) == "") {
-				if(!this.questMap.hasQuestPointAtDirection(this.x, this.y)){
+				if (!this.questMap.hasQuestPointAtDirection(this.x, this.y)) {
 					this.openCreateQuestModal();
 				} else {
 					this.addNewQuestLine();
