@@ -22,6 +22,12 @@
 				{{quest.quest.getQuestXp()}}
 			</td>
 		</tr>
+		<tr>
+			<td class="row-header">Max HP</td>
+			<td *ngFor="let quest of questMap.getQuestInformationArray()">
+				{{quest.quest.getQuestHp()}}
+			</td>
+		</tr>
 	</tbody>
 </table>
 
