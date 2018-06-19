@@ -1452,30 +1452,32 @@ router.get('/getSectionQuests', (req, res) => {
                 "section_id": req.query.section_id
             })
             .then(questmap => {
-                let questIds = [];
-                questmap.quest_coordinates.forEach(coord => {
-                    if (coord.quest_id) {
-                        questIds.push(coord.quest_id);
-                    }
-                });
-
-                myDB.collection('quests')
-                    .find()
-                    .toArray()
-                    .then((quests) => {
-                        let sectionQuests = [];
-                        questIds.forEach(questId => {
-                            quests.forEach(quest => {
-                                if (quest._id == questId) {
-                                    sectionQuests.push(quest);
-                                }
-                            });
-                        })
-                        res.json(sectionQuests);
-                    })
-                    .catch((err) => {
-                        sendError(err, res);
+                if(questmap) {
+                    let questIds = [];
+                    questmap.quest_coordinates.forEach(coord => {
+                        if (coord.quest_id) {
+                            questIds.push(coord.quest_id);
+                        }
                     });
+
+                    myDB.collection('quests')
+                        .find()
+                        .toArray()
+                        .then((quests) => {
+                            let sectionQuests = [];
+                            questIds.forEach(questId => {
+                                quests.forEach(quest => {
+                                    if (quest._id == questId) {
+                                        sectionQuests.push(quest);
+                                    }
+                                });
+                            })
+                            res.json(sectionQuests);
+                        })
+                        .catch((err) => {
+                            sendError(err, res);
+                        });
+                } else res.json(false);
             })
             .catch((err) => {
                 sendError(err, res);
