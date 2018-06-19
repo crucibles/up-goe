@@ -19,7 +19,7 @@ router.use(function timeLog(req, res, next) {
 
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, './uploads/');
+        cb(null, './src/assets/images/');
     },
     filename: function (req, file, cb) {
         cb(null, requestTime + "." + file.originalname);
@@ -478,7 +478,6 @@ router.post('/experiences', (req, res) => {
 });
 
 router.post('/upload', (req, res) => {
-    var path = '';
 
     upload(req, res, function (err) {
         if (err) {
@@ -486,7 +485,6 @@ router.post('/upload', (req, res) => {
             return res.status(422).send("an Error occured")
         }
         // No error occured.
-        path = req.file.path;
         // return res.send(path.substring(8, path.length));
         return res.json({ originalName: req.file.originalname, uploadName: req.file.filename });
     })
@@ -496,13 +494,13 @@ router.post('/upload', (req, res) => {
 router.get('/badgeImg', (req, res) => {
     var path = '';
 
-    filepath = path.join(__dirname, '../../uploads') + '/' + req.query.imgName;
+    filepath = path.join(__dirname, '../../src/assets/images') + '/' + req.query.imgName;
     res.sendFile(filepath);
 
 });
 
 router.post('/download', (req, res) => {
-    filepath = path.join(__dirname, '../../uploads') + '/' + req.body.fileName;
+    filepath = path.join(__dirname, '../../src/assets/images') + '/' + req.body.fileName;
     res.sendFile(filepath);
 });
 
