@@ -15,10 +15,31 @@ import {
 	Validators
 } from '@angular/forms';
 
+import {
+	ActivatedRoute,
+	ParamMap
+} from '@angular/router';
+
+//Third-Party Importsn
+import {
+	BsModalRef,
+	BsModalService
+} from 'ngx-bootstrap';
+
+import {
+	FileUploader
+} from 'ng2-file-upload/ng2-file-upload';
+
+import {
+	ToastsManager
+} from 'ng2-toastr';
 
 //Application Imports
 import {
-	User, Quest, Badge
+	User, 
+	Quest, 
+	Badge,
+	Section
 } from 'shared/models';
 
 import {
@@ -29,9 +50,9 @@ import {
 	BadgeService
 } from 'shared/services';
 
-import { BsModalRef, BsModalService } from 'ngx-bootstrap';
-import { FileUploader } from 'ng2-file-upload/ng2-file-upload';
-import { ToastsManager } from 'ng2-toastr';
+import {
+	SpecificComponent
+} from 'student/specific/specific.component';
 
 const imageDir: string = "/assets/images/";
 
@@ -46,6 +67,7 @@ const imageDir: string = "/assets/images/";
 
 
 export class SpecificSidetabComponent implements OnInit {
+	currentSection: Section;
 	@Input('sectionId') section_id: string;
 
 	private url = 'api/upload';
@@ -88,6 +110,7 @@ export class SpecificSidetabComponent implements OnInit {
 		private pageService: PageService,
 		private questService: QuestService,
 		private userService: UserService,
+		private route: ActivatedRoute,
 		private sectionService: SectionService,
 		private toastr: ToastsManager,
 		private badgeService: BadgeService
@@ -166,6 +189,7 @@ export class SpecificSidetabComponent implements OnInit {
 	setUser() {
 		//AHJ: current user is not yet obtained
 		this.currentUser = this.userService.getCurrentUser();
+		this.currentSection = this.sectionService.getCurrentSection();
 		this.image = this.currentUser.getUserPhoto();
 	}
 
@@ -177,23 +201,24 @@ export class SpecificSidetabComponent implements OnInit {
 	 * @param user_id the id of the user that asks for the list of quests
 	 */
 	setQuests(user_id): void {
-		console.warn(this.sectionService.getCurrentSection().getQuests());
 		this.quests = [];
 		let counter = 0;
-		this.sectionService.getCurrentSection().getQuests().map((sq) => {
-			this.questService.getQuest(sq.getSectionQuestId()).subscribe((quest) => {
-
-				sq.getQuestParticipants().forEach(qp => {
-					if (qp == user_id) {
-						this.quests.push(new Quest(quest));
+		if(this.sectionService.getCurrentSection()){
+			this.sectionService.getCurrentSection().getQuests().map((sq) => {
+				this.questService.getQuest(sq.getSectionQuestId()).subscribe((quest) => {
+	
+					sq.getQuestParticipants().forEach(qp => {
+						if (qp == user_id) {
+							this.quests.push(new Quest(quest));
+						}
+					});
+					counter++;
+					if (this.sectionService.getCurrentSection().getQuests().length == counter) {
+						this.isDataLoaded = true;
 					}
 				});
-				counter++;
-				if (this.sectionService.getCurrentSection().getQuests().length == counter) {
-					this.isDataLoaded = true;
-				}
 			});
-		});
+		}
 	}
 
 	/**
@@ -222,11 +247,9 @@ export class SpecificSidetabComponent implements OnInit {
 		);
 		let user_id = this.userService.getCurrentUser().getUserId();
 		let quest_id = this.questClicked.getQuestId();
+		let section_id = this.currentSection.getSectionId();
 
-		this.questService.abandonQuest(user_id, quest_id, "").subscribe((result) => {
-			this.questService.getUserJoinedQuests(user_id).subscribe(x => {
-				console.log(x);
-			})
+		this.questService.abandonQuest(user_id, quest_id, section_id).subscribe((result) => {
 		});
 		this.bsModalRef.hide();
 	}
@@ -239,7 +262,7 @@ export class SpecificSidetabComponent implements OnInit {
 		console.log(res);
 		let user_id = this.userService.getCurrentUser().getUserId();
 		//AHJ: unimplemented
-		
+
 		this.questService.submitQuest(res, this.commentBox, user_id, questId, "").subscribe(res => {
 			console.warn(res);
 			this.bsModalRef.hide();

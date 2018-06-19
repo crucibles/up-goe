@@ -20,7 +20,7 @@
 			<tbody>
 				<!--Shows if user has no classmates yet-->
 				<tr *ngIf="!classmates || classmates.length == 0">
-					<td colspan="3" style="text-align: center">You have no course enrolled yet!
+					<td colspan="4" style="text-align: center">You have no course enrolled yet!
 						<br>Input your class code now.
 					</td>
 				</tr>
@@ -92,7 +92,10 @@
 		<div class="student-badge" style="margin-top: 20px">
 			<h5 class="modal-title">{{this.classmateClicked.getUserFirstName()}}'s Badges</h5>
 
-			<div *ngIf="!this.badgesDisplay || this.badgesDisplay.length == 0">
+			<div *ngIf="!this.badgesDisplay">
+				Loading...
+			</div>
+			<div *ngIf="this.badgesDisplay && this.badgesDisplay.length == 0">
 				You have no badges yet.
 			</div>
 			<!-- Badge Display -->

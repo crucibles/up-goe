@@ -51,3 +51,11 @@ ul {
 h4 {
     text-align: center;
 }
+
+.quest-table tr td{
+    border: 1px solid #ddd;
+}
+
+.row-header{
+    font-weight: bold;
+}

@@ -33,7 +33,7 @@
 			<!-- display all quest for all sections -->
 			<li *ngFor="let quest of quests; let title of questCourses; let i = index">
 				<!-- the quest progress bar and some basic information -->
-				<a [tooltip]="questTemplate" placement="auto" container="body" (click)="openQuest(questClickedTemplate, quest)">
+				<a [tooltip]="questTemplate" placement="auto" container="body" (click)="openQuest(questClickedTemplate, quest, i)">
 					{{questCourses[i]}}
 					<br> {{quest.getQuestTitle()}}
 					<!-- {{quest.quest.getQuestTitle()}} -->
@@ -102,7 +102,9 @@
 						<!-- Quest Modal Buttons -->
 						<div class="modal-footer">
 							<!-- shows submit & abandon buttons if user is a participant -->
-							<button type="submit" class="btn btn-danger mr-auto" (click)="abandonQuest(this.questClicked.getQuestId())">Abandon Quest</button>
+							<button type="submit" class="btn btn-danger mr-auto" (click)="abandonQuest(this.questClicked.getQuestId())">
+								Abandon Quest
+							</button>
 						</div>
 						<!-- (ngSubmit)="func()" -->
 						<div class="modal-footer">

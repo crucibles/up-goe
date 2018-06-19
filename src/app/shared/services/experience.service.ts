@@ -56,37 +56,44 @@ export class ExperienceService {
      */
     getSectionGrades(section_id: string, user_id?: string): Observable<any> {
         const url = this.experienceUrl;
-        let params = new HttpParams()
-            .set('section_id', section_id)
-            .set('method', 'getSectionGrades');
-        if (user_id) {
-            params.set('user_id', user_id);
-        }
+        let params: HttpParams;
 
+        if(user_id != undefined){
+            params = new HttpParams()
+                .set('section_id', section_id)
+                .set('method', 'getSectionGrades')
+                .set('user_id', user_id);
+        } else {
+            params = new HttpParams()
+                .set('section_id', section_id)
+                .set('method', 'getSectionGrades');
+
+        }
+        
         return this.http.get<any>(url, {
-			params: params
-		}).pipe(
-			tap(quests => quests ? console.log(quests) : console.log('did not fetched quests')),
-			catchError(this.handleError(`getSectionGrades`, []))
-		);
+            params: params
+        }).pipe(
+            tap(quests => quests ? console.log(quests) : console.log('did not fetched quests')),
+            catchError(this.handleError(`getSectionGrades`, []))
+        );
     }
 
-    setStudentQuestGrade(section_id, user_id, quest_id, grade){
+    setStudentQuestGrade(section_id, user_id, quest_id, grade) {
         let url = this.experienceUrl;
-		return this.http.post<any>(url, {
-			method: "setStudentQuestGrade",
-			section_id: section_id,
-			user_id: user_id,
+        return this.http.post<any>(url, {
+            method: "setStudentQuestGrade",
+            section_id: section_id,
+            user_id: user_id,
             quest_id: quest_id,
-            grade: grade 
-		})
-			.pipe(
-				tap(data => {
-					// Returns data from api.js
-					return data;
-				}),
-				catchError(this.handleError<Experience>(`setStudentQuestGrade =${quest_id}`))
-			);
+            grade: grade
+        })
+            .pipe(
+                tap(data => {
+                    // Returns data from api.js
+                    return data;
+                }),
+                catchError(this.handleError<Experience>(`setStudentQuestGrade =${quest_id}`))
+            );
     }
 
     getCurrentExperience(quest_id: string, user_id: string, section_id: string) {
@@ -107,9 +114,9 @@ export class ExperienceService {
     getUserExpRecord(user_id: string, section_id: string) {
         let url = this.experienceUrl;
 
-        return this.http.post<Experience>(url, {user_id, section_id}).pipe(
+        return this.http.post<Experience>(url, { user_id, section_id }).pipe(
             tap(data => {
-                if(!data) console.warn('getUserExpRecord did not return anything.');
+                if (!data) console.warn('getUserExpRecord did not return anything.');
             }),
             catchError(this.handleError<any>(`getUserExpRecord = ${user_id}`))
         );
@@ -121,17 +128,17 @@ export class ExperienceService {
 	 * @param operation name of the operation that failed
 	 * @param result optional value to return as the observable result
 	 */
-	private handleError<T>(operation = 'operation', result?: T) {
-		return (error: any): Observable<T> => {
+    private handleError<T>(operation = 'operation', result?: T) {
+        return (error: any): Observable<T> => {
 
-			// TODO: send the error to remote logging infrastructure
-			console.error(error); // log to console instead
+            // TODO: send the error to remote logging infrastructure
+            console.error(error); // log to console instead
 
-			// TODO: better job of transforming error for user consumption
-			console.log(`${operation} failed: ${error.message}`);
+            // TODO: better job of transforming error for user consumption
+            console.log(`${operation} failed: ${error.message}`);
 
-			// Let the app keep running by returning an empty result.
-			return of(result as T);
-		};
-	}
+            // Let the app keep running by returning an empty result.
+            return of(result as T);
+        };
+    }
 }

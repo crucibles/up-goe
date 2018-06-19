@@ -157,6 +157,7 @@ export class SpecificMyCourseComponent implements OnInit {
 	}
 
 	getClassmateBadges(classmate: User) {
+		this.badgesDisplay = [];
 		this.badgeService.getSectionBadges(this.sectionService.getCurrentSection().getSectionId()).subscribe(badges => {
 			badges.map(badge => {
 				let x = new Badge(badge);

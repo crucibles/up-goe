@@ -13,6 +13,18 @@ import {
 } from '@angular/router';
 
 //Third-Party Imports
+import Chart = require('chart.js');
+
+import 'chartjs-plugin-datalabels';
+
+import {
+	FileUploader
+} from 'ng2-file-upload/ng2-file-upload';
+
+import {
+	ToastsManager
+} from 'ng2-toastr';
+
 import {
 	BsModalRef,
 	BsModalService,
@@ -26,7 +38,8 @@ import {
 	SectionQuest,
 	User,
 	QuestMap,
-	Badge
+	Badge,
+	Experience
 } from 'shared/models';
 
 import {
@@ -43,13 +56,6 @@ import {
 	AlertService
 } from 'shared/services/alert.service';
 
-import Chart = require('chart.js');
-
-import { 
-	ToastsManager 
-} from 'ng2-toastr';
-import { FileUploader } from 'ng2-file-upload/ng2-file-upload';
-
 @Component({
 	selector: 'app-specific-quest-map',
 	templateUrl: './specific-quest-map.component.html',
@@ -65,6 +71,8 @@ export class SpecificQuestMapComponent implements OnInit {
 	private quests: Quest[] = new Array();
 	private url = 'api/upload';
 	public uploader: FileUploader = new FileUploader({ url: this.url, itemAlias: 'file' });
+
+	sectionEXP: Experience;
 
 	// quest map chart
 	xTick: number;
@@ -84,8 +92,8 @@ export class SpecificQuestMapComponent implements OnInit {
 
 	currentUser: User;
 
-	
-    commentBox: any = "";
+
+	commentBox: any = "";
 	private questModalRef: BsModalRef;
 	private lbModalRef: BsModalRef;
 	private currentSection: Section;
@@ -129,8 +137,12 @@ export class SpecificQuestMapComponent implements OnInit {
 		this.loadQuestMap();
 	}
 
-	isPending() {
-		return this.pending;
+	isPending(quest_id) {
+		return this.sectionEXP.isQuestGraded(quest_id);
+	}
+
+	isSubmitted(quest_id) {
+		return this.sectionEXP.hasSubmittedQuest(quest_id);
 	}
 
 	getBadgeName(badge_id: any) {
@@ -161,19 +173,20 @@ export class SpecificQuestMapComponent implements OnInit {
 		this.questService.getSectionQuests(this.currentSection.getSectionId()).subscribe(quests => {
 			this.quests = quests.map(quest => new Quest(quest));
 			this.experienceService.getSectionGrades(this.currentSection.getSectionId(), this.currentUser.getUserId())
-			.subscribe(EXP => {
-				if(EXP && EXP.length > 0){
-					
-				}
-				this.questService.getSectionQuestMap(this.currentSection.getSectionId()).subscribe(questmap => {
-					console.log("QUESTMAP LOADEd");
-					console.log(questmap);
-					this.questMap = new QuestMap(questmap, this.quests);
-					this.setQuestMap();
+				.subscribe(EXP => {
+					if (EXP && EXP.length > 0) {
+						this.sectionEXP = new Experience(EXP[0]);
+					}
+					this.questService.getSectionQuestMap(this.currentSection.getSectionId()).subscribe(questmap => {
+						console.log("QUESTMAP LOADEd");
+						console.log(questmap);
+						this.questMap = new QuestMap(questmap, this.quests);
+						console.log(this.questMap.getQuestInformationArray())
+						this.setQuestMap();
+					});
 				});
-			});
 		});
-		
+
 	}
 
 	openQuest(quest: any) { //'quest: any' in here means the quest has not been converted to Quest type
@@ -190,7 +203,7 @@ export class SpecificQuestMapComponent implements OnInit {
 				this.currentUser.getUserId(),
 				this.currentSection.getSectionId()
 			).subscribe(res => {
-				if(res == "true") {
+				if (res == "true") {
 					this.pending = false;
 				} else if (res == "false") {
 					this.pending = true;
@@ -222,6 +235,19 @@ export class SpecificQuestMapComponent implements OnInit {
 		let options = {
 			onClick: this.chartClicked.bind(this),
 			legend: { display: false },
+			plugins: {
+				datalabels: {
+					display: true,
+					color: 'red',
+					font: {
+						weight: 'bold'
+					},
+					formatter: function (value, context) {
+						return context.chart.data.datasets[context.datasetIndex].label;
+					},
+					padding: 4
+				}
+			},
 			scales: {
 				xAxes: [{
 					display: false,
@@ -245,7 +271,7 @@ export class SpecificQuestMapComponent implements OnInit {
 				callbacks: {
 					title: function (tooltipItems, data) {
 						var tooltipItem = tooltipItems[0];
-						return data.datasets[tooltipItem.datasetIndex].label;
+						return data.datasets[tooltipItem.datasetIndex].title;
 					},
 					label: function (tooltipItem, data) {
 						return "";
@@ -294,9 +320,8 @@ export class SpecificQuestMapComponent implements OnInit {
 	 */
 	setDefault() {
 		this.pageService.isProfilePage(false);
-		this.currentUser = this.userService.getCurrentUser();
+		this.currentUser = new User(this.userService.getCurrentUser());
 		this.currentSection = new Section(this.sectionService.getCurrentSection());
-		console.log(this.currentSection);
 	}
 
 	/**
@@ -319,15 +344,19 @@ export class SpecificQuestMapComponent implements OnInit {
 		let section_id = this.currentSection.getSectionId();
 
 		this.questService.joinQuest(user_id, quest_id, section_id).subscribe((result) => {
-
-			this.sectionService.getUserSections(this.currentUser.getUserId(), this.currentSection.getSectionId()).subscribe(
-				sections => {
-					this.sectionService.setCurrentSection(sections[0].section);
-					this.currentSection = new Section(this.sectionService.getCurrentSection());
-				}
-			)
+			this.setNewSection(quest_id);
+			this.questModalRef.hide();
 		});
 
+	}
+
+	setNewSection(quest_id) {
+		this.sectionService.getUserSections(this.currentUser.getUserId(), this.currentSection.getSectionId()).subscribe(
+			sections => {
+				this.sectionService.setCurrentSection(sections[0].section);
+				this.currentSection = new Section(this.sectionService.getCurrentSection());
+			}
+		);
 	}
 
 	submitQuest(res: any) {
@@ -339,16 +368,23 @@ export class SpecificQuestMapComponent implements OnInit {
 		let user_id = this.userService.getCurrentUser().getUserId();
 		let quest_id = this.questClicked.getQuestId();
 		let section_id = this.currentSection.getSectionId();
-		
+
 		this.questService.submitQuest(res, this.commentBox, user_id, quest_id, section_id).subscribe((result) => {
 			this.isQuestTakn = true;
 			this.pending = true;
 			this.commentBox = "";
-			this.questService.getUserJoinedQuests(user_id).subscribe(x => {
-			})
-			console.log("hide!");
+			this.setNewExperience();
 			this.questModalRef.hide();
 		});
+	}
+
+	setNewExperience() {
+		this.experienceService.getSectionGrades(this.currentSection.getSectionId(), this.currentUser.getUserId())
+			.subscribe(EXP => {
+				if (EXP && EXP.length > 0) {
+					this.sectionEXP = new Experience(EXP[0]);
+				}
+			});
 	}
 
 	abandonQuest() {
@@ -362,9 +398,9 @@ export class SpecificQuestMapComponent implements OnInit {
 		let section_id = this.currentSection.getSectionId();
 
 		this.questService.abandonQuest(user_id, quest_id, section_id).subscribe((result) => {
-			this.questService.getUserJoinedQuests(user_id).subscribe(x => {
-				console.log(x);
-			})
+			// this.questService.getUserJoinedQuests(user_id).subscribe(x => {
+			// 	console.log(x);
+			// })
 		});
 		this.questModalRef.hide();
 	}

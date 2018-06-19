@@ -288,7 +288,7 @@ export class QuestService {
 	 * 
 	 * array[i].quest = someQuest //if specific section only
 	 */
-	getUserJoinedQuests(user_id: string, section_id?: string): Observable<any> {
+	getUserJoinedQuests(user_id: string): Observable<any> {
 		// note: This function is used on the general sidetab except for the profile page
 		let userEnrolledSections = this.sectionService.getUserEnrolledSections();
 		console.warn(userEnrolledSections);
@@ -297,7 +297,6 @@ export class QuestService {
 		// used for side tabs; aaaand di ko sure pero basin pwede makuha ang section quest by using getSectionQuests() function
 		let params = new HttpParams()
 			.set('id', user_id)
-			.set('section_id', section_id)
 			.set('method', 'getUserQuests');
 
 		return this.http.get<any[]>(this.sectionQuestUrl, {
@@ -367,6 +366,23 @@ export class QuestService {
 		);
 	}
 
+	setMaxEXP(questMapId: String, maxEXP: number) {
+		const url = this.questMapUrl;
+
+		let body = {
+			method: "setMaxEXP",
+			quest_map_id: questMapId,
+			max_exp: maxEXP
+		}
+
+		return this.http.post(url, body).pipe(
+			tap(data => {
+				console.warn(data);
+				return data;
+			})
+		);
+	}
+
 	/**\
 	 * Submits student's quest submission.
 	 * @description Submits the user's submission and removes user from the quest participant's list 
@@ -386,7 +402,7 @@ export class QuestService {
 			quest_id: quest_id,
 			data: data? data.uploadName: "",
 			comment: comment,
-			time: data && data.uploadName? Number(data.uploadName.substring(0, data.uploadName.indexOf('.'))): Date.now()
+			time: data && data.uploadName ? Number(data.uploadName.substring(0, data.uploadName.indexOf('.'))) : Date.now()
 		}
 
 		console.warn(body.data);

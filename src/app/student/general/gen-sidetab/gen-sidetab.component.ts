@@ -23,9 +23,31 @@ import {
 
 //Third-Party Imports
 import {
-	BsModalService,
-	BsModalRef
+	saveAs
+} from 'file-saver';
+
+import {
+	FileSelectDirective,
+	FileUploader
+} from 'ng2-file-upload/ng2-file-upload';
+
+import {
+	ToastsManager
+} from 'ng2-toastr';
+
+import {
+	BsModalRef,
+	BsModalService
 } from 'ngx-bootstrap';
+
+import {
+	Observable
+} from 'rxjs/Observable';
+
+import {
+	IfObservable
+} from 'rxjs/observable/IfObservable';
+
 
 //Application Imports
 import {
@@ -40,21 +62,16 @@ import {
 
 import {
 	CommentPostService,
+	ExperienceService,
+	FileService,
 	PageService,
 	QuestService,
 	SectionService,
 	UserService,
-	ExperienceService,
-	FileService,
 	BadgeService
 } from 'shared/services';
-import { IfObservable } from 'rxjs/observable/IfObservable';
-import { Observable } from 'rxjs/Observable';
 
 //import the file uploader plugin
-import { FileSelectDirective, FileUploader } from 'ng2-file-upload/ng2-file-upload';
-import { ToastsManager } from 'ng2-toastr';
-import { saveAs } from 'file-saver';
 
 @Component({
 	selector: 'gen-sidetab',
@@ -65,8 +82,11 @@ import { saveAs } from 'file-saver';
 	}
 })
 export class GenSidetabComponent implements OnInit {
+	indexClicked: number;
 	@Input('isProfile') isProfile: boolean = false;
 	@ViewChild('fileInput') fileInput;
+
+
 
 	private url = 'api/upload';
 	public uploader: FileUploader = new FileUploader({ url: this.url, itemAlias: 'file' });
@@ -80,6 +100,7 @@ export class GenSidetabComponent implements OnInit {
 	editForm: FormGroup;
 	quests: Quest[] = []; //user's quests
 	questCourses: string[] = [];
+	questSectionIds: any[] = [];
 	questClicked: Quest;
 	//for progress bar; 
 	defaultPBClass: string = 'progress-bar progress-bar-striped';
@@ -226,16 +247,14 @@ export class GenSidetabComponent implements OnInit {
 	 * @param user_id the id of the user that asks for the list of quests
 	 */
 	getQuests(user_id): void {
-		//AHJ: unimplemented; get quest by section; not sure... this may be okay as is 
 		this.questService.getUserJoinedQuests(user_id)
 			.subscribe(quests => {
 				console.warn(quests);
 				quests.forEach(quest => {
 					this.quests.push(new Quest(quest.questData));
 					this.questCourses.push(quest.course + '-' + quest.section);
+					this.questSectionIds.push(quest.section_id);
 				});
-
-
 
 				console.warn(this.quests);
 				this.timeDisplays();
@@ -259,11 +278,10 @@ export class GenSidetabComponent implements OnInit {
 		this.editForm.get("email").disable();
 	}
 
-	openQuest(template: TemplateRef<any>, quest: any) { //'quest: any' in here means the quest has not been converted to Quest type
-		//AHJ: Unimplemented
-		//WARNING!! Remove QUESTS in specific-qm.html when this is implemented
+	openQuest(template: TemplateRef<any>, quest: any, index: number) { //'quest: any' in here means the quest has not been converted to Quest type
 		this.questClicked = quest;
 		this.getBadgeName(this.questClicked.getQuestBadge())
+		this.indexClicked = index;
 		if (this.questClicked) {
 			this.bsModalRef = this.modalService.show(template);
 		}
@@ -280,19 +298,20 @@ export class GenSidetabComponent implements OnInit {
 		});
 	}
 
-	abandonQuest(questId: String) {
-		console.warn("hello");
+	abandonQuest() {
+		//AHJ: unimplemented
 		this.toastr.warning(
 			"You have abandoned a quest.",
 			"Quest Abandoned!"
 		);
 		let user_id = this.userService.getCurrentUser().getUserId();
 		let quest_id = this.questClicked.getQuestId();
+		let section_id = this.questSectionIds[this.indexClicked];
 
-		this.questService.abandonQuest(user_id, quest_id, "").subscribe((result) => {
-			this.questService.getUserJoinedQuests(user_id).subscribe(x => {
-				console.log(x);
-			})
+		this.questService.abandonQuest(user_id, quest_id, section_id).subscribe((result) => {
+			// this.questService.getUserJoinedQuests(user_id).subscribe(x => {
+			// 	console.log(x);
+			// })
 		});
 		this.bsModalRef.hide();
 	}
