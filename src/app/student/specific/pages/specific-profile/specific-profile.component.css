@@ -18,3 +18,7 @@ h3:after {
     height: 80px;
     width: 80px;
 }
+
+.badges {
+    display: inline-block;
+}

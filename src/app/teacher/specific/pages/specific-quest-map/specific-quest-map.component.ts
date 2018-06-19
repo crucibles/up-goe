@@ -28,11 +28,20 @@ import {
 
 //Third-Party Imports
 import {
+	Chart
+} from 'chart.js';
+
+import 'chartjs-plugin-datalabels';
+
+import {
+	ToastsManager
+} from 'ng2-toastr';
+
+import {
 	BsModalRef,
 	BsModalService,
 	ModalDirective
 } from 'ngx-bootstrap';
-
 //Application Imports
 import {
 	Quest,
@@ -42,10 +51,6 @@ import {
 	QuestMap,
 	Badge
 } from 'shared/models';
-
-import {
-	Chart
-} from 'chart.js';
 
 import {
 	FileService,
@@ -105,6 +110,8 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 	chartWidth: number;
 	chartHeight: number;
 
+	maxEXP: number;
+
 
 	constructor(
 		private badgeService: BadgeService,
@@ -116,6 +123,7 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 		private pageService: PageService,
 		private route: ActivatedRoute,
 		private sectionService: SectionService,
+		private toastr: ToastsManager,
 		private userService: UserService
 
 	) {
@@ -248,14 +256,38 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 		this.createQuestForm.reset();
 	}
 
+	setMaxEXP(maxEXP: number) {
+		if (maxEXP <= 0) {
+			this.toastr.error(
+				"You must input a max EXP greater than 0!",
+				"Max EXP Error!"
+			);
+		} else {
+			this.questService.setMaxEXP(this.questMap.getQuestMapId(), maxEXP).subscribe((x) => {
+				if (x) {
+					this.toastr.success(
+						"Successfully set the section max EXP to " + maxEXP,
+						"Grade Submission Success!"
+					);
+					this.questMap.setMaxEXP(maxEXP);
+				} else {
+					this.toastr.error(
+						"The system failed to set your max EXP.",
+						"Max EXP Error!"
+					);
+				}
+			})
+		}
+	}
+
 	/**
     * Sets the quest map based on the data received.
 	* @param data string where the quests and its respective coordinates will be located
     */
 	setQuestMap() {
 		this.chartColors = this.pageService.lineChartColors;
-		this.chartWidth = 650;
-		this.chartHeight = 300;
+		this.chartWidth = 500;
+		this.chartHeight = 500;
 
 
 		var QM = {
@@ -268,6 +300,19 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 		let options = {
 			onClick: this.chartClicked.bind(this),
 			legend: { display: false },
+			plugins: {
+				datalabels: {
+					display: true,
+					color: 'red',
+					font: {
+						weight: 'bold'
+					},
+					formatter: function (value, context) {
+						return context.chart.data.datasets[context.datasetIndex].label;
+					},
+					padding: 4
+				}
+			},
 			scales: {
 				xAxes: [{
 					display: false,
@@ -291,7 +336,7 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 				callbacks: {
 					title: function (tooltipItems, data) {
 						var tooltipItem = tooltipItems[0];
-						return data.datasets[tooltipItem.datasetIndex].label;
+						return data.datasets[tooltipItem.datasetIndex].title;
 					},
 					label: function (tooltipItem, data) {
 						return "";
@@ -309,7 +354,7 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 		});
 	}
 
-	
+
 
 	/**
 	 * https://stackoverflow.com/questions/38112802/how-to-save-a-text-to-file-and-read-it-again-but-save-as-binary-in-javascript
@@ -331,12 +376,16 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 	 */
 	chartClicked($event) {
 		var points: any = this.chart.getDatasetAtEvent($event);
-		var points: any = this.chart.getDatasetAtEvent($event);
 		if (points.length != 0) {
 			this.x = points[0]._model.x / (this.chartWidth / this.xTick);
 			this.y = (this.chartHeight - points[0]._model.y) / (this.chartHeight / this.yTick);
+			console.log(points);
 			if ((this.x % 5 != 0 || this.y % 5 !== 0) || this.questMap.getQuestIdOf(this.x, this.y) == "") {
-				this.openCreateQuestModal();
+				if (!this.questMap.hasQuestPointAtDirection(this.x, this.y)) {
+					this.openCreateQuestModal();
+				} else {
+					this.addNewQuestLine();
+				}
 			} else {
 				var questId = this.questMap.getQuestIdOf(this.x, this.y);
 				var quests: Quest[] = this.quests.filter(quest => quest.getQuestId() == questId);
@@ -348,8 +397,8 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 	}
 
 	openCreateQuestModal(isFromHTML?: boolean) {
-		if(isFromHTML){
-			this.x = 5; 
+		if (isFromHTML) {
+			this.x = 5;
 			this.y = 25;
 			this.isFromHTML = true;
 		} else {
@@ -390,9 +439,8 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 		});
 	}
 
-	addNewQuestLine(quest) {
+	addNewQuestLine(quest?) {
 		//AHJ: unimplemented; add to database so questmap is refreshed
-
 		// if the clicked point is a '+' sign
 		if (this.x % 5 != 0 || this.y % 5 != 0) {
 			let newQuestCoordinates: any[] = this.questMap.addNewQuestLine(this.x, this.y, quest);
@@ -407,12 +455,12 @@ export class SpecificQuestMapComponent implements OnInit, AfterViewInit {
 				});
 			}
 
-		// if clicked point is a quest point
+			// if clicked point is a quest point
 		} else {
 			let basisX = this.roundOff(this.x);
 			let basisY = this.roundOff(this.y);
 
-			if(this.isFromHTML){
+			if (this.isFromHTML) {
 				this.questMap.editQuestMapCoordinateAt(basisX, basisY, quest._id);
 			}
 

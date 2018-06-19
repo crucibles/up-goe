@@ -5,19 +5,62 @@
 <div *ngIf="!quests">
 	Loading...
 	<img class="loading-icon" src="/assets/images/loading.gif" />
-  </div>
+</div>
+
+<div>
+	Welcome to the Quest Map page, {{this.currentUser.getUserFirstName()}}! This is where you can create quests and form your
+	section's questmap.
+	<span *ngIf="questMap && questMap.getMaxEXP() == 0">
+		<br><br>Currently, you have not set the maximum EXP that your students can get. Set it so you can start creating your quest and
+		questmap
+		<br>
+	</span>
+	<br>Edit your section's max EXP below.
+</div>
+
+<div>
+	<input #maxEXP type="number" [value]="questMap? questMap.getMaxEXP(): 0">
+	<button type="submit" (click)="setMaxEXP(maxEXP.value)">
+		Submit
+	</button>
+</div>
 
 <!--Graph for quest map-->
-<div [class.hidden]="quests && quests.length == 0">
+<div [class.hidden]="(quests && quests.length == 0) || (questMap && (questMap.getMaxEXP() <= 0))">
 	<div class="row">
 		<div style="display: block">
-			<canvas id="quest-map" baseChart width="650" height="300" #chartCanvas></canvas>
+			<canvas id="quest-map" baseChart width="500" height="500" #chartCanvas></canvas>
 		</div>
 	</div>
 </div>
 
+<table id="hor-zebra" *ngIf="quests && questMap && quests.length > 0" class="quest-table">
+	<thead></thead>
+	<tbody>
+		<tr>
+			<td class="row-header">Quest</td>
+			<td *ngFor="let quest of questMap.getQuestInformationArray()">
+				{{quest.questLabel}}
+			</td>
+		</tr>
+		<tr>
+			<td class="row-header">Max EXP</td>
+			<td *ngFor="let quest of questMap.getQuestInformationArray()">
+				{{quest.quest.getQuestXp()}}
+			</td>
+		</tr>
+		<tr>
+			<td class="row-header">Max HP</td>
+			<td *ngFor="let quest of questMap.getQuestInformationArray()">
+				{{quest.quest.getQuestHp()}}
+			</td>
+		</tr>
+	</tbody>
+</table>
+
 <div *ngIf="isCreateModalReady && quests && quests.length == 0">
-	You have no quest yet. Click <span class="clickable" (click)="openCreateQuestModal(true)">here</span> to create your first quest!
+	<br>You have no quest yet. Click
+	<span class="clickable" (click)="openCreateQuestModal(true)">here</span> to create your first quest!
 </div>
 
 <ng-container *ngIf="isCreateModalReady">
@@ -29,7 +72,7 @@
 				<span aria-hidden="true">&times;</span>
 			</button>
 		</div>
-	
+
 		<!--Modal Body-->
 		<form class="create-quest-body" [formGroup]="createQuestForm">
 			<div class="modal-body">

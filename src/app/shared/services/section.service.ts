@@ -312,7 +312,7 @@ export class SectionService {
 	 * @returns {Section} section information of the current section being navigated
 	 */
 	getCurrentSection(): Section {
-		return this.currentSection;
+		return new Section(this.currentSection);
 	}
 
 	/**

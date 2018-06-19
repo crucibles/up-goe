@@ -157,8 +157,7 @@ export class SpecificMyCourseComponent implements OnInit {
 	}
 
 	getClassmateBadges(classmate: User) {
-		//AHJ: unimplemented; idk unsay method gamiton pra maobtain ang badges sa isa ka student however I just create an array of dummy
-		//badges to display
+		this.badgesDisplay = [];
 		this.badgeService.getSectionBadges(this.sectionService.getCurrentSection().getSectionId()).subscribe(badges => {
 			badges.map(badge => {
 				let x = new Badge(badge);
