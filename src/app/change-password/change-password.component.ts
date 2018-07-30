@@ -19,21 +19,27 @@ import {
     UserService 
 } from 'shared/services';
 
+import {
+    ToastsManager
+} from 'ng2-toastr';
+
 @Component({
     selector: 'app-change-password',
     templateUrl: './change-password.component.html',
     styleUrls: ['./change-password.component.css']
 })
+
 export class ChangePasswordComponent implements OnInit {
-    private sent = false;
-    private failSent = false;
+    // private sent = false;
+    // private failSent = false;
     private changePassForm: FormGroup;
-    private email;
+    // private email;
 
     constructor(
         formBuilder: FormBuilder,
         private router: Router,
-        private userService: UserService
+        private userService: UserService,
+        private toastr: ToastsManager
     ) {
         this.changePassForm = formBuilder.group({
             inputEmail: null
@@ -41,15 +47,17 @@ export class ChangePasswordComponent implements OnInit {
     }
 
     find() {
-        this.sent = false;
-        this.failSent = false;
+        // this.sent = false;
+        // this.failSent = false;
         let user_email = this.changePassForm.value.inputEmail;
         this.userService.getUserReqPass(user_email).subscribe(user => {
-            this.email = user_email;
+            // this.email = user_email;
             if(user) {
-                this.sent = true;
+                // this.sent = true;
+                this.toastr.success("An email has been sent to \"" + user_email + "\"", "Success!");
             } else {
-                this.failSent = true;
+                // this.failSent = true;
+                this.toastr.warning("Sorry, the email \"" + user_email + "\" does not exists.", "Warning!");
             }
         }, error => {
             console.log(error);
