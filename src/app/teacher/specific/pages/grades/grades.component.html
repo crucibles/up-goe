@@ -65,9 +65,13 @@
                         <td>{{this.toStudentName(submission.getUserId())}}</td>
                         <td>
                             <!-- <form class="form-horizontal"> -->
-                            <input #inputGrade type="number" [value]="submission.getQuestSubmissionGrade(questSelect.value)" [disabled]="!isGraded[i]"
-                            />
-                            <button *ngIf="isGraded[i]" type="submit" (click)="setStudentGrade(submission.getUserId(), questSelect.value, inputGrade.value)">Submit
+                            <input #inputGrade 
+                                    type="number" 
+                                    [value]="submission.getQuestSubmissionGrade(questSelect.value)" 
+                                    [disabled]="!isGraded[i]"/>
+                            <button *ngIf="isGraded[i]" 
+                                    type="submit" 
+                                    (click)="setStudentGrade(submission.getUserId(), questSelect.value, inputGrade.value, i)">Submit
                             </button>
                             <!-- </form> -->
                         </td>

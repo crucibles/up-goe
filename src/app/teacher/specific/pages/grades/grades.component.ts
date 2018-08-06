@@ -98,11 +98,13 @@ export class GradesComponent implements OnInit {
 	 */
 	getCurrentSection() {
         this.currentSection = this.sectionService.getCurrentSection();
+        console.log(this.currentSection);
 	}
 
     getSectionInformation() {
         // obtain section quest
         this.questService.getSectionQuests(this.currentSection.getSectionId()).subscribe(quests => {
+            console.log(quests);
             this.quests = quests.map(quest => new Quest(quest));
 
             //obtain section experiences
