@@ -64,7 +64,7 @@ const transporter = nodemailer.createTransport({
         user: 'donevirdensinghynson@gmail.com',
         clientId: '252696106568-ra91i6p5akda1sv1lvbd0u9s0576nq05.apps.googleusercontent.com',
         clientSecret: 'fhz3ClKjFYWqqh3T4oEyTgZw',
-        refreshToken: '1/t3ZXrgNJSymigHcL2Wc3qwnTK7cgyskwfVWKy4_9eV0'
+        refreshToken: '1/Jqk1UIt4IVHkWIwB7hqMbNP-Zd_H2IaJjAqySmy0wOM'
     }
 });
 
@@ -1456,30 +1456,32 @@ router.get('/getSectionQuests', (req, res) => {
                 "section_id": req.query.section_id
             })
             .then(questmap => {
-                let questIds = [];
-                questmap.quest_coordinates.forEach(coord => {
-                    if (coord.quest_id) {
-                        questIds.push(coord.quest_id);
-                    }
-                });
-
-                myDB.collection('quests')
-                    .find()
-                    .toArray()
-                    .then((quests) => {
-                        let sectionQuests = [];
-                        questIds.forEach(questId => {
-                            quests.forEach(quest => {
-                                if (quest._id == questId) {
-                                    sectionQuests.push(quest);
-                                }
-                            });
-                        })
-                        res.json(sectionQuests);
-                    })
-                    .catch((err) => {
-                        sendError(err, res);
+                if(questmap) {
+                    let questIds = [];
+                    questmap.quest_coordinates.forEach(coord => {
+                        if (coord.quest_id) {
+                            questIds.push(coord.quest_id);
+                        }
                     });
+
+                    myDB.collection('quests')
+                        .find()
+                        .toArray()
+                        .then((quests) => {
+                            let sectionQuests = [];
+                            questIds.forEach(questId => {
+                                quests.forEach(quest => {
+                                    if (quest._id == questId) {
+                                        sectionQuests.push(quest);
+                                    }
+                                });
+                            })
+                            res.json(sectionQuests);
+                        })
+                        .catch((err) => {
+                            sendError(err, res);
+                        });
+                } else res.json(false);
             })
             .catch((err) => {
                 sendError(err, res);
@@ -2086,7 +2088,8 @@ router.post('/userReqPass', (req, res) => {
                         from: 'UPGOE Admin <donevirdensinghynson@gmail.com>',
                         to: user.user_email,
                         subject: 'Password Retrieval',
-                        text: 'Hi ' + user.user_fname + '. Your password is \'' + user.user_password + '\'.'
+                        text: 'Hi ' + user.user_fname + '. Your password is \'' + user.user_password + '\'.' +
+                                '\n\nThis is a system-generated email.\nDo not reply in this email.\nThank you.'
                     };
 
                     // Sends the email.
