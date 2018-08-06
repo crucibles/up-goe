@@ -19,7 +19,7 @@ router.use(function timeLog(req, res, next) {
 
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, './src/assets/images/');
+        cb(null, './uploads');
     },
     filename: function (req, file, cb) {
         cb(null, requestTime + "." + file.originalname);
@@ -497,13 +497,13 @@ router.post('/upload', (req, res) => {
 router.get('/badgeImg', (req, res) => {
     var path = '';
 
-    filepath = path.join(__dirname, '../../src/assets/images') + '/' + req.query.imgName;
+    filepath = path.join(__dirname, '../../uploads') + '/' + req.query.imgName;
     res.sendFile(filepath);
 
 });
 
 router.post('/download', (req, res) => {
-    filepath = path.join(__dirname, '../../src/assets/images') + '/' + req.body.fileName;
+    filepath = path.join(__dirname, '../../uploads') + '/' + req.body.fileName;
     res.sendFile(filepath);
 });
 
