@@ -36,14 +36,18 @@ import {
 
 //Application Imports
 import {
-	User, Quest, Section
+	User, 
+	Quest, 
+	Badge,
+	Section
 } from 'shared/models';
 
 import {
 	QuestService,
 	PageService,
 	UserService,
-	SectionService
+	SectionService,
+	BadgeService
 } from 'shared/services';
 
 import {
@@ -97,6 +101,7 @@ export class SpecificSidetabComponent implements OnInit {
 	// for collapsible sidetab
 	isShowSideTab: boolean = false;
 	windowWidth: number = window.innerWidth;
+	badgeName: any = "";
 
 	constructor(
 		private elementRef: ElementRef,
@@ -107,7 +112,8 @@ export class SpecificSidetabComponent implements OnInit {
 		private userService: UserService,
 		private route: ActivatedRoute,
 		private sectionService: SectionService,
-		private toastr: ToastsManager
+		private toastr: ToastsManager,
+		private badgeService: BadgeService
 	) {
 		this.image = imageDir + "not-found.jpg";
 		this.uploader = new FileUploader({ url: this.url, itemAlias: 'file' });
@@ -134,6 +140,15 @@ export class SpecificSidetabComponent implements OnInit {
 			}
 		});
 		this.checkSize();
+	}
+
+	getBadgeName(badge_id: any) {
+		if(badge_id){
+			this.badgeService.getBadge(badge_id).subscribe(res => {
+				this.badgeName = new Badge(res).getBadgeName();
+			});
+		}
+		this.badgeName = "";
 	}
 
 	submit() {
@@ -214,6 +229,7 @@ export class SpecificSidetabComponent implements OnInit {
 	openQuest(template: TemplateRef<any>, quest: any) { //'quest: any' in here means the quest has not been converted to Quest type
 
 		this.questClicked = quest;
+		this.getBadgeName(this.questClicked.getQuestBadge());
 		if (this.questClicked) {
 			this.bsModalRef = this.modalService.show(template);
 		}

@@ -19,7 +19,7 @@ router.use(function timeLog(req, res, next) {
 
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, './uploads/');
+        cb(null, './uploads');
     },
     filename: function (req, file, cb) {
         cb(null, requestTime + "." + file.originalname);
@@ -481,7 +481,6 @@ router.post('/experiences', (req, res) => {
 });
 
 router.post('/upload', (req, res) => {
-    var path = '';
 
     upload(req, res, function (err) {
         if (err) {
@@ -489,7 +488,6 @@ router.post('/upload', (req, res) => {
             return res.status(422).send("an Error occured")
         }
         // No error occured.
-        path = req.file.path;
         // return res.send(path.substring(8, path.length));
         return res.json({ originalName: req.file.originalname, uploadName: req.file.filename });
     })
@@ -1963,8 +1961,8 @@ router.get('/badges', (req, res) => {
                 .find({ _id: ObjectID(req.query.badge_id) })
                 .toArray()
                 .then((badges) => {
-                    if (badges) {
-                        res.json(badges);
+                    if (badges && badges[0]) {
+                        res.json(badges[0]);
                     } else {
                         res.json(false);
                     }

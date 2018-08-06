@@ -5,6 +5,7 @@
 /tmp
 /out-tsc
 /public
+/uploads
 *.spec.ts
 
 # dependencies

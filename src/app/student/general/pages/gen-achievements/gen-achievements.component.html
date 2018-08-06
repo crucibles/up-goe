@@ -1,1 +1,19 @@
-<body>HELOO!</body>
+<body>
+
+    <!--Badges Section-->
+    <section class="badges">
+        <h3>Daily Badges</h3>
+        <!--Shows badges if badges exist-->
+        <ng-container *ngIf="badges && badges.length != 0">
+            <div *ngFor="let badge of badges">
+                <img class="badge-img" [src]="badge.getBadgePhoto()" tooltip="{{badge.getBadgeDescription()}}" placement="top" />
+            </div>
+        </ng-container>
+        <!--Informs user if he or she has no badges yet-->
+        <ng-container *ngIf="!badges || badges.length == 0">
+            <h6>You have no badges yet.</h6>
+        </ng-container>
+    </section>
+
+
+</body>

@@ -56,7 +56,8 @@ import {
 	Quest,
 	Section,
 	User,
-	imageDir
+	imageDir,
+	Badge
 } from 'shared/models';
 
 import {
@@ -66,7 +67,8 @@ import {
 	PageService,
 	QuestService,
 	SectionService,
-	UserService
+	UserService,
+	BadgeService
 } from 'shared/services';
 
 //import the file uploader plugin
@@ -116,6 +118,8 @@ export class GenSidetabComponent implements OnInit {
 	isShowSideTab: boolean = false;
 	windowWidth: number = window.innerWidth;
 
+	badgeName: any = "";
+
 	//if screen size changes it'll update
 	@HostListener('window:resize', ['$event'])
 	resize(event) {
@@ -134,7 +138,7 @@ export class GenSidetabComponent implements OnInit {
 		private router: Router,
 		private experienceService: ExperienceService,
 		private toastr: ToastsManager,
-		private fileService: FileService
+		private badgeService: BadgeService
 	) {
 		this.image = imageDir + "not-found.jpg";
 		this.uploader = new FileUploader({ url: this.url, itemAlias: 'file' });
@@ -160,6 +164,15 @@ export class GenSidetabComponent implements OnInit {
 			console.warn("refreshing quests");
 			this.getQuests(this.currentUser.getUserId());
 		}
+	}
+
+	getBadgeName(badge_id: any) {
+		if (badge_id) {
+			this.badgeService.getBadge(badge_id).subscribe(res => {
+				this.badgeName = new Badge(res).getBadgeName();
+			});
+		}
+		this.badgeName = "";
 	}
 
 	submit() {
@@ -267,8 +280,8 @@ export class GenSidetabComponent implements OnInit {
 
 	openQuest(template: TemplateRef<any>, quest: any, index: number) { //'quest: any' in here means the quest has not been converted to Quest type
 		this.questClicked = quest;
+		this.getBadgeName(this.questClicked.getQuestBadge())
 		this.indexClicked = index;
-		console.warn(this.questClicked);
 		if (this.questClicked) {
 			this.bsModalRef = this.modalService.show(template);
 		}
