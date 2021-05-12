@@ -46,7 +46,7 @@
     "ng2-toastr": "^4.1.2",
     "ngx-bootstrap": "^2.0.0-rc.0",
     "ngx-cookie-service": "^1.0.9",
-    "nodemailer": "^4.6.0",
+    "nodemailer": "^6.4.16",
     "nodemon": "^1.14.7",
     "rxjs": "^5.4.2",
     "xoauth2": "^1.2.0",
