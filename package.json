@@ -54,7 +54,7 @@
   },
   "devDependencies": {
     "@angular-devkit/core": "^0.6.0",
-    "@angular/cli": "^1.5.3",
+    "@angular/cli": "^15.0.4",
     "@angular/compiler-cli": "^4.2.4",
     "@angular/language-service": "^4.2.4",
     "@types/chart.js": "^2.7.15",
